@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LOISELLE - Feuille de Temps</title>
+    <title>LOISELLE - Feuille de Temps (3 Lignes)</title>
     <style>
         :root { --primary: #12263a; --accent: #28a745; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,60 +23,83 @@
         .sig-container { border: 2px dashed #ccc; border-radius: 10px; margin-top: 10px; background: #fff; }
         #sig-canvas { width: 100%; height: 150px; touch-action: none; cursor: crosshair; }
         .btn-submit { background: #ffc107; width: 100%; padding: 20px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; color: #12263a; }
-        .btn-clear { background: #eee; border: none; padding: 8px 15px; border-radius: 5px; font-size: 0.8em; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="logo"><h1>LOISELLE</h1><p>FEUILLE DE TEMPS</p></div>
     <form id="loiselleForm" action="https://formspree.io/f/xdadypze" method="POST">
+        
         <div class="total-banner">TOTAL : <span id="totalHrs">0.00</span>h</div>
         <input type="hidden" name="_TOTAL_DE_LA_SEMAINE" id="totalInput">
+
         <div class="info-card">
             <label>👤 Employé :</label>
-            <input type="text" name="1_NOM_EMPLOYE" placeholder="Entrez votre nom" required>
+            <input type="text" name="1_NOM_EMPLOYE" placeholder="Nom de l'employé" required>
             <label>📅 Semaine du (Dimanche) :</label>
             <input type="date" name="2_DATE_DE_DEBUT" required>
         </div>
+
         <div id="formContent"></div>
+        
         <div class="info-card">
             <label>✍️ Signature :</label>
-            <button type="button" class="btn-clear" onclick="clearSig()">Effacer / Clear</button>
             <div class="sig-container"><canvas id="sig-canvas"></canvas></div>
         </div>
         <input type="hidden" name="ZZ_SIGNATURE_DATA" id="sig-data">
-        <button type="submit" id="submitBtn" class="btn-submit" style="margin-top:20px">🚀 ENVOYER / SUBMIT</button>
+
+        <button type="submit" class="btn-submit" style="margin-top:20px">🚀 ENVOYER LA SEMAINE</button>
     </form>
 </div>
+
 <script>
     const days = [
         {fr:'Dimanche', en:'Sunday'}, {fr:'Lundi', en:'Monday'}, {fr:'Mardi', en:'Tuesday'}, 
         {fr:'Mercredi', en:'Wednesday'}, {fr:'Jeudi', en:'Thursday'}, {fr:'Vendredi', en:'Friday'}, {fr:'Samedi', en:'Saturday'}
     ];
+
     let html = '';
     days.forEach((day, i) => {
         html += `<div class="day-box"><div class="day-label"><span>${day.fr}</span><span>${day.en}</span></div>`;
-        for(let r=1; r<=2; r++) {
-            html += `<div class="time-row"><div class="row-inputs">
-                <div><label style="font-size:0.7em">${r===1?'Projet':''}</label>
-                <select name="${day.fr}_Projet_${r}"><option value="">Code?</option><option value="CCR">CCR</option><option value="25903-00">25903-00</option></select></div>
-                <div><label style="font-size:0.7em">Début (S${r})</label><select name="${day.fr}_Debut_${r}" id="s${i}_${r}" onchange="calc()">${genTime()}</select></div>
-                <div><label style="font-size:0.7em">Fin (E${r})</label><select name="${day.fr}_Fin_${r}" id="e${i}_${r}" onchange="calc()">${genTime()}</select></div>
-            </div></div>`;
+        // Boucle pour 3 lignes par jour
+        for(let r=1; r<=3; r++) {
+            html += `<div class="time-row">
+                <div class="row-inputs">
+                    <div>
+                        <label style="font-size:0.7em">${r===1?'Projet':''}</label>
+                        <select name="${day.fr}_Projet_${r}">
+                            <option value="">Code?</option>
+                            <option value="CCR">CCR</option>
+                            <option value="25903-00">25903-00</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.7em">Début (S${r})</label>
+                        <select name="${day.fr}_Debut_${r}" id="s${i}_${r}" onchange="calc()">${genTime()}</select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.7em">Fin (E${r})</label>
+                        <select name="${day.fr}_Fin_${r}" id="e${i}_${r}" onchange="calc()">${genTime()}</select>
+                    </div>
+                </div>
+            </div>`;
         }
         html += `</div>`;
     });
     document.getElementById('formContent').innerHTML = html;
+
     function genTime() { 
         let h='<option value="">--:--</option>'; 
         for(let i=0;i<24;i++) for(let m=0;m<60;m+=30) { 
-            let t=(i<10?'0'+i:i)+':'+(m<10?'0'+m:m); h+=`<option value="${t}">${t}</option>`; 
+            let t=(i<10?'0'+i:i)+':'+(m<10?'0'+m:m); 
+            h+=`<option value="${t}">${t}</option>`; 
         } return h; 
     }
+
     function calc() {
         let total = 0;
         for(let i=0; i<7; i++) {
-            for(let r=1; r<=2; r++) {
+            for(let r=1; r<=3; r++) { // Calcul sur les 3 lignes
                 let s = document.getElementById(`s${i}_${r}`).value, e = document.getElementById(`e${i}_${r}`).value;
                 if(s && e) {
                     let d = (parseInt(e.split(':')[0])*60+parseInt(e.split(':')[1])) - (parseInt(s.split(':')[0])*60+parseInt(s.split(':')[1]));
@@ -87,24 +110,32 @@
         document.getElementById('totalHrs').textContent = total.toFixed(2);
         document.getElementById('totalInput').value = total.toFixed(2) + " h";
     }
+
     const canvas = document.getElementById('sig-canvas');
     const ctx = canvas.getContext('2d');
     let drawing = false;
-    function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; ctx.lineWidth = 2; ctx.lineCap = 'round'; }
+
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        ctx.lineWidth = 2; ctx.lineCap = 'round';
+    }
     window.onload = resizeCanvas;
+
     function getPos(e) {
         const rect = canvas.getBoundingClientRect();
         const clientX = (e.touches ? e.touches[0].clientX : e.clientX);
         const clientY = (e.touches ? e.touches[0].clientY : e.clientY);
         return { x: clientX - rect.left, y: clientY - rect.top };
     }
-    canvas.addEventListener('mousedown', (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
-    canvas.addEventListener('mousemove', (e) => { if(!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
-    window.addEventListener('mouseup', () => drawing = false);
+
     canvas.addEventListener('touchstart', (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); e.preventDefault(); }, {passive: false});
     canvas.addEventListener('touchmove', (e) => { if(!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); }, {passive: false});
-    function clearSig() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-    document.getElementById("loiselleForm").onsubmit = function() { document.getElementById('sig-data').value = canvas.toDataURL("image/jpeg", 0.5); };
+    window.addEventListener('touchend', () => drawing = false);
+
+    document.getElementById("loiselleForm").onsubmit = function() {
+        document.getElementById('sig-data').value = canvas.toDataURL("image/jpeg", 0.5);
+    };
 </script>
 </body>
 </html>
