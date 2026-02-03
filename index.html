@@ -1,1 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOISELLE - Feuille de Temps</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f7f9; padding: 15px; color: #333; margin: 0; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { text-align: center; margin-bottom: 5px; font-size: 2.2em; letter-spacing: 2px; color: #1a2a40; }
+        .subtitle { text-align: center; font-weight: bold; font-size: 1.1em; margin-bottom: 25px; color: #555; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .section { margin-bottom: 20px; padding: 15px; border: 1px solid #e1e4e8; border-radius: 12px; background-color: #fdfdfd; }
+        .section-title { background: #1a2a40; color: white; padding: 10px 15px; margin: -15px -15px 15px -15px; border-radius: 12px 12px 0 0; font-weight: bold; display: flex; justify-content: space-between; }
+        label { display: block; margin-top: 12px; font-weight: 600; font-size: 0.9em; color: #444; }
+        input { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccd0d5; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #fff; }
+        .row { display: flex; gap: 10px; margin-top: 5px; }
+        .row div { flex: 1; }
+        button { width: 100%; padding: 18px; background: #1a2a40; color: white; border: none; border-radius: 8px; font-size: 1.2em; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        button:hover { background: #2c3e50; }
+        .footer-note { text-align: center; font-size: 0.8em; color: #888; margin-top: 15px; }
+    </style>
+</head>
+<body>
 
+<div class="container">
+    <h1>LOISELLE</h1>
+    <div class="subtitle">FEUILLE DE TEMPS</div>
+
+    <form id="loiselleForm" action="https://formspree.io/f/VOTRE_ID" method="POST">
+        
+        <div class="section">
+            <label>👤 Employé (Employee Name) :</label>
+            <input type="text" name="Consultant" placeholder="Nom de l'employé" required>
+            
+            <label>📅 Semaine du (Week of) :</label>
+            <input type="date" name="Semaine_du" required>
+        </div>
+
+        <div id="daysList"></div>
+
+        <div class="section">
+            <label>✍️ Signature :</label>
+            <input type="text" name="Signature_Data" placeholder="Tapez votre nom pour signer">
+        </div>
+
+        <button type="submit">ENVOYER LA SEMAINE</button>
+        <p class="footer-note">Les données sont sauvegardées sur ce téléphone jusqu'au samedi.</p>
+    </form>
+</div>
+
+<script>
+    const jours = [
+        {fr: 'Lundi', en: 'Monday'}, {fr: 'Mardi', en: 'Tuesday'}, 
+        {fr: 'Mercredi', en: 'Wednesday'}, {fr: 'Jeudi', en: 'Thursday'}, 
+        {fr: 'Vendredi', en: 'Friday'}, {fr: 'Samedi', en: 'Saturday'}, 
+        {fr: 'Dimanche', en: 'Sunday'}
+    ];
+    
+    const list = document.getElementById('daysList');
+
+    jours.forEach(j => {
+        list.innerHTML += `
+            <div class="section">
+                <div class="section-title"><span>${j.fr}</span> <span>${j.en}</span></div>
+                <label>Projet :</label>
+                <input type="text" name="${j.fr}_Code" placeholder="Ex: CCR">
+                <div class="row">
+                    <div><label>Début (S1)</label><input type="time" name="${j.fr}_S1"></div>
+                    <div><label>Fin (E1)</label><input type="time" name="${j.fr}_E1"></div>
+                </div>
+                <div class="row">
+                    <div><label>Début (S2)</label><input type="time" name="${j.fr}_S2"></div>
+                    <div><label>Fin (E2)</label><input type="time" name="${j.fr}_E2"></div>
+                </div>
+            </div>`;
+    });
+
+    const form = document.getElementById('loiselleForm');
+
+    // MÉMOIRE : Charger les données
+    window.onload = () => {
+        form.querySelectorAll('input').forEach(el => {
+            const val = localStorage.getItem(el.name);
+            if (val) el.value = val;
+        });
+    };
+
+    // SAUVEGARDE : À chaque frappe
+    form.addEventListener('input', (e) => {
+        localStorage.setItem(e.target.name, e.target.value);
+    });
+
+    // NETTOYAGE : Après l'envoi
+    form.addEventListener('submit', () => {
+        setTimeout(() => { localStorage.clear(); }, 1000);
+    });
+</script>
+
+</body>
+</html>
