@@ -1,1 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LOISELLE - Liste d'Inspection</title>
+    <style>
+        :root { --primary: #12263a; --accent: #28a745; --red: #d9534f; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background: #0d1b2a; padding: 10px; color: #333; }
+        .container { max-width: 600px; margin: auto; background: #fff; border-radius: 20px; padding: 15px; }
+        .logo { text-align: center; border-bottom: 2px solid #eee; margin-bottom: 15px; padding-bottom: 10px; }
+        .logo h1 { font-size: 2.2em; color: var(--primary); font-weight: 800; }
+        .info-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin: 5px 0; color: var(--primary); font-size: 0.9em; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
+        
+        .item-box { margin-bottom: 10px; padding: 15px; border: 1px solid #eee; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; background: #fff; }
+        .item-name { font-weight: bold; flex: 1; color: #444; }
+        
+        /* Boutons radio stylisés */
+        .status-options { display: flex; gap: 10px; }
+        .status-options input[type="radio"] { display: none; }
+        .status-options label { 
+            padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; font-size: 0.8em; margin: 0; background: #eee; color: #666; 
+        }
+        .status-options input[type="radio"]:checked + label.ok { background: var(--accent); color: white; border-color: var(--accent); }
+        .status-options input[type="radio"]:checked + label.defect { background: var(--red); color: white; border-color: var(--red); }
 
+        .sig-container { border: 2px dashed #ccc; border-radius: 10px; margin-top: 10px; background: #fafafa; }
+        #sig-canvas { width: 100%; height: 150px; touch-action: none; cursor: crosshair; }
+        .btn-submit { background: #ffc107; width: 100%; padding: 20px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; color: #12263a; margin-top: 20px;}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logo"><h1>LOISELLE</h1><p>LISTE D'INSPECTION</p></div>
+    <form id="inspectionForm" action="https://formspree.io/f/xdadypze" method="POST">
+        
+        <div class="info-card">
+            <label>👤 Inspecteur :</label>
+            <input type="text" name="Inspecteur" placeholder="Nom" required>
+            <label>🚛 Unité / Équipement :</label>
+            <input type="text" name="Equipement_ID" placeholder="ex: Camion 102" required>
+            <label>📅 Date :</label>
+            <input type="date" name="Date_Inspection" required>
+        </div>
+
+        <div id="itemsList"></div>
+
+        <div class="info-card">
+            <label>📝 Notes / Défectuosités observées :</label>
+            <textarea name="Commentaires" rows="4" placeholder="Décrivez ici si un item est coché 'Défaut'"></textarea>
+        </div>
+
+        <div class="info-card">
+            <label>✍️ Signature :</label>
+            <div class="sig-container"><canvas id="sig-canvas"></canvas></div>
+            <input type="hidden" name="Signature_Inspection" id="sig-data">
+        </div>
+
+        <button type="submit" class="btn-submit">🚀 ENVOYER L'INSPECTION</button>
+    </form>
+</div>
+
+<script>
+    const items = [
+        "Niveaux (Huile, Prestone)", "Freins et boyaux", "Pneus et boulons", 
+        "Lumières et clignotants", "Direction / Suspension", "Miroirs et Vitres", 
+        "Équipement de sécurité", "Courroies / Fuites"
+    ];
+
+    const list = document.getElementById('itemsList');
+    items.forEach((item, i) => {
+        list.innerHTML += `
+            <div class="item-box">
+                <div class="item-name">${item}</div>
+                <div class="status-options">
+                    <input type="radio" name="Item_${i}_${item}" value="OK" id="ok${i}" checked>
+                    <label for="ok${i}" class="ok">OK</label>
+                    <input type="radio" name="Item_${i}_${item}" value="DEFAUT" id="def${i}">
+                    <label for="def${i}" class="defect">DÉFAUT</label>
+                </div>
+            </div>`;
+    });
+
+    const canvas = document.getElementById('sig-canvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; ctx.lineWidth=2; ctx.lineCap='round'; }
+    window.onload = resize;
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = (e.touches ? e.touches[0].clientX : e.clientX);
+        const clientY = (e.touches ? e.touches[0].clientY : e.clientY);
+        return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+    canvas.addEventListener('mousedown', (e) => { drawing=true; ctx.beginPath(); const p=getPos(e); ctx.moveTo(p.x,p.y); });
+    canvas.addEventListener('mousemove', (e) => { if(!drawing) return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); });
+    window.addEventListener('mouseup', () => drawing=false);
+    canvas.addEventListener('touchstart', (e) => { drawing=true; ctx.beginPath(); const p=getPos(e); ctx.moveTo(p.x,p.y); e.preventDefault(); }, {passive:false});
+    canvas.addEventListener('touchmove', (e) => { if(!drawing) return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault(); }, {passive:false});
+
+    document.getElementById("inspectionForm").onsubmit = function() {
+        document.getElementById('sig-data').value = canvas.toDataURL("image/jpeg", 0.5);
+    };
+</script>
+</body>
+</html>
