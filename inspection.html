@@ -1,140 +1,154 @@
 <!DOCTYPE html>
-p<html lang="fr">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LOISELLE - Feuille de Temps (3 Lignes)</title>
+    <title>LOISELLE - Inspection & Conformité</title>
     <style>
-        :root { --primary: #12263a; --accent: #28a745; }
+        :root { --primary: #12263a; --accent: #28a745; --red: #d9534f; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: sans-serif; background: #0d1b2a; padding: 10px; color: #333; }
         .container { max-width: 600px; margin: auto; background: #fff; border-radius: 20px; padding: 15px; }
         .logo { text-align: center; border-bottom: 2px solid #eee; margin-bottom: 15px; padding-bottom: 10px; }
         .logo h1 { font-size: 2.2em; color: var(--primary); font-weight: 800; }
-        .logo p { font-weight: bold; color: #666; text-transform: uppercase; }
+        .logo p { font-weight: bold; color: #666; font-size: 0.8em; }
         .info-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin: 5px 0; color: var(--primary); font-size: 0.9em; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
-        .day-box { margin-bottom: 15px; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; background: #fff; }
-        .day-label { background: var(--primary); color: white; padding: 10px; text-align: center; font-weight: bold; display: flex; justify-content: space-between; }
-        .time-row { padding: 10px; border-bottom: 1px solid #eee; background: #fafafa; }
-        .row-inputs { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 8px; align-items: end; }
-        .total-banner { background: var(--accent); color: white; padding: 15px; border-radius: 10px; text-align: center; font-size: 20px; font-weight: bold; margin: 20px 0; }
-        .sig-container { border: 2px dashed #ccc; border-radius: 10px; margin-top: 10px; background: #fff; }
-        #sig-canvas { width: 100%; height: 150px; touch-action: none; cursor: crosshair; }
-        .btn-submit { background: #ffc107; width: 100%; padding: 20px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; color: #12263a; }
+        label { display: block; font-weight: bold; margin: 5px 0; color: var(--primary); font-size: 0.85em; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
+        .item-group { border: 1px solid #eee; border-radius: 12px; margin-bottom: 10px; padding: 12px; background: #fff; }
+        .item-main { display: flex; align-items: center; justify-content: space-between; }
+        .item-text { flex: 1; padding-right: 10px; }
+        .item-text div:first-child { font-weight: bold; color: #333; font-size: 0.9em; }
+        .item-text div:last-child { color: #888; font-size: 0.75em; font-style: italic; }
+        .status-options { display: flex; gap: 8px; }
+        .status-options input { display: none; }
+        .status-options label { padding: 10px 15px; border-radius: 8px; border: 1px solid #ccc; cursor: pointer; font-size: 0.85em; font-weight: bold; background: #fff; }
+        .status-options input:checked + label.ok { background: var(--accent); color: white; border-color: var(--accent); }
+        .status-options input:checked + label.defect { background: var(--red); color: white; border-color: var(--red); }
+        .proof-zone { display: none; background: #fff5f5; padding: 10px; border-radius: 8px; border: 1px dashed var(--red); margin-top: 15px; }
+        .sig-container { border: 2px dashed #ccc; border-radius: 10px; background: #fff; height: 150px; }
+        #sig-canvas { width: 100%; height: 100%; touch-action: none; }
+        .btn-submit { background: #ffc107; width: 100%; padding: 20px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; color: #12263a; margin-top: 20px; cursor: pointer; }
+        #receipt { display: none; text-align: center; }
+        .receipt-box { border: 2px solid var(--accent); border-radius: 15px; padding: 20px; background: #f0fff4; text-align: left; margin-top: 20px; }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="logo"><h1>LOISELLE</h1><p>FEUILLE DE TEMPS</p></div>
-    <form id="loiselleForm" action="https://formspree.io/f/xdadypze" method="POST">
-        
-        <div class="total-banner">TOTAL : <span id="totalHrs">0.00</span>h</div>
-        <input type="hidden" name="_TOTAL_DE_LA_SEMAINE" id="totalInput">
+
+<div class="container" id="main-form">
+    <div class="logo">
+        <h1>LOISELLE</h1>
+        <p>INSPECTION QUOTIDIENNE / DAILY INSPECTION</p>
+    </div>
+    
+    <form action="https://formspree.io/f/xdadypze" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_subject" id="email-subject" value="Inspection Normale - LOISELLE">
 
         <div class="info-card">
-            <label>👤 Employé :</label>
-            <input type="text" name="1_NOM_EMPLOYE" placeholder="Nom de l'employé" required>
-            <label>📅 Semaine du (Dimanche) :</label>
-            <input type="date" name="2_DATE_DE_DEBUT" required>
+            <label>👤 Employé / Employee :</label>
+            <input type="text" name="NOM_EMPLOYE" required>
+            <label>🔢 Plaque / Plate :</label>
+            <input type="text" name="PLAQUE" required>
+            <label>🚛 Unité / Unit :</label>
+            <input type="text" name="UNITE" required>
+            <label>📅 Date :</label>
+            <input type="date" name="DATE" id="inspect_date" required>
         </div>
 
-        <div id="formContent"></div>
-        
+        <div id="itemsList"></div>
+
         <div class="info-card">
             <label>✍️ Signature :</label>
             <div class="sig-container"><canvas id="sig-canvas"></canvas></div>
+            <input type="hidden" name="SIGNATURE_INSPECTION" id="sig-data">
         </div>
-        <input type="hidden" name="ZZ_SIGNATURE_DATA" id="sig-data">
 
-        <button type="submit" class="btn-submit" style="margin-top:20px">🚀 ENVOYER LA SEMAINE</button>
+        <button type="submit" class="btn-submit">🚀 ENVOYER / SUBMIT</button>
     </form>
 </div>
 
+<div class="container" id="receipt">
+    <div class="logo"><h1>LOISELLE</h1></div>
+    <div class="receipt-box" id="receipt-style">
+        <h2 id="receipt-title" style="text-align:center;">INSPECTION ENVOYÉE / SUBMITTED</h2>
+        <hr style="margin:15px 0;">
+        <p><strong>Statut / Status :</strong> <span id="r-status">CONFORME / COMPLIANT</span></p>
+        <p style="margin-top:15px; font-size: 0.85em;">Ce document sert de preuve pour les autorités routières. / This serves as proof for road authorities.</p>
+    </div>
+    <button onclick="location.reload()" class="btn-submit" style="background:#eee; margin-top:30px;">NOUVELLE INSPECTION / NEW</button>
+</div>
+
 <script>
-    const days = [
-        {fr:'Dimanche', en:'Sunday'}, {fr:'Lundi', en:'Monday'}, {fr:'Mardi', en:'Tuesday'}, 
-        {fr:'Mercredi', en:'Wednesday'}, {fr:'Jeudi', en:'Thursday'}, {fr:'Vendredi', en:'Friday'}, {fr:'Samedi', en:'Saturday'}
+    const items = [
+        {fr: "Niveaux & Fuites", en: "Fluids & Leaks"},
+        {fr: "Pneus & Boulons", en: "Tires & Bolts"},
+        {fr: "Freins & Boyaux", en: "Brakes & Hoses"},
+        {fr: "Lumières & Gyrophare", en: "Lights & Beacon"},
+        {fr: "Direction & Suspension", en: "Steering & Suspension"},
+        {fr: "Miroirs & Pare-brise", en: "Mirrors & Windshield"},
+        {fr: "Sécurité (Extincteur, Trousse)", en: "Safety (Extinguisher, Kit)"},
+        {fr: "Chargement (Sangles, Toile)", en: "Load Security (Straps, Tarp)"}
     ];
 
-    let html = '';
-    days.forEach((day, i) => {
-        html += `<div class="day-box"><div class="day-label"><span>${day.fr}</span><span>${day.en}</span></div>`;
-        // Boucle pour 3 lignes par jour
-        for(let r=1; r<=3; r++) {
-            html += `<div class="time-row">
-                <div class="row-inputs">
-                    <div>
-                        <label style="font-size:0.7em">${r===1?'Projet':''}</label>
-                        <select name="${day.fr}_Projet_${r}">
-                            <option value="">Code?</option>
-                            <option value="CCR">CCR</option>
-                            <option value="25903-00">25903-00</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="font-size:0.7em">Début (S${r})</label>
-                        <select name="${day.fr}_Debut_${r}" id="s${i}_${r}" onchange="calc()">${genTime()}</select>
-                    </div>
-                    <div>
-                        <label style="font-size:0.7em">Fin (E${r})</label>
-                        <select name="${day.fr}_Fin_${r}" id="e${i}_${r}" onchange="calc()">${genTime()}</select>
+    const list = document.getElementById('itemsList');
+    items.forEach((item, i) => {
+        list.innerHTML += `
+            <div class="item-group">
+                <div class="item-main">
+                    <div class="item-text"><div>${item.fr}</div><div>${item.en}</div></div>
+                    <div class="status-options">
+                        <input type="radio" name="ETAT_${item.fr}" value="OK" id="ok${i}" required onclick="showProof(${i}, false)">
+                        <label for="ok${i}" class="ok">OK</label>
+                        <input type="radio" name="ETAT_${item.fr}" value="DEF" id="def${i}" required onclick="showProof(${i}, true)">
+                        <label for="def${i}" class="defect">DEF</label>
                     </div>
                 </div>
+                <div class="proof-zone" id="proof-${i}">
+                    <label style="color:var(--red); font-size:0.75em;">📸 Photo & Note (Défaut / Defect) :</label>
+                    <input type="file" name="PHOTO_${item.fr}" accept="image/*" capture="environment">
+                    <textarea name="NOTE_${item.fr}" id="note-${i}" rows="1" placeholder="Détails du défaut / Defect details..."></textarea>
+                </div>
             </div>`;
-        }
-        html += `</div>`;
     });
-    document.getElementById('formContent').innerHTML = html;
 
-    function genTime() { 
-        let h='<option value="">--:--</option>'; 
-        for(let i=0;i<24;i++) for(let m=0;m<60;m+=30) { 
-            let t=(i<10?'0'+i:i)+':'+(m<10?'0'+m:m); 
-            h+=`<option value="${t}">${t}</option>`; 
-        } return h; 
+    function showProof(id, visible) {
+        document.getElementById(`proof-${id}`).style.display = visible ? 'block' : 'none';
+        const note = document.getElementById(`note-${id}`);
+        if(visible) note.setAttribute('required', 'required');
+        else note.removeAttribute('required');
     }
 
-    function calc() {
-        let total = 0;
-        for(let i=0; i<7; i++) {
-            for(let r=1; r<=3; r++) { // Calcul sur les 3 lignes
-                let s = document.getElementById(`s${i}_${r}`).value, e = document.getElementById(`e${i}_${r}`).value;
-                if(s && e) {
-                    let d = (parseInt(e.split(':')[0])*60+parseInt(e.split(':')[1])) - (parseInt(s.split(':')[0])*60+parseInt(s.split(':')[1]));
-                    if(d<0) d+=1440; total += d/60;
-                }
-            }
-        }
-        document.getElementById('totalHrs').textContent = total.toFixed(2);
-        document.getElementById('totalInput').value = total.toFixed(2) + " h";
-    }
-
+    document.getElementById('inspect_date').valueAsDate = new Date();
     const canvas = document.getElementById('sig-canvas');
     const ctx = canvas.getContext('2d');
     let drawing = false;
 
-    function resizeCanvas() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        ctx.lineWidth = 2; ctx.lineCap = 'round';
-    }
-    window.onload = resizeCanvas;
+    function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; ctx.lineWidth=2; ctx.lineCap='round'; }
+    window.onload = resize;
 
     function getPos(e) {
         const rect = canvas.getBoundingClientRect();
-        const clientX = (e.touches ? e.touches[0].clientX : e.clientX);
-        const clientY = (e.touches ? e.touches[0].clientY : e.clientY);
-        return { x: clientX - rect.left, y: clientY - rect.top };
+        const client = e.touches ? e.touches[0] : e;
+        return { x: client.clientX - rect.left, y: client.clientY - rect.top };
     }
+    canvas.addEventListener('touchstart', (e) => { drawing=true; ctx.beginPath(); const p=getPos(e); ctx.moveTo(p.x, p.y); e.preventDefault(); }, {passive:false});
+    canvas.addEventListener('touchmove', (e) => { if(!drawing) return; const p=getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); }, {passive:false});
+    window.addEventListener('touchend', () => drawing=false);
 
-    canvas.addEventListener('touchstart', (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); e.preventDefault(); }, {passive: false});
-    canvas.addEventListener('touchmove', (e) => { if(!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); }, {passive: false});
-    window.addEventListener('touchend', () => drawing = false);
+    document.querySelector("form").onsubmit = function() {
+        let hasDefect = false;
+        items.forEach((item, i) => { if(document.getElementById(`def${i}`).checked) hasDefect = true; });
 
-    document.getElementById("loiselleForm").onsubmit = function() {
+        if(hasDefect) {
+            document.getElementById('email-subject').value = "⚠️ DÉFAUT / DEFECT - LOISELLE";
+            document.getElementById('receipt-style').style.background = "#fff5f5";
+            document.getElementById('receipt-title').textContent = "⚠️ DÉFAUT DÉTECTÉ / DEFECT DETECTED";
+            document.getElementById('r-status').textContent = "NON-CONFORME / NON-COMPLIANT";
+        }
+
         document.getElementById('sig-data').value = canvas.toDataURL("image/jpeg", 0.5);
+        document.getElementById('main-form').style.display = 'none';
+        document.getElementById('receipt').style.display = 'block';
     };
 </script>
 </body>
