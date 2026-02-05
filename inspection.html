@@ -1,155 +1,328 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LOISELLE - Inspection & Conformité</title>
-    <style>
-        :root { --primary: #12263a; --accent: #28a745; --red: #d9534f; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: sans-serif; background: #0d1b2a; padding: 10px; color: #333; }
-        .container { max-width: 600px; margin: auto; background: #fff; border-radius: 20px; padding: 15px; }
-        .logo { text-align: center; border-bottom: 2px solid #eee; margin-bottom: 15px; padding-bottom: 10px; }
-        .logo h1 { font-size: 2.2em; color: var(--primary); font-weight: 800; }
-        .logo p { font-weight: bold; color: #666; font-size: 0.8em; }
-        .info-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin: 5px 0; color: var(--primary); font-size: 0.85em; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
-        .item-group { border: 1px solid #eee; border-radius: 12px; margin-bottom: 10px; padding: 12px; background: #fff; }
-        .item-main { display: flex; align-items: center; justify-content: space-between; }
-        .item-text { flex: 1; padding-right: 10px; }
-        .item-text div:first-child { font-weight: bold; color: #333; font-size: 0.9em; }
-        .item-text div:last-child { color: #888; font-size: 0.75em; font-style: italic; }
-        .status-options { display: flex; gap: 8px; }
-        .status-options input { display: none; }
-        .status-options label { padding: 10px 15px; border-radius: 8px; border: 1px solid #ccc; cursor: pointer; font-size: 0.85em; font-weight: bold; background: #fff; }
-        .status-options input:checked + label.ok { background: var(--accent); color: white; border-color: var(--accent); }
-        .status-options input:checked + label.defect { background: var(--red); color: white; border-color: var(--red); }
-        .proof-zone { display: none; background: #fff5f5; padding: 10px; border-radius: 8px; border: 1px dashed var(--red); margin-top: 15px; }
-        .sig-container { border: 2px dashed #ccc; border-radius: 10px; background: #fff; height: 150px; }
-        #sig-canvas { width: 100%; height: 100%; touch-action: none; }
-        .btn-submit { background: #ffc107; width: 100%; padding: 20px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; color: #12263a; margin-top: 20px; cursor: pointer; }
-        #receipt { display: none; text-align: center; }
-        .receipt-box { border: 2px solid var(--accent); border-radius: 15px; padding: 20px; background: #f0fff4; text-align: left; margin-top: 20px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOISELLE - Inspection Quotidienne</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #0d1b2a, #1a2f42); padding: 15px; color: #333; }
+.container { max-width: 600px; margin: auto; background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 30px rgba(0,0,0,0.3); }
+.header { background: #12263a; color: white; padding: 25px; margin: -20px -20px 20px -20px; border-radius: 15px 15px 0 0; text-align: center; }
+.header h1 { font-size: 2em; margin-bottom: 5px; letter-spacing: 2px; }
+.header p { color: #ffc107; font-size: 0.9em; }
+.section { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+.section h3 { color: #12263a; margin-bottom: 10px; font-size: 1.1em; }
+label { display: block; font-weight: bold; margin: 10px 0 5px 0; color: #12263a; font-size: 0.9em; }
+input, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 10px; }
+input:focus, textarea:focus { outline: none; border-color: #28a745; }
+.item { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 2px solid #e9ecef; }
+.item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.item-name { font-weight: bold; color: #333; }
+.item-name small { display: block; color: #888; font-size: 0.85em; font-weight: normal; }
+.buttons { display: flex; gap: 10px; }
+.buttons button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9em; }
+.btn-ok { background: #e9ecef; color: #666; }
+.btn-ok.active { background: #28a745; color: white; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4); }
+.btn-def { background: #e9ecef; color: #666; }
+.btn-def.active { background: #d9534f; color: white; box-shadow: 0 4px 10px rgba(217, 83, 79, 0.4); }
+.defect-zone { display: none; margin-top: 10px; padding: 10px; background: #fff5f5; border-radius: 8px; border: 2px dashed #d9534f; }
+.sig-box { border: 3px dashed #ccc; border-radius: 10px; height: 150px; background: white; position: relative; cursor: crosshair; }
+.sig-box canvas { width: 100%; height: 100%; }
+.sig-clear { position: absolute; top: 5px; right: 5px; background: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; cursor: pointer; }
+.btn-submit { background: #ffc107; color: #12263a; width: 100%; padding: 18px; border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
+.btn-submit:active { transform: scale(0.98); }
+#result { display: none; margin-top: 20px; }
+.success { background: #d4edda; border: 2px solid #28a745; padding: 20px; border-radius: 10px; color: #155724; }
+.success h2 { margin-bottom: 15px; color: #28a745; }
+.report { background: white; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #28a745; max-height: 400px; overflow-y: auto; }
+.report pre { white-space: pre-wrap; font-size: 0.9em; line-height: 1.6; font-family: monospace; }
+.action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+.action-btns button { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; }
+.progress { background: #e9ecef; height: 8px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+.progress-bar { background: #28a745; height: 100%; width: 0%; transition: width 0.3s; }
+</style>
 </head>
 <body>
-
-<div class="container" id="main-form">
-    <div class="logo">
-        <h1>LOISELLE</h1>
-        <p>INSPECTION QUOTIDIENNE / DAILY INSPECTION</p>
-    </div>
-    
-    <form action="https://formspree.io/f/xdadypze" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="_subject" id="email-subject" value="Inspection Normale - LOISELLE">
-
-        <div class="info-card">
-            <label>👤 Employé / Employee :</label>
-            <input type="text" name="NOM_EMPLOYE" required>
-            <label>🔢 Plaque / Plate :</label>
-            <input type="text" name="PLAQUE" required>
-            <label>🚛 Unité / Unit :</label>
-            <input type="text" name="UNITE" required>
-            <label>📅 Date :</label>
-            <input type="date" name="DATE" id="inspect_date" required>
-        </div>
-
-        <div id="itemsList"></div>
-
-        <div class="info-card">
-            <label>✍️ Signature :</label>
-            <div class="sig-container"><canvas id="sig-canvas"></canvas></div>
-            <input type="hidden" name="SIGNATURE_INSPECTION" id="sig-data">
-        </div>
-
-        <button type="submit" class="btn-submit">🚀 ENVOYER / SUBMIT</button>
-    </form>
+<div class="container">
+<div class="header">
+<h1>🚛 LOISELLE</h1>
+<p>INSPECTION QUOTIDIENNE / DAILY INSPECTION</p>
 </div>
 
-<div class="container" id="receipt">
-    <div class="logo"><h1>LOISELLE</h1></div>
-    <div class="receipt-box" id="receipt-style">
-        <h2 id="receipt-title" style="text-align:center;">INSPECTION ENVOYÉE / SUBMITTED</h2>
-        <hr style="margin:15px 0;">
-        <p><strong>Statut / Status :</strong> <span id="r-status">CONFORME / COMPLIANT</span></p>
-        <p style="margin-top:15px; font-size: 0.85em;">Ce document sert de preuve pour les autorités routières. / This serves as proof for road authorities.</p>
-    </div>
-    <button onclick="location.reload()" class="btn-submit" style="background:#eee; margin-top:30px;">NOUVELLE INSPECTION / NEW</button>
+<div id="form-section">
+<div class="section">
+<h3>📋 Informations</h3>
+<label>👤 Employé / Employee</label>
+<input type="text" id="employe" placeholder="Nom complet" required>
+<label>🔢 Plaque / Plate</label>
+<input type="text" id="plaque" placeholder="ABC-123" required>
+<label>🚛 Unité / Unit</label>
+<input type="text" id="unite" placeholder="Numéro d'unité" required>
+<label>📅 Date</label>
+<input type="date" id="date" required>
+<label>🕐 Heure / Time</label>
+<input type="time" id="heure" required>
+<label>📍 Lieu / Location</label>
+<input type="text" id="lieu" placeholder="Ville ou adresse">
+</div>
+
+<div class="section">
+<h3>🔍 Points d'inspection</h3>
+<div class="progress"><div class="progress-bar" id="progress"></div></div>
+<p style="text-align: center; color: #666; font-size: 0.9em;" id="progress-text">0/8 complétés</p>
+</div>
+
+<div id="items-list"></div>
+
+<div class="section">
+<h3>💬 Commentaires</h3>
+<textarea id="comments" rows="3" placeholder="Notes générales..."></textarea>
+</div>
+
+<div class="section">
+<h3>✍️ Signature</h3>
+<div class="sig-box">
+<canvas id="canvas"></canvas>
+<button class="sig-clear" onclick="clearSig()">Effacer</button>
+</div>
+</div>
+
+<button class="btn-submit" onclick="submitForm()">🚀 SOUMETTRE / SUBMIT</button>
+
+</div>
+
+<div id="result">
+<div class="success">
+<h2>✅ INSPECTION ENREGISTRÉE</h2>
+<p><strong>Employé:</strong> <span id="r-emp"></span></p>
+<p><strong>Plaque:</strong> <span id="r-plaque"></span></p>
+<p><strong>Date:</strong> <span id="r-date"></span></p>
+<p><strong>Statut:</strong> <span id="r-status"></span></p>
+<div class="report"><pre id="report-text"></pre></div>
+<div class="action-btns">
+<button onclick="emailReport()" style="background: #007bff;">📧 EMAIL</button>
+<button onclick="copyReport()" style="background: #6c757d;">📋 COPIER</button>
+<button onclick="downloadTXT()" style="background: #28a745;">💾 TXT</button>
+<button onclick="location.reload()" style="background: #17a2b8;">🔄 NOUVEAU</button>
+</div>
+</div>
+</div>
 </div>
 
 <script>
-    const items = [
-        {fr: "Niveaux & Fuites", en: "Fluids & Leaks"},
-        {fr: "Pneus & Boulons", en: "Tires & Bolts"},
-        {fr: "Freins & Boyaux", en: "Brakes & Hoses"},
-        {fr: "Lumières & Gyrophare", en: "Lights & Beacon"},
-        {fr: "Direction & Suspension", en: "Steering & Suspension"},
-        {fr: "Miroirs & Pare-brise", en: "Mirrors & Windshield"},
-        {fr: "Sécurité (Extincteur, Trousse)", en: "Safety (Extinguisher, Kit)"},
-        {fr: "Chargement (Sangles, Toile)", en: "Load Security (Straps, Tarp)"}
-    ];
+const items = [
+{fr: "💧 Niveaux & Fuites", en: "Fluids & Leaks"},
+{fr: "🔧 Pneus & Boulons", en: "Tires & Bolts"},
+{fr: "🛑 Freins & Boyaux", en: "Brakes & Hoses"},
+{fr: "💡 Lumières & Gyrophare", en: "Lights & Beacon"},
+{fr: "🎯 Direction & Suspension", en: "Steering & Suspension"},
+{fr: "🪞 Miroirs & Pare-brise", en: "Mirrors & Windshield"},
+{fr: "🧯 Sécurité", en: "Safety Equipment"},
+{fr: "📦 Chargement", en: "Load Security"}
+];
 
-    const list = document.getElementById('itemsList');
-    items.forEach((item, i) => {
-        list.innerHTML += `
-            <div class="item-group">
-                <div class="item-main">
-                    <div class="item-text"><div>${item.fr}</div><div>${item.en}</div></div>
-                    <div class="status-options">
-                        <input type="radio" name="ETAT_${item.fr}" value="OK" id="ok${i}" required onclick="showProof(${i}, false)">
-                        <label for="ok${i}" class="ok">OK</label>
-                        <input type="radio" name="ETAT_${item.fr}" value="DEF" id="def${i}" required onclick="showProof(${i}, true)">
-                        <label for="def${i}" class="defect">DEF</label>
-                    </div>
-                </div>
-                <div class="proof-zone" id="proof-${i}">
-                    <label style="color:var(--red); font-size:0.75em;">📸 Photo & Note (Défaut / Defect) :</label>
-                    <input type="file" name="PHOTO_${item.fr}" accept="image/*" capture="environment">
-                    <textarea name="NOTE_${item.fr}" id="note-${i}" rows="1" placeholder="Détails du défaut / Defect details..."></textarea>
-                </div>
-            </div>`;
-    });
+let inspectionData = { items: [], signature: null };
 
-    function showProof(id, visible) {
-        document.getElementById(`proof-${id}`).style.display = visible ? 'block' : 'none';
-        const note = document.getElementById(`note-${id}`);
-        if(visible) note.setAttribute('required', 'required');
-        else note.removeAttribute('required');
-    }
+const list = document.getElementById('items-list');
+items.forEach((item, i) => {
+list.innerHTML += `
+<div class="item">
+<div class="item-header">
+<div class="item-name">${item.fr}<small>${item.en}</small></div>
+<div class="buttons">
+<button class="btn-ok" onclick="setStatus(${i}, 'OK')">OK</button>
+<button class="btn-def" onclick="setStatus(${i}, 'DEF')">DEF</button>
+</div>
+</div>
+<div class="defect-zone" id="defect-${i}">
+<label style="color: #d9534f; font-size: 0.9em;">Note du défaut:</label>
+<textarea id="note-${i}" placeholder="Décrivez le défaut..."></textarea>
 
-    document.getElementById('inspect_date').valueAsDate = new Date();
-    const canvas = document.getElementById('sig-canvas');
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
+</div>
+</div>
+`;
+});
 
-    function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; ctx.lineWidth=2; ctx.lineCap='round'; }
-    window.onload = resize;
+document.getElementById(‘date’).valueAsDate = new Date();
+document.getElementById(‘heure’).value = new Date().toTimeString().slice(0,5);
 
-    function getPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        const client = e.touches ? e.touches[0] : e;
-        return { x: client.clientX - rect.left, y: client.clientY - rect.top };
-    }
-    canvas.addEventListener('touchstart', (e) => { drawing=true; ctx.beginPath(); const p=getPos(e); ctx.moveTo(p.x, p.y); e.preventDefault(); }, {passive:false});
-    canvas.addEventListener('touchmove', (e) => { if(!drawing) return; const p=getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); }, {passive:false});
-    window.addEventListener('touchend', () => drawing=false);
+const canvas = document.getElementById(‘canvas’);
+const ctx = canvas.getContext(‘2d’);
+let drawing = false;
+let hasSig = false;
 
-    document.querySelector("form").onsubmit = function() {
-        let hasDefect = false;
-        items.forEach((item, i) => { if(document.getElementById(`def${i}`).checked) hasDefect = true; });
+function resizeCanvas() {
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+ctx.lineWidth = 2;
+ctx.lineCap = ‘round’;
+ctx.strokeStyle = ‘#000’;
+}
+window.addEventListener(‘load’, resizeCanvas);
 
-        if(hasDefect) {
-            document.getElementById('email-subject').value = "⚠️ DÉFAUT / DEFECT - LOISELLE";
-            document.getElementById('receipt-style').style.background = "#fff5f5";
-            document.getElementById('receipt-title').textContent = "⚠️ DÉFAUT DÉTECTÉ / DEFECT DETECTED";
-            document.getElementById('r-status').textContent = "NON-CONFORME / NON-COMPLIANT";
-        }
+canvas.addEventListener(‘mousedown’, (e) => startDraw(e));
+canvas.addEventListener(‘mousemove’, (e) => draw(e));
+canvas.addEventListener(‘mouseup’, stopDraw);
+canvas.addEventListener(‘touchstart’, (e) => { e.preventDefault(); startDraw(e.touches[0]); });
+canvas.addEventListener(‘touchmove’, (e) => { e.preventDefault(); draw(e.touches[0]); });
+canvas.addEventListener(‘touchend’, stopDraw);
 
-        document.getElementById('sig-data').value = canvas.toDataURL("image/jpeg", 0.5);
-        document.getElementById('main-form').style.display = 'none';
-        document.getElementById('receipt').style.display = 'block';
-    };
+function startDraw(e) {
+drawing = true;
+hasSig = true;
+const rect = canvas.getBoundingClientRect();
+ctx.beginPath();
+ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+}
+
+function draw(e) {
+if (!drawing) return;
+const rect = canvas.getBoundingClientRect();
+ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+ctx.stroke();
+}
+
+function stopDraw() { drawing = false; }
+
+function clearSig() {
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+hasSig = false;
+}
+
+function setStatus(index, status) {
+const item = document.querySelectorAll(’.item’)[index];
+const okBtn = item.querySelector(’.btn-ok’);
+const defBtn = item.querySelector(’.btn-def’);
+const defZone = document.getElementById(`defect-${index}`);
+if (status === ‘OK’) {
+okBtn.classList.add(‘active’);
+defBtn.classList.remove(‘active’);
+defZone.style.display = ‘none’;
+inspectionData.items[index] = { status: ‘OK’, note: ‘’ };
+} else {
+defBtn.classList.add(‘active’);
+okBtn.classList.remove(‘active’);
+defZone.style.display = ‘block’;
+inspectionData.items[index] = { status: ‘DEF’, note: ‘’ };
+}
+updateProgress();
+}
+
+function updateProgress() {
+const completed = inspectionData.items.filter(i => i).length;
+const percent = (completed / items.length) * 100;
+document.getElementById(‘progress’).style.width = percent + ‘%’;
+document.getElementById(‘progress-text’).textContent = `${completed}/${items.length} complétés`;
+}
+
+function submitForm() {
+if (!document.getElementById(‘employe’).value) { alert(‘❌ Veuillez entrer le nom de l'employé’); return; }
+if (!document.getElementById(‘plaque’).value) { alert(‘❌ Veuillez entrer la plaque’); return; }
+if (inspectionData.items.length !== items.length) { alert(‘❌ Veuillez cocher tous les items’); return; }
+if (!hasSig) { alert(‘❌ Veuillez signer’); return; }
+
+inspectionData.items.forEach((item, i) => {
+if (item.status === ‘DEF’) item.note = document.getElementById(`note-${i}`).value;
+});
+
+const data = {
+employe: document.getElementById(‘employe’).value,
+plaque: document.getElementById(‘plaque’).value,
+unite: document.getElementById(‘unite’).value,
+date: document.getElementById(‘date’).value,
+heure: document.getElementById(‘heure’).value,
+lieu: document.getElementById(‘lieu’).value || ‘Non spécifié’,
+commentaires: document.getElementById(‘comments’).value,
+items: inspectionData.items.map((item, i) => ({
+nom: items[i].fr,
+name: items[i].en,
+statut: item.status,
+note: item.note
+}))
+};
+
+const defectCount = data.items.filter(i => i.statut === ‘DEF’).length;
+const isCompliant = defectCount === 0;
+
+let reportText = `
+═══════════════════════════════════════
+RAPPORT D’INSPECTION LOISELLE
+LOISELLE INSPECTION REPORT
+═══════════════════════════════════════
+
+👤 Employé: ${data.employe}
+🔢 Plaque: ${data.plaque}
+🚛 Unité: ${data.unite}
+📅 Date: ${data.date}
+🕐 Heure: ${data.heure}
+📍 Lieu: ${data.lieu}
+
+📊 STATUT: ${isCompliant ? ‘✅ CONFORME / COMPLIANT’ : ‘⚠️ NON-CONFORME / NON-COMPLIANT’}
+
+═══════════════════════════════════════
+DÉTAILS D’INSPECTION
+═══════════════════════════════════════
+
+`;
+
+data.items.forEach((item, i) => {
+reportText += `${i+1}. ${item.nom}: ${item.statut}\n`;
+if (item.statut === ‘DEF’ && item.note) reportText += `   📝 ${item.note}\n`;
+});
+
+if (data.commentaires) reportText += `\n💬 COMMENTAIRES:\n${data.commentaires}\n`;
+reportText += `\n═══════════════════════════════════════\n`;
+reportText += `Généré: ${new Date().toLocaleString()}\n`;
+
+window.currentReport = reportText;
+window.currentData = data;
+
+document.getElementById(‘r-emp’).textContent = data.employe;
+document.getElementById(‘r-plaque’).textContent = data.plaque;
+document.getElementById(‘r-date’).textContent = data.date;
+document.getElementById(‘r-status’).textContent = isCompliant ? ‘✅ CONFORME’ : ‘⚠️ NON-CONFORME’;
+document.getElementById(‘report-text’).textContent = reportText;
+
+document.getElementById(‘form-section’).style.display = ‘none’;
+document.getElementById(‘result’).style.display = ‘block’;
+window.scrollTo(0, 0);
+}
+
+function emailReport() {
+const subject = encodeURIComponent(`Inspection LOISELLE - ${window.currentData.plaque}`);
+const body = encodeURIComponent(window.currentReport);
+window.location.href = `mailto:Mjacquesperrier@gmail.com?subject=${subject}&body=${body}`;
+}
+
+function copyReport() {
+navigator.clipboard.writeText(window.currentReport).then(() => {
+alert(‘✅ Rapport copié!’);
+}).catch(() => {
+const el = document.createElement(‘textarea’);
+el.value = window.currentReport;
+document.body.appendChild(el);
+el.select();
+document.execCommand(‘copy’);
+document.body.removeChild(el);
+alert(‘✅ Rapport copié!’);
+});
+}
+
+function downloadTXT() {
+const blob = new Blob([window.currentReport], { type: ‘text/plain’ });
+const url = URL.createObjectURL(blob);
+const a = document.createElement(‘a’);
+a.href = url;
+a.download = `Inspection_LOISELLE_${window.currentData.plaque}_${window.currentData.date}.txt`;
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+URL.revokeObjectURL(url);
+alert(‘✅ Fichier téléchargé!’);
+}
 </script>
+
 </body>
 </html>
