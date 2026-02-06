@@ -1,1 +1,100 @@
+<!DOCTYPE html>
 
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOISELLE - Inspection Quotidienne</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #0d1b2a, #1a2f42); padding: 15px; color: #333; }
+.container { max-width: 600px; margin: auto; background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 30px rgba(0,0,0,0.3); }
+.header { background: #12263a; color: white; padding: 25px; margin: -20px -20px 20px -20px; border-radius: 15px 15px 0 0; text-align: center; }
+.header h1 { font-size: 2em; margin-bottom: 5px; letter-spacing: 2px; }
+.header p { color: #ffc107; font-size: 0.9em; }
+.section { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+.section h3 { color: #12263a; margin-bottom: 10px; font-size: 1.1em; }
+label { display: block; font-weight: bold; margin: 10px 0 5px 0; color: #12263a; font-size: 0.9em; }
+input, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 10px; }
+input:focus, textarea:focus { outline: none; border-color: #28a745; }
+.item { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 2px solid #e9ecef; }
+.item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.item-name { font-weight: bold; color: #333; }
+.item-name small { display: block; color: #888; font-size: 0.85em; font-weight: normal; }
+.buttons { display: flex; gap: 10px; }
+.buttons button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9em; }
+.btn-ok { background: #e9ecef; color: #666; }
+.btn-ok.active { background: #28a745; color: white; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4); }
+.btn-def { background: #e9ecef; color: #666; }
+.btn-def.active { background: #d9534f; color: white; box-shadow: 0 4px 10px rgba(217, 83, 79, 0.4); }
+.defect-zone { display: none; margin-top: 10px; padding: 10px; background: #fff5f5; border-radius: 8px; border: 2px dashed #d9534f; }
+.sig-box { border: 3px dashed #ccc; border-radius: 10px; height: 150px; background: white; position: relative; cursor: crosshair; }
+.sig-box canvas { width: 100%; height: 100%; }
+.sig-clear { position: absolute; top: 5px; right: 5px; background: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; cursor: pointer; }
+.btn-submit { background: #ffc107; color: #12263a; width: 100%; padding: 18px; border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
+.btn-submit:active { transform: scale(0.98); }
+#result { display: none; margin-top: 20px; }
+.success { background: #d4edda; border: 2px solid #28a745; padding: 20px; border-radius: 10px; color: #155724; }
+.success h2 { margin-bottom: 15px; color: #28a745; }
+.report { background: white; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #28a745; max-height: 400px; overflow-y: auto; }
+.report pre { white-space: pre-wrap; font-size: 0.9em; line-height: 1.6; font-family: monospace; }
+.action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+.action-btns button { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; }
+.progress { background: #e9ecef; height: 8px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+.progress-bar { background: #28a745; height: 100%; width: 0%; transition: width 0.3s; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>🚛 LOISELLE</h1>
+<p>INSPECTION QUOTIDIENNE / DAILY INSPECTION</p>
+</div>
+
+<div id="form-section">
+<div class="section">
+<h3>📋 Informations</h3>
+<label>👤 Employé / Employee</label>
+<input type="text" id="employe" placeholder="Nom complet" required>
+<label>🔢 Plaque / Plate</label>
+<input type="text" id="plaque" placeholder="ABC-123" required>
+<label>🚛 Unité / Unit</label>
+<input type="text" id="unite" placeholder="Numéro d'unité" required>
+<label>📅 Date</label>
+<input type="date" id="date" required>
+<label>🕐 Heure / Time</label>
+<input type="time" id="heure" required>
+<label>📍 Lieu / Location</label>
+<input type="text" id="lieu" placeholder="Ville ou adresse">
+</div>
+
+<div class="section">
+<h3>🔍 Points d'inspection</h3>
+<div class="progress"><div class="progress-bar" id="progress"></div></div>
+<p style="text-align: center; color: #666; font-size: 0.9em;" id="progress-text">0/8 complétés</p>
+</div>
+
+<!-- ITEM 1 -->
+
+<div class="item">
+<div class="item-header">
+<div class="item-name">💧 Niveaux & Fuites<small>Fluids & Leaks</small></div>
+<div class="buttons">
+<button class="btn-ok" onclick="setStatus(0, 'OK')">OK</button>
+<button class="btn-def" onclick="setStatus(0, 'DEF')">DEF</button>
+</div>
+</div>
+<div class="defect-zone" id="defect-0">
+<label style="color: #d9534f; font-size: 0.9em;">Note du défaut:</label>
+<textarea id="note-0" placeholder="Décrivez le défaut..."></textarea>
+</div>
+</div>
+
+<!-- ITEM 2 -->
+
+<div class="item">
+<div class="item-header">
+<div class="item-name">🔧 Pneus & Boulons<small>Tires & Bolts</small></div>
+<div class="buttons">
+<button class="btn-ok" onclick="setStatus(1, 'OK')">OK</button>
+<button class="btn-def" onclick="setStatus(1, 'DEF
