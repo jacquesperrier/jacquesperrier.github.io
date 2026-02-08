@@ -6,52 +6,109 @@
     <title>Inspection LOISELLE</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-2 font-sans">
-    <div class="max-w-lg mx-auto bg-white p-4 rounded-xl shadow-lg border-t-8 border-blue-800">
-        <h1 class="text-xl font-black text-center mb-4 uppercase text-blue-900 border-b-2 pb-2">Inspection LOISELLE</h1>
-        <form id="inspectionForm" class="space-y-4">
-            <div class="grid grid-cols-1 gap-3 bg-blue-50 p-3 rounded-lg text-sm">
-                <div><label class="font-bold">Nom de l'employé</label><input type="text" name="employe" required class="w-full border p-2 rounded"></div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="font-bold">Plaque</label><input type="text" name="plaque" required class="w-full border p-2 rounded"></div>
-                    <div><label class="font-bold">Unité #</label><input type="text" name="unite" required class="w-full border p-2 rounded"></div>
+<body class="bg-[#0f172a] p-2 font-sans">
+    <div class="max-w-lg mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border-t-8 border-blue-600">
+        <div class="p-6 text-center border-b bg-gray-50">
+            <h1 class="text-3xl font-black text-slate-800 tracking-tighter uppercase">LOISELLE</h1>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Inspection Quotidienne / Daily Inspection</p>
+        </div>
+        
+        <form id="inspectionForm" class="p-6 space-y-6">
+            <div class="space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <div>
+                    <label class="font-bold block text-sm mb-1 text-slate-700">👤 Employé / Employee :</label>
+                    <input type="text" name="employe" required class="w-full border-2 border-slate-200 p-3 rounded-xl shadow-sm outline-none">
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="font-bold">Date</label><input type="date" name="date" required class="w-full border p-2 rounded bg-white"></div>
-                    <div><label class="font-bold">Heure</label><input type="time" name="heure" required class="w-full border p-2 rounded bg-white"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="font-bold block text-sm mb-1 text-slate-700">🔢 Plaque / Plate :</label>
+                        <input type="text" name="plaque" required class="w-full border-2 border-slate-200 p-3 rounded-xl shadow-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="font-bold block text-sm mb-1 text-slate-700">🚛 Unité / Unit :</label>
+                        <input type="text" name="unite" required class="w-full border-2 border-slate-200 p-3 rounded-xl shadow-sm outline-none">
+                    </div>
                 </div>
-                <div><label class="font-bold">Lieu</label><input type="text" name="lieu" required class="w-full border p-2 rounded"></div>
+                <div>
+                    <label class="font-bold block text-sm mb-1 text-slate-700">📍 Lieu / Site :</label>
+                    <input type="text" name="lieu" required class="w-full border-2 border-slate-200 p-3 rounded-xl shadow-sm outline-none">
+                </div>
             </div>
-            <div id="itemsList" class="space-y-2"></div>
-            <div><label class="font-bold">Commentaires</label><textarea name="commentaires" class="w-full border p-2 rounded shadow-sm" rows="2"></textarea></div>
-            <button type="submit" id="btnSubmit" class="w-full bg-blue-800 text-white font-black py-4 rounded-xl shadow-lg uppercase">Envoyer le Rapport</button>
+
+            <div class="space-y-3">
+                <h2 class="font-black text-slate-800 uppercase text-xs tracking-widest border-b-2 pb-1">Points d'inspection / Checklist</h2>
+                <div id="itemsList" class="space-y-3"></div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="font-bold block text-xs uppercase text-slate-500">📝 Commentaires / Comments :</label>
+                <textarea name="commentaires" class="w-full border-2 border-slate-200 p-4 rounded-2xl shadow-sm outline-none" rows="3"></textarea>
+            </div>
+
+            <button type="submit" id="btnSubmit" class="w-full bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl uppercase text-xl transform active:scale-95 transition-all">Envoyer le Rapport</button>
         </form>
     </div>
+
     <script>
-        const items = ["Niveaux", "Pneus", "Freins", "Lumières", "Direction", "Miroirs", "Sécurité", "Chargement"];
+        const items = [
+            {f: "Niveaux & Fuites", e: "Fluids & Leaks (Oil, Coolant, Fuel)"},
+            {f: "Pneus & Boulons", e: "Tires, Wheels & Hubs"},
+            {f: "Freins & Boyaux", e: "Brakes & Air Hoses"},
+            {f: "Lumières & Gyrophare", e: "Lights, Signals & Beacon"},
+            {f: "Direction & Suspension", e: "Steering & Suspension"},
+            {f: "Miroirs & Pare-brise", e: "Mirrors, Glass & Wipers"},
+            {f: "Équipement de Sécurité", e: "Extinguisher, Flares, First Aid"},
+            {f: "Arrimage du chargement", e: "Cargo Securement & Straps"}
+        ];
+
         const list = document.getElementById('itemsList');
         const status = {};
+
         items.forEach(it => {
             const div = document.createElement('div');
-            div.className = "p-2 border rounded bg-white flex flex-col gap-2";
-            div.innerHTML = `<div class="flex justify-between items-center"><span class="font-bold uppercase text-xs">${it}</span><div class="flex gap-2"><button type="button" onclick="setStat('${it}','OK')" id="ok-${it}" class="px-4 py-1 bg-gray-100 rounded font-bold text-xs">OK</button><button type="button" onclick="setStat('${it}','DEF')" id="def-${it}" class="px-4 py-1 bg-gray-100 rounded font-bold text-red-600 text-xs">DEF</button></div></div><input type="text" id="note-${it}" placeholder="Note sur le défaut..." class="hidden w-full border p-1 rounded text-xs bg-gray-50 italic">`;
+            div.className = "p-4 border border-slate-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3";
+            div.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <div>
+                        <div class="font-bold text-slate-800 text-sm uppercase">${it.f}</div>
+                        <div class="text-slate-400 italic text-[10px] leading-tight">${it.e}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="setStat('${it.f}','OK')" id="ok-${it.f}" class="px-5 py-2 bg-white border-2 border-slate-100 rounded-xl font-bold text-xs transition-all shadow-sm">OK</button>
+                        <button type="button" onclick="setStat('${it.f}','DEF')" id="def-${it.f}" class="px-5 py-2 bg-white border-2 border-slate-100 rounded-xl font-bold text-slate-400 text-xs transition-all shadow-sm uppercase">DEF</button>
+                    </div>
+                </div>
+                <input type="text" id="note-${it.f}" placeholder="Détail du défaut / Describe issue..." class="hidden w-full border-2 border-red-100 p-3 rounded-xl text-xs bg-red-50 italic outline-none">
+            `;
             list.appendChild(div);
-            status[it] = "OK";
+            status[it.f] = "OK";
         });
+
         function setStat(it, val) {
             status[it] = val;
-            document.getElementById(`ok-${it}`).className = val==='OK' ? "px-4 py-1 bg-green-600 text-white rounded font-bold text-xs" : "px-4 py-1 bg-gray-100 rounded font-bold text-xs";
-            document.getElementById(`def-${it}`).className = val==='DEF' ? "px-4 py-1 bg-red-600 text-white rounded font-bold text-xs" : "px-4 py-1 bg-gray-100 rounded font-bold text-xs text-red-600";
-            document.getElementById(`note-${it}`).classList.toggle('hidden', val!=='DEF');
+            const okBtn = document.getElementById(`ok-${it}`);
+            const defBtn = document.getElementById(`def-${it}`);
+            const noteInput = document.getElementById(`note-${it}`);
+            if(val === 'OK') {
+                okBtn.className = "px-5 py-2 bg-green-500 text-white rounded-xl font-bold text-xs shadow-md border-green-600";
+                defBtn.className = "px-5 py-2 bg-white text-slate-300 rounded-xl font-bold text-xs border-2 border-slate-50 opacity-50";
+                noteInput.classList.add('hidden');
+            } else {
+                defBtn.className = "px-5 py-2 bg-red-600 text-white rounded-xl font-bold text-xs shadow-md border-red-700";
+                okBtn.className = "px-5 py-2 bg-white text-slate-300 rounded-xl font-bold text-xs border-2 border-slate-50 opacity-50";
+                noteInput.classList.remove('hidden');
+            }
         }
+
         document.getElementById('inspectionForm').onsubmit = async (e) => {
             e.preventDefault();
             const b = document.getElementById('btnSubmit');
             b.disabled = true; b.innerText = "ENVOI EN COURS...";
             const f = new FormData(e.target);
             const data = {
-                employe: f.get('employe'), plaque: f.get('plaque'), unite: f.get('unite'), date: f.get('date'), heure: f.get('heure'), lieu: f.get('lieu'), commentaires: f.get('commentaires'),
-                items: items.map(it => ({ nom: it, statut: status[it], note: document.getElementById(`note-${it}`).value }))
+                employe: f.get('employe'), plaque: f.get('plaque'), unite: f.get('unite'),
+                lieu: f.get('lieu'), commentaires: f.get('commentaires'),
+                items: Object.keys(status).map(nom => ({ nom: nom, statut: status[nom], note: document.getElementById(`note-${nom}`).value }))
             };
             try {
                 await fetch('https://formspree.io/f/xpzygkqr', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
