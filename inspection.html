@@ -2,121 +2,133 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspection LOISELLE</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LOISELLE - Inspection Détaillée</title>
+    <style>
+        :root { --primary: #12263a; --accent: #28a745; --red: #d9534f; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background: #0d1b2a; padding: 10px; color: #333; }
+        .container { max-width: 600px; margin: auto; background: #fff; border-radius: 20px; padding: 15px; }
+        .logo { text-align: center; border-bottom: 2px solid #eee; margin-bottom: 15px; padding-bottom: 10px; }
+        .logo h1 { font-size: 2.2em; color: var(--primary); font-weight: 800; }
+        .info-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin: 5px 0; color: var(--primary); font-size: 0.9em; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
+        .item-group { border: 1px solid #eee; border-radius: 12px; margin-bottom: 10px; padding: 12px; background: #fff; }
+        .item-main { display: flex; align-items: center; justify-content: space-between; }
+        .item-text { flex: 1; padding-right: 10px; }
+        .item-text div:first-child { font-weight: bold; color: #333; font-size: 0.9em; }
+        .item-text div:last-child { color: #888; font-size: 0.75em; font-style: italic; }
+        .status-options { display: flex; gap: 8px; }
+        .status-options input { display: none; }
+        .status-options label { padding: 10px 15px; border-radius: 8px; border: 1px solid #ccc; cursor: pointer; font-size: 0.85em; font-weight: bold; background: #fff; }
+        .status-options input:checked + label.ok { background: var(--accent); color: white; border-color: var(--accent); }
+        .status-options input:checked + label.defect { background: var(--red); color: white; border-color: var(--red); }
+        .proof-zone { display: none; background: #fff5f5; padding: 10px; border-radius: 8px; border: 1px dashed var(--red); margin-top: 15px; }
+        .sig-container { border: 2px dashed #ccc; border-radius: 10px; background: #fff; height: 150px; }
+        #sig-canvas { width: 100%; height: 100%; touch-action: none; }
+        .btn-submit { background: #ffc107; width: 100%; padding: 20px; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; color: #12263a; margin-top: 20px; cursor: pointer; }
+        #receipt { display: none; text-align: center; }
+        .receipt-box { border: 2px solid var(--accent); border-radius: 15px; padding: 20px; background: #f0fff4; text-align: left; margin-top: 20px; }
+    </style>
 </head>
-<body class="bg-[#0f172a] p-2 font-sans">
-    <div class="max-w-lg mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border-t-8 border-blue-600">
-        <div class="p-6 text-center border-b bg-gray-50">
-            <h1 class="text-3xl font-black text-slate-800 tracking-tighter uppercase">LOISELLE</h1>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Inspection Quotidienne / Daily Inspection</p>
+<body>
+
+<div class="container" id="main-form">
+    <div class="logo"><h1>LOISELLE</h1><p>INSPECTION MÉCANIQUE ET SÉCURITÉ</p></div>
+    
+    <form action="https://formspree.io/f/xdadypze" method="POST" enctype="multipart/form-data">
+        <div class="info-card">
+            <label>👤 Employé :</label>
+            <input type="text" name="NOM_EMPLOYE" required>
+            <label>🔢 Plaque :</label>
+            <input type="text" name="PLAQUE" required>
+            <label>🚛 Unité :</label>
+            <input type="text" name="UNITE" required>
+            <label>📅 Date :</label>
+            <input type="date" name="DATE" id="inspect_date" required>
         </div>
-        
-        <form id="inspectionForm" class="p-6 space-y-6">
-            <div class="space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                <div>
-                    <label class="font-bold block text-sm mb-1 text-slate-700">👤 Employé / Employee :</label>
-                    <input type="text" name="employe" required class="w-full border-2 border-slate-200 p-3 rounded-xl shadow-sm outline-none">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="font-bold block text-sm mb-1 text-slate-700">🔢 Plaque / Plate :</label>
-                        <input type="text" name="plaque" required class="w-full border-2 border-slate-200 p-3 rounded-xl shadow-sm outline-none">
-                    </div>
-                    <div>
-                        <label class="font-bold block text-sm mb-1 text-slate-700">🚛 Unité / Unit :</label>
-                        <input type="text" name="unite" required class="w-full border-2 border-slate-200 p-3 rounded-xl shadow-sm outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="font-bold block text-sm mb-1 text-slate-700">📍 Lieu / Site :</label>
-                    <input type="text" name="lieu" required class="w-full border-2 border-slate-200 p-3 rounded-xl shadow-sm outline-none">
-                </div>
-            </div>
 
-            <div class="space-y-3">
-                <h2 class="font-black text-slate-800 uppercase text-xs tracking-widest border-b-2 pb-1">Points d'inspection / Checklist</h2>
-                <div id="itemsList" class="space-y-3"></div>
-            </div>
+        <div id="itemsList"></div>
 
-            <div class="space-y-2">
-                <label class="font-bold block text-xs uppercase text-slate-500">📝 Commentaires / Comments :</label>
-                <textarea name="commentaires" class="w-full border-2 border-slate-200 p-4 rounded-2xl shadow-sm outline-none" rows="3"></textarea>
-            </div>
+        <div class="info-card">
+            <label>✍️ Signature :</label>
+            <div class="sig-container"><canvas id="sig-canvas"></canvas></div>
+            <input type="hidden" name="SIGNATURE" id="sig-data">
+        </div>
 
-            <button type="submit" id="btnSubmit" class="w-full bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl uppercase text-xl transform active:scale-95 transition-all">Envoyer le Rapport</button>
-        </form>
+        <button type="submit" class="btn-submit">🚀 ENVOYER L'INSPECTION</button>
+    </form>
+</div>
+
+<div class="container" id="receipt">
+    <div class="logo"><h1>LOISELLE</h1></div>
+    <div class="receipt-box">
+        <h2 style="text-align:center; color:var(--accent);">✅ ENVOYÉ / SENT</h2>
+        <p style="margin-top:15px; text-align:center;">Preuve d'inspection pour contrôle routier.</p>
     </div>
+    <button onclick="location.reload()" class="btn-submit" style="background:#eee; margin-top:30px;">NOUVELLE INSPECTION</button>
+</div>
 
-    <script>
-        const items = [
-            {f: "Niveaux & Fuites", e: "Fluids & Leaks (Oil, Coolant, Fuel)"},
-            {f: "Pneus & Boulons", e: "Tires, Wheels & Hubs"},
-            {f: "Freins & Boyaux", e: "Brakes & Air Hoses"},
-            {f: "Lumières & Gyrophare", e: "Lights, Signals & Beacon"},
-            {f: "Direction & Suspension", e: "Steering & Suspension"},
-            {f: "Miroirs & Pare-brise", e: "Mirrors, Glass & Wipers"},
-            {f: "Équipement de Sécurité", e: "Extinguisher, Flares, First Aid"},
-            {f: "Arrimage du chargement", e: "Cargo Securement & Straps"}
-        ];
+<script>
+    const items = [
+        {fr: "Niveaux & Fuites", en: "Fluids & Leaks (Oil, Coolant, Fuel)"},
+        {fr: "Pneus & Boulons", en: "Tires, Rims & Wheel Nuts"},
+        {fr: "Freins & Boyaux", en: "Brakes, Hoses & Air Leaks"},
+        {fr: "Lumières & Gyrophare", en: "Lights, Signals & Beacon"},
+        {fr: "Direction & Suspension", en: "Steering & Suspension"},
+        {fr: "Miroirs & Pare-brise", en: "Mirrors, Windows & Wipers"},
+        {fr: "Attaches & Sellette", en: "Coupling Devices & Fifth Wheel"},
+        {fr: "Sécurité (Extincteur, Trousse)", en: "Safety (Extinguisher, First Aid Kit)"},
+        {fr: "Chargement (Sangles, Toile)", en: "Load Security (Straps, Tarp)"}
+    ];
 
-        const list = document.getElementById('itemsList');
-        const status = {};
-
-        items.forEach(it => {
-            const div = document.createElement('div');
-            div.className = "p-4 border border-slate-100 rounded-2xl bg-white shadow-sm flex flex-col gap-3";
-            div.innerHTML = `
-                <div class="flex justify-between items-center">
-                    <div>
-                        <div class="font-bold text-slate-800 text-sm uppercase">${it.f}</div>
-                        <div class="text-slate-400 italic text-[10px] leading-tight">${it.e}</div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button type="button" onclick="setStat('${it.f}','OK')" id="ok-${it.f}" class="px-5 py-2 bg-white border-2 border-slate-100 rounded-xl font-bold text-xs transition-all shadow-sm">OK</button>
-                        <button type="button" onclick="setStat('${it.f}','DEF')" id="def-${it.f}" class="px-5 py-2 bg-white border-2 border-slate-100 rounded-xl font-bold text-slate-400 text-xs transition-all shadow-sm uppercase">DEF</button>
+    const list = document.getElementById('itemsList');
+    items.forEach((item, i) => {
+        list.innerHTML += `
+            <div class="item-group">
+                <div class="item-main">
+                    <div class="item-text"><div>${item.fr}</div><div>${item.en}</div></div>
+                    <div class="status-options">
+                        <input type="radio" name="ETAT_${item.fr}" value="OK" id="ok${i}" required onclick="showProof(${i}, false)">
+                        <label for="ok${i}" class="ok">OK</label>
+                        <input type="radio" name="ETAT_${item.fr}" value="DEF" id="def${i}" required onclick="showProof(${i}, true)">
+                        <label for="def${i}" class="defect">DEF</label>
                     </div>
                 </div>
-                <input type="text" id="note-${it.f}" placeholder="Détail du défaut / Describe issue..." class="hidden w-full border-2 border-red-100 p-3 rounded-xl text-xs bg-red-50 italic outline-none">
-            `;
-            list.appendChild(div);
-            status[it.f] = "OK";
-        });
+                <div class="proof-zone" id="proof-${i}">
+                    <label style="font-size:0.75em; color:var(--red);">📸 Photo & Note (Défaut) :</label>
+                    <input type="file" name="PHOTO_${item.fr}" accept="image/*" capture="environment">
+                    <textarea name="NOTE_${item.fr}" id="note-${i}" rows="1" placeholder="Expliquez le défaut..."></textarea>
+                </div>
+            </div>`;
+    });
 
-        function setStat(it, val) {
-            status[it] = val;
-            const okBtn = document.getElementById(`ok-${it}`);
-            const defBtn = document.getElementById(`def-${it}`);
-            const noteInput = document.getElementById(`note-${it}`);
-            if(val === 'OK') {
-                okBtn.className = "px-5 py-2 bg-green-500 text-white rounded-xl font-bold text-xs shadow-md border-green-600";
-                defBtn.className = "px-5 py-2 bg-white text-slate-300 rounded-xl font-bold text-xs border-2 border-slate-50 opacity-50";
-                noteInput.classList.add('hidden');
-            } else {
-                defBtn.className = "px-5 py-2 bg-red-600 text-white rounded-xl font-bold text-xs shadow-md border-red-700";
-                okBtn.className = "px-5 py-2 bg-white text-slate-300 rounded-xl font-bold text-xs border-2 border-slate-50 opacity-50";
-                noteInput.classList.remove('hidden');
-            }
-        }
+    function showProof(id, visible) {
+        document.getElementById(`proof-${id}`).style.display = visible ? 'block' : 'none';
+        if(visible) document.getElementById(`note-${id}`).setAttribute('required', 'required');
+        else document.getElementById(`note-${id}`).removeAttribute('required');
+    }
 
-        document.getElementById('inspectionForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const b = document.getElementById('btnSubmit');
-            b.disabled = true; b.innerText = "ENVOI EN COURS...";
-            const f = new FormData(e.target);
-            const data = {
-                employe: f.get('employe'), plaque: f.get('plaque'), unite: f.get('unite'),
-                lieu: f.get('lieu'), commentaires: f.get('commentaires'),
-                items: Object.keys(status).map(nom => ({ nom: nom, statut: status[nom], note: document.getElementById(`note-${nom}`).value }))
-            };
-            try {
-                await fetch('https://formspree.io/f/xpzygkqr', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
-                await fetch('https://script.google.com/macros/s/AKfycbz-1sHucUCXwJlTw-ga7jtmQ9j9v8Oaw0hRaREPmZBP-xyTudOthjvNbTo9KgpNFdsILA/exec', { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-                alert("✅ Rapport envoyé !");
-                location.reload();
-            } catch (err) { alert("Erreur."); b.disabled = false; b.innerText = "Envoyer"; }
-        };
-    </script>
+    document.getElementById('inspect_date').valueAsDate = new Date();
+    const canvas = document.getElementById('sig-canvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; ctx.lineWidth=2; ctx.lineCap='round'; }
+    window.onload = resize;
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const client = e.touches ? e.touches[0] : e;
+        return { x: client.clientX - rect.left, y: client.clientY - rect.top };
+    }
+    canvas.addEventListener('touchstart', (e) => { drawing=true; ctx.beginPath(); const p=getPos(e); ctx.moveTo(p.x, p.y); e.preventDefault(); }, {passive:false});
+    canvas.addEventListener('touchmove', (e) => { if(!drawing) return; const p=getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); }, {passive:false});
+    window.addEventListener('touchend', () => drawing=false);
+    document.querySelector("form").onsubmit = function() {
+        document.getElementById('sig-data').value = canvas.toDataURL("image/jpeg", 0.5);
+        document.getElementById('main-form').style.display = 'none';
+        document.getElementById('receipt').style.display = 'block';
+    };
+</script>
 </body>
 </html>
