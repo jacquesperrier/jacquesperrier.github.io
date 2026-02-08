@@ -6,25 +6,25 @@
     <title>Inspection LOISELLE</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-2 font-sans text-sm md:text-base">
+<body class="bg-gray-100 p-2 font-sans">
     <div class="max-w-lg mx-auto bg-white p-4 rounded-xl shadow-lg border-t-8 border-blue-800">
         <h1 class="text-xl font-black text-center mb-4 uppercase text-blue-900 border-b-2 pb-2">Inspection LOISELLE</h1>
         <form id="inspectionForm" class="space-y-4">
             <div class="grid grid-cols-1 gap-3 bg-blue-50 p-3 rounded-lg">
-                <input type="text" name="employe" placeholder="Nom de l'employé" required class="w-full border p-2 rounded shadow-sm">
+                <input type="text" name="employe" placeholder="Nom de l'employé" required class="w-full border p-2 rounded">
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="text" name="plaque" placeholder="Plaque" required class="border p-2 rounded shadow-sm">
-                    <input type="text" name="unite" placeholder="Unité #" required class="border p-2 rounded shadow-sm">
+                    <input type="text" name="plaque" placeholder="Plaque" required class="border p-2 rounded">
+                    <input type="text" name="unite" placeholder="Unité #" required class="border p-2 rounded">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="date" name="date" required class="border p-2 rounded shadow-sm bg-white">
-                    <input type="time" name="heure" required class="border p-2 rounded shadow-sm bg-white">
+                    <input type="date" name="date" required class="border p-2 rounded bg-white">
+                    <input type="time" name="heure" required class="border p-2 rounded bg-white">
                 </div>
-                <input type="text" name="lieu" placeholder="Lieu (Ville/Site)" required class="w-full border p-2 rounded shadow-sm">
+                <input type="text" name="lieu" placeholder="Lieu (Ville/Site)" required class="w-full border p-2 rounded">
             </div>
             <div id="itemsList" class="space-y-2 pt-2"></div>
             <textarea name="commentaires" placeholder="Commentaires additionnels..." class="w-full border p-2 rounded mt-2 shadow-sm" rows="2"></textarea>
-            <button type="submit" id="btnSubmit" class="w-full bg-blue-800 text-white font-black py-4 rounded-xl shadow-lg hover:bg-blue-900 transition active:scale-95 uppercase tracking-wider">Envoyer le Rapport</button>
+            <button type="submit" id="btnSubmit" class="w-full bg-blue-800 text-white font-black py-4 rounded-xl shadow-lg uppercase tracking-wider">Envoyer le Rapport</button>
         </form>
     </div>
     <script>
@@ -54,7 +54,9 @@
                 items: items.map(it => ({ nom: it, statut: status[it], note: document.getElementById(`note-${it}`).value }))
             };
             try {
+                // Email Formspree
                 await fetch('https://formspree.io/f/xpzygkqr', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+                // Envoi vers votre Google Sheet
                 await fetch('https://script.google.com/macros/s/AKfycbz-1sHucUCXwJlTw-ga7jtmQ9j9v8Oaw0hRaREPmZBP-xyTudOthjvNbTo9KgpNFdsILA/exec', { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
                 alert("✅ Rapport LOISELLE envoyé avec succès !");
                 location.reload();
