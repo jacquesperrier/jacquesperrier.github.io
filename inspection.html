@@ -1,1 +1,65 @@
-
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspection LOISELLE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-xl shadow-lg">
+        <h1 class="text-2xl font-bold text-center mb-6 uppercase text-blue-800 border-b-2 pb-2">Inspection LOISELLE</h1>
+        <form id="inspectionForm" class="space-y-4">
+            <div class="grid grid-cols-1 gap-4">
+                <input type="text" name="employe" placeholder="Nom de l'employé" required class="w-full border p-3 rounded shadow-sm">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" name="plaque" placeholder="Plaque" required class="border p-3 rounded shadow-sm">
+                    <input type="text" name="unite" placeholder="Unité #" required class="border p-3 rounded shadow-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="date" name="date" required class="border p-3 rounded shadow-sm">
+                    <input type="time" name="heure" required class="border p-3 rounded shadow-sm">
+                </div>
+                <input type="text" name="lieu" placeholder="Lieu (Ville/Site)" required class="w-full border p-3 rounded shadow-sm">
+            </div>
+            <div id="itemsList" class="space-y-3 pt-4 border-t"></div>
+            <textarea name="commentaires" placeholder="Commentaires additionnels..." class="w-full border p-3 rounded mt-4" rows="3"></textarea>
+            <button type="submit" id="btnSubmit" class="w-full bg-blue-700 text-white font-bold py-4 rounded-lg shadow-lg">SOUMETTRE L'INSPECTION</button>
+        </form>
+    </div>
+    <script>
+        const items = ["Niveaux", "Pneus", "Freins", "Lumières", "Direction", "Miroirs", "Sécurité", "Chargement"];
+        const list = document.getElementById('itemsList');
+        const status = {};
+        items.forEach(it => {
+            const div = document.createElement('div');
+            div.className = "p-3 border rounded bg-gray-50 flex flex-col gap-2";
+            div.innerHTML = `<div class="flex justify-between items-center"><span class="font-bold">${it}</span><div class="flex gap-2"><button type="button" onclick="setStat('${it}','OK')" id="ok-${it}" class="px-4 py-2 bg-gray-200 rounded font-bold">OK</button><button type="button" onclick="setStat('${it}','DEF')" id="def-${it}" class="px-4 py-2 bg-gray-200 rounded font-bold text-red-600">DEF</button></div></div><input type="text" id="note-${it}" placeholder="Détail du défaut..." class="hidden w-full border p-2 rounded text-sm bg-white">`;
+            list.appendChild(div);
+            status[it] = "OK";
+        });
+        function setStat(it, val) {
+            status[it] = val;
+            document.getElementById(`ok-${it}`).className = val==='OK' ? "px-4 py-2 bg-green-500 text-white rounded font-bold" : "px-4 py-2 bg-gray-200 rounded font-bold";
+            document.getElementById(`def-${it}`).className = val==='DEF' ? "px-4 py-2 bg-red-600 text-white rounded font-bold" : "px-4 py-2 bg-gray-200 rounded font-bold text-red-600";
+            document.getElementById(`note-${it}`).classList.toggle('hidden', val!=='DEF');
+        }
+        document.getElementById('inspectionForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const b = document.getElementById('btnSubmit');
+            b.disabled = true; b.innerText = "ENVOI EN COURS...";
+            const f = new FormData(e.target);
+            const data = {
+                employe: f.get('employe'), plaque: f.get('plaque'), unite: f.get('unite'), date: f.get('date'), heure: f.get('heure'), lieu: f.get('lieu'), commentaires: f.get('commentaires'),
+                items: items.map(it => ({ nom: it, statut: status[it], note: document.getElementById(`note-${it}`).value }))
+            };
+            try {
+                await fetch('https://formspree.io/f/xpzygkqr', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+                await fetch('VOTRE_URL_EXEC_ICI', { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+                alert("✅ Inspection envoyée !");
+                location.reload();
+            } catch (err) { alert("Erreur d'envoi"); b.disabled = false; b.innerText = "SOUMETTRE"; }
+        };
+    </script>
+</body>
+</html>
