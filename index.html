@@ -1,49 +1,42 @@
             function doPost(e) {
   try {
-    // Ouvrir votre Google Sheet par son ID
-    var sheet = SpreadsheetApp.openById('15x7hyaKkhjXfiYi92GY5y0iAlgJhU2wtN-23Y6FH_uU').getSheets()[0];
+    // Valider que les données POST existent
+    if (!e || !e.postData || !e.postData.contents) {
+      throw new Error("Aucune donnée reçue");
+    }
     
-    // Parser les données reçues
+    var sheet = SpreadsheetApp.openById('15x7hyaKkhjXfiYi92GY5y0iAlgJhU2wtN-23Y6FH_uU').getSheets()[0];
     var data = JSON.parse(e.postData.contents);
     
-    // Ajouter une nouvelle ligne avec les données
+    // Valider les champs requis
+    if (!data.nom || !data.date) {
+      throw new Error("Champs requis manquants");
+    }
+    
     sheet.appendRow([
-      new Date(),              // Timestamp (colonne A)
-      data.nom || '',          // Nom (colonne B)
-      data.date || '',         // Date (colonne C)
-      data.heureDebut || '',   // Heure début (colonne D)
-      data.heureFin || '',     // Heure fin (colonne E)
-      data.totalHeures || '',  // Total heures (colonne F)
-      data.projet || '',       // Projet (colonne G)
-      data.notes || ''         // Notes (colonne H)
+      new Date(),
+      data.nom || '',
+      data.date || '',
+      data.heureDebut || '',
+      data.heureFin || '',
+      data.totalHeures || '',
+      data.projet || '',
+      data.notes || ''
     ]);
     
-    // Retourner succès
     return ContentService
       .createTextOutput(JSON.stringify({
-        result: "success", 
+        result: "success",
         message: "Feuille de temps enregistrée avec succès"
       }))
       .setMimeType(ContentService.MimeType.JSON);
       
   } catch(error) {
-    // Retourner erreur
     return ContentService
       .createTextOutput(JSON.stringify({
-        result: "error", 
+        result: "error",
         message: error.toString()
       }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
-
-// Pour tester (optionnel)
-function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({
-      result: "info", 
-      message: "API fonctionne. Utilisez POST pour envoyer des données."
-    }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
