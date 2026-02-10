@@ -393,6 +393,9 @@ const subject = isCompliant
   ? `✅ CONFORME - Inspection LOISELLE - ${data.plaque}`
   : `⚠️ DÉFAUT (${defectCount}) - Inspection LOISELLE - ${data.plaque}`;
 
+// Si non-conforme, ajouter Jacques en copie
+const cc = !isCompliant ? 'Jacques.perrier@protonmail.com' : '';
+
 await fetch('https://formspree.io/f/xpzygkqr', {
 method: 'POST',
 headers: {
@@ -402,6 +405,7 @@ headers: {
 body: JSON.stringify({
 _subject: subject,
 _replyto: 'Mjacquesperrier@gmail.com',
+_cc: cc,
 message: reportText,
 employe: data.employe,
 plaque: data.plaque,
@@ -413,7 +417,7 @@ statut: isCompliant ? 'CONFORME' : 'NON-CONFORME',
 nb_defauts: defectCount
 })
 });
-console.log('✅ Email envoyé via Formspree');
+console.log('✅ Email envoyé via Formspree' + (cc ? ' (avec copie à Jacques)' : ''));
 } catch (error) {
 console.log('⚠️ Erreur Formspree:', error);
 }
