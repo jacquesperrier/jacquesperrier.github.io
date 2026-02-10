@@ -511,6 +511,16 @@ document.body.removeChild(a);
 URL.revokeObjectURL(url);
 alert('✅ Fichier téléchargé!');
 }
+// Envoi à Google Sheets
+fetch('https://script.google.com/macros/s/AKfycbyJtgB3xd5An8RMPG-1gEwSkFe6Lfi9b5VhvxgzYGEJ7iIfGvSZH85y8Tmn3N4qLocr/exec', {
+  method: 'POST',
+  mode: 'no-cors',
+  body: JSON.stringify({
+    employe: document.querySelector('[name="1_NOM_EMPLOYE"]').value,
+    semaine: document.querySelector('[name="2_DATE_DE_DEBUT"]').value,
+    total: document.getElementById('totalHrs').textContent
+  })
+});
 </script>
 
 </body>
