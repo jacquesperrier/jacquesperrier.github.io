@@ -1,1 +1,149 @@
+<!DOCTYPE html>
 
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAPAQ - Réception</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#0f2942,#1e3a5f);padding:10px;color:#333;min-height:100vh;}
+.container{max-width:600px;margin:auto;background:white;border-radius:15px;padding:20px;box-shadow:0 5px 30px rgba(0,0,0,.3);}
+.header{background:#12263a;color:white;padding:20px;margin:-20px -20px 15px;border-radius:15px 15px 0 0;text-align:center;}
+.header h1{font-size:1.5em;margin-bottom:3px;}
+.header p{color:#ffc107;font-size:0.85em;}
+.back{color:#8ba4bc;text-decoration:none;font-size:0.85em;display:inline-block;margin-bottom:8px;}
+.norms{background:#e8f4fd;border:1px solid #bee5eb;border-radius:8px;padding:10px;margin-bottom:12px;font-size:0.8em;color:#0c5460;line-height:1.5;}
+.section{background:#f8f9fa;padding:15px;border-radius:10px;margin-bottom:12px;}
+.section h3{color:#12263a;margin-bottom:10px;font-size:1em;}
+label{display:block;font-weight:bold;margin:8px 0 4px;color:#12263a;font-size:0.85em;}
+input,textarea,select{width:100%;padding:11px;border:2px solid #ddd;border-radius:8px;font-size:16px;margin-bottom:8px;font-family:inherit;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#28a745;}
+.item{background:white;padding:12px 15px;border-radius:10px;margin-bottom:8px;border:2px solid #e9ecef;}
+.item-header{display:flex;justify-content:space-between;align-items:center;}
+.item-name{font-weight:bold;color:#333;font-size:0.9em;}
+.item-name small{display:block;color:#888;font-size:0.8em;font-weight:normal;}
+.buttons{display:flex;gap:8px;}
+.buttons button{padding:10px 16px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:0.85em;}
+.btn-ok{background:#e9ecef;color:#666;}.btn-ok.active{background:#28a745;color:white;box-shadow:0 3px 8px rgba(40,167,69,.4);}
+.btn-def{background:#e9ecef;color:#666;}.btn-def.active{background:#d9534f;color:white;box-shadow:0 3px 8px rgba(217,83,79,.4);}
+.badge{padding:4px 10px;border-radius:15px;font-size:0.75em;font-weight:bold;display:inline-block;}
+.badge-ok{background:#d4edda;color:#155724;}.badge-bad{background:#f8d7da;color:#721c24;}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:1em;font-weight:bold;cursor:pointer;margin-top:8px;}
+.btn-add{background:#28a745;color:white;}.btn-submit{background:#ffc107;color:#12263a;text-transform:uppercase;letter-spacing:1px;margin-top:15px;}
+.btn-add:active,.btn-submit:active{transform:scale(0.98);}
+.sig-box{border:3px dashed #ccc;border-radius:10px;height:120px;background:white;position:relative;cursor:crosshair;touch-action:none;}
+.sig-box canvas{width:100%;height:100%;}.sig-clear{position:absolute;top:5px;right:5px;background:#d9534f;color:white;border:none;padding:4px 10px;border-radius:5px;font-size:0.75em;cursor:pointer;}
+.emp-bar{background:#12263a;color:white;padding:8px 15px;margin:-20px -20px 15px;display:flex;justify-content:space-between;font-size:0.85em;}
+.emp-bar .name{color:#ffc107;font-weight:bold;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+#result{display:none;}
+.success{background:#d4edda;border:2px solid #28a745;padding:20px;border-radius:10px;color:#155724;}
+.success h2{margin-bottom:10px;color:#28a745;}
+.report{background:white;padding:12px;border-radius:8px;margin:12px 0;border-left:4px solid #28a745;max-height:300px;overflow-y:auto;}
+.report pre{white-space:pre-wrap;font-size:0.8em;line-height:1.5;font-family:monospace;}
+.action-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.action-btns button{padding:12px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;color:white;font-size:0.85em;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<a class="back" href="mapaq.html">← Retour aux registres</a>
+<h1>📦 RÉCEPTION</h1>
+<p>MARCHANDISES — MAPAQ</p>
+</div>
+
+<div id="login">
+<div class="section">
+<h3>👤 Identification</h3>
+<label>Votre nom</label><input type="text" id="user-name" placeholder="Prénom et nom">
+<label>Poste</label><select id="user-poste"><option>Cuisinier(ère)</option><option>Chef / Sous-chef</option><option>Gestionnaire</option><option>Plongeur(euse)</option><option>Serveur(euse)</option><option>Commis</option><option>Propriétaire</option></select>
+<button class="btn btn-submit" onclick="doLogin()">COMMENCER →</button>
+</div>
+</div>
+
+<div id="main" style="display:none;">
+<div class="emp-bar"><span>👤 <span class="name" id="d-name"></span></span><span id="d-date"></span></div>
+<div class="norms"><strong>MAPAQ :</strong> Vérifiez la température, l'emballage et la DLC à chaque livraison. Conservez les factures pour la traçabilité.</div>
+
+<div class="section">
+<h3>📦 Réception de marchandise</h3>
+<div class="g2"><div><label>Fournisseur</label><input type="text" id="fourn" placeholder="Nom"></div><div><label>Produit(s)</label><input type="text" id="produit" placeholder="Description"></div></div>
+<div class="g2"><div><label>Température (°C)</label><input type="number" step="0.1" id="temp" placeholder="°C"></div><div><label>Date limite (DLC)</label><input type="date" id="dlc"></div></div>
+
+<div class="item" style="margin-top:8px;">
+<div class="item-header">
+<div class="item-name">État de l'emballage</div>
+<div class="buttons"><button class="btn-ok" id="e-ok" onclick="setEmb(true)">✓ OK</button><button class="btn-def" id="e-def" onclick="setEmb(false)">✗ DEF</button></div>
+</div>
+</div>
+
+<label>Remarques / Action corrective</label>
+
+<textarea id="remarques" rows="2" placeholder="Notes, refus..."></textarea>
+
+<button class="btn btn-add" onclick="addEntry()">✓ ENREGISTRER</button>
+
+</div>
+
+<div id="entries"></div>
+<div id="entry-count" style="text-align:center;color:#888;font-size:0.85em;margin:10px 0;"></div>
+
+<div class="section"><h3>✍️ Signature</h3><div class="sig-box"><canvas id="canvas"></canvas><button class="sig-clear" onclick="clearSig()">Effacer</button></div></div>
+<button class="btn btn-submit" onclick="submitForm()">🚀 SOUMETTRE</button>
+</div>
+
+<div id="result">
+<div class="success">
+<h2>✅ RÉCEPTION ENREGISTRÉE</h2>
+<p><strong>Responsable:</strong> <span id="r-emp"></span></p>
+<p><strong>Date:</strong> <span id="r-date"></span></p>
+<p><strong>Statut:</strong> <span id="r-status"></span></p>
+<div class="report"><pre id="report-text"></pre></div>
+<div class="action-btns">
+<button onclick="emailReport()" style="background:#007bff;">📧 EMAIL</button>
+<button onclick="copyReport()" style="background:#6c757d;">📋 COPIER</button>
+<button onclick="downloadTXT()" style="background:#28a745;">💾 TXT</button>
+<button onclick="location.reload()" style="background:#17a2b8;">🔄 NOUVEAU</button>
+</div>
+<div style="margin-top:12px;text-align:center;"><a href="mapaq.html" style="color:#155724;font-weight:bold;">← Retour aux registres</a></div>
+</div>
+</div>
+</div>
+
+<script>
+let user={},entries=[],emballage=null,hasSig=false;
+function doLogin(){const n=document.getElementById('user-name').value.trim();if(!n){alert('❌ Entrez votre nom');return;}user={nom:n,poste:document.getElementById('user-poste').value};document.getElementById('d-name').textContent=n;document.getElementById('d-date').textContent=new Date().toLocaleDateString('fr-CA');document.getElementById('login').style.display='none';document.getElementById('main').style.display='block';initCanvas();}
+function setEmb(v){emballage=v;document.getElementById('e-ok').className='btn-ok'+(v?' active':'');document.getElementById('e-def').className='btn-def'+(!v?' active':'');}
+function addEntry(){
+  const f=document.getElementById('fourn').value.trim();if(!f){alert('❌ Entrez le fournisseur');return;}
+  if(emballage===null){alert('❌ Indiquez l\'état de l\'emballage');return;}
+  const t=parseFloat(document.getElementById('temp').value);const tOk=isNaN(t)||t<=4;
+  entries.push({date:new Date().toLocaleDateString('fr-CA'),heure:new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'}),fournisseur:f,produit:document.getElementById('produit').value,temperature:isNaN(t)?null:t,emballage,dlc:document.getElementById('dlc').value,conforme:emballage&&tOk,remarques:document.getElementById('remarques').value,responsable:user.nom});
+  document.getElementById('fourn').value='';document.getElementById('produit').value='';document.getElementById('temp').value='';document.getElementById('dlc').value='';document.getElementById('remarques').value='';emballage=null;document.getElementById('e-ok').className='btn-ok';document.getElementById('e-def').className='btn-def';render();
+}
+function render(){
+  document.getElementById('entries').innerHTML=entries.map(e=>`<div class="item" style="border-left:4px solid ${e.conforme?'#28a745':'#d9534f'};"><div class="item-header"><div class="item-name">${e.fournisseur}<small>${e.produit||''} · ${e.date}</small></div><div>${e.temperature!==null?`<span style="font-weight:bold;color:${e.temperature<=4?'#28a745':'#d9534f'}">${e.temperature}°C</span>`:''}<span class="badge ${e.conforme?'badge-ok':'badge-bad'}" style="margin-left:5px;">${e.conforme?'✓':'✗'}</span></div></div>${e.remarques?`<div style="color:#d9534f;font-size:0.85em;margin-top:5px;">📝 ${e.remarques}</div>`:''}</div>`).join('');
+  document.getElementById('entry-count').textContent=`${entries.length} réception(s) enregistrée(s)`;
+}
+let canvas,ctx,drawing=false;
+function initCanvas(){canvas=document.getElementById('canvas');ctx=canvas.getContext('2d');setTimeout(()=>{canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;ctx.lineWidth=2;ctx.lineCap='round';ctx.strokeStyle='#000';},100);canvas.addEventListener('mousedown',e=>{drawing=true;hasSig=true;const r=canvas.getBoundingClientRect();ctx.beginPath();ctx.moveTo(e.clientX-r.left,e.clientY-r.top);});canvas.addEventListener('mousemove',e=>{if(!drawing)return;const r=canvas.getBoundingClientRect();ctx.lineTo(e.clientX-r.left,e.clientY-r.top);ctx.stroke();});canvas.addEventListener('mouseup',()=>drawing=false);canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;hasSig=true;const r=canvas.getBoundingClientRect();ctx.beginPath();ctx.moveTo(e.touches[0].clientX-r.left,e.touches[0].clientY-r.top);});canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const r=canvas.getBoundingClientRect();ctx.lineTo(e.touches[0].clientX-r.left,e.touches[0].clientY-r.top);ctx.stroke();});canvas.addEventListener('touchend',()=>drawing=false);}
+function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height);hasSig=false;}
+function submitForm(){
+  if(entries.length===0){alert('❌ Ajoutez au moins une réception');return;}if(!hasSig){alert('❌ Veuillez signer');return;}
+  const nc=entries.filter(e=>!e.conforme).length;const ok=nc===0;const today=new Date().toLocaleDateString('fr-CA');
+  let rpt=`═══════════════════════════════════════\n  RÉCEPTION MARCHANDISES — MAPAQ\n  ${today}\n═══════════════════════════════════════\n\n👤 Responsable: ${user.nom} (${user.poste})\n📅 Date: ${today}\n📊 STATUT: ${ok?'✅ CONFORME':'⚠️ NON-CONFORME ('+nc+')'}\n\n`;
+  entries.forEach((e,i)=>{rpt+=`${i+1}. ${e.fournisseur} — ${e.produit||'N/A'}: ${e.temperature!==null?e.temperature+'°C':'N/A'} | Emball: ${e.emballage?'OK':'DEF'} ${e.conforme?'✓':'✗'}\n`;if(e.remarques)rpt+=`   📝 ${e.remarques}\n`;});
+  rpt+=`\n═══════════════════════════════════════\nGénéré: ${new Date().toLocaleString('fr-CA')}\n`;
+  window.currentReport=rpt;window.currentData={employe:user.nom,date:today};
+  document.getElementById('r-emp').textContent=user.nom;document.getElementById('r-date').textContent=today;document.getElementById('r-status').textContent=ok?'✅ CONFORME':'⚠️ NON-CONFORME';document.getElementById('report-text').textContent=rpt;
+  document.getElementById('main').style.display='none';document.getElementById('result').style.display='block';window.scrollTo(0,0);
+}
+function emailReport(){window.location.href=`mailto:Mjacquesperrier@gmail.com?subject=${encodeURIComponent('Réception MAPAQ - '+window.currentData.date)}&body=${encodeURIComponent(window.currentReport)}`;}
+function copyReport(){navigator.clipboard.writeText(window.currentReport).then(()=>alert('✅ Copié!')).catch(()=>{const el=document.createElement('textarea');el.value=window.currentReport;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);alert('✅ Copié!');});}
+function downloadTXT(){const b=new Blob([window.currentReport],{type:'text/plain'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`MAPAQ_Reception_${window.currentData.date}.txt`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);}
+</script>
+
+</body>
+</html>
