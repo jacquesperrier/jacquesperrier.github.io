@@ -1,117 +1,122 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Verdict IA - Système Expert</title>
-    <style>
-        :root { --primary: #27ae60; --bg: #0a0e14; --card: #161b22; --text: #e6edf3; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .page { display: none; width: 100%; max-width: 400px; text-align: center; padding: 20px; animation: fadeIn 0.5s; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Page Accueil */
-        .logo-shield { font-size: 80px; margin-bottom: 10px; color: var(--primary); }
-        h1 { font-size: 2rem; letter-spacing: 2px; margin: 0; }
-        .subtitle { color: #8b949e; margin-bottom: 40px; font-weight: 300; }
-        .btn-start { background: var(--primary); color: white; border: none; padding: 20px 40px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); }
-
-        /* Clavier & Menu */
-        .pin-display { font-size: 3em; margin: 20px 0; color: var(--primary); letter-spacing: 10px; height: 60px; }
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .numpad button { background: var(--card); color: white; border: 1px solid #30363d; padding: 25px; border-radius: 15px; font-size: 1.5rem; cursor: pointer; }
-        .numpad button:active { background: #30363d; }
-        .btn-ok { background: var(--primary) !important; border: none !important; }
-
-        /* Menu Choix */
-        .menu-grid { display: grid; gap: 15px; }
-        .menu-item { background: var(--card); border: 1px solid #30363d; padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; text-align: left; }
-        .menu-item:hover { border-color: var(--primary); }
-        .icon { font-size: 1.5rem; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Verdict Inspection AI – Page de Garde</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* --- GARDE EXACTEMENT TON STYLE CSS ICI --- */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --noir: #0a0c0f; --blanc: #f5f3ef; --or: #c9a84c; --or-clair: #e8d5a3; --gris: #8a8a8a; --rouge: #c0392b; --vert: #2ecc71; --jaune: #f1c40f; }
+  html, body { height: 100%; background: var(--noir); color: var(--blanc); font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 100; opacity: 0.6; }
+  .page { min-height: 100vh; max-width: 430px; margin: 0 auto; position: relative; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+  .gold-line { position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent 0%, var(--or) 15%, var(--or) 85%, transparent 100%); opacity: 0.5; }
+  .header { padding: 48px 32px 0 52px; }
+  .date-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--or); margin-bottom: 24px; }
+  .date-badge::before { content: ''; width: 20px; height: 1px; background: var(--or); }
+  .logo-v { font-family: 'Cormorant Garamond', serif; font-size: 72px; font-weight: 300; color: var(--blanc); letter-spacing: -2px; }
+  .logo-v span { color: var(--or); }
+  .score-section { padding: 36px 32px 36px 52px; }
+  .score-ring-container { display: flex; align-items: center; gap: 32px; }
+  .score-ring { position: relative; width: 120px; height: 120px; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 6; }
+  .score-ring-fill { fill: none; stroke: var(--vert); stroke-width: 6; stroke-dasharray: 314; stroke-dashoffset: 314; transition: stroke-dashoffset 2s ease; }
+  .score-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .score-number { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 600; color: var(--blanc); }
+  .score-status { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--vert); }
+  .divider { margin: 0 32px 0 52px; height: 1px; background: linear-gradient(to right, var(--or) 0%, rgba(201,168,76,0.1) 100%); }
+  .zones-section { padding: 32px 32px 32px 52px; }
+  .zones-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .zone-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; padding: 14px; position: relative; }
+  .zone-score { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; }
+  .etablissement-section { padding: 0 32px 32px 52px; }
+  .etab-card { border: 1px solid rgba(201,168,76,0.2); border-radius: 4px; padding: 20px; background: rgba(201,168,76,0.04); position: relative; }
+  .footer { margin-top: auto; padding: 24px 32px 36px 52px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
+  .dot { position: absolute; left: 22px; width: 13px; height: 13px; border-radius: 50%; border: 1px solid var(--or); background: var(--noir); display: flex; align-items: center; justify-content: center; }
+  .dot::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--or); }
+  .dot-1 { top: 52px; } .dot-2 { top: 168px; } .dot-3 { bottom: 80px; }
+</style>
 </head>
 <body>
-
-    <div id="page-welcome" class="page active">
-        <div class="logo-shield">🛡️</div>
-        <h1>VERDICT IA</h1>
-        <div class="subtitle">JACQUES PERRIER<br>CONSULTANT – SANTÉ & SÉCURITÉ</div>
-        <button class="btn-start" onclick="showPage('page-pin')">DÉMARRER</button>
+<div class="page">
+  <div class="gold-line"></div>
+  <div class="dot dot-1"></div>
+  <div class="dot dot-2"></div>
+  <div class="dot dot-3"></div>
+ 
+  <div class="header">
+    <div class="date-badge" id="date-text">4 mars 2026</div>
+    <div class="logo-block">
+      <div class="logo-v"><span>V</span>erdict</div>
     </div>
-
-    <div id="page-pin" class="page">
-        <h2>ENTRER CODE PIN</h2>
-        <div class="pin-display" id="display">****</div>
-        <div class="numpad">
-            <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
-            <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
-            <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
-            <button style="color:#c0392b" onclick="clearPin()">C</button><button onclick="press(0)">0</button>
-            <button class="btn-ok" onclick="validatePin()">OK</button>
+  </div>
+ 
+  <div class="score-section">
+    <div class="score-ring-container">
+      <div class="score-ring">
+        <svg width="120" height="120">
+          <circle class="score-ring-bg" cx="60" cy="60" r="50"/>
+          <circle id="ring-fill" class="score-ring-fill" cx="60" cy="60" r="50"/>
+        </svg>
+        <div class="score-center">
+          <div class="score-number" id="main-score">0</div>
+          <div style="font-size:11px; color:var(--vert)">%</div>
         </div>
+      </div>
+      <div class="score-info">
+        <div class="score-status" id="status-text">ANALYSE...</div>
+        <div class="score-desc" id="status-desc">Chargement du rapport Verdict AI.</div>
+      </div>
     </div>
-
-    <div id="page-menu" class="page">
-        <h2 id="welcome-user">Bonjour</h2>
-        <div class="menu-grid">
-            <div class="menu-item" onclick="sendPunch('ARRIVÉE')">
-                <span class="icon">⏱️</span> <div><strong>Pointage</strong><br><small>Arrivée / Départ</small></div>
-            </div>
-            <div class="menu-item" onclick="alert('Module Température bientôt disponible')">
-                <span class="icon">🌡️</span> <div><strong>Température</strong><br><small>Vérification MAPAQ</small></div>
-            </div>
-            <div class="menu-item" onclick="alert('Module Nettoyage bientôt disponible')">
-                <span class="icon">🧹</span> <div><strong>Nettoyage</strong><br><small>Liste de tâches</small></div>
-            </div>
-        </div>
-        <br>
-        <button onclick="showPage('page-welcome')" style="background:none; border:none; color:#8b949e; cursor:pointer;">Quitter la session</button>
+  </div>
+ 
+  <div class="divider"></div>
+ 
+  <div class="etablissement-section" style="margin-top:30px;">
+    <div class="etab-card">
+      <div class="etab-name" id="client-name">Établissement</div>
+      <div class="etab-type" id="client-city">Localisation</div>
+      <div style="font-size:10px; color:var(--or); margin-top:15px; letter-spacing:2px;">RAPPORT DE CONFORMITÉ</div>
     </div>
+  </div>
+</div>
 
-    <script>
-        let currentPin = "";
-        let userName = "";
-        const SCRIPT_URL = "TON_LIEN_ICI"; // COLLE TON LIEN GOOGLE ICI
-        const employees = { "1234": "Jacques" };
+<script>
+  // SCRIPT MAGIQUE POUR PERSONNALISER VIA LE LIEN
+  const params = new URLSearchParams(window.location.search);
+  
+  // On récupère les infos dans l'URL (ou on met des valeurs par défaut)
+  const nom = params.get('nom') || "Client Verdict";
+  const ville = params.get('ville') || "Québec, QC";
+  const score = parseInt(params.get('score')) || 85;
 
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+  // Mise à jour des textes
+  document.getElementById('client-name').innerText = nom;
+  document.getElementById('client-city').innerText = ville;
+  document.getElementById('main-score').innerText = score;
 
-        function press(n) {
-            if (currentPin.length < 4) {
-                currentPin += n;
-                document.getElementById('display').innerText = "*".repeat(currentPin.length);
-            }
-        }
+  // Animation du cercle selon le score
+  const ring = document.getElementById('ring-fill');
+  const offset = 314 - (314 * score / 100);
+  setTimeout(() => {
+    ring.style.strokeDashoffset = offset;
+  }, 500);
 
-        function clearPin() { currentPin = ""; document.getElementById('display').innerText = "****"; }
-
-        function validatePin() {
-            userName = employees[currentPin];
-            if (userName) {
-                document.getElementById('welcome-user').innerText = "Bonjour " + userName;
-                showPage('page-menu');
-            } else {
-                alert("Code PIN Incorrect");
-                clearPin();
-            }
-        }
-
-        function sendPunch(status) {
-            const action = confirm(userName + ", confirmer votre " + status + " ?") ? status : (status === "ARRIVÉE" ? "DÉPART" : "ARRIVÉE");
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                body: JSON.stringify({ type: "PUNCH", pin: currentPin, nom: userName, action: action })
-            }).then(() => {
-                alert("✅ Enregistré dans Google Sheets");
-                showPage('page-welcome');
-                clearPin();
-            });
-        }
-    </script>
+  // Changement de couleur et texte selon le score
+  const statusTxt = document.getElementById('status-text');
+  if(score < 60) {
+    statusTxt.innerText = "CRITIQUE";
+    statusTxt.style.color = "#c0392b";
+  } else if(score < 80) {
+    statusTxt.innerText = "ATTENTION";
+    statusTxt.style.color = "#f1c40f";
+  } else {
+    statusTxt.innerText = "CONFORME";
+    statusTxt.style.color = "#2ecc71";
+  }
+</script>
 </body>
 </html>
