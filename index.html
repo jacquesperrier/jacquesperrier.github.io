@@ -3,45 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Verdict IA - Système Expert</title>
+    <title>Verdict IA - Logiciel Intégré</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { --noir: #0a0c0f; --blanc: #f5f3ef; --or: #c9a84c; --gris: #30363d; --vert: #28a745; --rouge: #d9534f; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Montserrat', sans-serif; background: var(--noir); color: var(--blanc); height: 100vh; overflow: hidden; }
-        .page { display: none; height: 100vh; width: 100%; max-width: 430px; margin: 0 auto; padding: 20px; flex-direction: column; justify-content: center; text-align: center; animation: fadeIn 0.4s; }
+        .page { display: none; height: 100vh; width: 100%; max-width: 430px; margin: 0 auto; padding: 20px; flex-direction: column; text-align: center; animation: fadeIn 0.4s; overflow-y: auto; }
         .active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- DESIGN CHIC --- */
-        .logo-v { font-family: 'Cormorant Garamond', serif; font-size: 60px; margin-bottom: 10px; }
+        /* HEADER & LOGO */
+        .logo-v { font-family: 'Cormorant Garamond', serif; font-size: 60px; margin-top: 40px; }
         .logo-v span { color: var(--or); }
-        .btn-gold { background: none; border: 1px solid var(--or); color: var(--or); padding: 15px 30px; border-radius: 50px; cursor: pointer; letter-spacing: 2px; font-weight: 600; margin-top: 20px; }
+        .sub { letter-spacing: 3px; font-size: 10px; color: var(--gris); margin-bottom: 40px; }
 
-        /* --- CLAVIER PIN --- */
+        /* BOUTONS & INPUTS */
+        .btn-gold { background: none; border: 1px solid var(--or); color: var(--or); padding: 15px 30px; border-radius: 50px; cursor: pointer; letter-spacing: 2px; font-weight: 600; margin-top: 20px; width: 100%; }
+        .btn-submit { background: var(--vert); color: white; border: none; padding: 18px; border-radius: 12px; font-weight: bold; margin-top: 25px; width: 100%; font-size: 1.1rem; }
+        
+        /* CLAVIER PIN */
         .pin-display { font-size: 3em; color: var(--or); letter-spacing: 15px; margin: 20px 0; height: 50px; }
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; }
-        .numpad button { background: var(--gris); color: white; border: none; padding: 20px; border-radius: 10px; font-size: 1.5rem; }
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; margin-top: 20px; }
+        .numpad button { background: #161b22; color: white; border: 1px solid var(--gris); padding: 20px; border-radius: 15px; font-size: 1.5rem; }
 
-        /* --- MENU PRINCIPAL --- */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
-        .menu-item { background: #161b22; border: 1px solid var(--gris); padding: 20px; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .menu-item i { font-size: 24px; }
+        /* MENU PRINCIPAL */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 20px; }
+        .menu-item { background: #161b22; border: 1px solid var(--gris); padding: 30px 10px; border-radius: 15px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: 0.3s; }
+        .menu-item:active { transform: scale(0.95); background: var(--gris); }
+        .menu-item i { font-size: 30px; }
 
-        /* --- FORMULAIRES --- */
-        .form-container { text-align: left; overflow-y: auto; padding-right: 5px; }
-        label { display: block; font-size: 11px; color: var(--or); margin-top: 15px; letter-spacing: 1px; }
-        input, select, textarea { width: 100%; background: #161b22; border: 1px solid var(--gris); color: white; padding: 12px; border-radius: 8px; margin-top: 5px; }
-        .sig-box { border: 2px dashed var(--or); background: white; height: 120px; margin-top: 10px; border-radius: 8px; }
-        canvas { width: 100%; height: 100%; cursor: crosshair; }
+        /* FORMULAIRES */
+        .form-container { text-align: left; width: 100%; }
+        label { display: block; font-size: 11px; color: var(--or); margin-top: 20px; letter-spacing: 1px; font-weight: 600; }
+        input, select { width: 100%; background: #161b22; border: 1px solid var(--gris); color: white; padding: 15px; border-radius: 10px; margin-top: 8px; font-size: 16px; }
+        .sig-box { border: 2px dashed var(--or); background: white; height: 150px; margin-top: 10px; border-radius: 10px; position: relative; }
+        canvas { width: 100%; height: 100%; touch-action: none; }
     </style>
 </head>
 <body>
 
     <div id="p-welcome" class="page active">
         <div class="logo-v"><span>V</span>erdict</div>
-        <p style="letter-spacing: 3px; font-size: 10px; color: var(--gris);">INSPECTION AI • EXPERT</p>
-        <button class="btn-gold" onclick="show('p-pin')">DÉMARRER</button>
+        <div class="sub">INSPECTION AI • SYSTÈME EXPERT</div>
+        <img src="https://i.imgur.com/G5zGkAn.png" style="width:80px; margin: 0 auto 30px; opacity:0.8;">
+        <button class="btn-gold" onclick="show('p-pin')">ACCÉDER AU TERMINAL</button>
     </div>
 
     <div id="p-pin" class="page">
@@ -54,84 +60,124 @@
             <button style="color:var(--rouge)" onclick="clearPin()">C</button><button onclick="press(0)">0</button>
             <button style="color:var(--vert)" onclick="checkPin()">OK</button>
         </div>
+        <button onclick="show('p-welcome')" style="margin-top:20px; background:none; border:none; color:var(--gris);">Retour</button>
     </div>
 
     <div id="p-menu" class="page">
-        <h2 id="user-hi" style="font-family:'Cormorant Garamond'; color:var(--or);"></h2>
-        <div class="menu-grid" style="margin-top:30px;">
-            <div class="menu-item" onclick="openForm('heures_regulier')">⏱️ <span>Heures</span></div>
-            <div class="menu-item" onclick="openForm('temperature')">🌡️ <span>Temp.</span></div>
-            <div class="menu-item" onclick="openForm('nettoyage')">🧹 <span>Lavage</span></div>
-            <div class="menu-item" onclick="openForm('reception')">📦 <span>Réception</span></div>
+        <h2 id="user-hi" style="font-family:'Cormorant Garamond'; color:var(--or); font-size: 2rem;"></h2>
+        <div class="menu-grid">
+            <div class="menu-item" onclick="show('p-form-heures')"><i>⏱️</i><span>Pointage</span></div>
+            <div class="menu-item" onclick="show('p-form-temp')"><i>🌡️</i><span>Température</span></div>
+            <div class="menu-item" onclick="show('p-form-nettoyage')"><i>🧹</i><span>Lavage</span></div>
+            <div class="menu-item" onclick="show('p-form-recep')"><i>📦</i><span>Réception</span></div>
         </div>
-        <button onclick="location.reload()" style="margin-top:30px; background:none; border:none; color:var(--gris);">Quitter</button>
+        <button onclick="location.reload()" style="margin-top:40px; color:var(--rouge); background:none; border:none; font-size:12px; letter-spacing:2px;">DÉCONNEXION SÉCURISÉE</button>
     </div>
 
-    <div id="p-form-nettoyage" class="page" style="justify-content: flex-start;">
-        <h3 style="color:var(--or)">REGISTRE NETTOYAGE</h3>
+    <div id="p-form-heures" class="page">
+        <h3 style="color:var(--or)">POINTAGE DES HEURES</h3>
         <div class="form-container">
-            <label>ZONE / ÉQUIPEMENT</label>
-            <select id="n-zone"><option>Surfaces de travail</option><option>Équipement de cuisson</option><option>Hottes / Filtres</option><option>Planchers / Drains</option></select>
-            <label>PRODUIT & PPM</label>
-            <input type="text" id="n-produit" placeholder="Ex: Chlore 200ppm">
-            <label>SIGNATURE</label>
+            <label>ACTION</label>
+            <select id="h-action"><option value="ARRIVÉE">Entrée au travail</option><option value="DÉPART">Fin de quart / Départ</option></select>
+            <label>POSTE OCCUPÉ</label>
+            <select id="h-poste"><option>Cuisine</option><option>Service</option><option>Plonge</option><option>Gestion</option></select>
+        </div>
+        <button class="btn-submit" onclick="submitHeures()">CONFIRMER</button>
+        <button onclick="show('p-menu')" style="margin-top:20px; color:var(--rouge); background:none; border:none;">Annuler</button>
+    </div>
+
+    <div id="p-form-temp" class="page">
+        <h3 style="color:var(--or)">TEMPÉRATURES MAPAQ</h3>
+        <div class="form-container">
+            <label>ÉQUIPEMENT</label>
+            <select id="t-equipe"><option>Frigo Principal</option><option>Table Froide</option><option>Congélateur</option><option>Réchaud</option></select>
+            <label>TEMPÉRATURE (°C)</label>
+            <input type="number" id="t-val" step="0.1" placeholder="4.0">
+        </div>
+        <button class="btn-submit" onclick="submitTemp()">ENREGISTRER</button>
+        <button onclick="show('p-menu')" style="margin-top:20px; color:var(--rouge); background:none; border:none;">Annuler</button>
+    </div>
+
+    <div id="p-form-nettoyage" class="page">
+        <h3 style="color:var(--or)">LAVAGE & ASSAINISSEMENT</h3>
+        <div class="form-container">
+            <label>ZONE / OBJET</label>
+            <select id="n-zone"><option>Surfaces de travail</option><option>Hottes / Filtres</option><option>Planchers / Drains</option><option>Toilettes</option></select>
+            <label>PRODUIT & CONCENTRATION</label>
+            <input type="text" id="n-produit" placeholder="Ex: Quat 200ppm">
+            <label>SIGNATURE REQUISE</label>
             <div class="sig-box"><canvas id="canvas"></canvas></div>
         </div>
-        <button class="btn-gold" style="background:var(--vert); color:white; border:none;" onclick="submitNettoyage()">SOUMETTRE</button>
-        <button onclick="show('p-menu')" style="margin-top:10px; background:none; border:none; color:var(--rouge);">Annuler</button>
+        <button class="btn-submit" onclick="submitNettoyage()">SOUMETTRE LE RAPPORT</button>
+        <button onclick="show('p-menu')" style="margin-top:20px; color:var(--rouge); background:none; border:none;">Annuler</button>
+    </div>
+
+    <div id="p-form-recep" class="page">
+        <h3 style="color:var(--or)">RÉCEPTION DE MARCHANDISE</h3>
+        <div class="form-container">
+            <label>FOURNISSEUR</label>
+            <input type="text" id="r-fourni" placeholder="Ex: Sysco">
+            <label>ÉTAT DE LA RÉCEPTION</label>
+            <select id="r-statut"><option>CONFORME</option><option>NON-CONFORME (REFUSÉ)</option></select>
+            <label>TEMP. CAMION (°C)</label>
+            <input type="number" id="r-temp" step="0.1" placeholder="4.0">
+        </div>
+        <button class="btn-submit" onclick="submitRecep()">VALIDER RÉCEPTION</button>
+        <button onclick="show('p-menu')" style="margin-top:20px; color:var(--rouge); background:none; border:none;">Annuler</button>
+    </div>
+
+    <div id="p-loading" class="page">
+        <div class="logo-v"><span>V</span></div>
+        <p>Synchronisation avec Verdict Cloud...</p>
     </div>
 
     <script>
-        const SCRIPT_URL = "TON_LIEN_EXEC_ICI";
-        const employees = { "1234": "Jacques", "0000": "Admin" };
+        // CONFIGURATION
+        const SCRIPT_URL = "TON_LIEN_ICI"; 
+        const employees = { "1234": "Jacques", "1111": "Employé 1" };
         let currentPin = "";
         let currentUser = "";
 
-        function show(id) { 
+        // NAVIGATION
+        function show(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             if(id === 'p-form-nettoyage') initCanvas();
         }
 
+        // GESTION PIN
         function press(n) { if(currentPin.length < 4) { currentPin += n; document.getElementById('pin-dots').innerText = "*".repeat(currentPin.length); } }
         function clearPin() { currentPin = ""; document.getElementById('pin-dots').innerText = "****"; }
-        
         function checkPin() {
             currentUser = employees[currentPin];
-            if(currentUser) {
-                document.getElementById('user-hi').innerText = "Bonjour " + currentUser;
-                show('p-menu');
-            } else { alert("Code invalide"); clearPin(); }
+            if(currentUser) { document.getElementById('user-hi').innerText = "Bonjour " + currentUser; show('p-menu'); }
+            else { alert("PIN Incorrect"); clearPin(); }
         }
 
-        function openForm(type) {
-            if(type === 'nettoyage') show('p-form-nettoyage');
-            else alert("Module " + type + " en cours de fignolage !");
-        }
-
-        // --- LOGIQUE CANVAS SIGNATURE ---
+        // CANVAS SIGNATURE
         let canvas, ctx, drawing = false;
         function initCanvas() {
-            canvas = document.getElementById('canvas');
-            ctx = canvas.getContext('2d');
+            canvas = document.getElementById('canvas'); ctx = canvas.getContext('2d');
             canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-            canvas.ontouchstart = (e) => { drawing = true; ctx.beginPath(); };
-            canvas.ontouchmove = (e) => { if(!drawing) return; ctx.lineTo(e.touches[0].clientX - canvas.offsetLeft, e.touches[0].clientY - canvas.offsetTop); ctx.stroke(); };
+            canvas.ontouchstart = (e) => { drawing = true; ctx.beginPath(); ctx.moveTo(e.touches[0].clientX - canvas.getBoundingClientRect().left, e.touches[0].clientY - canvas.getBoundingClientRect().top); };
+            canvas.ontouchmove = (e) => { if(!drawing) return; ctx.lineTo(e.touches[0].clientX - canvas.getBoundingClientRect().left, e.touches[0].clientY - canvas.getBoundingClientRect().top); ctx.stroke(); };
             canvas.ontouchend = () => drawing = false;
         }
 
-        function submitNettoyage() {
-            const data = {
-                type: 'nettoyage',
-                zone: document.getElementById('n-zone').value,
-                employe: currentUser,
-                produit: document.getElementById('n-produit').value,
-                validation: "OUI"
-            };
-            
-            fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
-            .then(() => { alert("✅ Enregistré !"); show('p-welcome'); clearPin(); });
+        // ENVOIS DES DONNÉES
+        async function send(payload) {
+            show('p-loading');
+            try {
+                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                setTimeout(() => { alert("✓ Données enregistrées"); show('p-menu'); }, 800);
+            } catch (e) { alert("Erreur de connexion"); show('p-menu'); }
         }
+
+        function submitHeures() { send({ type: 'heures_regulier', nom: currentUser, pin: currentPin, action: document.getElementById('h-action').value, poste: document.getElementById('h-poste').value }); }
+        function submitTemp() { send({ type: 'temperature', responsable: currentUser, equipement: document.getElementById('t-equipe').value, temperature: document.getElementById('t-val').value }); }
+        function submitNettoyage() { send({ type: 'nettoyage', employe: currentUser, zone: document.getElementById('n-zone').value, produit: document.getElementById('n-produit').value }); }
+        function submitRecep() { send({ type: 'reception', nom: currentUser, fournisseur: document.getElementById('r-fourni').value, statut: document.getElementById('r-statut').value, temperature: document.getElementById('r-temp').value }); }
+
     </script>
 </body>
 </html>
