@@ -1,119 +1,137 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Verdict Inspection AI – Rapport Expert</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  /* --- STYLE CSS --- */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --noir: #0a0c0f; --blanc: #f5f3ef; --or: #c9a84c; --gris: #8a8a8a; --rouge: #e74c3c; --vert: #2ecc71; --jaune: #f1c40f; }
-  html, body { background: var(--noir); color: var(--blanc); font-family: 'Montserrat', sans-serif; }
-  .page { max-width: 430px; margin: 0 auto; padding-bottom: 50px; position: relative; }
-  .gold-line { position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, var(--or), transparent); opacity: 0.3; }
-  .header { padding: 40px 32px 20px 52px; }
-  .logo-v { font-family: 'Cormorant Garamond', serif; font-size: 50px; color: var(--blanc); }
-  .logo-v span { color: var(--or); }
-  
-  /* Score Ring */
-  .score-section { padding: 20px 32px 20px 52px; display: flex; align-items: center; gap: 20px; }
-  .score-ring { position: relative; width: 100px; height: 100px; }
-  .score-ring svg { transform: rotate(-90deg); width: 100px; height: 100px; }
-  circle { fill: none; stroke-width: 6; }
-  .bg { stroke: rgba(255,255,255,0.1); }
-  .fill { stroke: var(--vert); stroke-dasharray: 283; stroke-dashoffset: 283; transition: 1.5s; }
-  .score-number { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 30px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verdict IA - Système Expert</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --noir: #0a0c0f; --blanc: #f5f3ef; --or: #c9a84c; --gris: #30363d; --vert: #28a745; --rouge: #d9534f; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--noir); color: var(--blanc); height: 100vh; overflow: hidden; }
+        .page { display: none; height: 100vh; width: 100%; max-width: 430px; margin: 0 auto; padding: 20px; flex-direction: column; justify-content: center; text-align: center; animation: fadeIn 0.4s; }
+        .active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-  /* Analyse Zone */
-  .zones-section { padding: 20px 32px 20px 52px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 4px; border-left: 3px solid var(--or); }
-  .card h4 { font-size: 10px; text-transform: uppercase; color: var(--gris); margin-bottom: 5px; }
-  .card .val { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--or); }
+        /* --- DESIGN CHIC --- */
+        .logo-v { font-family: 'Cormorant Garamond', serif; font-size: 60px; margin-bottom: 10px; }
+        .logo-v span { color: var(--or); }
+        .btn-gold { background: none; border: 1px solid var(--or); color: var(--or); padding: 15px 30px; border-radius: 50px; cursor: pointer; letter-spacing: 2px; font-weight: 600; margin-top: 20px; }
 
-  /* Recommandations IA (Le plus important pour toi) */
-  .ia-section { margin: 20px 32px 20px 52px; background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.2); padding: 20px; border-radius: 8px; }
-  .ia-title { font-size: 10px; letter-spacing: 2px; color: var(--or); margin-bottom: 15px; font-weight: bold; }
-  .ia-item { font-size: 11px; line-height: 1.6; margin-bottom: 10px; display: flex; gap: 10px; }
-  .ia-item span { color: var(--or); }
-</style>
+        /* --- CLAVIER PIN --- */
+        .pin-display { font-size: 3em; color: var(--or); letter-spacing: 15px; margin: 20px 0; height: 50px; }
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; }
+        .numpad button { background: var(--gris); color: white; border: none; padding: 20px; border-radius: 10px; font-size: 1.5rem; }
+
+        /* --- MENU PRINCIPAL --- */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
+        .menu-item { background: #161b22; border: 1px solid var(--gris); padding: 20px; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .menu-item i { font-size: 24px; }
+
+        /* --- FORMULAIRES --- */
+        .form-container { text-align: left; overflow-y: auto; padding-right: 5px; }
+        label { display: block; font-size: 11px; color: var(--or); margin-top: 15px; letter-spacing: 1px; }
+        input, select, textarea { width: 100%; background: #161b22; border: 1px solid var(--gris); color: white; padding: 12px; border-radius: 8px; margin-top: 5px; }
+        .sig-box { border: 2px dashed var(--or); background: white; height: 120px; margin-top: 10px; border-radius: 8px; }
+        canvas { width: 100%; height: 100%; cursor: crosshair; }
+    </style>
 </head>
 <body>
 
-<div class="page">
-  <div class="gold-line"></div>
-  
-  <div class="header">
-    <div class="logo-v"><span>V</span>erdict</div>
-    <p style="font-size:10px; color:var(--gris); letter-spacing:2px;">RAPPORT D'INSPECTION IA</p>
-  </div>
-
-  <div class="score-section">
-    <div class="score-ring">
-      <svg><circle class="bg" cx="50" cy="50" r="45"/><circle id="ring" class="fill" cx="50" cy="50" r="45"/></svg>
-      <div class="score-number" id="main-score">0%</div>
+    <div id="p-welcome" class="page active">
+        <div class="logo-v"><span>V</span>erdict</div>
+        <p style="letter-spacing: 3px; font-size: 10px; color: var(--gris);">INSPECTION AI • EXPERT</p>
+        <button class="btn-gold" onclick="show('p-pin')">DÉMARRER</button>
     </div>
-    <div>
-      <div id="status-label" style="font-family:'Cormorant Garamond'; font-size:24px;">ANALYSE...</div>
-      <div id="client-name" style="font-size:12px; color:var(--gris);">Client</div>
+
+    <div id="p-pin" class="page">
+        <h3>IDENTIFICATION</h3>
+        <div class="pin-display" id="pin-dots">****</div>
+        <div class="numpad">
+            <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
+            <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
+            <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
+            <button style="color:var(--rouge)" onclick="clearPin()">C</button><button onclick="press(0)">0</button>
+            <button style="color:var(--vert)" onclick="checkPin()">OK</button>
+        </div>
     </div>
-  </div>
 
-  <div class="zones-section">
-    <div class="grid">
-      <div class="card"><h4>Température</h4><div class="val" id="val-temp">0%</div></div>
-      <div class="card"><h4>Nettoyage</h4><div class="val" id="val-net">0%</div></div>
+    <div id="p-menu" class="page">
+        <h2 id="user-hi" style="font-family:'Cormorant Garamond'; color:var(--or);"></h2>
+        <div class="menu-grid" style="margin-top:30px;">
+            <div class="menu-item" onclick="openForm('heures_regulier')">⏱️ <span>Heures</span></div>
+            <div class="menu-item" onclick="openForm('temperature')">🌡️ <span>Temp.</span></div>
+            <div class="menu-item" onclick="openForm('nettoyage')">🧹 <span>Lavage</span></div>
+            <div class="menu-item" onclick="openForm('reception')">📦 <span>Réception</span></div>
+        </div>
+        <button onclick="location.reload()" style="margin-top:30px; background:none; border:none; color:var(--gris);">Quitter</button>
     </div>
-  </div>
 
-  <div class="ia-section">
-    <div class="ia-title">✨ RECOMMANDATIONS DE L'IA</div>
-    <div id="ia-list">
-      </div>
-  </div>
-</div>
+    <div id="p-form-nettoyage" class="page" style="justify-content: flex-start;">
+        <h3 style="color:var(--or)">REGISTRE NETTOYAGE</h3>
+        <div class="form-container">
+            <label>ZONE / ÉQUIPEMENT</label>
+            <select id="n-zone"><option>Surfaces de travail</option><option>Équipement de cuisson</option><option>Hottes / Filtres</option><option>Planchers / Drains</option></select>
+            <label>PRODUIT & PPM</label>
+            <input type="text" id="n-produit" placeholder="Ex: Chlore 200ppm">
+            <label>SIGNATURE</label>
+            <div class="sig-box"><canvas id="canvas"></canvas></div>
+        </div>
+        <button class="btn-gold" style="background:var(--vert); color:white; border:none;" onclick="submitNettoyage()">SOUMETTRE</button>
+        <button onclick="show('p-menu')" style="margin-top:10px; background:none; border:none; color:var(--rouge);">Annuler</button>
+    </div>
 
-<script>
-  // RÉCUPÉRATION DES PARAMÈTRES DANS LE LIEN
-  const p = new URLSearchParams(window.location.search);
-  const nom = p.get('nom') || "Établissement";
-  const t = parseInt(p.get('t')) || 100; // t = température
-  const n = parseInt(p.get('n')) || 100; // n = nettoyage
-  const global = Math.round((t + n) / 2);
+    <script>
+        const SCRIPT_URL = "TON_LIEN_EXEC_ICI";
+        const employees = { "1234": "Jacques", "0000": "Admin" };
+        let currentPin = "";
+        let currentUser = "";
 
-  // Mise à jour visuelle
-  document.getElementById('client-name').innerText = nom;
-  document.getElementById('val-temp').innerText = t + "%";
-  document.getElementById('val-net').innerText = n + "%";
-  document.getElementById('main-score').innerText = global + "%";
-  
-  // Animation cercle
-  const ring = document.getElementById('ring');
-  ring.style.strokeDashoffset = 283 - (283 * global / 100);
+        function show(id) { 
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'p-form-nettoyage') initCanvas();
+        }
 
-  // LOGIQUE DE RECOMMANDATION IA
-  const list = document.getElementById('ia-list');
-  let html = "";
+        function press(n) { if(currentPin.length < 4) { currentPin += n; document.getElementById('pin-dots').innerText = "*".repeat(currentPin.length); } }
+        function clearPin() { currentPin = ""; document.getElementById('pin-dots').innerText = "****"; }
+        
+        function checkPin() {
+            currentUser = employees[currentPin];
+            if(currentUser) {
+                document.getElementById('user-hi').innerText = "Bonjour " + currentUser;
+                show('p-menu');
+            } else { alert("Code invalide"); clearPin(); }
+        }
 
-  if(t < 100) {
-    html += `<div class="ia-item"><span>⚠</span> <b>Températures (${t}%) :</b> Il manque ${100-t}% de vos vérifications. Risque de non-conformité MAPAQ élevé.</div>`;
-  }
-  if(n < 100) {
-    html += `<div class="ia-item"><span>⚠</span> <b>Nettoyage (${n}%) :</b> Fréquence insuffisante. ${100-n}% des tâches critiques n'ont pas été signées cette semaine.</div>`;
-  }
-  if(global >= 95) {
-    html += `<div class="ia-item"><span>✅</span> <b>Excellent :</b> Votre établissement respecte les standards les plus élevés.</div>`;
-  }
+        function openForm(type) {
+            if(type === 'nettoyage') show('p-form-nettoyage');
+            else alert("Module " + type + " en cours de fignolage !");
+        }
 
-  list.innerHTML = html || "<div class='ia-item'>Aucune anomalie détectée.</div>";
+        // --- LOGIQUE CANVAS SIGNATURE ---
+        let canvas, ctx, drawing = false;
+        function initCanvas() {
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+            canvas.ontouchstart = (e) => { drawing = true; ctx.beginPath(); };
+            canvas.ontouchmove = (e) => { if(!drawing) return; ctx.lineTo(e.touches[0].clientX - canvas.offsetLeft, e.touches[0].clientY - canvas.offsetTop); ctx.stroke(); };
+            canvas.ontouchend = () => drawing = false;
+        }
 
-  // Label de statut
-  const label = document.getElementById('status-label');
-  if(global < 70) { label.innerText = "CRITIQUE"; label.style.color = "#e74c3c"; }
-  else if(global < 90) { label.innerText = "À AMÉLIORER"; label.style.color = "#f1c40f"; }
-  else { label.innerText = "CONFORME"; label.style.color = "#2ecc71"; }
-
-</script>
+        function submitNettoyage() {
+            const data = {
+                type: 'nettoyage',
+                zone: document.getElementById('n-zone').value,
+                employe: currentUser,
+                produit: document.getElementById('n-produit').value,
+                validation: "OUI"
+            };
+            
+            fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
+            .then(() => { alert("✅ Enregistré !"); show('p-welcome'); clearPin(); });
+        }
+    </script>
 </body>
 </html>
