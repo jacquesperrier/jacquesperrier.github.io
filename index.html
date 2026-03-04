@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verdict AI - Punch</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; text-align: center; background: #1a1a1a; color: white; padding-top: 30px; margin: 0; }
+        h1 { color: #27ae60; font-size: 1.5rem; }
+        .pin-display { font-size: 3.5em; margin: 20px 0; letter-spacing: 15px; height: 70px; color: #27ae60; }
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 320px; margin: 0 auto; padding: 10px; }
+        button { padding: 25px; font-size: 1.8em; border-radius: 15px; border: none; background: #333; color: white; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        button:active { background: #555; transform: scale(0.95); }
+        .btn-clear { background: #c0392b; }
+        .btn-ok { background: #27ae60; }
+        .status { margin-top: 20px; font-size: 0.9em; color: #888; }
+    </style>
+</head>
+<body>
+    <h1>VERDICT AI</h1>
+    <div class="pin-display" id="display">****</div>
+    
+    <div class="numpad">
+        <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
+        <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
+        <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
+        <button class="btn-clear" onclick="clearPin()">C</button><button onclick="press(0)">0</button><button class="btn-ok" onclick="submit()">OK</button>
+    </div>
+    <p class="status" id="statusMessage">Prêt pour le punch</p>
 
+    <script>
+        let pin = "";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkM7awWX4j0aCBlU1yHs3uk-W1EzxEkcOb354i4YLI2AY9IeQjE1OljB5-HeIFdn5c/exec";
+
+        function press(num) {
+            if (pin.length < 4) {
+                pin += num;
+                document.getElementById('display').innerText = "*".repeat(pin.length);
+            }
+        }
+
+        function clearPin() {
+            pin = "";
+            document.getElementById('display').innerText = "****";
+            document.getElementById('statusMessage').innerText = "Prêt pour le punch";
+        }
+
+        async function submit() {
+            if (pin.length !== 4) return alert("Code PIN incomplet");
+            
+            document.getElementById('statusMessage').innerText = "Envoi en cours...";
+            
+            try {
+                // Envoi des données vers ton Google Sheets
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Important pour Google Scripts
+                    body: JSON.stringify({
+                        type: "PUNCH",
+                        nom: "Jacques", 
+                        action: "ARRIVÉE",
+                        pin: pin
+                    })
+                });
+                
+                document.getElementById('statusMessage').innerText = "✅ Punch envoyé !";
+                setTimeout(clearPin, 3000);
+            } catch (error) {
+                alert("Erreur : " + error);
+                document.getElementById('statusMessage').innerText = "Erreur de connexion";
+            }
+        }
+    </script>
+</body>
+</html>
