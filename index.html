@@ -3,72 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Verdict AI - Punch</title>
+    <title>Verdict IA - Système Expert</title>
     <style>
-        body { font-family: -apple-system, sans-serif; text-align: center; background: #1a1a1a; color: white; padding-top: 30px; margin: 0; }
-        h1 { color: #27ae60; font-size: 1.5rem; }
-        .pin-display { font-size: 3.5em; margin: 20px 0; letter-spacing: 15px; height: 70px; color: #27ae60; }
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 320px; margin: 0 auto; padding: 10px; }
-        button { padding: 25px; font-size: 1.8em; border-radius: 15px; border: none; background: #333; color: white; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-        button:active { background: #555; transform: scale(0.95); }
-        .btn-clear { background: #c0392b; }
-        .btn-ok { background: #27ae60; }
-        .status { margin-top: 20px; font-size: 0.9em; color: #888; }
+        :root { --primary: #27ae60; --bg: #0a0e14; --card: #161b22; --text: #e6edf3; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .page { display: none; width: 100%; max-width: 400px; text-align: center; padding: 20px; animation: fadeIn 0.5s; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Page Accueil */
+        .logo-shield { font-size: 80px; margin-bottom: 10px; color: var(--primary); }
+        h1 { font-size: 2rem; letter-spacing: 2px; margin: 0; }
+        .subtitle { color: #8b949e; margin-bottom: 40px; font-weight: 300; }
+        .btn-start { background: var(--primary); color: white; border: none; padding: 20px 40px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); }
+
+        /* Clavier & Menu */
+        .pin-display { font-size: 3em; margin: 20px 0; color: var(--primary); letter-spacing: 10px; height: 60px; }
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .numpad button { background: var(--card); color: white; border: 1px solid #30363d; padding: 25px; border-radius: 15px; font-size: 1.5rem; cursor: pointer; }
+        .numpad button:active { background: #30363d; }
+        .btn-ok { background: var(--primary) !important; border: none !important; }
+
+        /* Menu Choix */
+        .menu-grid { display: grid; gap: 15px; }
+        .menu-item { background: var(--card); border: 1px solid #30363d; padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; text-align: left; }
+        .menu-item:hover { border-color: var(--primary); }
+        .icon { font-size: 1.5rem; }
     </style>
 </head>
 <body>
-    <h1>VERDICT AI</h1>
-    <div class="pin-display" id="display">****</div>
-    
-    <div class="numpad">
-        <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
-        <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
-        <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
-        <button class="btn-clear" onclick="clearPin()">C</button><button onclick="press(0)">0</button><button class="btn-ok" onclick="submit()">OK</button>
+
+    <div id="page-welcome" class="page active">
+        <div class="logo-shield">🛡️</div>
+        <h1>VERDICT IA</h1>
+        <div class="subtitle">JACQUES PERRIER<br>CONSULTANT – SANTÉ & SÉCURITÉ</div>
+        <button class="btn-start" onclick="showPage('page-pin')">DÉMARRER</button>
     </div>
-    <p class="status" id="statusMessage">Prêt pour le punch</p>
+
+    <div id="page-pin" class="page">
+        <h2>ENTRER CODE PIN</h2>
+        <div class="pin-display" id="display">****</div>
+        <div class="numpad">
+            <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
+            <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
+            <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
+            <button style="color:#c0392b" onclick="clearPin()">C</button><button onclick="press(0)">0</button>
+            <button class="btn-ok" onclick="validatePin()">OK</button>
+        </div>
+    </div>
+
+    <div id="page-menu" class="page">
+        <h2 id="welcome-user">Bonjour</h2>
+        <div class="menu-grid">
+            <div class="menu-item" onclick="sendPunch('ARRIVÉE')">
+                <span class="icon">⏱️</span> <div><strong>Pointage</strong><br><small>Arrivée / Départ</small></div>
+            </div>
+            <div class="menu-item" onclick="alert('Module Température bientôt disponible')">
+                <span class="icon">🌡️</span> <div><strong>Température</strong><br><small>Vérification MAPAQ</small></div>
+            </div>
+            <div class="menu-item" onclick="alert('Module Nettoyage bientôt disponible')">
+                <span class="icon">🧹</span> <div><strong>Nettoyage</strong><br><small>Liste de tâches</small></div>
+            </div>
+        </div>
+        <br>
+        <button onclick="showPage('page-welcome')" style="background:none; border:none; color:#8b949e; cursor:pointer;">Quitter la session</button>
+    </div>
 
     <script>
-        let pin = "";
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwTJp0zXffRGQo5Is3_JPT_BGM6H3pZ2qZe2eKIIYbV1i7Xv5o0AWJoZ8XmYbYXCc9v/exec";
+        let currentPin = "";
+        let userName = "";
+        const SCRIPT_URL = "TON_LIEN_ICI"; // COLLE TON LIEN GOOGLE ICI
+        const employees = { "1234": "Jacques" };
 
-        function press(num) {
-            if (pin.length < 4) {
-                pin += num;
-                document.getElementById('display').innerText = "*".repeat(pin.length);
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function press(n) {
+            if (currentPin.length < 4) {
+                currentPin += n;
+                document.getElementById('display').innerText = "*".repeat(currentPin.length);
             }
         }
 
-        function clearPin() {
-            pin = "";
-            document.getElementById('display').innerText = "****";
-            document.getElementById('statusMessage').innerText = "Prêt pour le punch";
+        function clearPin() { currentPin = ""; document.getElementById('display').innerText = "****"; }
+
+        function validatePin() {
+            userName = employees[currentPin];
+            if (userName) {
+                document.getElementById('welcome-user').innerText = "Bonjour " + userName;
+                showPage('page-menu');
+            } else {
+                alert("Code PIN Incorrect");
+                clearPin();
+            }
         }
 
-        async function submit() {
-            if (pin.length !== 4) return alert("Code PIN incomplet");
-            
-            document.getElementById('statusMessage').innerText = "Envoi en cours...";
-            
-            try {
-                // Envoi des données vers ton Google Sheets
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // Important pour Google Scripts
-                    body: JSON.stringify({
-                        type: "PUNCH",
-                        nom: "Jacques", 
-                        action: "ARRIVÉE",
-                        pin: pin
-                    })
-                });
-                
-                document.getElementById('statusMessage').innerText = "✅ Punch envoyé !";
-                setTimeout(clearPin, 3000);
-            } catch (error) {
-                alert("Erreur : " + error);
-                document.getElementById('statusMessage').innerText = "Erreur de connexion";
-            }
+        function sendPunch(status) {
+            const action = confirm(userName + ", confirmer votre " + status + " ?") ? status : (status === "ARRIVÉE" ? "DÉPART" : "ARRIVÉE");
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({ type: "PUNCH", pin: currentPin, nom: userName, action: action })
+            }).then(() => {
+                alert("✅ Enregistré dans Google Sheets");
+                showPage('page-welcome');
+                clearPin();
+            });
         }
     </script>
 </body>
