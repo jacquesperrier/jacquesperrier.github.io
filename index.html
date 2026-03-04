@@ -3,120 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Verdict Inspection AI – Page de Garde</title>
+<title>Verdict Inspection AI – Rapport Expert</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  /* --- GARDE EXACTEMENT TON STYLE CSS ICI --- */
+  /* --- STYLE CSS --- */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --noir: #0a0c0f; --blanc: #f5f3ef; --or: #c9a84c; --or-clair: #e8d5a3; --gris: #8a8a8a; --rouge: #c0392b; --vert: #2ecc71; --jaune: #f1c40f; }
-  html, body { height: 100%; background: var(--noir); color: var(--blanc); font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
-  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 100; opacity: 0.6; }
-  .page { min-height: 100vh; max-width: 430px; margin: 0 auto; position: relative; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
-  .gold-line { position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent 0%, var(--or) 15%, var(--or) 85%, transparent 100%); opacity: 0.5; }
-  .header { padding: 48px 32px 0 52px; }
-  .date-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--or); margin-bottom: 24px; }
-  .date-badge::before { content: ''; width: 20px; height: 1px; background: var(--or); }
-  .logo-v { font-family: 'Cormorant Garamond', serif; font-size: 72px; font-weight: 300; color: var(--blanc); letter-spacing: -2px; }
+  :root { --noir: #0a0c0f; --blanc: #f5f3ef; --or: #c9a84c; --gris: #8a8a8a; --rouge: #e74c3c; --vert: #2ecc71; --jaune: #f1c40f; }
+  html, body { background: var(--noir); color: var(--blanc); font-family: 'Montserrat', sans-serif; }
+  .page { max-width: 430px; margin: 0 auto; padding-bottom: 50px; position: relative; }
+  .gold-line { position: absolute; left: 28px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, var(--or), transparent); opacity: 0.3; }
+  .header { padding: 40px 32px 20px 52px; }
+  .logo-v { font-family: 'Cormorant Garamond', serif; font-size: 50px; color: var(--blanc); }
   .logo-v span { color: var(--or); }
-  .score-section { padding: 36px 32px 36px 52px; }
-  .score-ring-container { display: flex; align-items: center; gap: 32px; }
-  .score-ring { position: relative; width: 120px; height: 120px; }
-  .score-ring svg { transform: rotate(-90deg); }
-  .score-ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 6; }
-  .score-ring-fill { fill: none; stroke: var(--vert); stroke-width: 6; stroke-dasharray: 314; stroke-dashoffset: 314; transition: stroke-dashoffset 2s ease; }
-  .score-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .score-number { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 600; color: var(--blanc); }
-  .score-status { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--vert); }
-  .divider { margin: 0 32px 0 52px; height: 1px; background: linear-gradient(to right, var(--or) 0%, rgba(201,168,76,0.1) 100%); }
-  .zones-section { padding: 32px 32px 32px 52px; }
-  .zones-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .zone-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; padding: 14px; position: relative; }
-  .zone-score { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; }
-  .etablissement-section { padding: 0 32px 32px 52px; }
-  .etab-card { border: 1px solid rgba(201,168,76,0.2); border-radius: 4px; padding: 20px; background: rgba(201,168,76,0.04); position: relative; }
-  .footer { margin-top: auto; padding: 24px 32px 36px 52px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
-  .dot { position: absolute; left: 22px; width: 13px; height: 13px; border-radius: 50%; border: 1px solid var(--or); background: var(--noir); display: flex; align-items: center; justify-content: center; }
-  .dot::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--or); }
-  .dot-1 { top: 52px; } .dot-2 { top: 168px; } .dot-3 { bottom: 80px; }
+  
+  /* Score Ring */
+  .score-section { padding: 20px 32px 20px 52px; display: flex; align-items: center; gap: 20px; }
+  .score-ring { position: relative; width: 100px; height: 100px; }
+  .score-ring svg { transform: rotate(-90deg); width: 100px; height: 100px; }
+  circle { fill: none; stroke-width: 6; }
+  .bg { stroke: rgba(255,255,255,0.1); }
+  .fill { stroke: var(--vert); stroke-dasharray: 283; stroke-dashoffset: 283; transition: 1.5s; }
+  .score-number { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 30px; }
+
+  /* Analyse Zone */
+  .zones-section { padding: 20px 32px 20px 52px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 4px; border-left: 3px solid var(--or); }
+  .card h4 { font-size: 10px; text-transform: uppercase; color: var(--gris); margin-bottom: 5px; }
+  .card .val { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--or); }
+
+  /* Recommandations IA (Le plus important pour toi) */
+  .ia-section { margin: 20px 32px 20px 52px; background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.2); padding: 20px; border-radius: 8px; }
+  .ia-title { font-size: 10px; letter-spacing: 2px; color: var(--or); margin-bottom: 15px; font-weight: bold; }
+  .ia-item { font-size: 11px; line-height: 1.6; margin-bottom: 10px; display: flex; gap: 10px; }
+  .ia-item span { color: var(--or); }
 </style>
 </head>
 <body>
+
 <div class="page">
   <div class="gold-line"></div>
-  <div class="dot dot-1"></div>
-  <div class="dot dot-2"></div>
-  <div class="dot dot-3"></div>
- 
+  
   <div class="header">
-    <div class="date-badge" id="date-text">4 mars 2026</div>
-    <div class="logo-block">
-      <div class="logo-v"><span>V</span>erdict</div>
-    </div>
+    <div class="logo-v"><span>V</span>erdict</div>
+    <p style="font-size:10px; color:var(--gris); letter-spacing:2px;">RAPPORT D'INSPECTION IA</p>
   </div>
- 
+
   <div class="score-section">
-    <div class="score-ring-container">
-      <div class="score-ring">
-        <svg width="120" height="120">
-          <circle class="score-ring-bg" cx="60" cy="60" r="50"/>
-          <circle id="ring-fill" class="score-ring-fill" cx="60" cy="60" r="50"/>
-        </svg>
-        <div class="score-center">
-          <div class="score-number" id="main-score">0</div>
-          <div style="font-size:11px; color:var(--vert)">%</div>
-        </div>
-      </div>
-      <div class="score-info">
-        <div class="score-status" id="status-text">ANALYSE...</div>
-        <div class="score-desc" id="status-desc">Chargement du rapport Verdict AI.</div>
-      </div>
+    <div class="score-ring">
+      <svg><circle class="bg" cx="50" cy="50" r="45"/><circle id="ring" class="fill" cx="50" cy="50" r="45"/></svg>
+      <div class="score-number" id="main-score">0%</div>
+    </div>
+    <div>
+      <div id="status-label" style="font-family:'Cormorant Garamond'; font-size:24px;">ANALYSE...</div>
+      <div id="client-name" style="font-size:12px; color:var(--gris);">Client</div>
     </div>
   </div>
- 
-  <div class="divider"></div>
- 
-  <div class="etablissement-section" style="margin-top:30px;">
-    <div class="etab-card">
-      <div class="etab-name" id="client-name">Établissement</div>
-      <div class="etab-type" id="client-city">Localisation</div>
-      <div style="font-size:10px; color:var(--or); margin-top:15px; letter-spacing:2px;">RAPPORT DE CONFORMITÉ</div>
+
+  <div class="zones-section">
+    <div class="grid">
+      <div class="card"><h4>Température</h4><div class="val" id="val-temp">0%</div></div>
+      <div class="card"><h4>Nettoyage</h4><div class="val" id="val-net">0%</div></div>
     </div>
+  </div>
+
+  <div class="ia-section">
+    <div class="ia-title">✨ RECOMMANDATIONS DE L'IA</div>
+    <div id="ia-list">
+      </div>
   </div>
 </div>
 
 <script>
-  // SCRIPT MAGIQUE POUR PERSONNALISER VIA LE LIEN
-  const params = new URLSearchParams(window.location.search);
-  
-  // On récupère les infos dans l'URL (ou on met des valeurs par défaut)
-  const nom = params.get('nom') || "Client Verdict";
-  const ville = params.get('ville') || "Québec, QC";
-  const score = parseInt(params.get('score')) || 85;
+  // RÉCUPÉRATION DES PARAMÈTRES DANS LE LIEN
+  const p = new URLSearchParams(window.location.search);
+  const nom = p.get('nom') || "Établissement";
+  const t = parseInt(p.get('t')) || 100; // t = température
+  const n = parseInt(p.get('n')) || 100; // n = nettoyage
+  const global = Math.round((t + n) / 2);
 
-  // Mise à jour des textes
+  // Mise à jour visuelle
   document.getElementById('client-name').innerText = nom;
-  document.getElementById('client-city').innerText = ville;
-  document.getElementById('main-score').innerText = score;
+  document.getElementById('val-temp').innerText = t + "%";
+  document.getElementById('val-net').innerText = n + "%";
+  document.getElementById('main-score').innerText = global + "%";
+  
+  // Animation cercle
+  const ring = document.getElementById('ring');
+  ring.style.strokeDashoffset = 283 - (283 * global / 100);
 
-  // Animation du cercle selon le score
-  const ring = document.getElementById('ring-fill');
-  const offset = 314 - (314 * score / 100);
-  setTimeout(() => {
-    ring.style.strokeDashoffset = offset;
-  }, 500);
+  // LOGIQUE DE RECOMMANDATION IA
+  const list = document.getElementById('ia-list');
+  let html = "";
 
-  // Changement de couleur et texte selon le score
-  const statusTxt = document.getElementById('status-text');
-  if(score < 60) {
-    statusTxt.innerText = "CRITIQUE";
-    statusTxt.style.color = "#c0392b";
-  } else if(score < 80) {
-    statusTxt.innerText = "ATTENTION";
-    statusTxt.style.color = "#f1c40f";
-  } else {
-    statusTxt.innerText = "CONFORME";
-    statusTxt.style.color = "#2ecc71";
+  if(t < 100) {
+    html += `<div class="ia-item"><span>⚠</span> <b>Températures (${t}%) :</b> Il manque ${100-t}% de vos vérifications. Risque de non-conformité MAPAQ élevé.</div>`;
   }
+  if(n < 100) {
+    html += `<div class="ia-item"><span>⚠</span> <b>Nettoyage (${n}%) :</b> Fréquence insuffisante. ${100-n}% des tâches critiques n'ont pas été signées cette semaine.</div>`;
+  }
+  if(global >= 95) {
+    html += `<div class="ia-item"><span>✅</span> <b>Excellent :</b> Votre établissement respecte les standards les plus élevés.</div>`;
+  }
+
+  list.innerHTML = html || "<div class='ia-item'>Aucune anomalie détectée.</div>";
+
+  // Label de statut
+  const label = document.getElementById('status-label');
+  if(global < 70) { label.innerText = "CRITIQUE"; label.style.color = "#e74c3c"; }
+  else if(global < 90) { label.innerText = "À AMÉLIORER"; label.style.color = "#f1c40f"; }
+  else { label.innerText = "CONFORME"; label.style.color = "#2ecc71"; }
+
 </script>
 </body>
 </html>
