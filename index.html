@@ -1,11 +1,6 @@
 function envoyerDonnees(typeAction, nomEmploye, valeurAction, commentaire = "") {
-    // ⚠️ REMPLACE BIEN L'URL CI-DESSOUS PAR LA TIENNE
-    const urlScript = "COPIE_TON_LIEN_GOOGLE_ICI"; 
-
-    if (urlScript === "COPIE_TON_LIEN_GOOGLE_ICI") {
-        alert("Attention Jacques : Tu n'as pas encore collé ton URL de déploiement Google !");
-        return;
-    }
+    // TON URL RÉELLE EST MAINTENANT INTÉGRÉE ICI
+    const urlScript = "https://script.google.com/macros/s/AKfycbyclVwHhv90BPF9N_VCdTB5LBUy7-XtwLOEQUcirGMV8L-IIzgbtXzdJUVTl74eH9ZU/exec";
 
     const payload = {
         type: typeAction,
@@ -14,16 +9,15 @@ function envoyerDonnees(typeAction, nomEmploye, valeurAction, commentaire = "") 
         note: commentaire
     };
 
+    // On utilise fetch pour envoyer les données au "Cerveau" Google
     fetch(urlScript, {
         method: 'POST',
-        mode: 'no-cors', 
+        mode: 'no-cors', // Requis pour Google Apps Script
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
     })
     .then(() => {
         alert("✓ Enregistré dans Verdict IA");
-        // Optionnel : Rediriger ou fermer le menu après succès
-        if(typeof fermerModal === "function") fermerModal(); 
     })
     .catch(err => {
         console.error("Erreur d'envoi:", err);
