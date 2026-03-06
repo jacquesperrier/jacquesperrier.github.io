@@ -1,175 +1,21 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Verdict IA - Logiciel Intégré</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root { --noir: #0a0c0f; --blanc: #f5f3ef; --or: #c9a84c; --gris: #30363d; --vert: #28a745; --rouge: #d9534f; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--noir); color: var(--blanc); height: 100vh; overflow: hidden; }
-        .page { display: none; height: 100vh; width: 100%; max-width: 430px; margin: 0 auto; padding: 20px; flex-direction: column; text-align: center; animation: fadeIn 0.4s; overflow-y: auto; }
-        .active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+function envoyerDonnees(typeAction, nomEmploye, valeurAction, commentaire = "") {
+    const urlScript = "TON_URL_DE_DEPLOYEMENT_GOOGLE_ICI";
 
-        /* HEADER & LOGO */
-        .logo-v { font-family: 'Cormorant Garamond', serif; font-size: 60px; margin-top: 40px; }
-        .logo-v span { color: var(--or); }
-        .sub { letter-spacing: 3px; font-size: 10px; color: var(--gris); margin-bottom: 40px; }
+    const payload = {
+        type: typeAction,      // Doit être: 'heure', 'temp', 'nettoyage', 'reception' ou 'formation'
+        employe: nomEmploye,
+        valeur: valeurAction,
+        note: commentaire
+    };
 
-        /* BOUTONS & INPUTS */
-        .btn-gold { background: none; border: 1px solid var(--or); color: var(--or); padding: 15px 30px; border-radius: 50px; cursor: pointer; letter-spacing: 2px; font-weight: 600; margin-top: 20px; width: 100%; }
-        .btn-submit { background: var(--vert); color: white; border: none; padding: 18px; border-radius: 12px; font-weight: bold; margin-top: 25px; width: 100%; font-size: 1.1rem; }
-        
-        /* CLAVIER PIN */
-        .pin-display { font-size: 3em; color: var(--or); letter-spacing: 15px; margin: 20px 0; height: 50px; }
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; margin-top: 20px; }
-        .numpad button { background: #161b22; color: white; border: 1px solid var(--gris); padding: 20px; border-radius: 15px; font-size: 1.5rem; }
-
-        /* MENU PRINCIPAL */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 20px; }
-        .menu-item { background: #161b22; border: 1px solid var(--gris); padding: 30px 10px; border-radius: 15px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: 0.3s; text-decoration: none; color: white; }
-        .menu-item:active { transform: scale(0.95); background: var(--gris); }
-
-        /* FORMULAIRES */
-        .form-container { text-align: left; width: 100%; }
-        label { display: block; font-size: 11px; color: var(--or); margin-top: 20px; letter-spacing: 1px; font-weight: 600; }
-        input, select { width: 100%; background: #161b22; border: 1px solid var(--gris); color: white; padding: 15px; border-radius: 10px; margin-top: 8px; font-size: 16px; }
-        .sig-box { border: 2px dashed var(--or); background: white; height: 150px; margin-top: 10px; border-radius: 10px; position: relative; }
-        canvas { width: 100%; height: 100%; touch-action: none; }
-    </style>
-</head>
-<body>
-
-    <div id="p-welcome" class="page active">
-        <div class="logo-v"><span>V</span>erdict</div>
-        <div class="sub">INSPECTION AI • SYSTÈME EXPERT</div>
-        <button class="btn-gold" onclick="show('p-pin')">ACCÉDER AU TERMINAL</button>
-    </div>
-
-    <div id="p-pin" class="page">
-        <h3>IDENTIFICATION</h3>
-        <div class="pin-display" id="pin-dots">****</div>
-        <div class="numpad">
-            <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
-            <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
-            <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
-            <button style="color:var(--rouge)" onclick="clearPin()">C</button><button onclick="press(0)">0</button>
-            <button style="color:var(--vert)" onclick="checkPin()">OK</button>
-        </div>
-    </div>
-
-    <div id="p-menu" class="page">
-        <h2 id="user-hi" style="font-family:'Cormorant Garamond'; color:var(--or); font-size: 2rem;"></h2>
-        <div class="menu-grid">
-            <div class="menu-item" onclick="show('p-form-heures')">⏱️<span>Heures</span></div>
-            <div class="menu-item" onclick="show('p-form-temp')">🌡️<span>Température</span></div>
-            <div class="menu-item" onclick="show('p-form-nettoyage')">🧹<span>Lavage</span></div>
-            <div class="menu-item" onclick="show('p-form-recep')">📦<span>Réception</span></div>
-        </div>
-        <button onclick="location.reload()" style="margin-top:40px; color:var(--rouge); background:none; border:none; font-size:10px; letter-spacing:2px;">DÉCONNEXION</button>
-    </div>
-
-    <div id="p-form-heures" class="page">
-        <h3 style="color:var(--or)">HEURES</h3>
-        <div class="form-container">
-            <label>ACTION</label>
-            <select id="h-action"><option value="ARRIVÉE">ARRIVÉE</option><option value="DÉPART">DÉPART</option></select>
-            <label>POSTE</label>
-            <select id="h-poste"><option>Cuisine</option><option>Service</option><option>Plonge</option><option>Gestion</option></select>
-        </div>
-        <button class="btn-submit" onclick="submitHeures()">CONFIRMER</button>
-        <button onclick="show('p-menu')" style="margin-top:20px; background:none; border:none; color:gray;">Retour</button>
-    </div>
-
-    <div id="p-form-temp" class="page">
-        <h3 style="color:var(--or)">TEMPÉRATURES</h3>
-        <div class="form-container">
-            <label>ÉQUIPEMENT</label>
-            <select id="t-equipe"><option>Frigo Principal</option><option>Table Froide</option><option>Congélateur</option><option>Réchaud</option></select>
-            <label>DEGRÉS (°C)</label>
-            <input type="number" id="t-val" step="0.1" placeholder="4.0">
-        </div>
-        <button class="btn-submit" onclick="submitTemp()">ENREGISTRER</button>
-        <button onclick="show('p-menu')" style="margin-top:20px; background:none; border:none; color:gray;">Retour</button>
-    </div>
-
-    <div id="p-form-nettoyage" class="page">
-        <h3 style="color:var(--or)">LAVAGE</h3>
-        <div class="form-container">
-            <label>ZONE</label>
-            <select id="n-zone"><option>Surfaces</option><option>Hottes</option><option>Planchers</option><option>Toilettes</option></select>
-            <label>PRODUIT</label>
-            <input type="text" id="n-produit" placeholder="Ex: Chlore 200ppm">
-            <label>SIGNATURE</label>
-            <div class="sig-box"><canvas id="canvas"></canvas></div>
-        </div>
-        <button class="btn-submit" onclick="submitNettoyage()">SOUMETTRE</button>
-        <button onclick="show('p-menu')" style="margin-top:20px; background:none; border:none; color:gray;">Retour</button>
-    </div>
-
-    <div id="p-form-recep" class="page">
-        <h3 style="color:var(--or)">RÉCEPTION</h3>
-        <div class="form-container">
-            <label>FOURNISSEUR</label>
-            <input type="text" id="r-fourni" placeholder="Ex: Sysco">
-            <label>STATUT</label>
-            <select id="r-statut"><option>CONFORME</option><option>REFUSÉ</option></select>
-            <label>TEMP. CAMION (°C)</label>
-            <input type="number" id="r-temp" step="0.1" placeholder="4.0">
-        </div>
-        <button class="btn-submit" onclick="submitRecep()">VALIDER</button>
-        <button onclick="show('p-menu')" style="margin-top:20px; background:none; border:none; color:gray;">Retour</button>
-    </div>
-
-    <div id="p-loading" class="page">
-        <div class="logo-v"><span>V</span></div>
-        <p>Synchronisation...</p>
-    </div>
-
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwM1OLEbEXNp9GZrVbI-M9EHBjFTuiG84d_X7m_Kvbx1pY8xRoO8uT13YpkM52aUCTA/exec";
-        const employees = { "1234": "Jacques", "0000": "Admin" };
-        let currentPin = "";
-        let currentUser = "";
-
-        function show(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(id === 'p-form-nettoyage') initCanvas();
-        }
-
-        function press(n) { if(currentPin.length < 4) { currentPin += n; document.getElementById('pin-dots').innerText = "*".repeat(currentPin.length); } }
-        function clearPin() { currentPin = ""; document.getElementById('pin-dots').innerText = "****"; }
-        function checkPin() {
-            currentUser = employees[currentPin];
-            if(currentUser) { document.getElementById('user-hi').innerText = "Bonjour " + currentUser; show('p-menu'); }
-            else { alert("PIN Incorrect"); clearPin(); }
-        }
-
-        let canvas, ctx, drawing = false;
-        function initCanvas() {
-            canvas = document.getElementById('canvas'); ctx = canvas.getContext('2d');
-            canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-            canvas.ontouchstart = (e) => { drawing = true; ctx.beginPath(); };
-            canvas.ontouchmove = (e) => { if(!drawing) return; ctx.lineTo(e.touches[0].clientX - canvas.offsetLeft, e.touches[0].clientY - canvas.offsetTop); ctx.stroke(); };
-            canvas.ontouchend = () => drawing = false;
-        }
-
-        async function send(payload) {
-            show('p-loading');
-            try {
-                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                setTimeout(() => { alert("✓ Enregistré"); show('p-menu'); }, 500);
-            } catch (e) { alert("Erreur de synchronisation"); show('p-menu'); }
-        }
-
-        function submitHeures() { send({ type: 'heures_regulier', nom: currentUser, action: document.getElementById('h-action').value, poste: document.getElementById('h-poste').value, pin: currentPin }); }
-        function submitTemp() { send({ type: 'temperature', responsable: currentUser, equipement: document.getElementById('t-equipe').value, temperature: document.getElementById('t-val').value }); }
-        function submitNettoyage() { send({ type: 'nettoyage', employe: currentUser, zone: document.getElementById('n-zone').value, produit: document.getElementById('n-produit').value }); }
-        function submitRecep() { send({ type: 'reception', nom: currentUser, fournisseur: document.getElementById('r-fourni').value, statut: document.getElementById('r-statut').value, temperature: document.getElementById('r-temp').value }); }
-    </script>
-</body>
-</html>
-
+    fetch(urlScript, {
+        method: 'POST',
+        mode: 'no-cors', // Important pour Google Apps Script
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(() => {
+        alert("✓ Enregistré dans Verdict IA");
+    })
+    .catch(err => console.error("Erreur d'envoi:", err));
+}
