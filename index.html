@@ -2,117 +2,72 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VERDICT IA</title>
     <style>
-        [span_2](start_span)/* SPÉCIFICATIONS COULEURS VERDICT IA[span_2](end_span) */
-        :root {
-            --gold: #D4AF37;   [span_3](start_span)/* Or Métallique[span_3](end_span) */
-            --black: #000000;  [span_4](start_span)/* Noir Pur[span_4](end_span) */
-            --dark: #1A1A1A;   [span_5](start_span)/* Anthracite[span_5](end_span) */
+        /* DESIGN NOIR & OR GÉNÉRÉ POUR VERDICT IA */
+        body { background-color: #000000; color: #D4AF37; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        h1 { font-size: 1.8rem; margin-bottom: 0; }
+        .subtitle { font-size: 0.7rem; margin-bottom: 30px; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 400px; }
+        
+        .btn-v { 
+            background: #1A1A1A; border: 2px solid #D4AF37; color: #D4AF37; 
+            padding: 25px 10px; border-radius: 10px; font-weight: bold; text-align: center;
+            cursor: pointer; font-size: 1rem;
         }
 
-        body {
-            background-color: var(--black);
-            color: white;
-            font-family: 'Helvetica Neue', Arial, sans-serif; [span_6](start_span)/*[span_6](end_span) */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
+        /* FENÊTRE DE SAISIE */
+        #form-v { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #1A1A1A; border: 3px solid #D4AF37; padding: 20px; width: 80%; z-index: 100;
         }
-
-        h1 { color: var(--gold); letter-spacing: 2px; }
-
-        [span_7](start_span)/* GRILLE DASHBOARD 2x3[span_7](end_span) */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .btn-verdict {
-            background-color: var(--dark);
-            border: 2px solid var(--gold); [span_8](start_span)/*[span_8](end_span) */
-            color: var(--gold);
-            padding: 20px;
-            border-radius: 8px; [span_9](start_span)/*[span_9](end_span) */
-            font-weight: bold;
-            min-height: 80px; [span_10](start_span)/* Supérieur au min de 60px pour gants[span_10](end_span) */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        /* FORMULAIRE D'ENTRÉE */
-        #form-box {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--dark);
-            border: 2px solid var(--gold);
-            padding: 20px;
-            width: 85%;
-            z-index: 1000;
-        }
-
-        input {
-            width: 90%;
-            padding: 12px;
-            margin: 10px 0;
-            background: #000;
-            border: 1px solid var(--gold);
-            color: white;
-        }
-
-        .btn-send { background: var(--gold); color: black; border: none; padding: 15px; width: 100%; font-weight: bold; }
+        
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #D4AF37; color: #fff; box-sizing: border-box; }
+        .btn-save { background: #D4AF37; color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <h1>VERDICT IA</h1>
-    [span_11](start_span)<p style="color: var(--gold); font-size: 0.8rem;">"L'excellence n'attend pas l'inspection."[span_11](end_span)</p>
+    <p class="subtitle">CONFORMITÉ MAPAQ & GESTION</p>
 
     <div class="grid">
-        <div class="btn-verdict" onclick="showForm('heure')">🕒 PUNCH</div>
-        <div class="btn-verdict" onclick="showForm('temp')">🌡️ SÉCURITÉ</div>
-        <div class="btn-verdict" onclick="showForm('nettoyage')">🧼 HYGIÈNE</div>
-        <div class="btn-verdict" onclick="showForm('reception')">🚚 CONTRÔLE</div>
-        <div class="btn-verdict" onclick="showForm('formation')">🎓 ACADÉMIE</div>
+        <div class="btn-v" onclick="openV('heure')">🕒 PUNCH</div>
+        <div class="btn-v" onclick="openV('temp')">🌡️ SÉCURITÉ</div>
+        <div class="btn-v" onclick="openV('nettoyage')">🧼 HYGIÈNE</div>
+        <div class="btn-v" onclick="openV('reception')">🚚 RÉCEPTION</div>
+        <div class="btn-v" onclick="openV('formation')">🎓 ACADÉMIE</div>
     </div>
 
-    <div id="form-box">
-        <h3 id="form-title" style="color: var(--gold);"></h3>
-        <input type="text" id="employe" placeholder="Code PIN ou Nom">
-        <input type="text" id="valeur" placeholder="Valeur (ex: 3.5 ou Entrée)">
-        [span_12](start_span)<input type="text" id="note" placeholder="Note / Fournisseur[span_12](end_span)">
-        <button class="btn-send" onclick="submitData()">ENREGISTRER</button>
-        <button onclick="hideForm()" style="background:none; border:none; color:grey; margin-top:10px;">Annuler</button>
+    <div id="form-v">
+        <h2 id="title-v" style="margin-top:0"></h2>
+        <input type="text" id="emp" placeholder="Nom de l'employé">
+        <input type="text" id="val" placeholder="Valeur (ex: 3.5 ou Entrée)">
+        <input type="text" id="note" placeholder="Notes (ex: Sysco)">
+        <button class="btn-save" onclick="sendV()">ENREGISTRER</button>
+        <button onclick="closeV()" style="background:none; border:none; color:gray; width:100%; margin-top:10px;">Annuler</button>
     </div>
 
     <script>
-        let currentType = "";
+        let currentMode = "";
+        // TON URL GOOGLE SCRIPT GÉNÉRÉE
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyclVwHhv90BPF9N_VCdTB5LBUy7-XtwLOEQUcirGMV8L-IIzgbtXzdJUVTl74eH9ZU/exec";
 
-        function showForm(type) {
-            currentType = type;
-            document.getElementById('form-title').innerText = type.toUpperCase();
-            document.getElementById('form-box').style.display = 'block';
+        function openV(type) {
+            currentMode = type;
+            document.getElementById('title-v').innerText = type.toUpperCase();
+            document.getElementById('form-v').style.display = 'block';
         }
 
-        function hideForm() { document.getElementById('form-box').style.display = 'none'; }
+        function closeV() { document.getElementById('form-v').style.display = 'none'; }
 
-        function submitData() {
+        function sendV() {
             const payload = {
-                type: currentType,
-                employe: document.getElementById('employe').value,
-                valeur: document.getElementById('valeur').value,
+                type: currentMode,
+                employe: document.getElementById('emp').value,
+                valeur: document.getElementById('val').value,
                 note: document.getElementById('note').value
             };
 
@@ -121,9 +76,10 @@
                 mode: 'no-cors',
                 body: JSON.stringify(payload)
             }).then(() => {
-                [span_13](start_span)alert("✓ Enregistré dans Verdict IA[span_13](end_span)");
-                hideForm();
-            }).catch(err => alert("Erreur : " + err));
+                alert("✓ ENREGISTRÉ");
+                document.getElementById('val').value = "";
+                closeV();
+            }).catch(e => alert("Erreur: " + e));
         }
     </script>
 </body>
