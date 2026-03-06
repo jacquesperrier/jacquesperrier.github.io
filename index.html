@@ -1,8 +1,14 @@
 function envoyerDonnees(typeAction, nomEmploye, valeurAction, commentaire = "") {
-    const urlScript = "TON_URL_DE_DEPLOYEMENT_GOOGLE_ICI";
+    // ⚠️ REMPLACE BIEN L'URL CI-DESSOUS PAR LA TIENNE
+    const urlScript = "COPIE_TON_LIEN_GOOGLE_ICI"; 
+
+    if (urlScript === "COPIE_TON_LIEN_GOOGLE_ICI") {
+        alert("Attention Jacques : Tu n'as pas encore collé ton URL de déploiement Google !");
+        return;
+    }
 
     const payload = {
-        type: typeAction,      // Doit être: 'heure', 'temp', 'nettoyage', 'reception' ou 'formation'
+        type: typeAction,
         employe: nomEmploye,
         valeur: valeurAction,
         note: commentaire
@@ -10,12 +16,17 @@ function envoyerDonnees(typeAction, nomEmploye, valeurAction, commentaire = "") 
 
     fetch(urlScript, {
         method: 'POST',
-        mode: 'no-cors', // Important pour Google Apps Script
+        mode: 'no-cors', 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
     })
     .then(() => {
         alert("✓ Enregistré dans Verdict IA");
+        // Optionnel : Rediriger ou fermer le menu après succès
+        if(typeof fermerModal === "function") fermerModal(); 
     })
-    .catch(err => console.error("Erreur d'envoi:", err));
+    .catch(err => {
+        console.error("Erreur d'envoi:", err);
+        alert("Erreur de connexion. Vérifiez internet.");
+    });
 }
