@@ -1,26 +1,153 @@
-function envoyerDonnees(typeAction, nomEmploye, valeurAction, commentaire = "") {
-    // TON URL RÉELLE EST MAINTENANT INTÉGRÉE ICI
-    const urlScript = "https://script.google.com/macros/s/AKfycbyclVwHhv90BPF9N_VCdTB5LBUy7-XtwLOEQUcirGMV8L-IIzgbtXzdJUVTl74eH9ZU/exec";
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VERDICT IA - Dashboard</title>
+    <style>
+        /* DESIGN PRESTIGE NOIR & OR */
+        :root {
+            --gold: #D4AF37;
+            --black: #000000;
+            --dark-grey: #1A1A1A;
+            --red: #FF0000;
+        }
 
-    const payload = {
-        type: typeAction,
-        employe: nomEmploye,
-        valeur: valeurAction,
-        note: commentaire
-    };
+        body {
+            background-color: var(--black);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
 
-    // On utilise fetch pour envoyer les données au "Cerveau" Google
-    fetch(urlScript, {
-        method: 'POST',
-        mode: 'no-cors', // Requis pour Google Apps Script
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    })
-    .then(() => {
-        alert("✓ Enregistré dans Verdict IA");
-    })
-    .catch(err => {
-        console.error("Erreur d'envoi:", err);
-        alert("Erreur de connexion. Vérifiez internet.");
-    });
-}
+        h1 { color: var(--gold); margin-top: 20px; font-size: 1.5rem; letter-spacing: 2px; }
+
+        /* GRILLE DES 5 PILIERS */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        .btn-verdict {
+            background-color: var(--dark-grey);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 25px 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-verdict:active { background-color: var(--gold); color: black; }
+        .icon { font-size: 1.5rem; }
+
+        /* FORMULAIRE SIMPLE */
+        #form-container {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            padding-top: 50px;
+            z-index: 100;
+        }
+
+        input, select {
+            width: 80%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #000;
+            border: 1px solid var(--gold);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .btn-send { background: var(--gold); color: black; border: none; padding: 15px 30px; font-weight: bold; margin-top: 20px; width: 80%; }
+        .btn-close { background: transparent; color: #666; border: none; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <h1>VERDICT IA</h1>
+
+    <div class="dashboard">
+        <div class="btn-verdict" onclick="ouvrirForm('heure', 'PUNCH')"><span class="icon">🕒</span>PUNCH</div>
+        <div class="btn-verdict" onclick="ouvrirForm('temp', 'SÉCURITÉ')"><span class="icon">🌡️</span>TEMP.</div>
+        <div class="btn-verdict" onclick="ouvrirForm('nettoyage', 'HYGIÈNE')"><span class="icon">🧼</span>NETTOYAGE</div>
+        <div class="btn-verdict" onclick="ouvrirForm('reception', 'RÉCEPTION')"><span class="icon">🚚</span>RÉCEPTION</div>
+        <div class="btn-verdict" onclick="ouvrirForm('formation', 'ACADÉMIE')"><span class="icon">🎓</span>ACADÉMIE</div>
+    </div>
+
+    <div id="form-container">
+        <h2 id="form-title" style="color: var(--gold);"></h2>
+        <input type="text" id="employe" placeholder="NOM OU CODE PIN">
+        <input type="text" id="valeur" placeholder="VALEUR (Ex: 3.5 ou IN/OUT)">
+        <input type="text" id="note" placeholder="NOTE OU FOURNISSEUR (Optionnel)">
+        <button class="btn-send" onclick="validerEtEnvoyer()">ENREGISTRER</button>
+        <br>
+        <button class="btn-close" onclick="fermerForm()">ANNULER</button>
+    </div>
+
+    <script>
+        let typeActuel = "";
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyclVwHhv90BPF9N_VCdTB5LBUy7-XtwLOEQUcirGMV8L-IIzgbtXzdJUVTl74eH9ZU/exec";
+
+        function ouvrirForm(type, titre) {
+            typeActuel = type;
+            document.getElementById('form-title').innerText = titre;
+            document.getElementById('form-container').style.display = 'block';
+        }
+
+        function fermerForm() {
+            document.getElementById('form-container').style.display = 'none';
+        }
+
+        function validerEtEnvoyer() {
+            const emp = document.getElementById('employe').value;
+            const val = document.getElementById('valeur').value;
+            const note = document.getElementById('note').value;
+
+            if (!emp || !val) {
+                alert("Veuillez remplir au moins l'employé et la valeur.");
+                return;
+            }
+
+            const payload = {
+                type: typeActuel,
+                employe: emp,
+                valeur: val,
+                note: note
+            };
+
+            // APPEL AU CERVEAU GOOGLE
+            fetch(URL_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                alert("✓ VERDICT : Enregistré avec succès");
+                document.getElementById('valeur').value = "";
+                document.getElementById('note').value = "";
+                fermerForm();
+            })
+            .catch(err => alert("Erreur de connexion : " + err));
+        }
+    </script>
+</body>
+</html>
