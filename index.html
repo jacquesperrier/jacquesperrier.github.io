@@ -3,150 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VERDICT IA - Dashboard</title>
+    <title>VERDICT IA</title>
     <style>
-        /* DESIGN PRESTIGE NOIR & OR */
+        [span_2](start_span)/* SPÉCIFICATIONS COULEURS VERDICT IA[span_2](end_span) */
         :root {
-            --gold: #D4AF37;
-            --black: #000000;
-            --dark-grey: #1A1A1A;
-            --red: #FF0000;
+            --gold: #D4AF37;   [span_3](start_span)/* Or Métallique[span_3](end_span) */
+            --black: #000000;  [span_4](start_span)/* Noir Pur[span_4](end_span) */
+            --dark: #1A1A1A;   [span_5](start_span)/* Anthracite[span_5](end_span) */
         }
 
         body {
             background-color: var(--black);
             color: white;
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif; [span_6](start_span)/*[span_6](end_span) */
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
+            margin: 0;
+            padding: 20px;
         }
 
-        h1 { color: var(--gold); margin-top: 20px; font-size: 1.5rem; letter-spacing: 2px; }
+        h1 { color: var(--gold); letter-spacing: 2px; }
 
-        /* GRILLE DES 5 PILIERS */
-        .dashboard {
+        [span_7](start_span)/* GRILLE DASHBOARD 2x3[span_7](end_span) */
+        .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            padding: 20px;
             width: 100%;
             max-width: 400px;
-            box-sizing: border-box;
         }
 
         .btn-verdict {
-            background-color: var(--dark-grey);
-            border: 1px solid var(--gold);
+            background-color: var(--dark);
+            border: 2px solid var(--gold); [span_8](start_span)/*[span_8](end_span) */
             color: var(--gold);
-            padding: 25px 10px;
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 8px; [span_9](start_span)/*[span_9](end_span) */
             font-weight: bold;
-            font-size: 0.9rem;
-            cursor: pointer;
+            min-height: 80px; [span_10](start_span)/* Supérieur au min de 60px pour gants[span_10](end_span) */
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
-            transition: 0.3s;
+            cursor: pointer;
         }
 
-        .btn-verdict:active { background-color: var(--gold); color: black; }
-        .icon { font-size: 1.5rem; }
-
-        /* FORMULAIRE SIMPLE */
-        #form-container {
+        /* FORMULAIRE D'ENTRÉE */
+        #form-box {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            padding-top: 50px;
-            z-index: 100;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--dark);
+            border: 2px solid var(--gold);
+            padding: 20px;
+            width: 85%;
+            z-index: 1000;
         }
 
-        input, select {
-            width: 80%;
-            padding: 15px;
+        input {
+            width: 90%;
+            padding: 12px;
             margin: 10px 0;
             background: #000;
             border: 1px solid var(--gold);
             color: white;
-            font-size: 1.1rem;
         }
 
-        .btn-send { background: var(--gold); color: black; border: none; padding: 15px 30px; font-weight: bold; margin-top: 20px; width: 80%; }
-        .btn-close { background: transparent; color: #666; border: none; margin-top: 15px; }
+        .btn-send { background: var(--gold); color: black; border: none; padding: 15px; width: 100%; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <h1>VERDICT IA</h1>
+    [span_11](start_span)<p style="color: var(--gold); font-size: 0.8rem;">"L'excellence n'attend pas l'inspection."[span_11](end_span)</p>
 
-    <div class="dashboard">
-        <div class="btn-verdict" onclick="ouvrirForm('heure', 'PUNCH')"><span class="icon">🕒</span>PUNCH</div>
-        <div class="btn-verdict" onclick="ouvrirForm('temp', 'SÉCURITÉ')"><span class="icon">🌡️</span>TEMP.</div>
-        <div class="btn-verdict" onclick="ouvrirForm('nettoyage', 'HYGIÈNE')"><span class="icon">🧼</span>NETTOYAGE</div>
-        <div class="btn-verdict" onclick="ouvrirForm('reception', 'RÉCEPTION')"><span class="icon">🚚</span>RÉCEPTION</div>
-        <div class="btn-verdict" onclick="ouvrirForm('formation', 'ACADÉMIE')"><span class="icon">🎓</span>ACADÉMIE</div>
+    <div class="grid">
+        <div class="btn-verdict" onclick="showForm('heure')">🕒 PUNCH</div>
+        <div class="btn-verdict" onclick="showForm('temp')">🌡️ SÉCURITÉ</div>
+        <div class="btn-verdict" onclick="showForm('nettoyage')">🧼 HYGIÈNE</div>
+        <div class="btn-verdict" onclick="showForm('reception')">🚚 CONTRÔLE</div>
+        <div class="btn-verdict" onclick="showForm('formation')">🎓 ACADÉMIE</div>
     </div>
 
-    <div id="form-container">
-        <h2 id="form-title" style="color: var(--gold);"></h2>
-        <input type="text" id="employe" placeholder="NOM OU CODE PIN">
-        <input type="text" id="valeur" placeholder="VALEUR (Ex: 3.5 ou IN/OUT)">
-        <input type="text" id="note" placeholder="NOTE OU FOURNISSEUR (Optionnel)">
-        <button class="btn-send" onclick="validerEtEnvoyer()">ENREGISTRER</button>
-        <br>
-        <button class="btn-close" onclick="fermerForm()">ANNULER</button>
+    <div id="form-box">
+        <h3 id="form-title" style="color: var(--gold);"></h3>
+        <input type="text" id="employe" placeholder="Code PIN ou Nom">
+        <input type="text" id="valeur" placeholder="Valeur (ex: 3.5 ou Entrée)">
+        [span_12](start_span)<input type="text" id="note" placeholder="Note / Fournisseur[span_12](end_span)">
+        <button class="btn-send" onclick="submitData()">ENREGISTRER</button>
+        <button onclick="hideForm()" style="background:none; border:none; color:grey; margin-top:10px;">Annuler</button>
     </div>
 
     <script>
-        let typeActuel = "";
-        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyclVwHhv90BPF9N_VCdTB5LBUy7-XtwLOEQUcirGMV8L-IIzgbtXzdJUVTl74eH9ZU/exec";
+        let currentType = "";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyclVwHhv90BPF9N_VCdTB5LBUy7-XtwLOEQUcirGMV8L-IIzgbtXzdJUVTl74eH9ZU/exec";
 
-        function ouvrirForm(type, titre) {
-            typeActuel = type;
-            document.getElementById('form-title').innerText = titre;
-            document.getElementById('form-container').style.display = 'block';
+        function showForm(type) {
+            currentType = type;
+            document.getElementById('form-title').innerText = type.toUpperCase();
+            document.getElementById('form-box').style.display = 'block';
         }
 
-        function fermerForm() {
-            document.getElementById('form-container').style.display = 'none';
-        }
+        function hideForm() { document.getElementById('form-box').style.display = 'none'; }
 
-        function validerEtEnvoyer() {
-            const emp = document.getElementById('employe').value;
-            const val = document.getElementById('valeur').value;
-            const note = document.getElementById('note').value;
-
-            if (!emp || !val) {
-                alert("Veuillez remplir au moins l'employé et la valeur.");
-                return;
-            }
-
+        function submitData() {
             const payload = {
-                type: typeActuel,
-                employe: emp,
-                valeur: val,
-                note: note
+                type: currentType,
+                employe: document.getElementById('employe').value,
+                valeur: document.getElementById('valeur').value,
+                note: document.getElementById('note').value
             };
 
-            // APPEL AU CERVEAU GOOGLE
-            fetch(URL_SCRIPT, {
+            fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
-            })
-            .then(() => {
-                alert("✓ VERDICT : Enregistré avec succès");
-                document.getElementById('valeur').value = "";
-                document.getElementById('note').value = "";
-                fermerForm();
-            })
-            .catch(err => alert("Erreur de connexion : " + err));
+            }).then(() => {
+                [span_13](start_span)alert("✓ Enregistré dans Verdict IA[span_13](end_span)");
+                hideForm();
+            }).catch(err => alert("Erreur : " + err));
         }
     </script>
 </body>
