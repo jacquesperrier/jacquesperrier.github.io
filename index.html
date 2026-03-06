@@ -6,22 +6,22 @@
     <title>Verdict Inspection AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --or: #C9A84C; --noir: #06080A; --c1: #131619; --txt: #E8E4DC; --txt3: #565C68; --vert: #22C55E; }
-        body { background: var(--noir); color: var(--txt); font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; }
+        :root { --or: #C9A84C; --noir: #06080A; --c1: #131619; --txt: #E8E4DC; --txt3: #565C68; }
+        body { background: var(--noir); color: var(--txt); font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         header { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .V { color: var(--or); font-weight: 600; font-family: 'Cormorant Garamond', serif; font-size: 45px; line-height: 1; }
         .screen { display: none; padding: 20px; max-width: 450px; margin: 0 auto; }
         .active { display: block; }
-        h2 { font-weight: 300; font-size: 18px; letter-spacing: 2px; color: var(--or); text-transform: uppercase; margin-bottom: 25px; }
+        h2 { font-weight: 300; font-size: 16px; letter-spacing: 2px; color: var(--or); text-transform: uppercase; margin-bottom: 25px; text-align: center; }
         label { display: block; font-size: 10px; letter-spacing: 2px; color: var(--txt3); margin: 15px 0 5px; text-transform: uppercase; }
         input, select, button { 
             width: 100%; padding: 16px; margin: 5px 0; border-radius: 10px; border: 1px solid #222; 
             background: #1A1D22; color: white; font-size: 16px; box-sizing: border-box; font-family: 'Montserrat';
         }
         button { background: var(--or); color: black; font-weight: 700; cursor: pointer; border: none; margin-top: 20px; }
-        .card { background: var(--c1); border: 1px solid rgba(201,168,76,0.1); padding: 20px; border-radius: 15px; margin-bottom: 15px; cursor: pointer; }
-        .card-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 15px; }
-        .btn-back { background: none; color: var(--txt3); border: 1px solid #222; font-size: 12px; margin-top: 40px; }
+        .card { background: var(--c1); border: 1px solid rgba(201,168,76,0.1); padding: 25px 20px; border-radius: 15px; margin-bottom: 15px; cursor: pointer; }
+        .card-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 15px; letter-spacing: 1px; }
+        .btn-back { background: none; color: var(--txt3); border: 1px solid #222; font-size: 11px; margin-top: 30px; }
     </style>
 </head>
 <body>
@@ -33,77 +33,77 @@
 
 <div id="screen-pin" class="screen active">
     <h2>Identification</h2>
-    <label>Votre code secret</label>
+    <label>Code Employé</label>
     <input type="password" id="pin-input" placeholder="0000" maxlength="4" inputmode="numeric">
     <button onclick="login()">ENTRER</button>
 </div>
 
 <div id="screen-menu" class="screen">
-    <h2 id="welcome-msg">Session Active</h2>
+    <h2 id="welcome-msg">Menu Principal</h2>
     <div class="card" onclick="showScreen('screen-form-temp')">
-        <div class="card-title"><span>🌡️</span> TEMPÉRATURES</div>
+        <div class="card-title">🌡️ TEMPÉRATURES</div>
     </div>
     <div class="card" onclick="showScreen('screen-form-nettoyage')">
-        <div class="card-title"><span>🧹</span> NETTOYAGE</div>
+        <div class="card-title">🧹 NETTOYAGE</div>
     </div>
     <div class="card" onclick="showScreen('screen-form-heures')">
-        <div class="card-title"><span>⏰</span> HEURES TRAVAILLÉES</div>
+        <div class="card-title">⏰ HEURES (POINTAGE)</div>
     </div>
     <button class="btn-back" onclick="logout()">DÉCONNEXION</button>
 </div>
 
 <div id="screen-form-temp" class="screen">
-    <h2>Températures</h2>
+    <h2>Enregistrer Température</h2>
     <label>Équipement</label>
     <select id="temp-equip">
-        <option value="Frigo 1">Frigo 1 (Viandes)</option>
-        <option value="Frigo 2">Frigo 2 (Légumes)</option>
-        <option value="Congélateur 1">Congélateur 1</option>
+        <option value="Frigo 1 (Viandes)">Frigo 1 (Viandes)</option>
+        <option value="Frigo 2 (Légumes)">Frigo 2 (Légumes)</option>
+        <option value="Congélateur">Congélateur</option>
         <option value="Bain-Marie">Bain-Marie</option>
     </select>
-    <label>Mesure (°C)</label>
+    <label>Température (°C)</label>
     <input type="number" id="temp-val" step="0.1" placeholder="4.0">
     <button onclick="save('Temperatures')">ENREGISTRER</button>
-    <button class="btn-back" onclick="showScreen('screen-menu')">RETOUR</button>
+    <button class="btn-back" onclick="showScreen('screen-menu')">ANNULER</button>
 </div>
 
 <div id="screen-form-nettoyage" class="screen">
-    <h2>Nettoyage</h2>
-    <label>Zone inspectée</label>
+    <h2>Registre Nettoyage</h2>
+    <label>Zone</label>
     <select id="net-zone">
-        <option value="Cuisine - Surfaces">Cuisine - Surfaces</option>
+        <option value="Surfaces Cuisine">Surfaces Cuisine</option>
+        <option value="Planchers">Planchers</option>
         <option value="Plonge">Plonge</option>
-        <option value="Toilettes">Toilettes</option>
         <option value="Hottes">Hottes</option>
     </select>
-    <label>Statut</label>
+    <label>État</label>
     <select id="net-statut">
-        <option value="CONFORME">Propre / Fait</option>
+        <option value="CONFORME">Nettoyé / Propre</option>
         <option value="À REVOIR">À revoir</option>
     </select>
     <button onclick="save('Nettoyage')">ENREGISTRER</button>
-    <button class="btn-back" onclick="showScreen('screen-menu')">RETOUR</button>
+    <button class="btn-back" onclick="showScreen('screen-menu')">ANNULER</button>
 </div>
 
 <div id="screen-form-heures" class="screen">
-    <h2>Heures</h2>
+    <h2>Pointage Heures</h2>
     <label>Action</label>
     <select id="heure-action">
         <option value="Arrivée">Arrivée</option>
         <option value="Départ">Départ</option>
     </select>
-    <label>Quart de travail</label>
+    <label>Poste</label>
     <select id="heure-quart">
         <option value="Cuisine">Cuisine</option>
         <option value="Service">Service</option>
     </select>
-    <button onclick="save('Heures_Regulier')">ENREGISTRER</button>
-    <button class="btn-back" onclick="showScreen('screen-menu')">RETOUR</button>
+    <button onclick="save('Heures_Regulier')">POINTER</button>
+    <button class="btn-back" onclick="showScreen('screen-menu')">ANNULER</button>
 </div>
 
 <script>
-    // URL DE TON API GOOGLE SCRIPT
-    const API_URL = "https://script.google.com/macros/s/AKfycbxk0TfauF3_JvbRkVsJ_jaQi_ZH6bjZJOPmFmpIHbfna7piCNwldGT8y4iMmW8goNij/exec"; 
+    // TA NOUVELLE URL D'API
+    const API_URL = "https://script.google.com/macros/s/AKfycbzGJeovjtw-VY0il1WqHP7PkdqTfNIcDqzgRdRR0bLt0I-gUiPZXJGre04EpO0XM8TW/exec"; 
     let userPin = "";
 
     function showScreen(id) {
@@ -114,7 +114,7 @@
 
     function login() {
         const pin = document.getElementById('pin-input').value;
-        if (pin.length < 1) return alert("PIN requis");
+        if (!pin) return alert("Entrez votre PIN");
         userPin = pin;
         document.getElementById('welcome-msg').innerText = "Session : " + pin;
         showScreen('screen-menu');
@@ -126,33 +126,40 @@
         showScreen('screen-pin');
     }
 
-    async function save(type) {
+    function save(type) {
         let payload = { type: type, pin: userPin };
 
         if (type === 'Temperatures') {
+            const v = document.getElementById('temp-val').value;
+            if(!v) return alert("Entrez une valeur");
             payload.equipement = document.getElementById('temp-equip').value;
-            payload.valeur = document.getElementById('temp-val').value;
-            payload.statut = (payload.valeur > 4) ? "NON-CONFORME" : "CONFORME";
-            payload.action = (payload.statut === "NON-CONFORME") ? "Vérification thermostat" : "";
+            payload.valeur = v;
+            payload.statut = (parseFloat(v) > 4) ? "NON-CONFORME" : "CONFORME";
+            payload.action = (payload.statut === "NON-CONFORME") ? "Vérification thermostat" : "N/A";
         } 
         else if (type === 'Nettoyage') {
             payload.zone = document.getElementById('net-zone').value;
-            payload.produit = "Standard";
+            payload.produit = "Dégraissant Std";
             payload.statut = document.getElementById('net-statut').value;
+            payload.frequence = "Quotidien";
         }
         else if (type === 'Heures_Regulier') {
             payload.action = document.getElementById('heure-action').value;
             payload.quart = document.getElementById('heure-quart').value;
         }
 
-        // ENVOI SANS ATTENTE (Vitesse maximum)
+        // --- ENVOI ULTRA-RAPIDE (MODE NO-CORS) ---
         fetch(API_URL, {
             method: 'POST',
-            mode: 'no-cors',
+            mode: 'no-cors', 
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        alert("✅ Enregistré !");
+        // Succès immédiat côté utilisateur
+        alert("✅ Enregistré avec succès !");
+        if(type === 'Temperatures') document.getElementById('temp-val').value = "";
         showScreen('screen-menu');
     }
 </script>
