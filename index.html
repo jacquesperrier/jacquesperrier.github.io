@@ -2,158 +2,159 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verdict Inspection AI — Interface Mobile</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verdict Inspection AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --or: #C9A84C; --noir: #06080A; --c1: #0D0F12; --txt: #E8E4DC; --txt3: #565C68; --vert: #22C55E; --rouge: #EF4444;
-        }
-        body { background: var(--noir); color: var(--txt); font-family: 'Montserrat', sans-serif; margin: 0; text-align: center; }
-        header { padding: 40px 20px; }
-        .V { color: var(--or); font-weight: 600; font-family: 'Cormorant Garamond', serif; font-size: 50px; }
-        
-        .screen { display: none; padding: 20px; max-width: 400px; margin: 0 auto; }
+        :root { --or: #C9A84C; --noir: #06080A; --c1: #131619; --txt: #E8E4DC; --txt3: #565C68; --vert: #22C55E; }
+        body { background: var(--noir); color: var(--txt); font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; }
+        header { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .V { color: var(--or); font-weight: 600; font-family: 'Cormorant Garamond', serif; font-size: 45px; line-height: 1; }
+        .screen { display: none; padding: 20px; max-width: 450px; margin: 0 auto; }
         .active { display: block; }
-
+        h2 { font-weight: 300; font-size: 18px; letter-spacing: 2px; color: var(--or); text-transform: uppercase; margin-bottom: 25px; }
+        label { display: block; font-size: 10px; letter-spacing: 2px; color: var(--txt3); margin: 15px 0 5px; text-transform: uppercase; }
         input, select, button { 
-            width: 100%; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; 
-            background: #1A1D22; color: white; font-size: 16px; box-sizing: border-box;
+            width: 100%; padding: 16px; margin: 5px 0; border-radius: 10px; border: 1px solid #222; 
+            background: #1A1D22; color: white; font-size: 16px; box-sizing: border-box; font-family: 'Montserrat';
         }
-        button { background: var(--or); color: black; font-weight: 600; cursor: pointer; border: none; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .card { background: #131619; border: 1px solid #222; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: left; }
-        .status { font-size: 12px; margin-top: 10px; color: var(--or); }
-        .loader { display: none; margin: 10px auto; border: 3px solid #f3f3f3; border-top: 3px solid var(--or); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        button { background: var(--or); color: black; font-weight: 700; cursor: pointer; border: none; margin-top: 20px; }
+        .card { background: var(--c1); border: 1px solid rgba(201,168,76,0.1); padding: 20px; border-radius: 15px; margin-bottom: 15px; cursor: pointer; }
+        .card-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 15px; }
+        .btn-back { background: none; color: var(--txt3); border: 1px solid #222; font-size: 12px; margin-top: 40px; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="V">Verdict</div>
-    <div style="letter-spacing: 4px; font-size: 10px; color: var(--txt3);">INSPECTION AI</div>
+    <div style="letter-spacing: 5px; font-size: 9px; color: var(--txt3); margin-top: 5px;">INSPECTION AI</div>
 </header>
 
 <div id="screen-pin" class="screen active">
-    <h2>Connexion</h2>
-    <p style="color: var(--txt3);">Entrez votre PIN employé</p>
-    <input type="password" id="pin-input" placeholder="0 0 0 0" maxlength="4" inputmode="numeric">
-    <button onclick="login()">DÉMARRER</button>
+    <h2>Identification</h2>
+    <label>Votre code secret</label>
+    <input type="password" id="pin-input" placeholder="0000" maxlength="4" inputmode="numeric">
+    <button onclick="login()">ENTRER</button>
 </div>
 
 <div id="screen-menu" class="screen">
-    <h2 id="welcome-msg">Bonjour</h2>
-    <div class="card" onclick="openForm('Temperatures')">🌡️ Températures</div>
-    <div class="card" onclick="openForm('Nettoyage')">🧹 Nettoyage</div>
-    <div class="card" onclick="openForm('Heures_Regulier')">⏰ Arrivée / Départ</div>
-    <button onclick="logout()" style="background: none; color: var(--txt3); border: 1px solid #333;">Déconnexion</button>
+    <h2 id="welcome-msg">Session Active</h2>
+    <div class="card" onclick="showScreen('screen-form-temp')">
+        <div class="card-title"><span>🌡️</span> TEMPÉRATURES</div>
+    </div>
+    <div class="card" onclick="showScreen('screen-form-nettoyage')">
+        <div class="card-title"><span>🧹</span> NETTOYAGE</div>
+    </div>
+    <div class="card" onclick="showScreen('screen-form-heures')">
+        <div class="card-title"><span>⏰</span> HEURES TRAVAILLÉES</div>
+    </div>
+    <button class="btn-back" onclick="logout()">DÉCONNEXION</button>
 </div>
 
 <div id="screen-form-temp" class="screen">
-    <h2 onclick="showScreen('screen-menu')" style="cursor:pointer">← Retour</h2>
-    <div class="card">
-        <label>Équipement</label>
-        <select id="temp-equip">
-            <option value="Frigo 1">Frigo 1 (Viandes)</option>
-            <option value="Frigo 2">Frigo 2 (Légumes)</option>
-            <option value="Congélateur 1">Congélateur 1</option>
-            <option value="Bain-Marie">Bain-Marie</option>
-        </select>
-        
-        <label>Température (°C)</label>
-        <input type="number" id="temp-val" step="0.1" placeholder="4.0">
-        
-        <div id="temp-status" class="status"></div>
-        <button id="btn-submit" onclick="submitTemp()">ENREGISTRER</button>
-        <div id="loader" class="loader"></div>
-    </div>
+    <h2>Températures</h2>
+    <label>Équipement</label>
+    <select id="temp-equip">
+        <option value="Frigo 1">Frigo 1 (Viandes)</option>
+        <option value="Frigo 2">Frigo 2 (Légumes)</option>
+        <option value="Congélateur 1">Congélateur 1</option>
+        <option value="Bain-Marie">Bain-Marie</option>
+    </select>
+    <label>Mesure (°C)</label>
+    <input type="number" id="temp-val" step="0.1" placeholder="4.0">
+    <button onclick="save('Temperatures')">ENREGISTRER</button>
+    <button class="btn-back" onclick="showScreen('screen-menu')">RETOUR</button>
+</div>
+
+<div id="screen-form-nettoyage" class="screen">
+    <h2>Nettoyage</h2>
+    <label>Zone inspectée</label>
+    <select id="net-zone">
+        <option value="Cuisine - Surfaces">Cuisine - Surfaces</option>
+        <option value="Plonge">Plonge</option>
+        <option value="Toilettes">Toilettes</option>
+        <option value="Hottes">Hottes</option>
+    </select>
+    <label>Statut</label>
+    <select id="net-statut">
+        <option value="CONFORME">Propre / Fait</option>
+        <option value="À REVOIR">À revoir</option>
+    </select>
+    <button onclick="save('Nettoyage')">ENREGISTRER</button>
+    <button class="btn-back" onclick="showScreen('screen-menu')">RETOUR</button>
+</div>
+
+<div id="screen-form-heures" class="screen">
+    <h2>Heures</h2>
+    <label>Action</label>
+    <select id="heure-action">
+        <option value="Arrivée">Arrivée</option>
+        <option value="Départ">Départ</option>
+    </select>
+    <label>Quart de travail</label>
+    <select id="heure-quart">
+        <option value="Cuisine">Cuisine</option>
+        <option value="Service">Service</option>
+    </select>
+    <button onclick="save('Heures_Regulier')">ENREGISTRER</button>
+    <button class="btn-back" onclick="showScreen('screen-menu')">RETOUR</button>
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyy86lSTYaOKDZFL5rVaqkhoValvoXR70ID9_FXDe0xZ8yP88jAjcoUK6ZBviHBfD2o/exec";
-    let currentUser = { pin: "", name: "" };
+    // URL DE TON API GOOGLE SCRIPT
+    const API_URL = "https://script.google.com/macros/s/AKfycbxk0TfauF3_JvbRkVsJ_jaQi_ZH6bjZJOPmFmpIHbfna7piCNwldGT8y4iMmW8goNij/exec"; 
+    let userPin = "";
 
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
     }
 
-    async function login() {
+    function login() {
         const pin = document.getElementById('pin-input').value;
-        if (!pin) return alert("Entrez un PIN");
-
-        // Simulation de validation (l'API validera réellement lors de l'envoi)
-        // Note: Dans une version avancée, on pourrait faire un petit fetch de validation ici
-        currentUser.pin = pin;
-        document.getElementById('welcome-msg').innerText = "Session active (" + pin + ")";
+        if (pin.length < 1) return alert("PIN requis");
+        userPin = pin;
+        document.getElementById('welcome-msg').innerText = "Session : " + pin;
         showScreen('screen-menu');
     }
 
     function logout() {
-        currentUser = { pin: "", name: "" };
+        userPin = "";
         document.getElementById('pin-input').value = "";
         showScreen('screen-pin');
     }
 
-    function openForm(type) {
-        if(type === 'Temperatures') showScreen('screen-form-temp');
-        else alert("Module " + type + " en cours d'activation.");
-    }
+    async function save(type) {
+        let payload = { type: type, pin: userPin };
 
-    async function submitTemp() {
-        const equip = document.getElementById('temp-equip').value;
-        const val = parseFloat(document.getElementById('temp-val').value);
-        const btn = document.getElementById('btn-submit');
-        const loader = document.getElementById('loader');
-
-        if (isNaN(val)) return alert("Entrez une valeur valide");
-
-        // Logique de conformité (Simple exemple MAPAQ)
-        let statut = "CONFORME";
-        let action = "";
-        if (equip.includes("Frigo") && val > 4) {
-            statut = "NON-CONFORME";
-            action = "Ajustement thermostat / Vérification joint";
+        if (type === 'Temperatures') {
+            payload.equipement = document.getElementById('temp-equip').value;
+            payload.valeur = document.getElementById('temp-val').value;
+            payload.statut = (payload.valeur > 4) ? "NON-CONFORME" : "CONFORME";
+            payload.action = (payload.statut === "NON-CONFORME") ? "Vérification thermostat" : "";
+        } 
+        else if (type === 'Nettoyage') {
+            payload.zone = document.getElementById('net-zone').value;
+            payload.produit = "Standard";
+            payload.statut = document.getElementById('net-statut').value;
+        }
+        else if (type === 'Heures_Regulier') {
+            payload.action = document.getElementById('heure-action').value;
+            payload.quart = document.getElementById('heure-quart').value;
         }
 
-        const payload = {
-            type: "Temperatures",
-            pin: currentUser.pin,
-            equipement: equip,
-            valeur: val,
-            statut: statut,
-            action: action
-        };
+        // ENVOI SANS ATTENTE (Vitesse maximum)
+        fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(payload)
+        });
 
-        btn.disabled = true;
-        loader.style.display = "block";
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Mode nécessaire pour Apps Script sans redirection complexe
-                body: JSON.stringify(payload)
-            });
-
-            // Note: avec 'no-cors', on ne peut pas lire le JSON de réponse, 
-            // mais si l'envoi réussit, on le considère OK après 1 sec.
-            setTimeout(() => {
-                alert("Données envoyées vers Google Sheets !");
-                document.getElementById('temp-val').value = "";
-                btn.disabled = false;
-                loader.style.display = "none";
-                showScreen('screen-menu');
-            }, 1000);
-
-        } catch (error) {
-            alert("Erreur de connexion : " + error);
-            btn.disabled = false;
-            loader.style.display = "none";
-        }
+        alert("✅ Enregistré !");
+        showScreen('screen-menu');
     }
 </script>
-
 </body>
 </html>
