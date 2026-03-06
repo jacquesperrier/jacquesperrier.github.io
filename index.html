@@ -18,7 +18,8 @@
             width: 100%; padding: 16px; margin: 5px 0; border-radius: 10px; border: 1px solid #222; 
             background: #1A1D22; color: white; font-size: 16px; box-sizing: border-box; font-family: 'Montserrat';
         }
-        button { background: var(--or); color: black; font-weight: 700; cursor: pointer; border: none; margin-top: 20px; }
+        button { background: var(--or); color: black; font-weight: 700; cursor: pointer; border: none; margin-top: 20px; transition: 0.2s; }
+        button:active { transform: scale(0.98); opacity: 0.8; }
         .card { background: var(--c1); border: 1px solid rgba(201,168,76,0.1); padding: 25px 20px; border-radius: 15px; margin-bottom: 15px; cursor: pointer; }
         .card-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 15px; letter-spacing: 1px; }
         .btn-back { background: none; color: var(--txt3); border: 1px solid #222; font-size: 11px; margin-top: 30px; }
@@ -53,11 +54,11 @@
 </div>
 
 <div id="screen-form-temp" class="screen">
-    <h2>Enregistrer Température</h2>
+    <h2>Températures</h2>
     <label>Équipement</label>
     <select id="temp-equip">
-        <option value="Frigo 1 (Viandes)">Frigo 1 (Viandes)</option>
-        <option value="Frigo 2 (Légumes)">Frigo 2 (Légumes)</option>
+        <option value="Frigo 1">Frigo 1</option>
+        <option value="Frigo 2">Frigo 2</option>
         <option value="Congélateur">Congélateur</option>
         <option value="Bain-Marie">Bain-Marie</option>
     </select>
@@ -68,42 +69,30 @@
 </div>
 
 <div id="screen-form-nettoyage" class="screen">
-    <h2>Registre Nettoyage</h2>
+    <h2>Nettoyage</h2>
     <label>Zone</label>
     <select id="net-zone">
-        <option value="Surfaces Cuisine">Surfaces Cuisine</option>
-        <option value="Planchers">Planchers</option>
+        <option value="Cuisine">Cuisine</option>
         <option value="Plonge">Plonge</option>
-        <option value="Hottes">Hottes</option>
-    </select>
-    <label>État</label>
-    <select id="net-statut">
-        <option value="CONFORME">Nettoyé / Propre</option>
-        <option value="À REVOIR">À revoir</option>
+        <option value="Toilettes">Toilettes</option>
     </select>
     <button onclick="save('Nettoyage')">ENREGISTRER</button>
     <button class="btn-back" onclick="showScreen('screen-menu')">ANNULER</button>
 </div>
 
 <div id="screen-form-heures" class="screen">
-    <h2>Pointage Heures</h2>
+    <h2>Heures</h2>
     <label>Action</label>
-    <select id="heure-action">
-        <option value="Arrivée">Arrivée</option>
-        <option value="Départ">Départ</option>
-    </select>
+    <select id="heure-action"><option value="Arrivée">Arrivée</option><option value="Départ">Départ</option></select>
     <label>Poste</label>
-    <select id="heure-quart">
-        <option value="Cuisine">Cuisine</option>
-        <option value="Service">Service</option>
-    </select>
+    <select id="heure-quart"><option value="Cuisine">Cuisine</option><option value="Service">Service</option></select>
     <button onclick="save('Heures_Regulier')">POINTER</button>
     <button class="btn-back" onclick="showScreen('screen-menu')">ANNULER</button>
 </div>
 
 <script>
-    // --- TA NOUVELLE URL DE SERVEUR ---
-    const API_URL = "https://script.google.com/macros/s/AKfycbxrfM7nB_yL-5gFmycBOeiCtbUyWGnBkw2WsmAPR28n2qsbFMos6wJnEVZBlps0aPlZ/exec"; 
+    // URL DE TON NOUVEAU SERVEUR
+    const API_URL = "https://script.google.com/macros/s/AKfycbxNaW6WMraiG2mgA57-rrCkWIBi2IUJsGvx4omDAdBZfn3Oa-czVR4QIK9FPsFhoUmw/exec"; 
     
     let userPin = "";
 
@@ -131,35 +120,28 @@
         let payload = { type: type, pin: userPin };
 
         if (type === 'Temperatures') {
-            const v = document.getElementById('temp-val').value;
-            if(!v) return alert("Entrez une valeur");
             payload.equipement = document.getElementById('temp-equip').value;
-            payload.valeur = v;
-            payload.statut = (parseFloat(v) > 4) ? "NON-CONFORME" : "CONFORME";
+            payload.valeur = document.getElementById('temp-val').value;
+            payload.statut = (parseFloat(payload.valeur) > 4) ? "NON-CONFORME" : "CONFORME";
             payload.action = (payload.statut === "NON-CONFORME") ? "Vérification thermostat" : "N/A";
         } 
         else if (type === 'Nettoyage') {
             payload.zone = document.getElementById('net-zone').value;
-            payload.produit = "Dégraissant Std";
-            payload.statut = document.getElementById('net-statut').value;
-            payload.frequence = "Quotidien";
+            payload.produit = "Standard";
+            payload.statut = "CONFORME";
         }
         else if (type === 'Heures_Regulier') {
             payload.action = document.getElementById('heure-action').value;
             payload.quart = document.getElementById('heure-quart').value;
         }
 
-        // --- ENVOI AU SERVEUR ---
         fetch(API_URL, {
             method: 'POST',
-            mode: 'no-cors', // Évite les erreurs de sécurité bloquantes
-            cache: 'no-cache',
+            mode: 'no-cors',
             body: JSON.stringify(payload)
         });
 
-        alert("✅ Enregistré avec succès !");
-        
-        // Réinitialisation et retour au menu
+        alert("✅ Donnée envoyée !");
         if(type === 'Temperatures') document.getElementById('temp-val').value = "";
         showScreen('screen-menu');
     }
