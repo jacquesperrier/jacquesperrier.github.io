@@ -102,8 +102,9 @@
 </div>
 
 <script>
-    // TA NOUVELLE URL D'API
-    const API_URL = "https://script.google.com/macros/s/AKfycbzGJeovjtw-VY0il1WqHP7PkdqTfNIcDqzgRdRR0bLt0I-gUiPZXJGre04EpO0XM8TW/exec"; 
+    // --- TA NOUVELLE URL DE SERVEUR ---
+    const API_URL = "https://script.google.com/macros/s/AKfycbxrfM7nB_yL-5gFmycBOeiCtbUyWGnBkw2WsmAPR28n2qsbFMos6wJnEVZBlps0aPlZ/exec"; 
+    
     let userPin = "";
 
     function showScreen(id) {
@@ -148,17 +149,17 @@
             payload.quart = document.getElementById('heure-quart').value;
         }
 
-        // --- ENVOI ULTRA-RAPIDE (MODE NO-CORS) ---
+        // --- ENVOI AU SERVEUR ---
         fetch(API_URL, {
             method: 'POST',
-            mode: 'no-cors', 
+            mode: 'no-cors', // Évite les erreurs de sécurité bloquantes
             cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        // Succès immédiat côté utilisateur
         alert("✅ Enregistré avec succès !");
+        
+        // Réinitialisation et retour au menu
         if(type === 'Temperatures') document.getElementById('temp-val').value = "";
         showScreen('screen-menu');
     }
