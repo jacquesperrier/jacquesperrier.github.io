@@ -1,196 +1,56 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Verdict Inspection AI</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-/* --- VARIABLES ET FIXES CSS --- */
-:root {
-  --or: #C9A84C; --or2: #E8C97A;
-  --noir: #080809; --card: #0F1012; --card2: #161819;
-  --border: rgba(255,255,255,0.08); --border-or: rgba(201,168,76,0.3);
-  --blanc: #F0EBE0; --gris: #555A64; --gris2: #8A8E98;
-  --vert: #22C55E; --rouge: #EF4444; --jaune: #F59E0B;
-}
+const SHEET_ID = "18vFZctK9UI5NKa1XbwNm7xoYCl0B8_0uog5lXzwDpdM";
+const SHEET_NAME = "Temperatures";
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; background: var(--noir); color: var(--blanc); font-family: 'Montserrat', sans-serif; overflow: hidden; }
+const EMPLOYES = {
+  "1111": "Jean",
+  "2222": "Marie",
+  "3333": "Paul"
+};
 
-/* --- SCREENS --- */
-.screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--noir); transition: opacity .35s, transform .35s; z-index: 10; }
-.screen.hidden { opacity: 0; pointer-events: none; transform: translateY(30px); }
-
-/* --- ÉLÉMENTS UI --- */
-.logo { font-family: 'Cormorant Garamond', serif; font-size: clamp(72px, 20vw, 100px); font-weight: 300; letter-spacing: 4px; color: var(--blanc); }
-.logo .V { color: var(--or); font-weight: 600; }
-.tagline { font-size: 11px; letter-spacing: 8px; color: #6B7280; margin: 12px 0 50px; font-weight: 300; }
-.btn-main { border: 2px solid var(--or); color: var(--or); font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 6px; padding: 18px 64px; border-radius: 50px; background: transparent; cursor: pointer; }
-
-/* --- PIN --- */
-.pin-dots { display: flex; gap: 20px; margin-bottom: 44px; }
-.pin-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #333; }
-.pin-dot.filled { background: var(--or); border-color: var(--or); box-shadow: 0 0 16px rgba(201,168,76,0.7); }
-.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 300px; }
-.key { background: #1A1C20; border: 1.5px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 22px 0; font-size: 26px; color: var(--blanc); cursor: pointer; text-align: center; }
-
-/* --- FORMULAIRES --- */
-.form-screen { justify-content: flex-start; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.form-header { width: 100%; display: flex; align-items: center; gap: 12px; padding: 52px 20px 20px; background: var(--noir); position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--border); }
-.form-body { width: 100%; max-width: 420px; padding: 20px; }
-.field-group { margin-bottom: 16px; width: 100%; }
-.field-label { font-size: 9px; letter-spacing: 3px; color: var(--or); font-weight: 600; margin-bottom: 8px; display: block; }
-.field-input, .field-select { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 10px; color: var(--blanc); padding: 14px; font-family: inherit; outline: none; }
-.statut-pills { display: flex; gap: 8px; }
-.pill { flex: 1; padding: 14px 0; border-radius: 10px; border: 1.5px solid var(--border); font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; color: var(--gris2); }
-.pill.active.conforme { background: rgba(34,197,94,0.1); border-color: var(--vert); color: var(--vert); }
-.pill.active.nonconforme { background: rgba(239,68,68,0.1); border-color: var(--rouge); color: var(--rouge); }
-
-.spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.2); border-top-color: var(--or); border-radius: 50%; animation: spin .8s linear infinite; margin: auto; }
-@keyframes spin { to { transform: rotate(360deg); } }
-</style>
-</head>
-<body>
-
-<div class="screen" id="splash">
-  <div class="logo"><span class="V">V</span>erdict</div>
-  <div class="tagline">INSPECTION AI · EXPERT</div>
-  <button class="btn-main" onclick="showScreen('pin')">DÉMARRER</button>
-</div>
-
-<div class="screen hidden" id="pin">
-  <div class="pin-dots"><div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div><div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div></div>
-  <div class="keypad">
-    <div class="key" onclick="pinPress(1)">1</div><div class="key" onclick="pinPress(2)">2</div><div class="key" onclick="pinPress(3)">3</div>
-    <div class="key" onclick="pinPress(4)">4</div><div class="key" onclick="pinPress(5)">5</div><div class="key" onclick="pinPress(6)">6</div>
-    <div class="key" onclick="pinPress(7)">7</div><div class="key" onclick="pinPress(8)">8</div><div class="key" onclick="pinPress(9)">9</div>
-    <div class="key" style="color:var(--rouge)" onclick="pinClear()">C</div><div class="key" onclick="pinPress(0)">0</div><div class="key" style="color:var(--vert)" onclick="pinConfirm()">OK</div>
-  </div>
-  <div id="pinError" style="color:var(--rouge); font-size:10px; margin-top:15px; letter-spacing:2px;"></div>
-</div>
-
-<div class="screen hidden" id="menu">
-  <div id="greeting" style="font-family:'Cormorant Garamond'; font-size:32px; color:var(--or); margin-bottom:30px;"></div>
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; width:320px;">
-    <button class="pill" onclick="showForm('heures')">⏰ HEURES</button>
-    <button class="pill" onclick="showForm('temperatures')">🌡️ TEMP.</button>
-    <button class="pill" onclick="showForm('nettoyage')">🧹 NETTOYAGE</button>
-    <button class="pill" onclick="showForm('reception')">📦 RÉCEPTION</button>
-  </div>
-  <button onclick="showScreen('splash')" style="margin-top:40px; background:none; border:none; color:var(--gris2); letter-spacing:3px; font-size:10px;">QUITTER</button>
-</div>
-
-<div class="screen form-screen hidden" id="form-heures">
-  <div class="form-header">
-    <button onclick="showScreen('menu')" style="background:none; border:1px solid var(--border); color:white; padding:5px 10px; border-radius:5px;">←</button>
-    <div style="font-size:11px; letter-spacing:3px;">SAISIE DES HEURES</div>
-  </div>
-  <div class="form-body">
-    <div class="field-group">
-      <label class="field-label">EMPLOYÉ</label>
-      <select class="field-select" id="h-employe"></select>
-    </div>
-    <div class="field-group">
-      <label class="field-label">ACTION</label>
-      <div class="statut-pills">
-        <div class="pill conforme" id="pill-arrivee" onclick="selectAction('ARRIVÉE')">ARRIVÉE</div>
-        <div class="pill nonconforme" id="pill-depart" onclick="selectAction('DÉPART')">DÉPART</div>
-      </div>
-    </div>
-    <div class="field-group">
-        <label class="field-label">HEURE</label>
-        <input type="time" class="field-input" id="h-heure">
-    </div>
-    <button class="btn-main" style="width:100%; margin-top:20px;" onclick="submitForm('heures')">ENREGISTRER</button>
-  </div>
-</div>
-
-<div class="screen hidden" id="confirmation">
-  <div style="font-size:50px;">✅</div>
-  <div style="color:var(--vert); font-family:'Cormorant Garamond'; font-size:28px;">Enregistré</div>
-  <button class="btn-main" style="margin-top:30px;" onclick="showScreen('menu')">RETOUR</button>
-</div>
-
-<script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJk9pI4RapkGpCSQulYlUXoVtE-kjPCtogcO--qQg4ySjyTjq08hNcQbZjgLLijqUl/exec';
-
-const EMPLOYES = { '1111': 'Jacques', '1234': 'Marie', '2222': 'Jean', '0000': 'Admin' };
-let currentPin = '';
-let currentUser = '';
-let selectedAction = '';
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
-
-function pinPress(n) { if(currentPin.length < 4) { currentPin += n; updateDots(); } }
-function pinClear() { currentPin = ''; updateDots(); }
-function updateDots() { for(let i=0; i<4; i++) document.getElementById('d'+i).classList.toggle('filled', i < currentPin.length); }
-
-function pinConfirm() {
-  const nom = EMPLOYES[currentPin];
-  if(nom) {
-    currentUser = nom;
-    document.getElementById('greeting').textContent = "Bonjour " + nom;
-    populateSelects();
-    showScreen('menu');
-    pinClear();
-  } else {
-    document.getElementById('pinError').textContent = "CODE INVALIDE";
-    setTimeout(() => { document.getElementById('pinError').textContent = ""; pinClear(); }, 1500);
-  }
-}
-
-function populateSelects() {
-    const sel = document.getElementById('h-employe');
-    sel.innerHTML = `<option>${currentUser}</option>`;
-}
-
-function selectAction(a) {
-    selectedAction = a;
-    document.getElementById('pill-arrivee').classList.toggle('active', a === 'ARRIVÉE');
-    document.getElementById('pill-depart').classList.toggle('active', a === 'DÉPART');
-}
-
-function showForm(type) {
-    showScreen('form-' + type);
-    const now = new Date();
-    if(document.getElementById('h-heure')) document.getElementById('h-heure').value = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
-}
-
-async function submitForm(type) {
-  const btn = document.querySelector(`#form-${type} .btn-main`);
-  btn.innerHTML = '<div class="spinner"></div>';
-  
-  const payload = {
-    type: type,
-    employe: currentUser,
-    date: new Date().toLocaleDateString('fr-CA'),
-    heure: document.getElementById('h-heure')?.value || '',
-    action: selectedAction,
-    timestamp: new Date().toISOString()
-  };
+function doPost(e) {
 
   try {
-    const params = new URLSearchParams();
-    params.append('data', JSON.stringify(payload));
 
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params
-    });
+    const data = JSON.parse(e.postData.contents);
 
-    showScreen('confirmation');
-  } catch (e) {
-    alert("Erreur réseau");
-  } finally {
-    btn.innerHTML = "ENREGISTRER";
+    const pin = data.pin;
+    const equipement = data.equipement;
+    const temperature = parseFloat(data.temperature);
+
+    if (!EMPLOYES[pin]) {
+      return ContentService
+        .createTextOutput(JSON.stringify({status:"error",message:"PIN invalide"}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const employe = EMPLOYES[pin];
+
+    const sheet = SpreadsheetApp
+      .openById(SHEET_ID)
+      .getSheetByName(SHEET_NAME);
+
+    let statut = "OK";
+
+    if (temperature >= 4 && temperature <= 60) {
+      statut = "ALERTE";
+    }
+
+    sheet.appendRow([
+      new Date(),
+      employe,
+      equipement,
+      temperature,
+      statut
+    ]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({status:"success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch(err){
+
+    return ContentService
+      .createTextOutput(JSON.stringify({status:"error",message:err}))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
-</script>
-</body>
-</html>
