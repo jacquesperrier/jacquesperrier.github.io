@@ -507,7 +507,7 @@ html,body{height:100%;background:var(--noir);color:var(--blanc);font-family:'Mon
 
 <script>
 // ═══ CONFIGURATION ═══════════════════════════════════════
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7n6B-lCpA61xifk2GiOGeh-gPilIL4ocimf8nYDK5dH7PRffYxg7K57NK_7GZGY18/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbybbLZgW3VSzK7YpkBnF2UMmhZKjPOP52duhC0adPa7OjurCMdgQW3gHhb8fScFFskG/exec';
 
 const EMPLOYES = {
   '1111': 'Jacques',
@@ -747,12 +747,9 @@ async function submitForm(type) {
       detail = `${payload.fournisseur} · ${payload.produit} · ${payload.statut}`;
     }
 
-    const formData = new FormData();
-    formData.append('data', JSON.stringify(payload));
-    const sent = navigator.sendBeacon(APPS_SCRIPT_URL, formData);
-    if (!sent) {
-      fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ data: JSON.stringify(payload) }) });
-    }
+    // GET = méthode la plus fiable avec Google Apps Script
+    const params = encodeURIComponent(JSON.stringify(payload));
+    await fetch(APPS_SCRIPT_URL + '?data=' + params, { method: 'GET', mode: 'no-cors' });
 
     document.getElementById('confirm-sub').textContent = type.toUpperCase() + ' · ENREGISTRÉ ' + new Date().toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' });
     document.getElementById('confirm-detail').textContent = detail;
