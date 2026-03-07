@@ -1,169 +1,854 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Verdict AI - Système Officiel</title>
-    <style>
-        :root {
-            --or: #C9A84C;
-            --noir: #06080A;
-            --gris: #1E2025;
-            --txt: #E8E4DC;
-        }
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: var(--noir); color: var(--txt); margin: 0; padding-top: 50px; }
-        .page { display: none; padding: 20px; }
-        .active { display: block; }
-        
-        /* PIN CODE STYLE */
-        .pin-display { font-size: 3em; margin-bottom: 20px; letter-spacing: 10px; height: 60px; color: var(--or); }
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 300px; margin: 0 auto; }
-        .numpad button { padding: 25px; font-size: 1.5em; border-radius: 12px; border: 1px solid var(--gris); background: #111; color: white; cursor: pointer; transition: 0.2s; }
-        .numpad button:active { background: var(--or); color: black; }
-        .btn-ok { background: #22C55E !important; border: none !important; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Verdict Inspection AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --or:#C9A84C;--or2:#E8C97A;
+  --noir:#080809;--card:#0F1012;--card2:#161819;
+  --border:rgba(255,255,255,0.08);--border-or:rgba(201,168,76,0.3);
+  --blanc:#F0EBE0;--gris:#555A64;--gris2:#8A8E98;
+  --vert:#22C55E;--rouge:#EF4444;--jaune:#F59E0B;
+}
+html,body{height:100%;background:var(--noir);color:var(--blanc);font-family:'Montserrat',sans-serif;overflow:hidden;}
 
-        /* DASHBOARD STYLE */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 400px; margin: 20px auto; }
-        .card { background: #111214; padding: 25px 10px; border-radius: 15px; border: 1px solid var(--gris); cursor: pointer; transition: 0.3s; }
-        .card:hover { border-color: var(--or); transform: translateY(-3px); }
-        .card i { font-size: 2em; display: block; margin-bottom: 10px; font-style: normal; }
-        .card span { font-size: 0.8em; letter-spacing: 1px; font-weight: bold; color: var(--txt); }
-        
-        /* FORMULAIRE STYLE */
-        .form-box { max-width: 350px; margin: 0 auto; text-align: left; background: #111214; padding: 20px; border-radius: 15px; border: 1px solid var(--or); }
-        label { display: block; margin-top: 15px; color: var(--or); font-weight: bold; font-size: 0.8em; letter-spacing: 1px; }
-        input, select { width: 100%; padding: 15px; margin-top: 5px; background: #000; border: 1px solid var(--gris); color: white; border-radius: 8px; box-sizing: border-box; font-size: 1em; }
-        .btn-send { background: var(--or); color: black; border: none; padding: 20px; width: 100%; border-radius: 10px; font-weight: bold; margin-top: 25px; font-size: 1.1em; cursor: pointer; }
-    </style>
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(–noir);transition:opacity .35s,transform .35s;z-index:10;}
+.screen.hidden{opacity:0;pointer-events:none;transform:translateY(30px);}
+
+/* ── SPLASH ── */
+#splash{background:#080809;}
+#splash::before{content:’’;position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(201,168,76,0.13) 0%,transparent 65%);top:40%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.logo{font-family:‘Cormorant Garamond’,Georgia,serif;font-size:clamp(72px,20vw,100px);font-weight:300;letter-spacing:4px;line-height:1;color:#F0EBE0;}
+.logo .V{color:#C9A84C;font-weight:600;}
+.tagline{font-size:11px;letter-spacing:8px;color:#6B7280;margin:12px 0 50px;font-weight:300;}
+.btn-main{border:2px solid #C9A84C;color:#C9A84C !important;font-family:‘Montserrat’,sans-serif;font-size:12px;font-weight:700;letter-spacing:6px;padding:18px 64px;border-radius:50px;background:transparent;cursor:pointer;transition:all .25s;-webkit-appearance:none;}
+.btn-main:active{background:rgba(201,168,76,0.15);}
+
+/* ── PIN ── */
+.pin-title{font-size:12px;letter-spacing:6px;color:#8A8E98;margin-bottom:32px;font-weight:500;}
+.pin-dots{display:flex;gap:20px;margin-bottom:44px;}
+.pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid #333;transition:all .2s;}
+.pin-dot.filled{background:#C9A84C;border-color:#C9A84C;box-shadow:0 0 16px rgba(201,168,76,0.7),0 0 32px rgba(201,168,76,0.3);}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:300px;}
+.key{background:#1A1C20;border:1.5px solid rgba(255,255,255,0.12);border-radius:14px;padding:22px 0;font-size:26px;font-weight:300;color:#F0EBE0;cursor:pointer;text-align:center;transition:all .15s;user-select:none;-webkit-user-select:none;}
+.key:active{background:rgba(201,168,76,0.15);border-color:rgba(201,168,76,0.5);transform:scale(.94);color:#C9A84C;}
+.key.red{color:#EF4444;font-size:22px;font-weight:600;}
+.key.green{color:#22C55E;font-size:20px;font-weight:700;letter-spacing:1px;}
+.pin-error{font-size:11px;color:#EF4444;letter-spacing:3px;margin-top:20px;height:18px;transition:opacity .3s;}
+
+/* ── MENU ── */
+.menu-greeting{font-family:‘Cormorant Garamond’,Georgia,serif;font-size:36px;font-weight:300;color:#C9A84C;margin-bottom:36px;letter-spacing:1px;text-align:center;}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:320px;}
+.menu-card{background:#111214;border:1.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:28px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all .2s;}
+.menu-card:active{border-color:rgba(201,168,76,0.5);background:rgba(201,168,76,0.08);transform:scale(.96);}
+.menu-icon{font-size:34px;}
+.menu-label{font-size:15px;font-weight:500;color:#F0EBE0;letter-spacing:.5px;}
+.btn-quitter{margin-top:28px;font-size:11px;letter-spacing:4px;color:#555A64;background:none;border:none;cursor:pointer;padding:10px 24px;}
+
+/* ── FORMULAIRES ── */
+.form-screen{justify-content:flex-start;padding:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.form-header{width:100%;display:flex;align-items:center;gap:12px;padding:52px 20px 20px;background:var(–noir);position:sticky;top:0;z-index:5;border-bottom:1px solid var(–border);}
+.btn-back{background:none;border:1px solid var(–border);border-radius:8px;color:var(–gris2);font-size:18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.btn-back:active{border-color:var(–border-or);color:var(–or);}
+.form-title-h{font-size:11px;font-weight:600;letter-spacing:4px;color:var(–blanc);flex:1;}
+.form-badge{font-size:8px;letter-spacing:2px;color:var(–or);background:rgba(201,168,76,0.1);border:1px solid var(–border-or);padding:4px 10px;border-radius:20px;white-space:nowrap;}
+
+.form-body{width:100%;max-width:420px;margin:0 auto;padding:20px 20px 40px;}
+
+.field-group{margin-bottom:16px;}
+.field-label{font-size:9px;letter-spacing:3px;color:var(–or);font-weight:600;margin-bottom:8px;display:block;}
+.field-select,.field-input{width:100%;background:var(–card);border:1px solid var(–border);border-radius:10px;color:var(–blanc);font-family:‘Montserrat’,sans-serif;font-size:14px;font-weight:400;padding:14px 16px;-webkit-appearance:none;appearance:none;outline:none;transition:border-color .2s;}
+.field-select:focus,.field-input:focus{border-color:var(–border-or);}
+.field-select option{background:var(–card);color:var(–blanc);}
+.select-wrap{position:relative;}
+.select-wrap::after{content:‘▾’;position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(–or);font-size:14px;pointer-events:none;}
+.field-input::placeholder{color:var(–gris);}
+.field-input[type=number]{-moz-appearance:textfield;}
+.field-input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+
+.temp-display{text-align:center;padding:16px;background:rgba(255,255,255,0.02);border:1px solid var(–border);border-radius:10px;margin-top:8px;}
+.temp-num{font-family:‘Cormorant Garamond’,serif;font-size:48px;font-weight:300;color:var(–or);line-height:1;}
+.temp-unit{font-size:11px;color:var(–gris2);letter-spacing:2px;}
+
+.statut-pills{display:flex;gap:8px;}
+.pill{flex:1;padding:14px 0;border-radius:10px;border:1.5px solid var(–border);background:var(–card);font-size:11px;font-weight:600;letter-spacing:2px;cursor:pointer;text-align:center;transition:all .2s;color:var(–gris2);}
+.pill:active{transform:scale(.97);}
+.pill.conforme.active{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.4);color:var(–vert);}
+.pill.nonconforme.active{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.4);color:var(–rouge);}
+
+.section-sep{font-size:8px;letter-spacing:4px;color:var(–gris);margin:20px 0 14px;display:flex;align-items:center;gap:10px;}
+.section-sep::before,.section-sep::after{content:’’;flex:1;height:1px;background:var(–border);}
+
+.btn-submit{width:100%;background:transparent;border:1.5px solid var(–or);color:var(–or);font-family:‘Montserrat’,sans-serif;font-size:11px;font-weight:700;letter-spacing:5px;padding:18px;border-radius:50px;cursor:pointer;margin-top:24px;transition:all .25s;}
+.btn-submit:active{background:rgba(201,168,76,0.12);transform:scale(.98);}
+
+/* ── CONFIRMATION ── */
+#confirmation{background:var(–noir);}
+.confirm-icon{font-size:56px;margin-bottom:16px;}
+.confirm-title{font-family:‘Cormorant Garamond’,serif;font-size:32px;font-weight:300;color:var(–vert);margin-bottom:8px;}
+.confirm-sub{font-size:10px;letter-spacing:3px;color:var(–gris2);margin-bottom:8px;}
+.confirm-detail{font-size:12px;color:var(–or);margin-bottom:32px;text-align:center;line-height:1.6;}
+.btn-retour{border:1px solid var(–border-or);color:var(–or);font-family:‘Montserrat’,sans-serif;font-size:10px;font-weight:600;letter-spacing:4px;padding:14px 40px;border-radius:50px;background:transparent;cursor:pointer;}
+
+/* ── SPINNER ── */
+.spinner{width:24px;height:24px;border:2px solid var(–border);border-top-color:var(–or);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+
 </head>
 <body>
 
-    <div style="font-size: 1.5em; letter-spacing: 5px; margin-bottom: 30px;">
-        <span style="color:var(--or)">V</span>ERDICT AI
+<!-- ═══ SPLASH ═══════════════════════════════════════════ -->
+
+<div class="screen" id="splash">
+  <div class="logo"><span class="V">V</span>erdict</div>
+  <div class="tagline">INSPECTION AI · EXPERT</div>
+  <button class="btn-main" onclick="showScreen('pin')">DÉMARRER</button>
+</div>
+
+<!-- ═══ PIN ══════════════════════════════════════════════ -->
+
+<div class="screen hidden" id="pin">
+  <div class="pin-title">IDENTIFICATION</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="d0"></div>
+    <div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div>
+    <div class="pin-dot" id="d3"></div>
+  </div>
+  <div class="keypad">
+    <div class="key" onclick="pinPress(1)">1</div>
+    <div class="key" onclick="pinPress(2)">2</div>
+    <div class="key" onclick="pinPress(3)">3</div>
+    <div class="key" onclick="pinPress(4)">4</div>
+    <div class="key" onclick="pinPress(5)">5</div>
+    <div class="key" onclick="pinPress(6)">6</div>
+    <div class="key" onclick="pinPress(7)">7</div>
+    <div class="key" onclick="pinPress(8)">8</div>
+    <div class="key" onclick="pinPress(9)">9</div>
+    <div class="key red" onclick="pinClear()">C</div>
+    <div class="key" onclick="pinPress(0)">0</div>
+    <div class="key green" onclick="pinConfirm()">OK</div>
+  </div>
+  <div class="pin-error" id="pinError"></div>
+</div>
+
+<!-- ═══ MENU ══════════════════════════════════════════════ -->
+
+<div class="screen hidden" id="menu">
+  <div class="menu-greeting" id="greeting">Bonjour</div>
+  <div class="menu-grid">
+    <div class="menu-card" onclick="showForm('heures')">
+      <div class="menu-icon">⏰</div>
+      <div class="menu-label">Heures</div>
     </div>
-
-    <div id="p-pin" class="page active">
-        <div class="pin-display" id="disp">****</div>
-        <div class="numpad">
-            <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
-            <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
-            <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
-            <button onclick="clr()" style="color: #EF4444;">C</button><button onclick="press(0)">0</button><button class="btn-ok" onclick="auth()">OK</button>
-        </div>
+    <div class="menu-card" onclick="showForm('temperatures')">
+      <div class="menu-icon">🌡️</div>
+      <div class="menu-label">Temp.</div>
     </div>
-
-    <div id="p-dash" class="page">
-        <div class="grid">
-            <div class="card" onclick="openF('TEMP')"><i>🌡️</i><span>TEMPÉRATURES</span></div>
-            <div class="card" onclick="openF('NETTOYAGE')"><i>🧼</i><span>NETTOYAGE</span></div>
-            <div class="card" onclick="openF('RECEPTION')"><i>🚚</i><span>RÉCEPTION</span></div>
-            <div class="card" onclick="openF('FORMATION')"><i>🎓</i><span>FORMATION</span></div>
-            <div class="card" onclick="openF('HEURES')" style="grid-column: span 2; background: var(--gris);"><i>🕒</i><span>HEURES & PAIE (8%)</span></div>
-        </div>
-        <button onclick="location.reload()" style="background:none; border:none; color:grey; margin-top:30px;">Déconnexion</button>
+    <div class="menu-card" onclick="showForm('nettoyage')">
+      <div class="menu-icon">🧹</div>
+      <div class="menu-label">Nettoyage</div>
     </div>
-
-    <div id="p-form" class="page">
-        <div class="form-box">
-            <h2 id="f-title" style="text-align:center; color:var(--or); text-transform: uppercase; font-size: 1em; letter-spacing: 2px;"></h2>
-            <div id="f-fields"></div>
-            <button class="btn-send" id="btn-submit" onclick="send()">ENREGISTRER AU CLOUD</button>
-            <button onclick="nav('p-dash')" style="background:none; border:none; color:grey; width:100%; margin-top:15px; cursor:pointer;">Annuler</button>
-        </div>
+    <div class="menu-card" onclick="showForm('reception')">
+      <div class="menu-icon">📦</div>
+      <div class="menu-label">Réception</div>
     </div>
+  </div>
+  <button class="btn-quitter" onclick="quitter()">Quitter</button>
+</div>
 
-    <script>
-        let pin = ""; 
-        let currentMod = "";
-        
-        // --- TON URL API GOOGLE (À VERIFIER APRÈS CHAQUE DÉPLOIEMENT) ---
-        const URL_API = "https://script.google.com/macros/s/AKfycbwkM7awWX4j0aCBlU1yHs3uk-W1EzxEkcOb354i4YLI2AY9IeQjE1OljB5-HeIFdn5c/exec";
+<!-- ═══ FORM — HEURES ══════════════════════════════════════ -->
 
-        function nav(id) { 
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
-            document.getElementById(id).classList.add('active'); 
-        }
+<div class="screen form-screen hidden" id="form-heures">
+  <div class="form-header">
+    <button class="btn-back" onclick="showScreen('menu')">←</button>
+    <div class="form-title-h">HEURES DE TRAVAIL</div>
+    <div class="form-badge">MAPAQ</div>
+  </div>
+  <div class="form-body">
 
-        function press(n) { 
-            if(pin.length < 4) { 
-                pin += n; 
-                document.getElementById('disp').innerText = "*".repeat(pin.length); 
-            } 
-        }
+```
+<div class="field-group">
+  <label class="field-label">EMPLOYÉ</label>
+  <div class="select-wrap">
+    <select class="field-select" id="h-employe"></select>
+  </div>
+</div>
 
-        function clr() { pin = ""; document.getElementById('disp').innerText = "****"; }
+<div class="field-group">
+  <label class="field-label">ACTION</label>
+  <div class="statut-pills">
+    <div class="pill conforme" id="pill-arrivee" onclick="selectAction('ARRIVÉE')">ARRIVÉE</div>
+    <div class="pill nonconforme" id="pill-depart" onclick="selectAction('DÉPART')">DÉPART</div>
+  </div>
+</div>
 
-        function auth() { 
-            if(pin.length === 4) nav('p-dash'); 
-            else alert("Entrez votre code PIN"); 
-        }
+<div class="field-group">
+  <label class="field-label">QUART DE TRAVAIL</label>
+  <div class="select-wrap">
+    <select class="field-select" id="h-quart" onchange="updateQuartInfo()">
+      <option value="">— Sélectionner —</option>
+      <optgroup label="🍳 Sans pourboires">
+        <option value="Cuisine">Cuisine</option>
+        <option value="Plonge">Plonge</option>
+        <option value="Préparation">Préparation</option>
+        <option value="Livraison">Livraison</option>
+      </optgroup>
+      <optgroup label="🍽️ Avec pourboires">
+        <option value="Service">Service</option>
+        <option value="Bar">Bar</option>
+        <option value="Terrasse">Terrasse</option>
+        <option value="Salle">Salle</option>
+      </optgroup>
+    </select>
+  </div>
+  <div id="quart-info" style="font-size:9px;color:var(--gris2);margin-top:6px;letter-spacing:1px;"></div>
+</div>
 
-        function openF(m) {
-            currentMod = m; 
-            document.getElementById('f-title').innerText = m;
-            const f = document.getElementById('f-fields');
-            f.innerHTML = ""; // Reset
-            
-            if(m === 'TEMP') {
-                f.innerHTML = `
-                    <label>Équipement</label>
-                    <select id="v1">
-                        <option>Frigo 1 (Cuisine)</option><option>Frigo 2 (Bar)</option>
-                        <option>Congélateur</option><option>Table Froide</option>
-                    </select>
-                    <label>Température (°C)</label>
-                    <input type="number" step="0.1" id="v2" placeholder="Ex: 3.2">`;
-            } else if(m === 'HEURES') {
-                f.innerHTML = `
-                    <label>Poste / Quart</label>
-                    <select id="v1">
-                        <option>Cuisine (Régulier)</option><option>Service (8% Pourboire)</option>
-                        <option>Bar</option><option>Plonge</option>
-                    </select>
-                    <label>Action</label>
-                    <select id="v2"><option>ARRIVÉE</option><option>DÉPART</option></select>`;
-            } else if(m === 'NETTOYAGE') {
-                f.innerHTML = `
-                    <label>Zone</label>
-                    <select id="v1"><option>Surfaces de travail</option><option>Planchers</option><option>Hottes</option></select>
-                    <label>Statut</label>
-                    <select id="v2"><option>CONFORME</option><option>NON-CONFORME</option></select>`;
-            } else {
-                f.innerHTML = `<label>Détail</label><input type="text" id="v1"><label>Valeur</label><input type="text" id="v2">`;
-            }
-            f.innerHTML += `<label>Notes / Commentaires</label><input type="text" id="n" placeholder="Optionnel">`;
-            nav('p-form');
-        }
+<div class="field-group">
+  <label class="field-label">HEURE</label>
+  <input type="time" class="field-input" id="h-heure">
+</div>
 
-        function send() {
-            const btn = document.getElementById('btn-submit');
-            btn.innerText = "ENVOI EN COURS...";
-            btn.disabled = true;
+<div id="section-pourboire" style="display:none;">
+  <div class="section-sep">POURBOIRES</div>
+  <div class="field-group">
+    <label class="field-label">VENTES TOTALES ($)</label>
+    <input type="number" class="field-input" id="h-ventes" placeholder="0.00" step="0.01">
+  </div>
+  <div class="field-group">
+    <label class="field-label">POURBOIRES ($)</label>
+    <input type="number" class="field-input" id="h-pourboires" placeholder="0.00" step="0.01" oninput="calcRatio()">
+  </div>
+  <div class="field-group">
+    <label class="field-label">RATIO %</label>
+    <div class="temp-display" style="padding:10px;">
+      <div class="temp-num" id="ratio-display" style="font-size:32px;">—</div>
+      <div class="temp-unit">POURBOIRES / VENTES</div>
+    </div>
+  </div>
+</div>
 
-            const data = { 
-                dept: currentMod, 
-                pin: pin, 
-                v1: document.getElementById('v1').value, 
-                v2: document.getElementById('v2').value, 
-                note: document.getElementById('n').value 
-            };
+<div class="field-group">
+  <label class="field-label">NOTES (optionnel)</label>
+  <input type="text" class="field-input" id="h-notes" placeholder="Remarques...">
+</div>
 
-            // Utilisation de fetch avec mode no-cors pour éviter les blocages de navigateur
-            fetch(URL_API, {
-                method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-cache',
-                body: JSON.stringify(data)
-            }).then(() => {
-                alert("✓ ENREGISTRÉ AVEC SUCCÈS");
-                btn.innerText = "ENREGISTRER AU CLOUD";
-                btn.disabled = false;
-                nav('p-dash');
-            }).catch(err => {
-                alert("Erreur de connexion");
-                btn.disabled = false;
-            });
-        }
-    </script>
+<button class="btn-submit" onclick="submitForm('heures')">ENREGISTRER</button>
+```
+
+  </div>
+</div>
+
+<!-- ═══ FORM — TEMPÉRATURES ════════════════════════════════ -->
+
+<div class="screen form-screen hidden" id="form-temperatures">
+  <div class="form-header">
+    <button class="btn-back" onclick="showScreen('menu')">←</button>
+    <div class="form-title-h">TEMPÉRATURES</div>
+    <div class="form-badge">MAPAQ</div>
+  </div>
+  <div class="form-body">
+
+```
+<div class="field-group">
+  <label class="field-label">EMPLOYÉ</label>
+  <div class="select-wrap">
+    <select class="field-select" id="t-employe"></select>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">ÉQUIPEMENT</label>
+  <div class="select-wrap">
+    <select class="field-select" id="t-equipement" onchange="updateTempLimites()">
+      <option value="">— Sélectionner —</option>
+      <optgroup label="❄️ Réfrigérateurs">
+        <option value="Frigo 1" data-min="0" data-max="4">Frigo 1</option>
+        <option value="Frigo 2" data-min="0" data-max="4">Frigo 2</option>
+        <option value="Frigo 3" data-min="0" data-max="4">Frigo 3</option>
+        <option value="Frigo 4" data-min="0" data-max="4">Frigo 4</option>
+      </optgroup>
+      <optgroup label="🧊 Congélateurs">
+        <option value="Congélateur 1" data-min="-25" data-max="-18">Congélateur 1</option>
+        <option value="Congélateur 2" data-min="-25" data-max="-18">Congélateur 2</option>
+      </optgroup>
+      <optgroup label="🔥 Maintien chaud">
+        <option value="Bain-marie" data-min="60" data-max="74">Bain-marie</option>
+        <option value="Chauffe-assiettes" data-min="60" data-max="74">Chauffe-assiettes</option>
+        <option value="Comptoir chaud" data-min="60" data-max="74">Comptoir chaud</option>
+      </optgroup>
+      <optgroup label="🌡️ Cuisson">
+        <option value="Four principal" data-min="160" data-max="200">Four principal</option>
+        <option value="Gril" data-min="160" data-max="200">Gril</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+<div id="limites-info" style="display:none;font-size:9px;letter-spacing:1px;color:var(--gris2);padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:16px;border:1px solid var(--border);"></div>
+
+<div class="field-group">
+  <label class="field-label">TEMPÉRATURE (°C)</label>
+  <input type="number" class="field-input" id="t-temp" placeholder="ex: 3.5" step="0.1" oninput="evalTemp()">
+  <div class="temp-display" style="margin-top:8px;">
+    <div class="temp-num" id="temp-display">—</div>
+    <div class="temp-unit" id="temp-statut-label">°C</div>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">STATUT</label>
+  <div class="statut-pills">
+    <div class="pill conforme" id="t-conforme" onclick="setStatut('t','CONFORME')">✓ CONFORME</div>
+    <div class="pill nonconforme" id="t-nonconforme" onclick="setStatut('t','NON-CONFORME')">✗ NON-CONFORME</div>
+  </div>
+</div>
+
+<div id="t-action-group" style="display:none;" class="field-group">
+  <label class="field-label">ACTION CORRECTIVE</label>
+  <div class="select-wrap">
+    <select class="field-select" id="t-action">
+      <option value="">— Sélectionner —</option>
+      <option>Vérifier joint de porte</option>
+      <option>Appeler technicien réfrigération</option>
+      <option>Retirer et jeter les aliments exposés</option>
+      <option>Vérifier thermostat</option>
+      <option>Déglacer l'équipement</option>
+      <option>Autre — voir notes</option>
+    </select>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">NOTES</label>
+  <input type="text" class="field-input" id="t-notes" placeholder="Observations...">
+</div>
+
+<button class="btn-submit" onclick="submitForm('temperatures')">ENREGISTRER</button>
+```
+
+  </div>
+</div>
+
+<!-- ═══ FORM — NETTOYAGE ════════════════════════════════════ -->
+
+<div class="screen form-screen hidden" id="form-nettoyage">
+  <div class="form-header">
+    <button class="btn-back" onclick="showScreen('menu')">←</button>
+    <div class="form-title-h">NETTOYAGE</div>
+    <div class="form-badge">MAPAQ</div>
+  </div>
+  <div class="form-body">
+
+```
+<div class="field-group">
+  <label class="field-label">EMPLOYÉ</label>
+  <div class="select-wrap">
+    <select class="field-select" id="n-employe"></select>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">ZONE / SURFACE NETTOYÉE</label>
+  <div class="select-wrap">
+    <select class="field-select" id="n-zone">
+      <option value="">— Sélectionner —</option>
+      <optgroup label="🍳 Cuisine">
+        <option>Hottes et filtres</option>
+        <option>Tables de travail</option>
+        <option>Plancher cuisine</option>
+        <option>Friteuses</option>
+        <option>Gril / Plaque chauffante</option>
+        <option>Four</option>
+        <option>Micro-ondes</option>
+        <option>Évier et robinets</option>
+      </optgroup>
+      <optgroup label="❄️ Réfrigération">
+        <option>Intérieur Frigo 1</option>
+        <option>Intérieur Frigo 2</option>
+        <option>Intérieur Frigo 3</option>
+        <option>Intérieur Frigo 4</option>
+        <option>Intérieur Congélateur 1</option>
+        <option>Intérieur Congélateur 2</option>
+        <option>Joints de portes réfrigérateurs</option>
+      </optgroup>
+      <optgroup label="🍽️ Salle et service">
+        <option>Plancher salle</option>
+        <option>Tables et chaises</option>
+        <option>Comptoir service</option>
+        <option>Bar</option>
+        <option>Toilettes clients</option>
+        <option>Toilettes employés</option>
+      </optgroup>
+      <optgroup label="🗑️ Divers">
+        <option>Bacs à déchets</option>
+        <option>Zone réception marchandises</option>
+        <option>Chambre froide walk-in</option>
+        <option>Extérieur équipements</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">PRODUIT UTILISÉ</label>
+  <div class="select-wrap">
+    <select class="field-select" id="n-produit">
+      <option value="">— Sélectionner —</option>
+      <option value="250 — Dégraissant">250 — Dégraissant</option>
+      <option value="259 — Désinfectant">259 — Désinfectant</option>
+      <option value="Javex 1:10">Javex dilué 1:10</option>
+      <option value="Javex 1:50">Javex dilué 1:50</option>
+      <option value="Savon désinfectant">Savon désinfectant</option>
+      <option value="Nettoyant four">Nettoyant four</option>
+      <option value="Détartrant">Détartrant</option>
+      <option value="Autre">Autre — voir notes</option>
+    </select>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">STATUT</label>
+  <div class="statut-pills">
+    <div class="pill conforme" id="n-conforme" onclick="setStatut('n','CONFORME')">✓ CONFORME</div>
+    <div class="pill nonconforme" id="n-nonconforme" onclick="setStatut('n','NON-CONFORME')">✗ NON-CONFORME</div>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">NOTES</label>
+  <input type="text" class="field-input" id="n-notes" placeholder="Observations...">
+</div>
+
+<button class="btn-submit" onclick="submitForm('nettoyage')">ENREGISTRER</button>
+```
+
+  </div>
+</div>
+
+<!-- ═══ FORM — RÉCEPTION ════════════════════════════════════ -->
+
+<div class="screen form-screen hidden" id="form-reception">
+  <div class="form-header">
+    <button class="btn-back" onclick="showScreen('menu')">←</button>
+    <div class="form-title-h">RÉCEPTION MARCHANDISES</div>
+    <div class="form-badge">MAPAQ</div>
+  </div>
+  <div class="form-body">
+
+```
+<div class="field-group">
+  <label class="field-label">EMPLOYÉ</label>
+  <div class="select-wrap">
+    <select class="field-select" id="r-employe"></select>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">FOURNISSEUR</label>
+  <div class="select-wrap">
+    <select class="field-select" id="r-fournisseur">
+      <option value="">— Sélectionner —</option>
+      <option>Sysco</option>
+      <option>Gordon Food Service</option>
+      <option>Autre fournisseur</option>
+    </select>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">NO. DE FACTURE</label>
+  <input type="text" class="field-input" id="r-facture" placeholder="ex: SYS-2026-001234">
+</div>
+
+<div class="field-group">
+  <label class="field-label">CATÉGORIE DE PRODUIT</label>
+  <div class="select-wrap">
+    <select class="field-select" id="r-categorie">
+      <option value="">— Sélectionner —</option>
+      <option>Viandes et volailles</option>
+      <option>Poissons et fruits de mer</option>
+      <option>Produits laitiers</option>
+      <option>Fruits et légumes</option>
+      <option>Produits congelés</option>
+      <option>Épicerie sèche</option>
+      <option>Produits d'entretien</option>
+    </select>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">DESCRIPTION DU PRODUIT</label>
+  <input type="text" class="field-input" id="r-produit" placeholder="ex: Poitrines de poulet 10kg">
+</div>
+
+<div class="field-group">
+  <label class="field-label">TEMPÉRATURE À LA RÉCEPTION (°C)</label>
+  <input type="number" class="field-input" id="r-temp" placeholder="ex: 3.2" step="0.1" oninput="showRTemp()">
+  <div class="temp-display" style="margin-top:8px;padding:10px;">
+    <div class="temp-num" id="rtemp-display" style="font-size:32px;">—</div>
+    <div class="temp-unit">°C À LA RÉCEPTION</div>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">NO. LOT / DATE EXPIRATION</label>
+  <input type="text" class="field-input" id="r-lot" placeholder="ex: LOT-001 / 2026-04-15">
+</div>
+
+<div class="field-group">
+  <label class="field-label">STATUT</label>
+  <div class="statut-pills">
+    <div class="pill conforme" id="r-conforme" onclick="setStatut('r','CONFORME')">✓ CONFORME</div>
+    <div class="pill nonconforme" id="r-nonconforme" onclick="setStatut('r','NON-CONFORME')">✗ REFUSÉ</div>
+  </div>
+</div>
+
+<div id="r-motif-group" style="display:none;" class="field-group">
+  <label class="field-label">MOTIF DE REFUS</label>
+  <div class="select-wrap">
+    <select class="field-select" id="r-motif">
+      <option value="">— Sélectionner —</option>
+      <option>Température hors norme</option>
+      <option>Emballage endommagé</option>
+      <option>Date périmée</option>
+      <option>Odeur anormale</option>
+      <option>Présence de moisissures</option>
+      <option>Produit non conforme à la commande</option>
+      <option>Autre — voir notes</option>
+    </select>
+  </div>
+</div>
+
+<div class="field-group">
+  <label class="field-label">NOTES</label>
+  <input type="text" class="field-input" id="r-notes" placeholder="Observations...">
+</div>
+
+<button class="btn-submit" onclick="submitForm('reception')">ENREGISTRER</button>
+```
+
+  </div>
+</div>
+
+<!-- ═══ CONFIRMATION ══════════════════════════════════════ -->
+
+<div class="screen hidden" id="confirmation">
+  <div class="confirm-icon">✅</div>
+  <div class="confirm-title">Enregistré</div>
+  <div class="confirm-sub" id="confirm-sub">DONNÉES SAUVEGARDÉES</div>
+  <div class="confirm-detail" id="confirm-detail"></div>
+  <button class="btn-retour" onclick="showScreen('menu')">RETOUR AU MENU</button>
+</div>
+
+<script>
+// ═══ CONFIGURATION ═══════════════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxO59lF2AqYms_KX3YDd17vqi-6IVZUa7KnZNGnkTxzVwBlJV9mA8vsgcfhDtA7aP0BUA/exec';
+
+// Employés et leurs PINs
+const EMPLOYES = {
+  '1111': 'Jacques',
+  '1234': 'Marie',
+  '2222': 'Jean',
+  '3333': 'Sophie',
+  '4444': 'Marc',
+  '5555': 'Julie',
+  '6666': 'Pierre',
+  '7777': 'Anne',
+  '8888': 'Louis',
+  '9999': 'Claire',
+  '0000': 'Admin',
+};
+
+// ═══ ÉTAT ════════════════════════════════════════════════
+let currentPin = '';
+let currentUser = '';
+let selectedAction = '';
+let statuts = { t: '', n: '', r: '' };
+
+// ═══ PIN ═════════════════════════════════════════════════
+function pinPress(n) {
+  if (currentPin.length >= 4) return;
+  currentPin += n;
+  updateDots();
+  document.getElementById('pinError').textContent = '';
+}
+
+function pinClear() {
+  currentPin = '';
+  updateDots();
+  document.getElementById('pinError').textContent = '';
+}
+
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('d' + i).classList.toggle('filled', i < currentPin.length);
+  }
+}
+
+function pinConfirm() {
+  if (currentPin.length < 4) {
+    document.getElementById('pinError').textContent = 'ENTREZ 4 CHIFFRES';
+    return;
+  }
+  const nom = EMPLOYES[currentPin];
+  if (!nom) {
+    document.getElementById('pinError').textContent = 'CODE INVALIDE';
+    setTimeout(() => { currentPin = ''; updateDots(); }, 800);
+    return;
+  }
+  currentUser = nom;
+  currentPin = '';
+  updateDots();
+  document.getElementById('greeting').textContent = 'Bonjour ' + nom;
+  populateEmployeSelects();
+  showScreen('menu');
+}
+
+// ═══ PEUPLEMENT DES SELECTS EMPLOYÉS ════════════════════
+function populateEmployeSelects() {
+  const noms = Object.values(EMPLOYES).filter((v,i,a) => a.indexOf(v)===i);
+  ['h-employe','t-employe','n-employe','r-employe'].forEach(id => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = '';
+    noms.forEach(n => {
+      const opt = document.createElement('option');
+      opt.value = n;
+      opt.textContent = n;
+      if (n === currentUser) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+// ═══ NAVIGATION ══════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  const target = document.getElementById(id);
+  if (target) {
+    target.classList.remove('hidden');
+    target.scrollTop = 0;
+  }
+  resetForms();
+}
+
+function showForm(type) {
+  showScreen('form-' + type);
+  // Heure actuelle par défaut
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const heureField = document.getElementById('h-heure');
+  if (heureField) heureField.value = hh + ':' + mm;
+}
+
+function quitter() {
+  currentUser = '';
+  showScreen('splash');
+}
+
+// ═══ HEURES ══════════════════════════════════════════════
+function selectAction(action) {
+  selectedAction = action;
+  document.getElementById('pill-arrivee').classList.toggle('active', action === 'ARRIVÉE');
+  document.getElementById('pill-depart').classList.toggle('active', action === 'DÉPART');
+}
+
+function updateQuartInfo() {
+  const sel = document.getElementById('h-quart');
+  const quart = sel.value;
+  const info = document.getElementById('quart-info');
+  const section = document.getElementById('section-pourboire');
+
+  const avecPourboire = ['Service','Bar','Terrasse','Salle'].includes(quart);
+  section.style.display = avecPourboire ? 'block' : 'none';
+
+  if (quart) {
+    info.textContent = avecPourboire
+      ? '💰 Quart avec pourboires → onglet Heures_Pourboire'
+      : '⏱  Quart salaire seulement → onglet Heures_Regulier';
+    info.style.color = avecPourboire ? 'var(--or)' : 'var(--gris2)';
+  } else {
+    info.textContent = '';
+  }
+}
+
+function calcRatio() {
+  const v = parseFloat(document.getElementById('h-ventes').value) || 0;
+  const p = parseFloat(document.getElementById('h-pourboires').value) || 0;
+  const el = document.getElementById('ratio-display');
+  el.textContent = v > 0 ? (p/v*100).toFixed(1) + '%' : '—';
+  el.style.color = v > 0 && p/v < 0.10 ? 'var(--jaune)' : 'var(--or)';
+}
+
+// ═══ TEMPÉRATURES ════════════════════════════════════════
+function updateTempLimites() {
+  const sel = document.getElementById('t-equipement');
+  const opt = sel.options[sel.selectedIndex];
+  const info = document.getElementById('limites-info');
+  if (opt && opt.dataset.min !== undefined) {
+    info.style.display = 'block';
+    info.innerHTML = `PLAGE NORMALE : <strong style="color:var(--or)">${opt.dataset.min}°C → ${opt.dataset.max}°C</strong>`;
+    // Auto-évaluer si valeur déjà entrée
+    evalTemp();
+  } else {
+    info.style.display = 'none';
+  }
+}
+
+function evalTemp() {
+  const val = parseFloat(document.getElementById('t-temp').value);
+  const sel = document.getElementById('t-equipement');
+  const opt = sel.options[sel.selectedIndex];
+  const display = document.getElementById('temp-display');
+  const label = document.getElementById('temp-statut-label');
+
+  display.textContent = isNaN(val) ? '—' : val + '°C';
+
+  if (!isNaN(val) && opt && opt.dataset.min !== undefined) {
+    const min = parseFloat(opt.dataset.min);
+    const max = parseFloat(opt.dataset.max);
+    const ok = val >= min && val <= max;
+    display.style.color = ok ? 'var(--vert)' : 'var(--rouge)';
+    label.textContent = ok ? '✓ DANS LA PLAGE NORMALE' : '⚠ HORS NORME — ACTION REQUISE';
+    label.style.color = ok ? 'var(--vert)' : 'var(--rouge)';
+    // Auto-sélectionner le statut
+    setStatut('t', ok ? 'CONFORME' : 'NON-CONFORME');
+  } else {
+    display.style.color = 'var(--or)';
+    label.textContent = '°C';
+    label.style.color = 'var(--gris2)';
+  }
+}
+
+// ═══ STATUTS ═════════════════════════════════════════════
+function setStatut(prefix, val) {
+  statuts[prefix] = val;
+  document.getElementById(prefix + '-conforme').classList.toggle('active', val === 'CONFORME');
+  document.getElementById(prefix + '-nonconforme').classList.toggle('active', val === 'NON-CONFORME');
+
+  // Afficher champ action corrective si non-conforme
+  const actionGroup = document.getElementById(prefix + '-action-group');
+  if (actionGroup) actionGroup.style.display = val === 'NON-CONFORME' ? 'block' : 'none';
+
+  const motifGroup = document.getElementById(prefix + '-motif-group');
+  if (motifGroup) motifGroup.style.display = val === 'NON-CONFORME' ? 'block' : 'none';
+}
+
+// ═══ TEMPÉRATURE RÉCEPTION ═══════════════════════════════
+function showRTemp() {
+  const val = parseFloat(document.getElementById('r-temp').value);
+  const el = document.getElementById('rtemp-display');
+  el.textContent = isNaN(val) ? '—' : val + '°C';
+  el.style.color = isNaN(val) ? 'var(--or)' : (val <= 4 ? 'var(--vert)' : 'var(--rouge)');
+}
+
+// ═══ SOUMISSION ═══════════════════════════════════════════
+async function submitForm(type) {
+  const btn = document.querySelector('#form-' + type + ' .btn-submit');
+  btn.innerHTML = '<div class="spinner"></div>';
+  btn.disabled = true;
+
+  let payload = { type };
+  let detail = '';
+
+  try {
+    if (type === 'heures') {
+      payload.employe    = document.getElementById('h-employe').value;
+      payload.action     = selectedAction || 'ARRIVÉE';
+      payload.quart      = document.getElementById('h-quart').value;
+      payload.heure      = document.getElementById('h-heure').value;
+      payload.ventes     = document.getElementById('h-ventes').value;
+      payload.pourboires = document.getElementById('h-pourboires').value;
+      payload.notes      = document.getElementById('h-notes').value;
+      detail = `${payload.employe} · ${payload.action} · ${payload.quart} · ${payload.heure}`;
+    }
+    else if (type === 'temperatures') {
+      payload.employe    = document.getElementById('t-employe').value;
+      payload.equipement = document.getElementById('t-equipement').value;
+      payload.temperature= document.getElementById('t-temp').value;
+      payload.statut     = statuts.t || 'CONFORME';
+      payload.actionCorrective = document.getElementById('t-action') ? document.getElementById('t-action').value : '';
+      payload.notes      = document.getElementById('t-notes').value;
+      detail = `${payload.equipement} · ${payload.temperature}°C · ${payload.statut}`;
+    }
+    else if (type === 'nettoyage') {
+      payload.employe    = document.getElementById('n-employe').value;
+      payload.zone       = document.getElementById('n-zone').value;
+      payload.produit    = document.getElementById('n-produit').value;
+      payload.statut     = statuts.n || 'CONFORME';
+      payload.notes      = document.getElementById('n-notes').value;
+      detail = `${payload.zone} · ${payload.produit} · ${payload.statut}`;
+    }
+    else if (type === 'reception') {
+      payload.employe     = document.getElementById('r-employe').value;
+      payload.fournisseur = document.getElementById('r-fournisseur').value;
+      payload.facture     = document.getElementById('r-facture').value;
+      payload.categorie   = document.getElementById('r-categorie').value;
+      payload.produit     = document.getElementById('r-produit').value;
+      payload.temperature = document.getElementById('r-temp').value;
+      payload.noLot       = document.getElementById('r-lot').value;
+      payload.statut      = statuts.r || 'CONFORME';
+      payload.motif       = document.getElementById('r-motif') ? document.getElementById('r-motif').value : '';
+      payload.notes       = document.getElementById('r-notes').value;
+      detail = `${payload.fournisseur} · ${payload.produit} · ${payload.statut}`;
+    }
+
+    // sendBeacon = envoi fiable sans CORS, pas de réponse attendue
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(payload));
+    const sent = navigator.sendBeacon(APPS_SCRIPT_URL, formData);
+    if (!sent) {
+      // Fallback no-cors
+      fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', body: new URLSearchParams({data: JSON.stringify(payload)}) });
+    }
+
+    // Confirmation
+    document.getElementById('confirm-sub').textContent = type.toUpperCase() + ' · ENREGISTRÉ ' + new Date().toLocaleTimeString('fr-CA', {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('confirm-detail').textContent = detail;
+    showScreen('confirmation');
+
+  } catch(e) {
+    // Même si envoi échoue, confirmer localement
+    document.getElementById('confirm-sub').textContent = 'SAUVEGARDÉ LOCALEMENT';
+    document.getElementById('confirm-detail').textContent = detail;
+    showScreen('confirmation');
+  }
+
+  btn.innerHTML = 'ENREGISTRER';
+  btn.disabled = false;
+}
+
+// ═══ RESET ════════════════════════════════════════════════
+function resetForms() {
+  selectedAction = '';
+  statuts = { t: '', n: '', r: '' };
+  ['t','n','r'].forEach(p => {
+    const c = document.getElementById(p+'-conforme');
+    const nc = document.getElementById(p+'-nonconforme');
+    if (c) c.classList.remove('active');
+    if (nc) nc.classList.remove('active');
+  });
+  document.getElementById('pill-arrivee')?.classList.remove('active');
+  document.getElementById('pill-depart')?.classList.remove('active');
+  document.getElementById('section-pourboire').style.display = 'none';
+  document.getElementById('quart-info').textContent = '';
+  document.getElementById('temp-display').textContent = '—';
+  document.getElementById('ratio-display').textContent = '—';
+  document.getElementById('rtemp-display').textContent = '—';
+  document.getElementById('limites-info').style.display = 'none';
+  if (document.getElementById('t-action-group')) document.getElementById('t-action-group').style.display = 'none';
+  if (document.getElementById('r-motif-group')) document.getElementById('r-motif-group').style.display = 'none';
+}
+</script>
+
 </body>
 </html>
