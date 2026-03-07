@@ -1,150 +1,183 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Verdict Inspection AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root { --or: #C9A84C; --noir: #06080A; --c1: #131619; --txt: #E8E4DC; --txt3: #565C68; }
-        body { background: var(--noir); color: var(--txt); font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        header { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .V { color: var(--or); font-weight: 600; font-family: 'Cormorant Garamond', serif; font-size: 45px; line-height: 1; }
-        .screen { display: none; padding: 20px; max-width: 450px; margin: 0 auto; }
-        .active { display: block; }
-        h2 { font-weight: 300; font-size: 16px; letter-spacing: 2px; color: var(--or); text-transform: uppercase; margin-bottom: 25px; text-align: center; }
-        label { display: block; font-size: 10px; letter-spacing: 2px; color: var(--txt3); margin: 15px 0 5px; text-transform: uppercase; }
-        input, select, button { 
-            width: 100%; padding: 16px; margin: 5px 0; border-radius: 10px; border: 1px solid #222; 
-            background: #1A1D22; color: white; font-size: 16px; box-sizing: border-box; font-family: 'Montserrat';
-        }
-        button { background: var(--or); color: black; font-weight: 700; cursor: pointer; border: none; margin-top: 20px; transition: 0.2s; }
-        button:active { transform: scale(0.98); opacity: 0.8; }
-        .card { background: var(--c1); border: 1px solid rgba(201,168,76,0.1); padding: 25px 20px; border-radius: 15px; margin-bottom: 15px; cursor: pointer; }
-        .card-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 15px; letter-spacing: 1px; }
-        .btn-back { background: none; color: var(--txt3); border: 1px solid #222; font-size: 11px; margin-top: 30px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verdict Inspection AI</title>
+
+<style>
+body{
+font-family:Arial;
+padding:20px;
+background:#f4f4f4;
+}
+
+input,select,button{
+width:100%;
+padding:12px;
+margin-top:10px;
+font-size:16px;
+}
+
+button{
+background:black;
+color:white;
+border:none;
+}
+
+.hidden{
+display:none;
+}
+</style>
 </head>
+
 <body>
 
-<header>
-    <div class="V">Verdict</div>
-    <div style="letter-spacing: 5px; font-size: 9px; color: var(--txt3); margin-top: 5px;">INSPECTION AI</div>
-</header>
+<h2>Verdict Inspection AI</h2>
 
-<div id="screen-pin" class="screen active">
-    <h2>Identification</h2>
-    <label>Code Employé</label>
-    <input type="password" id="pin-input" placeholder="0000" maxlength="4" inputmode="numeric">
-    <button onclick="login()">ENTRER</button>
+<!-- LOGIN PIN -->
+
+<div id="login">
+
+<input id="pin" placeholder="Entrer votre PIN">
+
+<button onclick="login()">Connexion</button>
+
+<p id="message" style="color:red;"></p>
+
 </div>
 
-<div id="screen-menu" class="screen">
-    <h2 id="welcome-msg">Menu Principal</h2>
-    <div class="card" onclick="showScreen('screen-form-temp')">
-        <div class="card-title">🌡️ TEMPÉRATURES</div>
-    </div>
-    <div class="card" onclick="showScreen('screen-form-nettoyage')">
-        <div class="card-title">🧹 NETTOYAGE</div>
-    </div>
-    <div class="card" onclick="showScreen('screen-form-heures')">
-        <div class="card-title">⏰ HEURES (POINTAGE)</div>
-    </div>
-    <button class="btn-back" onclick="logout()">DÉCONNEXION</button>
-</div>
+<!-- MENU -->
 
-<div id="screen-form-temp" class="screen">
-    <h2>Températures</h2>
-    <label>Équipement</label>
-    <select id="temp-equip">
-        <option value="Frigo 1">Frigo 1</option>
-        <option value="Frigo 2">Frigo 2</option>
-        <option value="Congélateur">Congélateur</option>
-        <option value="Bain-Marie">Bain-Marie</option>
-    </select>
-    <label>Température (°C)</label>
-    <input type="number" id="temp-val" step="0.1" placeholder="4.0">
-    <button onclick="save('Temperatures')">ENREGISTRER</button>
-    <button class="btn-back" onclick="showScreen('screen-menu')">ANNULER</button>
-</div>
+<div id="menu" class="hidden">
 
-<div id="screen-form-nettoyage" class="screen">
-    <h2>Nettoyage</h2>
-    <label>Zone</label>
-    <select id="net-zone">
-        <option value="Cuisine">Cuisine</option>
-        <option value="Plonge">Plonge</option>
-        <option value="Toilettes">Toilettes</option>
-    </select>
-    <button onclick="save('Nettoyage')">ENREGISTRER</button>
-    <button class="btn-back" onclick="showScreen('screen-menu')">ANNULER</button>
-</div>
+<select id="type">
 
-<div id="screen-form-heures" class="screen">
-    <h2>Heures</h2>
-    <label>Action</label>
-    <select id="heure-action"><option value="Arrivée">Arrivée</option><option value="Départ">Départ</option></select>
-    <label>Poste</label>
-    <select id="heure-quart"><option value="Cuisine">Cuisine</option><option value="Service">Service</option></select>
-    <button onclick="save('Heures_Regulier')">POINTER</button>
-    <button class="btn-back" onclick="showScreen('screen-menu')">ANNULER</button>
+<option value="Temperatures">Température</option>
+
+<option value="Nettoyage">Nettoyage</option>
+
+<option value="Heures_Regulier">Heures</option>
+
+</select>
+
+<input id="nom" placeholder="Nom employé">
+
+<input id="equipement" placeholder="Équipement / Zone">
+
+<input id="valeur" placeholder="Valeur">
+
+<button onclick="envoyer()">Envoyer</button>
+
 </div>
 
 <script>
-    // URL MISE À JOUR AVEC TON NOUVEAU DÉPLOIEMENT
-    const API_URL = "https://script.google.com/macros/s/AKfycbxsxir81EyPm8wEC-MR7gEo_MImY6LHhG72O6Cqz-IHvIcroXTGwVEyvkz2tORq0Xa7/exec"; 
-    
-    let userPin = "";
 
-    function showScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        window.scrollTo(0,0);
-    }
+/* PIN autorisés */
 
-    function login() {
-        const pin = document.getElementById('pin-input').value;
-        if (!pin) return alert("Entrez votre PIN");
-        userPin = pin;
-        document.getElementById('welcome-msg').innerText = "Session : " + pin;
-        showScreen('screen-menu');
-    }
+const PIN = {
 
-    function logout() {
-        userPin = "";
-        document.getElementById('pin-input').value = "";
-        showScreen('screen-pin');
-    }
+"1234":"Jacques",
 
-    function save(type) {
-        let payload = { type: type, pin: userPin };
+"5678":"Marie"
 
-        if (type === 'Temperatures') {
-            payload.equipement = document.getElementById('temp-equip').value;
-            payload.valeur = document.getElementById('temp-val').value;
-            payload.statut = (parseFloat(payload.valeur) > 4) ? "NON-CONFORME" : "CONFORME";
-            payload.action = (payload.statut === "NON-CONFORME") ? "Vérification thermostat" : "N/A";
-        } 
-        else if (type === 'Nettoyage') {
-            payload.zone = document.getElementById('net-zone').value;
-            payload.produit = "Standard";
-            payload.statut = "CONFORME";
-        }
-        else if (type === 'Heures_Regulier') {
-            payload.action = document.getElementById('heure-action').value;
-            payload.quart = document.getElementById('heure-quart').value;
-        }
+};
 
-        fetch(API_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify(payload)
-        });
+/* URL Apps Script */
 
-        alert("✅ Donnée envoyée !");
-        if(type === 'Temperatures') document.getElementById('temp-val').value = "";
-        showScreen('screen-menu');
-    }
+const API_URL="https://script.google.com/macros/s/AKfycbxsxir81EyPm8wEC-MR7gEo_MImY6LHhG72O6Cqz-IHvIcroXTGwVEyvkz2tORq0Xa7/exec";
+
+/* LOGIN */
+
+function login(){
+
+let pin=document.getElementById("pin").value.trim();
+
+if(PIN[pin]){
+
+document.getElementById("login").classList.add("hidden");
+
+document.getElementById("menu").classList.remove("hidden");
+
+document.getElementById("nom").value=PIN[pin];
+
+}
+
+else{
+
+document.getElementById("message").innerText="PIN invalide";
+
+}
+
+}
+
+/* ENVOI DONNÉE */
+
+function envoyer(){
+
+let type=document.getElementById("type").value;
+
+let nom=document.getElementById("nom").value.trim();
+
+let equipement=document.getElementById("equipement").value.trim();
+
+let valeur=document.getElementById("valeur").value.trim();
+
+if(!nom||!equipement||!valeur){
+
+alert("Remplir tous les champs");
+
+return;
+
+}
+
+let data={
+
+type:type,
+
+nom:nom,
+
+equipement:equipement,
+
+valeur:valeur
+
+};
+
+fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify(data)
+
+})
+
+.then(res=>res.json())
+
+.then(res=>{
+
+if(res.status==="success"){
+
+alert("Donnée envoyée");
+
+document.getElementById("equipement").value="";
+
+document.getElementById("valeur").value="";
+
+}
+
+else{
+
+alert("Erreur serveur");
+
+}
+
+})
+
+.catch(()=>alert("Erreur réseau"));
+
+}
+
 </script>
+
 </body>
 </html>
