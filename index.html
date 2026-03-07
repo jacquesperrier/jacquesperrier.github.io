@@ -2,36 +2,30 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verdict Test</title>
+    <title>Verdict Fix</title>
 </head>
 <body>
-    <h2>Saisie de Température</h2>
-    <input type="text" id="nom" placeholder="Votre nom"><br><br>
-    <input type="text" id="item" placeholder="Objet (ex: Frigo)"><br><br>
-    <input type="number" id="temp" placeholder="Température"><br><br>
-    <button onclick="envoyer()">ENVOYER MAINTENANT</button>
+    <input type="text" id="n" placeholder="Nom">
+    <input type="text" id="o" placeholder="Objet">
+    <input type="number" id="v" placeholder="Valeur">
+    <button onclick="send()">ENVOYER</button>
 
     <script>
-        const scriptURL = 'const scriptURL = 'https://script.google.com/macros/s/AKfycbx_3HrUZ1y0wReWvCcpolTrUU4SY6-peWHppgF4xdla0h2G8TnEnledPFYJC_AzCY0Q/exec';
-';
+        // COLLEZ VOTRE URL ENTRE LES GUILLEMETS CI-DESSOUS
+        const url = 'https://script.google.com/macros/s/AKfycbyodaY4I6Kv6KBmOVfbeAL-pPDKQUzBhI8F7H4_KtMB8Q8CbM3sMvLPbdA8-XdS8YQk/exec';
 
-        function envoyer() {
-            const donnees = {
-                employe: document.getElementById('nom').value,
-                item: document.getElementById('item').value,
-                valeur: document.getElementById('temp').value
+        function send() {
+            const d = {
+                nom: document.getElementById('n').value,
+                objet: document.getElementById('o').value,
+                note: document.getElementById('v').value
             };
 
-            fetch(scriptURL, {
+            fetch(url, {
                 method: 'POST',
-                mode: 'no-cors', // Évite les erreurs de sécurité bloquantes
-                body: JSON.stringify(donnees)
-            }).then(() => {
-                alert("Envoyé ! Vérifiez le Google Sheet.");
-            }).catch(err => {
-                alert("Erreur : " + err);
-            });
+                mode: 'no-cors',
+                body: JSON.stringify(d)
+            }).then(() => alert("ENVOYÉ !"));
         }
     </script>
 </body>
