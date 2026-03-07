@@ -1,183 +1,169 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verdict Inspection AI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verdict AI - Système Officiel</title>
+    <style>
+        :root {
+            --or: #C9A84C;
+            --noir: #06080A;
+            --gris: #1E2025;
+            --txt: #E8E4DC;
+        }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: var(--noir); color: var(--txt); margin: 0; padding-top: 50px; }
+        .page { display: none; padding: 20px; }
+        .active { display: block; }
+        
+        /* PIN CODE STYLE */
+        .pin-display { font-size: 3em; margin-bottom: 20px; letter-spacing: 10px; height: 60px; color: var(--or); }
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 300px; margin: 0 auto; }
+        .numpad button { padding: 25px; font-size: 1.5em; border-radius: 12px; border: 1px solid var(--gris); background: #111; color: white; cursor: pointer; transition: 0.2s; }
+        .numpad button:active { background: var(--or); color: black; }
+        .btn-ok { background: #22C55E !important; border: none !important; }
 
-<style>
-body{
-font-family:Arial;
-padding:20px;
-background:#f4f4f4;
-}
-
-input,select,button{
-width:100%;
-padding:12px;
-margin-top:10px;
-font-size:16px;
-}
-
-button{
-background:black;
-color:white;
-border:none;
-}
-
-.hidden{
-display:none;
-}
-</style>
+        /* DASHBOARD STYLE */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 400px; margin: 20px auto; }
+        .card { background: #111214; padding: 25px 10px; border-radius: 15px; border: 1px solid var(--gris); cursor: pointer; transition: 0.3s; }
+        .card:hover { border-color: var(--or); transform: translateY(-3px); }
+        .card i { font-size: 2em; display: block; margin-bottom: 10px; font-style: normal; }
+        .card span { font-size: 0.8em; letter-spacing: 1px; font-weight: bold; color: var(--txt); }
+        
+        /* FORMULAIRE STYLE */
+        .form-box { max-width: 350px; margin: 0 auto; text-align: left; background: #111214; padding: 20px; border-radius: 15px; border: 1px solid var(--or); }
+        label { display: block; margin-top: 15px; color: var(--or); font-weight: bold; font-size: 0.8em; letter-spacing: 1px; }
+        input, select { width: 100%; padding: 15px; margin-top: 5px; background: #000; border: 1px solid var(--gris); color: white; border-radius: 8px; box-sizing: border-box; font-size: 1em; }
+        .btn-send { background: var(--or); color: black; border: none; padding: 20px; width: 100%; border-radius: 10px; font-weight: bold; margin-top: 25px; font-size: 1.1em; cursor: pointer; }
+    </style>
 </head>
-
 <body>
 
-<h2>Verdict Inspection AI</h2>
-
-<!-- LOGIN PIN -->
-
-<div id="login">
-
-<input id="pin" placeholder="Entrer votre PIN">
-
-<button onclick="login()">Connexion</button>
-
-<p id="message" style="color:red;"></p>
-
-</div>
-
-<!-- MENU -->
-
-<div id="menu" class="hidden">
-
-<select id="type">
-
-<option value="Temperatures">Température</option>
-
-<option value="Nettoyage">Nettoyage</option>
-
-<option value="Heures_Regulier">Heures</option>
-
-</select>
-
-<input id="nom" placeholder="Nom employé">
-
-<input id="equipement" placeholder="Équipement / Zone">
-
-<input id="valeur" placeholder="Valeur">
-
-<button onclick="envoyer()">Envoyer</button>
-
-</div>
-
-<script>
-
-/* PIN autorisés */
-
-const PIN = {
-
-"1234":"Jacques",
-
-"5678":"Marie"
-
-};
-
-/* URL Apps Script */
-
-const API_URL="https://script.google.com/macros/s/AKfycbxsxir81EyPm8wEC-MR7gEo_MImY6LHhG72O6Cqz-IHvIcroXTGwVEyvkz2tORq0Xa7/exec";
-
-/* LOGIN */
-
-function login(){
-
-let pin=document.getElementById("pin").value.trim();
-
-if(PIN[pin]){
-
-document.getElementById("login").classList.add("hidden");
-
-document.getElementById("menu").classList.remove("hidden");
-
-document.getElementById("nom").value=PIN[pin];
-
-}
-
-else{
-
-document.getElementById("message").innerText="PIN invalide";
-
-}
-
-}
-
-/* ENVOI DONNÉE */
-
-function envoyer(){
-
-let type=document.getElementById("type").value;
-
-let nom=document.getElementById("nom").value.trim();
-
-let equipement=document.getElementById("equipement").value.trim();
-
-let valeur=document.getElementById("valeur").value.trim();
-
-if(!nom||!equipement||!valeur){
-
-alert("Remplir tous les champs");
-
-return;
-
-}
-
-let data={
-
-type:type,
-
-nom:nom,
-
-equipement:equipement,
-
-valeur:valeur
-
-};
-
-fetch(API_URL,{
-
-method:"POST",
-
-body:JSON.stringify(data)
-
-})
-
-.then(res=>res.json())
-
-.then(res=>{
-
-if(res.status==="success"){
-
-alert("Donnée envoyée");
-
-document.getElementById("equipement").value="";
-
-document.getElementById("valeur").value="";
-
-}
-
-else{
-
-alert("Erreur serveur");
-
-}
-
-})
-
-.catch(()=>alert("Erreur réseau"));
-
-}
-
-</script>
-
+    <div style="font-size: 1.5em; letter-spacing: 5px; margin-bottom: 30px;">
+        <span style="color:var(--or)">V</span>ERDICT AI
+    </div>
+
+    <div id="p-pin" class="page active">
+        <div class="pin-display" id="disp">****</div>
+        <div class="numpad">
+            <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
+            <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
+            <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
+            <button onclick="clr()" style="color: #EF4444;">C</button><button onclick="press(0)">0</button><button class="btn-ok" onclick="auth()">OK</button>
+        </div>
+    </div>
+
+    <div id="p-dash" class="page">
+        <div class="grid">
+            <div class="card" onclick="openF('TEMP')"><i>🌡️</i><span>TEMPÉRATURES</span></div>
+            <div class="card" onclick="openF('NETTOYAGE')"><i>🧼</i><span>NETTOYAGE</span></div>
+            <div class="card" onclick="openF('RECEPTION')"><i>🚚</i><span>RÉCEPTION</span></div>
+            <div class="card" onclick="openF('FORMATION')"><i>🎓</i><span>FORMATION</span></div>
+            <div class="card" onclick="openF('HEURES')" style="grid-column: span 2; background: var(--gris);"><i>🕒</i><span>HEURES & PAIE (8%)</span></div>
+        </div>
+        <button onclick="location.reload()" style="background:none; border:none; color:grey; margin-top:30px;">Déconnexion</button>
+    </div>
+
+    <div id="p-form" class="page">
+        <div class="form-box">
+            <h2 id="f-title" style="text-align:center; color:var(--or); text-transform: uppercase; font-size: 1em; letter-spacing: 2px;"></h2>
+            <div id="f-fields"></div>
+            <button class="btn-send" id="btn-submit" onclick="send()">ENREGISTRER AU CLOUD</button>
+            <button onclick="nav('p-dash')" style="background:none; border:none; color:grey; width:100%; margin-top:15px; cursor:pointer;">Annuler</button>
+        </div>
+    </div>
+
+    <script>
+        let pin = ""; 
+        let currentMod = "";
+        
+        // --- TON URL API GOOGLE (À VERIFIER APRÈS CHAQUE DÉPLOIEMENT) ---
+        const URL_API = "https://script.google.com/macros/s/AKfycbwkM7awWX4j0aCBlU1yHs3uk-W1EzxEkcOb354i4YLI2AY9IeQjE1OljB5-HeIFdn5c/exec";
+
+        function nav(id) { 
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
+            document.getElementById(id).classList.add('active'); 
+        }
+
+        function press(n) { 
+            if(pin.length < 4) { 
+                pin += n; 
+                document.getElementById('disp').innerText = "*".repeat(pin.length); 
+            } 
+        }
+
+        function clr() { pin = ""; document.getElementById('disp').innerText = "****"; }
+
+        function auth() { 
+            if(pin.length === 4) nav('p-dash'); 
+            else alert("Entrez votre code PIN"); 
+        }
+
+        function openF(m) {
+            currentMod = m; 
+            document.getElementById('f-title').innerText = m;
+            const f = document.getElementById('f-fields');
+            f.innerHTML = ""; // Reset
+            
+            if(m === 'TEMP') {
+                f.innerHTML = `
+                    <label>Équipement</label>
+                    <select id="v1">
+                        <option>Frigo 1 (Cuisine)</option><option>Frigo 2 (Bar)</option>
+                        <option>Congélateur</option><option>Table Froide</option>
+                    </select>
+                    <label>Température (°C)</label>
+                    <input type="number" step="0.1" id="v2" placeholder="Ex: 3.2">`;
+            } else if(m === 'HEURES') {
+                f.innerHTML = `
+                    <label>Poste / Quart</label>
+                    <select id="v1">
+                        <option>Cuisine (Régulier)</option><option>Service (8% Pourboire)</option>
+                        <option>Bar</option><option>Plonge</option>
+                    </select>
+                    <label>Action</label>
+                    <select id="v2"><option>ARRIVÉE</option><option>DÉPART</option></select>`;
+            } else if(m === 'NETTOYAGE') {
+                f.innerHTML = `
+                    <label>Zone</label>
+                    <select id="v1"><option>Surfaces de travail</option><option>Planchers</option><option>Hottes</option></select>
+                    <label>Statut</label>
+                    <select id="v2"><option>CONFORME</option><option>NON-CONFORME</option></select>`;
+            } else {
+                f.innerHTML = `<label>Détail</label><input type="text" id="v1"><label>Valeur</label><input type="text" id="v2">`;
+            }
+            f.innerHTML += `<label>Notes / Commentaires</label><input type="text" id="n" placeholder="Optionnel">`;
+            nav('p-form');
+        }
+
+        function send() {
+            const btn = document.getElementById('btn-submit');
+            btn.innerText = "ENVOI EN COURS...";
+            btn.disabled = true;
+
+            const data = { 
+                dept: currentMod, 
+                pin: pin, 
+                v1: document.getElementById('v1').value, 
+                v2: document.getElementById('v2').value, 
+                note: document.getElementById('n').value 
+            };
+
+            // Utilisation de fetch avec mode no-cors pour éviter les blocages de navigateur
+            fetch(URL_API, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                body: JSON.stringify(data)
+            }).then(() => {
+                alert("✓ ENREGISTRÉ AVEC SUCCÈS");
+                btn.innerText = "ENREGISTRER AU CLOUD";
+                btn.disabled = false;
+                nav('p-dash');
+            }).catch(err => {
+                alert("Erreur de connexion");
+                btn.disabled = false;
+            });
+        }
+    </script>
 </body>
 </html>
