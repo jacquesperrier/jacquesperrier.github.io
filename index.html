@@ -1,31 +1,56 @@
+(No subject)
+Verdict<eliteauditeur@icloud.com>
+​You​
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Verdict Fix</title>
+    <title>Verdict - Saisie</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        input, button { display: block; width: 100%; margin-bottom: 10px; padding: 10px; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <input type="text" id="n" placeholder="Nom">
-    <input type="text" id="o" placeholder="Objet">
-    <input type="number" id="v" placeholder="Valeur">
-    <button onclick="send()">ENVOYER</button>
+    <h2>Rapport d'Inspection</h2>
+    <input type="text" id="employe" placeholder="Nom de l'employé" required>
+    <input type="text" id="item" placeholder="Item inspecté" required>
+    <input type="number" id="valeur" placeholder="Valeur / Température" required>
+    <input type="text" id="commentaire" placeholder="Commentaire">
+    <button id="btnEnvoyer" onclick="envoyerDonnees()">ENVOYER</button>
 
     <script>
-        // COLLEZ VOTRE URL ENTRE LES GUILLEMETS CI-DESSOUS
-        const url = 'https://script.google.com/macros/s/AKfycbyodaY4I6Kv6KBmOVfbeAL-pPDKQUzBhI8F7H4_KtMB8Q8CbM3sMvLPbdA8-XdS8YQk/exec';
+        // REMPLACEZ UNIQUEMENT CETTE URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzbsLtYgg1MWvVr5se4bVeNpWauHJ0nPqJGFfmAjvqFbuRzCELi3CqcQhP-9lDCJW0/exec';
 
-        function send() {
-            const d = {
-                nom: document.getElementById('n').value,
-                objet: document.getElementById('o').value,
-                note: document.getElementById('v').value
+        function envoyerDonnees() {
+            const btn = document.getElementById('btnEnvoyer');
+            btn.disabled = true; // Empêche de cliquer deux fois (fini les 400 entrées)
+            btn.innerText = "Envoi en cours...";
+
+            const payload = {
+                employe: document.getElementById('employe').value,
+                item: document.getElementById('item').value,
+                valeur: document.getElementById('valeur').value,
+                commentaire: document.getElementById('commentaire').value
             };
 
-            fetch(url, {
+            fetch(scriptURL, {
                 method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(d)
-            }).then(() => alert("ENVOYÉ !"));
+                mode: 'no-cors', // Force le passage à travers les sécurités
+                cache: 'no-cache',
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                alert("Données transmises au tableau !");
+                location.reload(); // Reset complet de la page
+            })
+            .catch(error => {
+                alert("Erreur de connexion");
+                btn.disabled = false;
+                btn.innerText = "Réessayer";
+            });
         }
     </script>
 </body>
