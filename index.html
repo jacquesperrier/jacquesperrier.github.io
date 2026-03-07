@@ -1,56 +1,24 @@
-const SHEET_ID = "18vFZctK9UI5NKa1XbwNm7xoYCl0B8_0uog5lXzwDpdM";
-const SHEET_NAME = "Temperatures";
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Verdict Inspection AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <style>
+        /* Garde ici ton bloc <style> que nous avons validé ensemble */
+        :root { --or: #C9A84C; --noir: #080809; --blanc: #F0EBE0; --vert: #22C55E; --rouge: #EF4444; }
+        /* ... (Recopie le CSS du message précédent ici) ... */
+    </style>
+</head>
+<body>
 
-const EMPLOYES = {
-  "1111": "Jean",
-  "2222": "Marie",
-  "3333": "Paul"
-};
+    <div class="screen" id="splash">
+        <div class="logo"><span class="V">V</span>erdict</div>
+        <div class="tagline">INSPECTION AI · EXPERT</div>
+        <button class="btn-main" onclick="showScreen('pin')">DÉMARRER</button>
+    </div>
 
-function doPost(e) {
-
-  try {
-
-    const data = JSON.parse(e.postData.contents);
-
-    const pin = data.pin;
-    const equipement = data.equipement;
-    const temperature = parseFloat(data.temperature);
-
-    if (!EMPLOYES[pin]) {
-      return ContentService
-        .createTextOutput(JSON.stringify({status:"error",message:"PIN invalide"}))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    const employe = EMPLOYES[pin];
-
-    const sheet = SpreadsheetApp
-      .openById(SHEET_ID)
-      .getSheetByName(SHEET_NAME);
-
-    let statut = "OK";
-
-    if (temperature >= 4 && temperature <= 60) {
-      statut = "ALERTE";
-    }
-
-    sheet.appendRow([
-      new Date(),
-      employe,
-      equipement,
-      temperature,
-      statut
-    ]);
-
-    return ContentService
-      .createTextOutput(JSON.stringify({status:"success"}))
-      .setMimeType(ContentService.MimeType.JSON);
-
-  } catch(err){
-
-    return ContentService
-      .createTextOutput(JSON.stringify({status:"error",message:err}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+    <script src="script.js"></script>
+</body>
+</html>
