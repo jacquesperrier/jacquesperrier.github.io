@@ -274,7 +274,7 @@ select {
 
 <!-- ══ FORMS ══ -->
 
-<div id="forms-screen" class="screen" style="padding:0; justify-content:flex-start;">
+<div id="forms-screen" class="screen" style="display:none; padding:0; justify-content:flex-start;">
   <div class="form-header">
     <button class="back-btn" onclick="goBack()">←</button>
     <div class="form-header-title" id="form-header-title">FORMULAIRE</div>
@@ -453,8 +453,13 @@ let cameraStream = null;
 
 // ── NAV ──
 function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  var el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.display = 'flex';
   window.scrollTo(0, 0);
 }
 function goBack() { show(currentDashboard); stopCamera(); }
