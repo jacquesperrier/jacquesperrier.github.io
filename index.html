@@ -383,8 +383,15 @@ document.addEventListener("DOMContentLoaded", function() {
   </div>
   <img id="photo-preview" class="photo-preview" alt="Photo prise">
   <button type="button" class="btn-camera" id="btn-photo" style="display:none" onclick="prendrePhoto()">📸 PRENDRE LA PHOTO</button>
-  <label class="field-label">Heure de départ</label>
-  <input type="time" id="h-fin">
+  <label class="field-label">Heure de départ (Punch OUT)</label>
+  <input type="time" id="h-fin" onchange="activerCameraFin()">
+  <label class="field-label">📸 Photo de départ (anti-fraude)</label>
+  <div class="camera-wrap" id="camera-wrap-fin">
+    <video id="camera-video-fin" autoplay playsinline muted></video>
+    <canvas id="camera-canvas-fin"></canvas>
+  </div>
+  <img id="photo-preview-fin" class="photo-preview" alt="Photo départ">
+  <button type="button" class="btn-camera" id="btn-photo-fin" style="display:none" onclick="prendrePhotoFin()">📸 PRENDRE LA PHOTO DE DÉPART</button>
   <label class="field-label">Heures travaillées</label>
   <input type="number" id="h-heures" step="0.25" placeholder="Ex: 7.5">
   <label class="field-label">Pourboires ($)</label>
@@ -458,6 +465,7 @@ let pinEntry = "";
 let currentRole = "";
 let currentDashboard = "dashboard";
 let photoData = "";
+let photoDataFin = "";
 let cameraStream = null;
 
 // ── NAV ──
@@ -557,6 +565,35 @@ function activerCamera() {
       });
   }
 }
+function activerCameraFin() {
+  const wrap = document.getElementById('camera-wrap-fin');
+  const btnPhoto = document.getElementById('btn-photo-fin');
+  if (!document.getElementById('h-fin').value) return;
+  wrap.style.display = 'block';
+  btnPhoto.style.display = 'block';
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+      .then(stream => {
+        cameraStream = stream;
+        document.getElementById('camera-video-fin').srcObject = stream;
+      })
+      .catch(() => { wrap.style.display = 'none'; btnPhoto.style.display = 'none'; });
+  }
+}
+function prendrePhotoFin() {
+  const video = document.getElementById('camera-video-fin');
+  const canvas = document.getElementById('camera-canvas-fin');
+  canvas.width = video.videoWidth || 320;
+  canvas.height = video.videoHeight || 240;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  photoDataFin = canvas.toDataURL('image/jpeg', 0.6);
+  const preview = document.getElementById('photo-preview-fin');
+  preview.src = photoDataFin;
+  preview.style.display = 'block';
+  document.getElementById('camera-wrap-fin').style.display = 'none';
+  document.getElementById('btn-photo-fin').textContent = '✅ PHOTO DÉPART PRISE — Reprendre';
+  stopCamera();
+}
 function prendrePhoto() {
   const video = document.getElementById('camera-video');
   const canvas = document.getElementById('camera-canvas');
@@ -616,6 +653,7 @@ function envoyer(type) {
     payload.pourboires = document.getElementById('h-pourboires').value;
     payload.commentaire = document.getElementById('h-commentaire').value.trim();
     payload.photo = photoData ? "OUI" : "NON";
+    payload.photo_fin = photoDataFin ? "OUI" : "NON";
     if (!payload.employe || !payload.date) valid = false;
   } else if (type === 'formation') {
     payload.employe = document.getElementById('f-employe').value.trim();
@@ -653,9 +691,13 @@ function envoyer(type) {
   .then(() => {
     msg.className = 'msg success';
     msg.textContent = '✅ Enregistré dans Google Sheets !';
-    photoData = "";
+    photoData = ""; photoDataFin = "";
     document.getElementById('photo-preview').style.display = 'none';
     document.getElementById('photo-preview').src = '';
+    document.getElementById('photo-preview-fin').style.display = 'none';
+    document.getElementById('photo-preview-fin').src = '';
+    document.getElementById('btn-photo-fin').style.display = 'none';
+    document.getElementById('camera-wrap-fin').style.display = 'none';
     document.querySelectorAll('#form-' + type + ' input:not([type=radio]), #form-' + type + ' textarea, #form-' + type + ' select').forEach(el => { el.value = ''; });
     document.querySelectorAll('#form-' + type + ' input[type=radio]').forEach(el => { el.checked = false; });
   })
