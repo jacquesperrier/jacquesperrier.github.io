@@ -381,8 +381,8 @@ document.addEventListener("DOMContentLoaded", function() {
   <div class="camera-wrap" id="camera-wrap">
     <video id="camera-video" autoplay playsinline muted></video>
     <canvas id="camera-canvas"></canvas>
+    <button type="button" id="btn-snap-photo" onclick="prendrePhoto()" style="display:none; position:absolute; bottom:10px; left:50%; transform:translateX(-50%); padding:14px 30px; background:#c9a84c; color:#000; border:none; border-radius:30px; font-size:15px; font-weight:700; font-family:Montserrat,sans-serif; z-index:10; cursor:pointer;">📸 PRENDRE LA PHOTO</button>
   </div>
-  <button type="button" class="btn-camera" id="btn-snap-photo" style="display:none; background:#155724; color:#fff; border-color:#155724;" onclick="prendrePhoto()">📸 PRENDRE LA PHOTO MAINTENANT</button>
   <img id="photo-preview" class="photo-preview" alt="Photo prise">
   <label class="field-label">Heure de départ (Punch OUT)</label>
   <input type="time" id="h-fin" onchange="calculerHeures();">
@@ -391,8 +391,8 @@ document.addEventListener("DOMContentLoaded", function() {
   <div class="camera-wrap" id="camera-wrap-fin">
     <video id="camera-video-fin" autoplay playsinline muted></video>
     <canvas id="camera-canvas-fin"></canvas>
+    <button type="button" id="btn-snap-fin" onclick="prendrePhotoFin()" style="display:none; position:absolute; bottom:10px; left:50%; transform:translateX(-50%); padding:14px 30px; background:#c9a84c; color:#000; border:none; border-radius:30px; font-size:15px; font-weight:700; font-family:Montserrat,sans-serif; z-index:10; cursor:pointer;">📸 PRENDRE LA PHOTO</button>
   </div>
-  <button type="button" class="btn-camera" id="btn-snap-fin" style="display:none; background:#155724; color:#fff; border-color:#155724;" onclick="prendrePhotoFin()">📸 PRENDRE LA PHOTO MAINTENANT</button>
   <img id="photo-preview-fin" class="photo-preview" alt="Photo départ">
   <label class="field-label">Heures travaillées (calculé automatiquement)</label>
   <input type="text" id="h-heures" placeholder="Sera calculé..." readonly style="background:#f5f5f5; color:#333; font-weight:700; font-size:18px; text-align:center; border-color:#c9a84c;">
