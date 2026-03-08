@@ -1,57 +1,94 @@
-(No subject)
-Verdict<eliteauditeur@icloud.com>
-​You​
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Verdict - Saisie</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; }
-        input, button { display: block; width: 100%; margin-bottom: 10px; padding: 10px; }
-        button { background: #007bff; color: white; border: none; cursor: pointer; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verdict Inspection AI — Saisie</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .card { background: white; border-radius: 12px; padding: 30px; width: 100%; max-width: 480px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    h1 { font-size: 20px; color: #1a1a2e; margin-bottom: 6px; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
+    label { display: block; font-size: 13px; font-weight: bold; color: #444; margin-bottom: 5px; }
+    input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; margin-bottom: 16px; background: #fafafa; }
+    textarea { resize: vertical; min-height: 80px; }
+    button { width: 100%; padding: 14px; background: #e63946; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    button:disabled { background: #aaa; }
+    #message { margin-top: 16px; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; display: none; }
+    .success { background: #d4edda; color: #155724; display: block !important; }
+    .error   { background: #f8d7da; color: #721c24; display: block !important; }
+  </style>
 </head>
 <body>
-    <h2>Rapport d'Inspection</h2>
-    <input type="text" id="employe" placeholder="Nom de l'employé" required>
-    <input type="text" id="item" placeholder="Item inspecté" required>
-    <input type="number" id="valeur" placeholder="Valeur / Température" required>
-    <input type="text" id="commentaire" placeholder="Commentaire">
-    <button id="btnEnvoyer" onclick="envoyerDonnees()">ENVOYER</button>
+<div class="card">
+  <h1>🍽️ Verdict Inspection AI</h1>
+  <p class="subtitle">Saisie des données MAPAQ</p>
 
-    <script>
-        // REMPLACEZ UNIQUEMENT CETTE URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzbsLtYgg1MWvVr5se4bVeNpWauHJ0nPqJGFfmAjvqFbuRzCELi3CqcQhP-9lDCJW0/exec';
+<label for="employe">Employé</label>
+<input type="text" id="employe" placeholder="Ex: Marie Tremblay">
 
-        function envoyerDonnees() {
-            const btn = document.getElementById('btnEnvoyer');
-            btn.disabled = true; // Empêche de cliquer deux fois (fini les 400 entrées)
-            btn.innerText = "Envoi en cours...";
+<label for="item">Élément inspecté</label>
+<input type="text" id="item" placeholder="Ex: Température frigo #1">
 
-            const payload = {
-                employe: document.getElementById('employe').value,
-                item: document.getElementById('item').value,
-                valeur: document.getElementById('valeur').value,
-                commentaire: document.getElementById('commentaire').value
-            };
+<label for="valeur">Valeur / Résultat</label>
+<input type="text" id="valeur" placeholder="Ex: 4.5°C">
 
-            fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors', // Force le passage à travers les sécurités
-                cache: 'no-cache',
-                body: JSON.stringify(payload)
-            })
-            .then(() => {
-                alert("Données transmises au tableau !");
-                location.reload(); // Reset complet de la page
-            })
-            .catch(error => {
-                alert("Erreur de connexion");
-                btn.disabled = false;
-                btn.innerText = "Réessayer";
-            });
-        }
-    </script>
+<label for="commentaire">Commentaire</label>
+
+  <textarea id="commentaire" placeholder="Ex: Conforme MAPAQ"></textarea>
+
+<button id="btn" onclick="envoyer()">✅ Enregistrer</button>
+
+  <div id="message"></div>
+</div>
+
+<script>
+  const scriptURL = "https://script.google.com/macros/s/AKfycbwWFXbAjm-TVHCDBm13lF7dNR3rqHxaQRjV1Rp8KRftM53dDw4rGNMUI_d3VS5brG1R/exec";
+
+  function envoyer() {
+    const employe     = document.getElementById("employe").value.trim();
+    const item        = document.getElementById("item").value.trim();
+    const valeur      = document.getElementById("valeur").value.trim();
+    const commentaire = document.getElementById("commentaire").value.trim();
+    const msg         = document.getElementById("message");
+    const btn         = document.getElementById("btn");
+
+    if (!employe || !item || !valeur) {
+      msg.className = "error";
+      msg.textContent = "⚠️ Remplir Employé, Élément et Valeur.";
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Envoi...";
+    msg.style.display = "none";
+
+    fetch(scriptURL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ employe, item, valeur, commentaire })
+    })
+    .then(() => {
+      msg.className = "success";
+      msg.textContent = "✅ Enregistré dans Google Sheets !";
+      document.getElementById("employe").value = "";
+      document.getElementById("item").value = "";
+      document.getElementById("valeur").value = "";
+      document.getElementById("commentaire").value = "";
+    })
+    .catch(err => {
+      msg.className = "error";
+      msg.textContent = "❌ Erreur : " + err.message;
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.textContent = "✅ Enregistrer";
+    });
+  }
+</script>
+
 </body>
 </html>
