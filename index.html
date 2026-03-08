@@ -375,25 +375,27 @@ document.addEventListener("DOMContentLoaded", function() {
   <label class="field-label">Date</label>
   <input type="date" id="h-date">
   <label class="field-label">Heure d'arrivée (Punch IN)</label>
-  <input type="time" id="h-debut" onchange="activerCamera()">
-  <label class="field-label">📸 Photo de présence (anti-fraude)</label>
+  <input type="time" id="h-debut" onchange="calculerHeures();">
+  <label class="field-label">📸 Photo d'arrivée (anti-fraude)</label>
+  <button type="button" class="btn-camera" id="btn-photo" onclick="activerCamera()">📸 ACTIVER LA CAMÉRA — ARRIVÉE</button>
   <div class="camera-wrap" id="camera-wrap">
     <video id="camera-video" autoplay playsinline muted></video>
     <canvas id="camera-canvas"></canvas>
   </div>
+  <button type="button" class="btn-camera" id="btn-snap-photo" style="display:none; background:#155724; color:#fff; border-color:#155724;" onclick="prendrePhoto()">📸 PRENDRE LA PHOTO MAINTENANT</button>
   <img id="photo-preview" class="photo-preview" alt="Photo prise">
-  <button type="button" class="btn-camera" id="btn-photo" style="display:none" onclick="prendrePhoto()">📸 PRENDRE LA PHOTO</button>
   <label class="field-label">Heure de départ (Punch OUT)</label>
-  <input type="time" id="h-fin" onchange="activerCameraFin()">
+  <input type="time" id="h-fin" onchange="calculerHeures();">
   <label class="field-label">📸 Photo de départ (anti-fraude)</label>
+  <button type="button" class="btn-camera" id="btn-photo-fin" onclick="activerCameraFin()">📸 ACTIVER LA CAMÉRA — DÉPART</button>
   <div class="camera-wrap" id="camera-wrap-fin">
     <video id="camera-video-fin" autoplay playsinline muted></video>
     <canvas id="camera-canvas-fin"></canvas>
   </div>
+  <button type="button" class="btn-camera" id="btn-snap-fin" style="display:none; background:#155724; color:#fff; border-color:#155724;" onclick="prendrePhotoFin()">📸 PRENDRE LA PHOTO MAINTENANT</button>
   <img id="photo-preview-fin" class="photo-preview" alt="Photo départ">
-  <button type="button" class="btn-camera" id="btn-photo-fin" style="display:none" onclick="prendrePhotoFin()">📸 PRENDRE LA PHOTO DE DÉPART</button>
-  <label class="field-label">Heures travaillées</label>
-  <input type="number" id="h-heures" step="0.25" placeholder="Ex: 7.5">
+  <label class="field-label">Heures travaillées (calculé automatiquement)</label>
+  <input type="text" id="h-heures" placeholder="Sera calculé..." readonly style="background:#f5f5f5; color:#333; font-weight:700; font-size:18px; text-align:center; border-color:#c9a84c;">
   <label class="field-label">Pourboires ($)</label>
   <input type="number" id="h-pourboires" step="0.01" placeholder="Ex: 45.00">
   <label class="field-label">Commentaire</label>
@@ -466,6 +468,8 @@ let currentRole = "";
 let currentDashboard = "dashboard";
 let photoData = "";
 let photoDataFin = "";
+let cameraStreamArrivee = null;
+let cameraStreamDepart = null;
 let cameraStream = null;
 
 // ── NAV ──
@@ -548,68 +552,98 @@ function showForm(type) {
 
 // ── CAMERA ANTI-FRAUDE ──
 function activerCamera() {
-  const wrap = document.getElementById('camera-wrap');
-  const btnPhoto = document.getElementById('btn-photo');
   if (!document.getElementById('h-debut').value) return;
+  if (photoData) return; // déjà prise
+  var wrap = document.getElementById('camera-wrap');
+  var btn = document.getElementById('btn-photo');
   wrap.style.display = 'block';
-  btnPhoto.style.display = 'block';
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
-      .then(stream => {
-        cameraStream = stream;
-        document.getElementById('camera-video').srcObject = stream;
-      })
-      .catch(() => {
-        wrap.style.display = 'none';
-        btnPhoto.style.display = 'none';
-      });
-  }
+  btn.style.display = 'block';
+  if (!navigator.mediaDevices) { wrap.style.display='none'; btn.style.display='none'; return; }
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width:640, height:480 }, audio: false })
+    .then(function(stream) {
+      cameraStreamArrivee = stream;
+      var vid = document.getElementById('camera-video');
+      vid.srcObject = stream;
+      vid.play();
+    })
+    .catch(function(err) {
+      console.log('Camera arrivee error:', err);
+      wrap.style.display = 'none';
+      btn.style.display = 'none';
+      alert('Caméra non disponible: ' + err.message);
+    });
+}
+function calculerHeures() {
+  var debut = document.getElementById('h-debut').value;
+  var fin   = document.getElementById('h-fin').value;
+  if (!debut || !fin) return;
+  var d = debut.split(':').map(Number);
+  var f = fin.split(':').map(Number);
+  var debutMin = d[0] * 60 + d[1];
+  var finMin   = f[0] * 60 + f[1];
+  if (finMin < debutMin) finMin += 24 * 60; // quart de nuit
+  var totalMin = finMin - debutMin;
+  var heures = Math.floor(totalMin / 60);
+  var minutes = totalMin % 60;
+  var decimal = Math.round(totalMin / 60 * 4) / 4; // arrondi au 0.25
+  document.getElementById('h-heures').value = decimal + 'h (' + heures + 'h' + (minutes > 0 ? minutes + 'm' : '') + ')';
 }
 function activerCameraFin() {
-  const wrap = document.getElementById('camera-wrap-fin');
-  const btnPhoto = document.getElementById('btn-photo-fin');
   if (!document.getElementById('h-fin').value) return;
+  if (photoDataFin) return; // déjà prise
+  var wrap = document.getElementById('camera-wrap-fin');
+  var btn = document.getElementById('btn-photo-fin');
   wrap.style.display = 'block';
-  btnPhoto.style.display = 'block';
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
-      .then(stream => {
-        cameraStream = stream;
-        document.getElementById('camera-video-fin').srcObject = stream;
-      })
-      .catch(() => { wrap.style.display = 'none'; btnPhoto.style.display = 'none'; });
-  }
+  btn.style.display = 'block';
+  if (!navigator.mediaDevices) { wrap.style.display='none'; btn.style.display='none'; return; }
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width:640, height:480 }, audio: false })
+    .then(function(stream) {
+      cameraStreamDepart = stream;
+      var vid = document.getElementById('camera-video-fin');
+      vid.srcObject = stream;
+      vid.play();
+    })
+    .catch(function(err) {
+      console.log('Camera depart error:', err);
+      wrap.style.display = 'none';
+      btn.style.display = 'none';
+    });
 }
 function prendrePhotoFin() {
-  const video = document.getElementById('camera-video-fin');
-  const canvas = document.getElementById('camera-canvas-fin');
+  var video = document.getElementById('camera-video-fin');
+  var canvas = document.getElementById('camera-canvas-fin');
   canvas.width = video.videoWidth || 320;
   canvas.height = video.videoHeight || 240;
   canvas.getContext('2d').drawImage(video, 0, 0);
-  photoDataFin = canvas.toDataURL('image/jpeg', 0.6);
-  const preview = document.getElementById('photo-preview-fin');
+  photoDataFin = canvas.toDataURL('image/jpeg', 0.7);
+  var preview = document.getElementById('photo-preview-fin');
   preview.src = photoDataFin;
   preview.style.display = 'block';
   document.getElementById('camera-wrap-fin').style.display = 'none';
-  document.getElementById('btn-photo-fin').textContent = '✅ PHOTO DÉPART PRISE — Reprendre';
-  stopCamera();
+  document.getElementById('btn-snap-fin').style.display = 'none';
+  document.getElementById('btn-photo-fin').textContent = '✅ PHOTO DÉPART PRISE';
+  document.getElementById('btn-photo-fin').style.display = 'block';
+  if (cameraStreamDepart) { cameraStreamDepart.getTracks().forEach(function(t){t.stop();}); cameraStreamDepart = null; }
 }
 function prendrePhoto() {
-  const video = document.getElementById('camera-video');
-  const canvas = document.getElementById('camera-canvas');
+  var video = document.getElementById('camera-video');
+  var canvas = document.getElementById('camera-canvas');
   canvas.width = video.videoWidth || 320;
   canvas.height = video.videoHeight || 240;
   canvas.getContext('2d').drawImage(video, 0, 0);
-  photoData = canvas.toDataURL('image/jpeg', 0.6);
-  const preview = document.getElementById('photo-preview');
+  photoData = canvas.toDataURL('image/jpeg', 0.7);
+  var preview = document.getElementById('photo-preview');
   preview.src = photoData;
   preview.style.display = 'block';
   document.getElementById('camera-wrap').style.display = 'none';
-  document.getElementById('btn-photo').textContent = '✅ PHOTO PRISE — Reprendre';
-  stopCamera();
+  document.getElementById('btn-snap-photo').style.display = 'none';
+  document.getElementById('btn-photo').textContent = '✅ PHOTO ARRIVÉE PRISE';
+  document.getElementById('btn-photo').style.display = 'block';
+  if (cameraStreamArrivee) { cameraStreamArrivee.getTracks().forEach(function(t){t.stop();}); cameraStreamArrivee = null; }
 }
 function stopCamera() {
-  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
+  if (cameraStreamArrivee) { cameraStreamArrivee.getTracks().forEach(function(t){t.stop();}); cameraStreamArrivee = null; }
+  if (cameraStreamDepart) { cameraStreamDepart.getTracks().forEach(function(t){t.stop();}); cameraStreamDepart = null; }
 }
 
 // ── ENVOI ──
