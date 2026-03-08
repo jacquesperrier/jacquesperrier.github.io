@@ -151,10 +151,19 @@ select {
   </style>
 </head>
 <body>
+<script>
+// Cache tout immédiatement au chargement
+document.addEventListener("DOMContentLoaded", function() {
+  var screens = document.querySelectorAll('.screen');
+  screens.forEach(function(s) { s.style.cssText = 'display:none !important'; });
+  var splash = document.getElementById('splash');
+  if (splash) splash.style.cssText = 'display:flex !important; min-height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:30px 20px;';
+});
+</script>
 
 <!-- ══ SPLASH ══ -->
 
-<div id="splash" class="screen active">
+<div id="splash" class="screen">
   <div class="splash-logo">
     <div><span class="logo-v">V</span><span class="logo-rest">erdict</span></div>
     <div class="logo-sub">INSPECTION AI &nbsp;·&nbsp; EXPERT</div>
@@ -454,12 +463,13 @@ let cameraStream = null;
 // ── NAV ──
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => {
-    s.classList.remove('active');
-    s.style.display = 'none';
+    s.style.cssText = 'display:none !important';
   });
   var el = document.getElementById(id);
-  el.classList.add('active');
-  el.style.display = 'flex';
+  var isForm = (id === 'forms-screen');
+  el.style.cssText = (isForm
+    ? 'display:flex !important; min-height:100vh; flex-direction:column; align-items:flex-start; justify-content:flex-start; padding:0;'
+    : 'display:flex !important; min-height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:30px 20px;');
   window.scrollTo(0, 0);
 }
 function goBack() { show(currentDashboard); stopCamera(); }
