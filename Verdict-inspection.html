@@ -1,0 +1,1105 @@
+
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Verdict Inspection AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --noir: #0A0A0A;
+  --or: #D4A017;
+  --or-vif: #FFD700;
+  --vert: #1B5E20;
+  --vert-pale: #C8E6C9;
+  --rouge: #C62828;
+  --jaune: #E65100;
+  --blanc: #F0EEE8;
+  --gris: #1E1E1E;
+  --gris2: #2A2A2A;
+  --gris3: #3A3A3A;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; }
+body {
+  background: var(--noir);
+  color: var(--blanc);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  overflow-x: hidden;
+}
+
+/* ——— HEADER ——— */
+.header {
+background: linear-gradient(135deg, #0A0A0A 0%, #111100 100%);
+border-bottom: 2px solid var(–or);
+padding: 14px 20px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+.logo { font-family:‘Bebas Neue’,cursive; font-size:26px; color:var(–or); letter-spacing:3px; }
+.logo span { color:var(–blanc); }
+.btn-gear {
+background:none; border:1px solid var(–gris3); color:#888;
+width:38px; height:38px; border-radius:8px; font-size:18px;
+cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+
+/* ——— SCREENS ——— */
+.screen { display:none; padding:20px 18px; min-height:calc(100vh - 68px); }
+.screen.active { display:block; animation:fadeUp 0.25s ease; }
+@keyframes fadeUp {
+from { opacity:0; transform:translateY(8px); }
+to   { opacity:1; transform:translateY(0); }
+}
+
+/* ——— BOTTOM NAV ——— */
+.bottom-nav {
+position:fixed; bottom:0; left:0; right:0;
+background:#111; border-top:1px solid #222;
+display:flex;
+padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+z-index:100;
+}
+.nav-item {
+flex:1; display:flex; flex-direction:column;
+align-items:center; gap:3px; padding:5px 0;
+cursor:pointer; color:#444; font-size:11px;
+font-weight:600; text-transform:uppercase; letter-spacing:0.5px;
+transition:color 0.2s;
+}
+.nav-item span { font-size:22px; }
+.nav-item.active { color:var(–or); }
+.with-nav { padding-bottom: calc(68px + env(safe-area-inset-bottom) + 10px); }
+
+/* ——— BUTTONS ——— */
+.btn-gold {
+background: linear-gradient(135deg, var(–or), var(–or-vif));
+color:var(–noir); border:none; padding:15px 24px;
+border-radius:12px; font-family:‘Rajdhani’,sans-serif;
+font-size:17px; font-weight:700; cursor:pointer;
+width:100%; letter-spacing:1px; text-transform:uppercase;
+transition:all 0.15s;
+}
+.btn-gold:active { transform:scale(0.98); opacity:0.9; }
+.btn-outline {
+background:transparent; color:var(–or); border:2px solid var(–or);
+padding:13px 24px; border-radius:12px; font-family:‘Rajdhani’,sans-serif;
+font-size:16px; font-weight:600; cursor:pointer; width:100%;
+letter-spacing:1px; text-transform:uppercase; transition:all 0.15s;
+}
+.btn-outline:active { background:rgba(212,160,23,0.1); }
+.btn-red {
+background:var(–rouge); color:white; border:none;
+padding:12px 20px; border-radius:10px; font-family:‘Rajdhani’,sans-serif;
+font-size:15px; font-weight:600; cursor:pointer;
+}
+.btn-back {
+background:none; border:none; color:var(–or);
+font-size:26px; cursor:pointer; padding:0 8px 0 0;
+line-height:1;
+}
+
+/* ——— CARDS ——— */
+.card {
+background:var(–gris); border:1px solid var(–gris2);
+border-radius:16px; padding:18px; margin-bottom:14px;
+}
+.card-gold {
+background: linear-gradient(135deg, #161400, #1E1A00);
+border-color:var(–or);
+}
+
+/* ——— FORMS ——— */
+.form-group { margin-bottom:18px; }
+.lbl {
+display:block; color:var(–or); font-size:12px;
+font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:7px;
+}
+.inp {
+width:100%; background:#141414; border:1px solid var(–gris3);
+color:var(–blanc); padding:13px 15px; border-radius:10px;
+font-family:‘Rajdhani’,sans-serif; font-size:16px; outline:none;
+transition:border-color 0.2s; -webkit-appearance:none;
+}
+.inp:focus { border-color:var(–or); }
+select.inp { cursor:pointer; }
+
+/* ——— HOME ——— */
+.hero { text-align:center; padding:24px 0 16px; }
+.hero-title {
+font-family:‘Bebas Neue’,cursive; font-size:44px;
+color:var(–or); letter-spacing:4px; line-height:1;
+}
+.hero-sub { color:#666; font-size:13px; letter-spacing:2px; text-transform:uppercase; margin-top:6px; }
+.hero-badge {
+display:inline-block; background:linear-gradient(135deg,var(–or),var(–or-vif));
+color:var(–noir); padding:5px 14px; border-radius:20px;
+font-size:12px; font-weight:700; margin-top:10px; letter-spacing:1px;
+}
+
+.insp-card {
+background:var(–gris); border-radius:14px; padding:15px 16px;
+margin-bottom:10px; display:flex; align-items:center; gap:14px;
+border-left:4px solid; cursor:pointer; transition:background 0.15s;
+}
+.insp-card:active { background:#2A2A2A; }
+.score-dot {
+width:54px; height:54px; border-radius:12px;
+display:flex; flex-direction:column; align-items:center;
+justify-content:center; flex-shrink:0;
+}
+.dot-num { font-family:‘Bebas Neue’,cursive; font-size:22px; line-height:1; }
+.dot-pct { font-size:10px; font-weight:700; }
+.s-rouge { background:rgba(198,40,40,.18); color:#EF5350; border:1px solid rgba(198,40,40,.35); }
+.s-jaune { background:rgba(230,81,0,.18); color:#FFA726; border:1px solid rgba(230,81,0,.35); }
+.s-vert  { background:rgba(27,94,32,.25); color:#66BB6A; border:1px solid rgba(27,94,32,.45); }
+
+.insp-info h3 { font-size:17px; font-weight:700; color:var(–blanc); }
+.insp-info p { font-size:13px; color:#666; margin-top:2px; }
+
+.empty {
+text-align:center; padding:50px 20px; color:#444;
+}
+.empty-icon { font-size:48px; margin-bottom:14px; }
+
+/* ——— STEPS ——— */
+.steps { display:flex; justify-content:space-between; margin-bottom:22px; position:relative; }
+.steps::before {
+content:’’; position:absolute; top:15px; left:30px; right:30px;
+height:1px; background:#222;
+}
+.step { display:flex; flex-direction:column; align-items:center; gap:5px; position:relative; z-index:1; }
+.step-dot {
+width:30px; height:30px; border-radius:50%;
+display:flex; align-items:center; justify-content:center;
+font-size:13px; font-weight:700; border:2px solid #2A2A2A;
+background:var(–noir); color:#444;
+}
+.step.active .step-dot { border-color:var(–or); color:var(–or); background:#0A0A00; }
+.step.done .step-dot { border-color:var(–vert); background:var(–vert); color:white; }
+.step-lbl { font-size:10px; color:#444; text-transform:uppercase; letter-spacing:0.5px; }
+.step.active .step-lbl { color:var(–or); }
+.step.done .step-lbl { color:#66BB6A; }
+
+/* ——— ZONE NAV ——— */
+.zone-nav {
+display:flex; gap:8px; overflow-x:auto;
+padding-bottom:10px; margin-bottom:18px; scrollbar-width:none;
+}
+.zone-nav::-webkit-scrollbar { display:none; }
+.z-pill {
+flex-shrink:0; padding:8px 14px; border-radius:20px;
+font-size:13px; font-weight:600; cursor:pointer;
+border:1px solid var(–gris3); background:#141414;
+color:#555; transition:all 0.2s; white-space:nowrap;
+}
+.z-pill.active { background:var(–or); color:var(–noir); border-color:var(–or); }
+.z-pill.done { border-color:var(–vert); color:#66BB6A; }
+
+/* ——— PHOTO UPLOAD ——— */
+.upload-zone {
+border:2px dashed var(–gris3); border-radius:14px;
+padding:28px 20px; text-align:center; cursor:pointer;
+transition:border-color 0.2s; margin-bottom:14px;
+}
+.upload-zone:active { border-color:var(–or); }
+.upload-icon { font-size:38px; margin-bottom:8px; }
+.upload-txt { color:#666; font-size:14px; }
+.upload-txt strong { color:var(–or); }
+
+.photos-grid {
+display:grid; grid-template-columns:repeat(2,1fr);
+gap:10px; margin-bottom:14px;
+}
+.photo-item {
+position:relative; border-radius:10px; overflow:hidden; aspect-ratio:4/3;
+}
+.photo-item img { width:100%; height:100%; object-fit:cover; display:block; }
+.photo-status {
+position:absolute; bottom:0; left:0; right:0;
+padding:5px 8px; font-size:11px; font-weight:700;
+text-transform:uppercase; letter-spacing:0.5px;
+}
+.st-wait { background:rgba(0,0,0,.75); color:var(–or-vif); }
+.st-ok   { background:rgba(27,94,32,.85); color:#C8E6C9; }
+.st-err  { background:rgba(198,40,40,.85); color:white; }
+.btn-rm {
+position:absolute; top:5px; right:5px; background:rgba(0,0,0,.7);
+color:white; border:none; width:26px; height:26px;
+border-radius:50%; font-size:14px; cursor:pointer;
+display:flex; align-items:center; justify-content:center;
+}
+
+/* ——— ANALYSE ——— */
+.analyse-wrap {
+display:flex; flex-direction:column; align-items:center;
+justify-content:center; min-height:80vh; text-align:center; padding:30px 20px;
+}
+.spinner {
+width:64px; height:64px; border:3px solid #2A2A2A;
+border-top-color:var(–or); border-radius:50%;
+animation:spin 1s linear infinite; margin-bottom:24px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.analyse-title {
+font-family:‘Bebas Neue’,cursive; font-size:30px;
+color:var(–or); letter-spacing:3px; margin-bottom:10px;
+}
+.analyse-sub { color:#666; font-size:14px; margin-bottom:20px; }
+.prog-bar-wrap {
+background:#2A2A2A; border-radius:6px; height:6px;
+overflow:hidden; width:100%; max-width:320px; margin:0 auto 20px;
+}
+.prog-bar {
+height:100%; background:linear-gradient(90deg,var(–or),var(–or-vif));
+border-radius:6px; transition:width 0.5s ease; width:0;
+}
+.log-wrap {
+width:100%; max-width:340px; text-align:left;
+max-height:200px; overflow-y:auto;
+}
+.log-item {
+padding:7px 10px; margin-bottom:5px; border-radius:8px;
+background:#161616; font-size:13px; color:#666;
+}
+
+/* ——— RAPPORT ——— */
+.rp-cover {
+background: linear-gradient(160deg, #0A0A0A 0%, #141000 100%);
+border:2px solid var(–or); border-radius:18px;
+padding:28px 22px; text-align:center; margin-bottom:22px;
+}
+.rp-logo {
+font-family:‘Bebas Neue’,cursive; font-size:32px;
+color:var(–or); letter-spacing:5px;
+}
+.rp-score {
+font-family:‘Bebas Neue’,cursive; font-size:84px; line-height:1; margin:14px 0 6px;
+}
+.rp-score-lbl {
+font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:3px;
+}
+.info-row {
+display:flex; justify-content:space-between; align-items:center;
+padding:9px 0; border-bottom:1px solid #1E1E1E; font-size:14px;
+}
+.info-row:last-child { border-bottom:none; }
+.info-lbl { color:#666; }
+.info-val { color:var(–blanc); font-weight:600; text-align:right; max-width:60%; }
+
+.sec-hdr {
+display:flex; align-items:center; gap:10px;
+margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid #1E1E1E;
+}
+.sec-hdr h2 {
+font-family:‘Bebas Neue’,cursive; font-size:20px;
+color:var(–or); letter-spacing:2px;
+}
+.sec-num {
+background:var(–or); color:var(–noir); width:30px; height:30px;
+border-radius:7px; display:flex; align-items:center; justify-content:center;
+font-family:‘Bebas Neue’,cursive; font-size:16px; flex-shrink:0;
+}
+
+.zone-grid {
+display:grid; grid-template-columns:repeat(2,1fr); gap:9px; margin-bottom:22px;
+}
+.z-card {
+border-radius:12px; padding:13px; text-align:center;
+}
+.z-card-name { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; opacity:0.8; }
+.z-card-score { font-family:‘Bebas Neue’,cursive; font-size:30px; line-height:1; }
+.z-card-nc { font-size:11px; margin-top:3px; opacity:0.7; }
+
+.photo-blk { border-radius:12px; overflow:hidden; margin-bottom:14px; border:1px solid #1E1E1E; }
+.photo-banner {
+padding:8px 13px; display:flex; justify-content:space-between;
+align-items:center; font-size:13px;
+}
+.photo-banner strong { font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+.photo-banner .pb-score { font-family:‘Bebas Neue’,cursive; font-size:20px; }
+.photo-blk img { width:100%; display:block; }
+.photo-blk-info { padding:12px; background:#111; }
+
+.nc-row {
+display:flex; align-items:flex-start; gap:8px;
+padding:6px 0; border-bottom:1px solid #181818; font-size:13px;
+}
+.nc-row:last-child { border-bottom:none; }
+.nc-risk {
+font-size:11px; font-weight:700; white-space:nowrap;
+padding:2px 7px; border-radius:5px; flex-shrink:0;
+}
+.risk-c { background:rgba(198,40,40,.3); color:#EF5350; }
+.risk-m { background:rgba(230,81,0,.3); color:#FFA726; }
+.risk-mi{ background:rgba(30,136,229,.3); color:#42A5F5; }
+
+.conf-row {
+display:flex; align-items:flex-start; gap:8px;
+padding:8px 0; border-bottom:1px solid #1A1A1A; font-size:14px; color:#999;
+}
+.conf-row:last-child { border-bottom:none; }
+.conf-chk { color:#66BB6A; font-size:15px; flex-shrink:0; }
+
+.nc-card {
+border-radius:12px; padding:15px; margin-bottom:10px; border-left:4px solid;
+}
+.nc-c { background:rgba(198,40,40,.12); border-color:#EF5350; }
+.nc-m { background:rgba(230,81,0,.12); border-color:#FFA726; }
+.nc-mi{ background:rgba(30,136,229,.12); border-color:#42A5F5; }
+.nc-badge {
+display:inline-block; padding:2px 9px; border-radius:5px;
+font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:7px;
+}
+.b-c { background:rgba(198,40,40,.35); color:#EF5350; }
+.b-m { background:rgba(230,81,0,.35); color:#FFA726; }
+.b-mi{ background:rgba(30,136,229,.35); color:#42A5F5; }
+.nc-desc { font-size:15px; font-weight:600; color:var(–blanc); margin-bottom:5px; }
+.nc-act { font-size:13px; color:#888; margin-bottom:3px; }
+.nc-delai { font-size:12px; color:var(–or); font-weight:600; }
+
+.sig-box {
+border:1px dashed var(–gris3); border-radius:12px;
+padding:22px; text-align:center; margin-bottom:14px;
+}
+.sig-lbl { font-size:12px; color:#555; text-transform:uppercase; letter-spacing:2px; margin-bottom:36px; }
+.sig-line { border-top:1px solid var(–gris3); padding-top:7px; font-size:13px; color:#555; }
+
+/* ——— SETTINGS ——— */
+.set-title {
+font-family:‘Bebas Neue’,cursive; font-size:30px;
+color:var(–or); letter-spacing:3px; text-align:center; margin-bottom:6px;
+}
+.set-sub { text-align:center; color:#666; font-size:13px; margin-bottom:24px; }
+
+/* ——— TOAST ——— */
+.toast {
+position:fixed; bottom:82px; left:16px; right:16px;
+background:var(–gris2); border:1px solid var(–gris3);
+border-radius:12px; padding:13px 15px; font-size:14px;
+font-weight:600; z-index:200; transform:translateY(14px);
+opacity:0; transition:all 0.3s; pointer-events:none;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.ok  { border-color:var(–vert); color:#66BB6A; }
+.toast.err { border-color:var(–rouge); color:#EF5350; }
+
+/* ——— PRINT ——— */
+@media print {
+.header, .bottom-nav, .btn-gold, .btn-outline, .no-print { display:none !important; }
+body { background:white; color:black; }
+.screen { display:none !important; }
+#screen-rapport { display:block !important; padding:0; }
+.rp-cover { border:2px solid #D4A017; page-break-after:always; }
+.nc-card { break-inside:avoid; }
+.photo-blk { break-inside:avoid; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+  <div class="logo">VERDICT<span> AI</span></div>
+  <button class="btn-gear" onclick="nav('settings')">⚙</button>
+</div>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<!-- ========== HOME ========== -->
+
+<div class="screen with-nav active" id="screen-home">
+  <div class="hero">
+    <div class="hero-title">TABLEAU DE BORD</div>
+    <div class="hero-sub">Inspections MAPAQ / HACCP</div>
+    <div class="hero-badge">✦ POWERED BY CLAUDE AI</div>
+  </div>
+  <button class="btn-gold" style="margin:18px 0 20px" onclick="newInspection()">+ NOUVELLE INSPECTION</button>
+  <div id="list-inspections"></div>
+</div>
+
+<!-- ========== SETTINGS ========== -->
+
+<div class="screen with-nav" id="screen-settings">
+  <div style="padding-top:16px">
+    <div class="set-title">⚙ PARAMÈTRES</div>
+    <div class="set-sub">Configuration de Verdict Inspection AI</div>
+
+```
+<div class="card card-gold">
+  <div class="form-group">
+    <label class="lbl">🔑 Clé API Anthropic (Claude)</label>
+    <input type="password" class="inp" id="inp-apikey" placeholder="sk-ant-api03-...">
+    <div style="margin-top:7px;font-size:12px;color:#555;">Sauvegardée localement sur votre appareil uniquement.</div>
+  </div>
+  <button class="btn-gold" onclick="saveApiKey()">SAUVEGARDER LA CLÉ</button>
+</div>
+
+<div class="card" style="margin-top:4px">
+  <div class="form-group">
+    <label class="lbl">👤 Nom de l'auditeur</label>
+    <input type="text" class="inp" id="inp-auditeur" placeholder="Jacques Perrier, CFA">
+  </div>
+  <div class="form-group">
+    <label class="lbl">🏢 Entreprise</label>
+    <input type="text" class="inp" id="inp-company" placeholder="Verdict Inspection AI">
+  </div>
+  <button class="btn-gold" onclick="saveSettings()">SAUVEGARDER</button>
+</div>
+
+<div class="card" style="margin-top:4px;text-align:center">
+  <div style="font-size:12px;color:#444;margin-bottom:12px">v1.0 — Verdict Inspection AI © 2025<br>info@verdictinspection-ai.com</div>
+  <button class="btn-red" onclick="clearAll()">🗑 Effacer toutes les données</button>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ========== NOUVELLE INSPECTION ========== -->
+
+<div class="screen with-nav" id="screen-nouvelle">
+  <div style="padding-top:8px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
+      <button class="btn-back" onclick="nav('home')">←</button>
+      <div>
+        <div style="font-family:'Bebas Neue',cursive;font-size:22px;color:var(--or);letter-spacing:2px">NOUVELLE INSPECTION</div>
+        <div style="font-size:12px;color:#666">Étape 1 / 4 — Informations générales</div>
+      </div>
+    </div>
+
+```
+<div class="steps">
+  <div class="step active"><div class="step-dot">1</div><div class="step-lbl">Info</div></div>
+  <div class="step"><div class="step-dot">2</div><div class="step-lbl">Photos</div></div>
+  <div class="step"><div class="step-dot">3</div><div class="step-lbl">Analyse</div></div>
+  <div class="step"><div class="step-dot">4</div><div class="step-lbl">Rapport</div></div>
+</div>
+
+<div class="card">
+  <div class="form-group">
+    <label class="lbl">🏪 Nom de l'établissement *</label>
+    <input type="text" class="inp" id="n-resto" placeholder="Restaurant Le Bouchon">
+  </div>
+  <div class="form-group">
+    <label class="lbl">📍 Adresse</label>
+    <input type="text" class="inp" id="n-adresse" placeholder="123 rue Principale, Gatineau QC">
+  </div>
+  <div class="form-group">
+    <label class="lbl">📋 No. permis MAPAQ</label>
+    <input type="text" class="inp" id="n-permis" placeholder="QC-2025-XXXXX">
+  </div>
+  <div class="form-group">
+    <label class="lbl">👤 Auditeur</label>
+    <input type="text" class="inp" id="n-auditeur" placeholder="Jacques Perrier, CFA">
+  </div>
+  <div class="form-group">
+    <label class="lbl">📅 Date d'inspection</label>
+    <input type="date" class="inp" id="n-date">
+  </div>
+  <div class="form-group" style="margin-bottom:0">
+    <label class="lbl">📝 Type d'inspection</label>
+    <select class="inp" id="n-type">
+      <option>Inspection de routine</option>
+      <option>Inspection de suivi</option>
+      <option>Inspection sur plainte</option>
+      <option>Pré-ouverture</option>
+    </select>
+  </div>
+</div>
+<button class="btn-gold" onclick="goZones()">SUIVANT : PHOTOS DES ZONES →</button>
+```
+
+  </div>
+</div>
+
+<!-- ========== ZONES / PHOTOS ========== -->
+
+<div class="screen with-nav" id="screen-zones">
+  <div style="padding-top:8px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">
+      <button class="btn-back" onclick="nav('nouvelle')">←</button>
+      <div>
+        <div style="font-family:'Bebas Neue',cursive;font-size:22px;color:var(--or);letter-spacing:2px">PHOTOS PAR ZONE</div>
+        <div style="font-size:12px;color:#666">Étape 2 / 4 — Ajoutez 1 à 4 photos par zone</div>
+      </div>
+    </div>
+    <div class="zone-nav" id="zone-nav"></div>
+    <div id="zone-content"></div>
+    <button class="btn-gold" id="btn-analyser" onclick="startAnalysis()" style="margin-top:8px">🔍 ANALYSER AVEC L'IA</button>
+  </div>
+</div>
+
+<!-- ========== ANALYSE ========== -->
+
+<div class="screen" id="screen-analyse">
+  <div class="analyse-wrap">
+    <div class="spinner"></div>
+    <div class="analyse-title">ANALYSE IA EN COURS</div>
+    <div class="analyse-sub" id="a-status">Initialisation...</div>
+    <div class="prog-bar-wrap">
+      <div class="prog-bar" id="a-bar"></div>
+    </div>
+    <div class="log-wrap" id="a-log"></div>
+  </div>
+</div>
+
+<!-- ========== RAPPORT ========== -->
+
+<div class="screen with-nav" id="screen-rapport">
+  <div id="rapport-content"></div>
+  <div class="no-print" style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
+    <button class="btn-gold" onclick="exportPDF()">📄 EXPORTER EN PDF</button>
+    <button class="btn-outline" onclick="nav('home')">← RETOUR ACCUEIL</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+
+<div class="bottom-nav" id="bottom-nav">
+  <div class="nav-item active" id="nav-home" onclick="nav('home')"><span>🏠</span>Accueil</div>
+  <div class="nav-item" id="nav-new" onclick="newInspection()"><span>➕</span>Nouveau</div>
+  <div class="nav-item" id="nav-settings" onclick="nav('settings')"><span>⚙</span>Réglages</div>
+</div>
+
+<!-- Hidden file input -->
+
+<input type="file" id="file-input" accept="image/*" multiple style="display:none" onchange="onFileChange(event)">
+
+<script>
+// ──────────────────────────────────────────────
+// DATA
+// ──────────────────────────────────────────────
+const ZONES = [
+  { id:'reception',   name:'Réception',   emoji:'📦', desc:'Réception des aliments' },
+  { id:'entreposage', name:'Entreposage', emoji:'🗄️', desc:'Entreposage et réfrigération' },
+  { id:'preparation', name:'Préparation', emoji:'🔪', desc:'Préparation alimentaire' },
+  { id:'cuisson',     name:'Cuisson',     emoji:'🍳', desc:'Cuisson et service' },
+  { id:'nettoyage',   name:'Nettoyage',   emoji:'🧹', desc:'Nettoyage et assainissement' },
+  { id:'personnel',   name:'Personnel',   emoji:'👷', desc:'Personnel et hygiène' }
+];
+
+let S = {
+  inspections: [],
+  current: null,
+  photos: {},      // zoneId -> [{dataUrl, analysis}]
+  activeZone: 0,
+  fileZone: null
+};
+
+// ──────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────
+function init() {
+  try { S.inspections = JSON.parse(localStorage.getItem('vi_inspections') || '[]'); } catch(e){}
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('n-date').value = today;
+
+  const aud = ls('vi_auditor');
+  const cmp = ls('vi_company');
+  const key = ls('vi_key');
+
+  if (aud) { document.getElementById('n-auditeur').value = aud; document.getElementById('inp-auditeur').value = aud; }
+  if (cmp) document.getElementById('inp-company').value = cmp;
+  if (key) document.getElementById('inp-apikey').value = '••••••••••••••••';
+
+  if (!key) { nav('settings'); toast('⚙ Configurez votre clé API pour commencer','err'); }
+  else renderList();
+}
+
+function ls(k) { return localStorage.getItem(k)||''; }
+
+// ──────────────────────────────────────────────
+// NAVIGATION
+// ──────────────────────────────────────────────
+function nav(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  if (name==='home') document.getElementById('nav-home').classList.add('active');
+  if (name==='settings') document.getElementById('nav-settings').classList.add('active');
+
+  document.getElementById('bottom-nav').style.display = name==='analyse' ? 'none' : 'flex';
+  if (name==='home') renderList();
+  window.scrollTo(0,0);
+}
+
+// ──────────────────────────────────────────────
+// HOME
+// ──────────────────────────────────────────────
+function renderList() {
+  const el = document.getElementById('list-inspections');
+  if (!S.inspections.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div>Aucune inspection pour l'instant.<br><span style="color:#555">Créez votre première inspection !</span></div>`;
+    return;
+  }
+  el.innerHTML = [...S.inspections].reverse().map(i => {
+    const sc = i.globalScore||0;
+    const cls = sc<50?'s-rouge':sc<70?'s-jaune':'s-vert';
+    const bc  = sc<50?'#EF5350':sc<70?'#FFA726':'#66BB6A';
+    return `<div class="insp-card" style="border-left-color:${bc}" onclick="viewInspection('${i.id}')">
+      <div class="score-dot ${cls}"><div class="dot-num">${sc}</div><div class="dot-pct">%</div></div>
+      <div class="insp-info">
+        <h3>${i.restaurant}</h3>
+        <p>${i.date} · ${i.type}</p>
+        <p style="color:${bc};font-weight:700;font-size:12px">${scoreLabel(sc)}</p>
+      </div>
+      <div style="margin-left:auto;color:#444;font-size:20px">›</div>
+    </div>`;
+  }).join('');
+}
+
+function viewInspection(id) {
+  const insp = S.inspections.find(i=>i.id===id);
+  if (!insp) return;
+  S.current = insp;
+  renderRapport(insp);
+  nav('rapport');
+}
+
+function scoreLabel(s) { return s<50?'🔴 NON-CONFORME':s<70?'🟡 AMÉLIORATION REQUISE':'🟢 CONFORME'; }
+function scoreColor(s) { return s<50?'#EF5350':s<70?'#FFA726':'#66BB6A'; }
+
+// ──────────────────────────────────────────────
+// NEW INSPECTION
+// ──────────────────────────────────────────────
+function newInspection() {
+  if (!ls('vi_key')) { toast('⚙ Configurez votre clé API d\'abord','err'); nav('settings'); return; }
+  S.photos = {};
+  S.activeZone = 0;
+  ZONES.forEach(z => S.photos[z.id]=[]);
+  document.getElementById('n-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('n-auditeur').value = ls('vi_auditor');
+  document.getElementById('n-resto').value = '';
+  document.getElementById('n-adresse').value = '';
+  document.getElementById('n-permis').value = '';
+  nav('nouvelle');
+}
+
+function goZones() {
+  const nom = document.getElementById('n-resto').value.trim();
+  if (!nom) { toast('⚠ Entrez le nom de l\'établissement','err'); return; }
+  S.current = {
+    id: Date.now().toString(),
+    restaurant: nom,
+    adresse: document.getElementById('n-adresse').value.trim(),
+    permis: document.getElementById('n-permis').value.trim(),
+    auditeur: document.getElementById('n-auditeur').value.trim()||'Auditeur',
+    date: document.getElementById('n-date').value,
+    type: document.getElementById('n-type').value,
+    zones: {}, globalScore: 0
+  };
+  renderZoneNav();
+  renderZoneBody(0);
+  nav('zones');
+}
+
+// ──────────────────────────────────────────────
+// ZONES
+// ──────────────────────────────────────────────
+function renderZoneNav() {
+  document.getElementById('zone-nav').innerHTML = ZONES.map((z,i) => {
+    const photos = S.photos[z.id]||[];
+    const done = photos.length>0 && photos.every(p=>p.analysis);
+    return `<div class="z-pill ${i===S.activeZone?'active':''} ${done?'done':''}" onclick="switchZone(${i})">
+      ${z.emoji} ${z.name}${photos.length?' ('+photos.length+')':''}
+    </div>`;
+  }).join('');
+}
+
+function renderZoneBody(zi) {
+  S.activeZone = zi;
+  const z = ZONES[zi];
+  const photos = S.photos[z.id]||[];
+  const el = document.getElementById('zone-content');
+
+  el.innerHTML = `<div class="card" style="animation:fadeUp 0.2s ease">
+    <div style="margin-bottom:14px">
+      <div style="font-family:'Bebas Neue',cursive;font-size:20px;color:var(--or);letter-spacing:2px">${z.emoji} ${z.desc.toUpperCase()}</div>
+      <div style="font-size:13px;color:#666;margin-top:3px">1 à 4 photos de cette zone</div>
+    </div>
+    ${photos.length<4?`<div class="upload-zone" onclick="triggerFile('${z.id}')">
+      <div class="upload-icon">📸</div>
+      <div class="upload-txt">Appuyez pour <strong>ajouter une photo</strong></div>
+    </div>`:''}
+    ${photos.length>0?`<div class="photos-grid">
+      ${photos.map((p,i)=>`<div class="photo-item">
+        <img src="${p.dataUrl}" alt="Photo ${i+1}">
+        <div class="photo-status ${p.analysis?'st-ok':'st-wait'}">${p.analysis?'✓ Analysée':'⏳ En attente'}</div>
+        <button class="btn-rm" onclick="removePhoto('${z.id}',${i})">✕</button>
+      </div>`).join('')}
+    </div>`:''}
+    ${!photos.length?`<div style="text-align:center;color:#444;font-size:13px;padding:8px 0">
+      Aucune photo — <span style="color:#555">vous pouvez passer à la prochaine zone.</span>
+    </div>`:''}
+    <div style="display:flex;gap:10px;margin-top:10px">
+      ${zi>0?`<button class="btn-outline" style="flex:1" onclick="switchZone(${zi-1})">← Préc.</button>`:'<div style="flex:1"></div>'}
+      ${zi<ZONES.length-1?`<button class="btn-gold" style="flex:1" onclick="switchZone(${zi+1})">Suiv. →</button>`:''}
+    </div>
+  </div>`;
+}
+
+function switchZone(i) {
+  S.activeZone = i;
+  renderZoneNav();
+  renderZoneBody(i);
+}
+
+function triggerFile(zoneId) {
+  S.fileZone = zoneId;
+  const fi = document.getElementById('file-input');
+  fi.value = '';
+  fi.click();
+}
+
+function onFileChange(e) {
+  const files = Array.from(e.target.files);
+  const zid = S.fileZone;
+  if (!files.length||!zid) return;
+  const cur = S.photos[zid].length;
+  const rem = 4 - cur;
+  files.slice(0,rem).forEach(f => {
+    const r = new FileReader();
+    r.onload = ev => {
+      S.photos[zid].push({ dataUrl:ev.target.result, analysis:null });
+      renderZoneNav();
+      renderZoneBody(S.activeZone);
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+function removePhoto(zid, i) {
+  S.photos[zid].splice(i,1);
+  renderZoneNav();
+  renderZoneBody(S.activeZone);
+}
+
+// ──────────────────────────────────────────────
+// ANALYSIS
+// ──────────────────────────────────────────────
+async function startAnalysis() {
+  const total = ZONES.reduce((s,z)=>s+(S.photos[z.id]?.length||0),0);
+  if (!total) { toast('⚠ Ajoutez au moins une photo','err'); return; }
+
+  nav('analyse');
+  const log   = document.getElementById('a-log');
+  const stat  = document.getElementById('a-status');
+  const bar   = document.getElementById('a-bar');
+  log.innerHTML = '';
+
+  const queue = [];
+  ZONES.forEach(z => { (S.photos[z.id]||[]).forEach((p,i) => queue.push({z,p,i})); });
+
+  let done = 0;
+  for (const item of queue) {
+    stat.textContent = `Analyse ${item.z.emoji} ${item.z.desc} — Photo ${item.i+1}...`;
+    const li = document.createElement('div');
+    li.className = 'log-item';
+    li.textContent = `⏳ ${item.z.emoji} ${item.z.name} #${item.i+1}...`;
+    log.appendChild(li);
+    log.scrollTop = log.scrollHeight;
+
+    try {
+      item.p.analysis = await callClaude(item.p.dataUrl, item.z);
+      li.textContent = `✅ ${item.z.emoji} ${item.z.name} #${item.i+1} — ${item.p.analysis.score}%`;
+      li.style.color = '#66BB6A';
+    } catch(err) {
+      console.error(err);
+      item.p.analysis = { score:50, nonConformites:[], conformites:['Analyse non disponible'], commentaire:'Erreur API: '+err.message };
+      li.textContent = `⚠ ${item.z.emoji} ${item.z.name} #${item.i+1} — Erreur`;
+      li.style.color = '#FFA726';
+    }
+    done++;
+    bar.style.width = (done/queue.length*100)+'%';
+  }
+
+  // Zone summaries
+  ZONES.forEach(z => {
+    const photos = S.photos[z.id]||[];
+    const analyses = photos.map(p=>p.analysis).filter(Boolean);
+    const zScore = analyses.length ? Math.round(analyses.reduce((s,a)=>s+(a.score||0),0)/analyses.length) : null;
+    S.current.zones[z.id] = {
+      name:z.name, emoji:z.emoji, desc:z.desc,
+      score: zScore,
+      nonConformites: analyses.flatMap(a=>a.nonConformites||[]),
+      conformites:    analyses.flatMap(a=>a.conformites||[])
+    };
+  });
+
+  const allScores = queue.map(i=>i.p.analysis?.score||0);
+  S.current.globalScore = allScores.length ? Math.round(allScores.reduce((s,v)=>s+v,0)/allScores.length) : 0;
+  S.current.photos = JSON.parse(JSON.stringify(S.photos)); // deep copy
+
+  S.inspections.push(S.current);
+  localStorage.setItem('vi_inspections', JSON.stringify(S.inspections));
+
+  stat.textContent = 'Analyse terminée ! Génération du rapport...';
+  bar.style.width = '100%';
+  await sleep(900);
+  renderRapport(S.current);
+  nav('rapport');
+}
+
+async function callClaude(dataUrl, zone) {
+  const key = ls('vi_key');
+  if (!key) throw new Error('Clé API manquante');
+
+  const b64  = dataUrl.split(',')[1];
+  const mime = dataUrl.split(';')[0].split(':')[1];
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key': key,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body: JSON.stringify({
+      model:'claude-opus-4-5',
+      max_tokens:1500,
+      messages:[{
+        role:'user',
+        content:[
+          { type:'image', source:{ type:'base64', media_type:mime||'image/jpeg', data:b64 } },
+          { type:'text', text:`Tu es un auditeur MAPAQ/HACCP certifié au Québec. Analyse cette photo de la zone "${zone.desc}" selon la réglementation MAPAQ (Loi sur les produits alimentaires, Guide 5M).
+
+Réponds UNIQUEMENT en JSON valide, sans texte avant ou après, sans balises markdown:
+{
+  "score": 85,
+  "nonConformites": [
+    { "description": "Non-conformité factuelle observée", "risque": "CRITIQUE", "action": "Action corrective spécifique", "delai": "24h" }
+  ],
+  "conformites": ["Point conforme 1", "Point conforme 2"],
+  "commentaire": "Commentaire professionnel de l'auditeur"
+}
+
+Niveaux de risque: CRITIQUE (danger immédiat santé), MAJEUR (risque élevé), MINEUR (amélioration recommandée).
+Délais: "24h", "72h", "7 jours", "30 jours".
+Score 0-100 selon conformité MAPAQ. Si image peu claire, score=70 et noter dans commentaire.` }
+        ]
+      }]
+    })
+  });
+
+  if (!res.ok) {
+    const e = await res.json().catch(()=>({error:{message:'Erreur HTTP '+res.status}}));
+    throw new Error(e.error?.message||'HTTP '+res.status);
+  }
+
+  const d = await res.json();
+  const txt = d.content[0].text.trim().replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+  return JSON.parse(txt);
+}
+
+// ──────────────────────────────────────────────
+// RAPPORT
+// ──────────────────────────────────────────────
+function renderRapport(insp) {
+  const sc = insp.globalScore||0;
+  const scCol = scoreColor(sc);
+  const scLbl = scoreLabel(sc);
+  const cmp = ls('vi_company')||'Verdict Inspection AI';
+
+  // Collect all NCs sorted CRITIQUE > MAJEUR > MINEUR
+  const order = {CRITIQUE:0,MAJEUR:1,MINEUR:2};
+  const allNCs = [];
+  Object.values(insp.zones||{}).forEach(z => {
+    (z.nonConformites||[]).forEach(nc => allNCs.push({...nc, zoneName:z.name, zoneEmoji:z.emoji}));
+  });
+  allNCs.sort((a,b)=>(order[a.risque]??2)-(order[b.risque]??2));
+
+  const el = document.getElementById('rapport-content');
+  el.innerHTML = `
+
+  <!-- 1. COUVERTURE -->
+  <div class="rp-cover">
+    <div class="rp-logo">${cmp.toUpperCase()}</div>
+    <div style="font-size:11px;color:#666;letter-spacing:2px;text-transform:uppercase;margin:5px 0 16px">Rapport d'inspection MAPAQ / HACCP</div>
+    <div style="border-top:1px solid #222;border-bottom:1px solid #222;padding:14px 0;margin:14px 0">
+      <div class="info-row"><span class="info-lbl">🏪 Établissement</span><span class="info-val">${insp.restaurant}</span></div>
+      ${insp.adresse?`<div class="info-row"><span class="info-lbl">📍 Adresse</span><span class="info-val" style="font-size:13px">${insp.adresse}</span></div>`:''}
+      ${insp.permis?`<div class="info-row"><span class="info-lbl">📋 Permis</span><span class="info-val">${insp.permis}</span></div>`:''}
+      <div class="info-row"><span class="info-lbl">📅 Date</span><span class="info-val">${insp.date}</span></div>
+      <div class="info-row"><span class="info-lbl">👤 Auditeur</span><span class="info-val">${insp.auditeur}</span></div>
+      <div class="info-row" style="border:none"><span class="info-lbl">📝 Type</span><span class="info-val">${insp.type}</span></div>
+    </div>
+    <div class="rp-score" style="color:${scCol}">${sc}%</div>
+    <div class="rp-score-lbl" style="color:${scCol}">${scLbl}</div>
+    <div style="margin-top:16px;font-size:11px;color:#444;letter-spacing:1px">GÉNÉRÉ PAR CLAUDE AI · VERDICT INSPECTION AI</div>
+  </div>
+
+  <!-- 2. TABLEAU DE BORD -->
+  <div style="margin-bottom:22px">
+    <div class="sec-hdr"><div class="sec-num">2</div><h2>TABLEAU DE BORD DES ZONES</h2></div>
+    <div class="zone-grid">
+      ${ZONES.map(z => {
+        const zd = insp.zones?.[z.id];
+        const zs = zd?.score;
+        if (zs==null) return `<div class="z-card" style="background:#141414;border:1px dashed #222;color:#444">
+          <div class="z-card-name">${z.emoji} ${z.name}</div>
+          <div class="z-card-score">—</div>
+          <div class="z-card-nc">Non inspecté</div>
+        </div>`;
+        const zc = scoreColor(zs);
+        const zbg = zs<50?'rgba(198,40,40,.13)':zs<70?'rgba(230,81,0,.13)':'rgba(27,94,32,.18)';
+        const nc = zd?.nonConformites?.length||0;
+        return `<div class="z-card" style="background:${zbg};border:1px solid ${zc}25">
+          <div class="z-card-name" style="color:${zc}">${z.emoji} ${z.name}</div>
+          <div class="z-card-score" style="color:${zc}">${zs}%</div>
+          <div class="z-card-nc">${nc>0?nc+' NC':'✓ Conforme'}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <!-- 3. DOSSIER PHOTOS -->
+  <div style="margin-bottom:22px">
+    <div class="sec-hdr"><div class="sec-num">3</div><h2>DOSSIER PHOTOS ANNOTÉES</h2></div>
+    ${ZONES.map(z => {
+      const photos = insp.photos?.[z.id]||[];
+      if (!photos.length) return '';
+      return photos.map((p,pi) => {
+        if (!p.dataUrl) return '';
+        const a = p.analysis;
+        const ps = a?.score||0;
+        const pc = scoreColor(ps);
+        const pBg = ps<50?'#8B0000':ps<70?'#7F2700':'#1B5E20';
+        const nc = a?.nonConformites?.length||0;
+        const conf = a?.conformites?.slice(0,3)||[];
+        return `<div class="photo-blk">
+          <div class="photo-banner" style="background:${pBg};color:white">
+            <strong>${z.emoji} ${z.desc} — Photo ${pi+1}</strong>
+            <span class="pb-score">${ps}% · ${nc} NC</span>
+          </div>
+          <img src="${p.dataUrl}" alt="">
+          <div class="photo-blk-info">
+            ${a?.nonConformites?.length?`<div style="margin-bottom:8px">${a.nonConformites.map(nc=>`
+              <div class="nc-row">
+                <span class="nc-risk ${nc.risque==='CRITIQUE'?'risk-c':nc.risque==='MAJEUR'?'risk-m':'risk-mi'}">⚠ ${nc.risque}</span>
+                <span style="color:#CCC">${nc.description}</span>
+              </div>`).join('')}</div>`:''}
+            ${conf.length?`<div style="margin-bottom:8px">${conf.map(c=>`
+              <div class="conf-row"><span class="conf-chk">✓</span><span>${c}</span></div>`).join('')}</div>`:''}
+            ${a?.commentaire?`<div style="font-size:13px;color:#666;font-style:italic;padding-top:8px;border-top:1px solid #1A1A1A">"${a.commentaire}"</div>`:''}
+          </div>
+          <div style="background:${pBg};height:4px"></div>
+        </div>`;
+      }).join('');
+    }).join('')}
+  </div>
+
+  <!-- 4. PLAN D'ACTION CORRECTIF -->
+  <div style="margin-bottom:22px">
+    <div class="sec-hdr"><div class="sec-num">4</div><h2>PLAN D'ACTION CORRECTIF</h2></div>
+    ${!allNCs.length
+      ? `<div class="card" style="text-align:center;padding:28px">
+          <div style="font-size:38px;margin-bottom:10px">✅</div>
+          <div style="font-family:'Bebas Neue',cursive;font-size:20px;color:#66BB6A;letter-spacing:2px">AUCUNE NON-CONFORMITÉ</div>
+          <div style="color:#555;font-size:13px;margin-top:6px">L'établissement est en conformité totale.</div>
+        </div>`
+      : `<div style="font-size:13px;color:#666;margin-bottom:12px">
+          ${allNCs.filter(n=>n.risque==='CRITIQUE').length} CRITIQUE &nbsp;·&nbsp;
+          ${allNCs.filter(n=>n.risque==='MAJEUR').length} MAJEUR &nbsp;·&nbsp;
+          ${allNCs.filter(n=>n.risque==='MINEUR').length} MINEUR
+        </div>
+        ${allNCs.map((nc,i)=>`<div class="nc-card ${nc.risque==='CRITIQUE'?'nc-c':nc.risque==='MAJEUR'?'nc-m':'nc-mi'}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+            <span class="nc-badge ${nc.risque==='CRITIQUE'?'b-c':nc.risque==='MAJEUR'?'b-m':'b-mi'}">${nc.risque}</span>
+            <span style="font-size:12px;color:#555">${nc.zoneEmoji} ${nc.zoneName}</span>
+          </div>
+          <div class="nc-desc">${i+1}. ${nc.description}</div>
+          <div class="nc-act">↳ ${nc.action}</div>
+          <div class="nc-delai">⏱ Délai: ${nc.delai}</div>
+        </div>`).join('')}`
+    }
+  </div>
+
+  <!-- 5. SIGNATURES -->
+  <div style="margin-bottom:22px">
+    <div class="sec-hdr"><div class="sec-num">5</div><h2>SIGNATURES</h2></div>
+    <div class="sig-box">
+      <div class="sig-lbl">Signature de l'auditeur</div>
+      <div class="sig-line">${insp.auditeur}</div>
+    </div>
+    <div class="sig-box">
+      <div class="sig-lbl">Signature du responsable de l'établissement</div>
+      <div class="sig-line">________________________</div>
+    </div>
+    <div style="text-align:center;margin-top:18px;font-size:11px;color:#444;line-height:2">
+      Rapport généré par Claude AI (Anthropic) via Verdict Inspection AI<br>
+      <span style="color:#888">info@verdictinspection-ai.com</span> &nbsp;·&nbsp; <span style="color:var(--or)">verdictinspection-ai.com</span>
+    </div>
+  </div>`;
+}
+
+// ──────────────────────────────────────────────
+// PDF
+// ──────────────────────────────────────────────
+function exportPDF() {
+  toast('📄 Ouverture de l\'impression PDF...','ok');
+  setTimeout(()=>window.print(), 500);
+}
+
+// ──────────────────────────────────────────────
+// SETTINGS
+// ──────────────────────────────────────────────
+function saveApiKey() {
+  const k = document.getElementById('inp-apikey').value.trim();
+  if (!k||k.includes('•')) { toast('⚠ Entrez votre clé API','err'); return; }
+  if (!k.startsWith('sk-ant-')) { toast('⚠ La clé doit commencer par sk-ant-','err'); return; }
+  localStorage.setItem('vi_key', k);
+  document.getElementById('inp-apikey').value = '••••••••••••••••';
+  toast('✅ Clé API sauvegardée !','ok');
+}
+
+function saveSettings() {
+  const a = document.getElementById('inp-auditeur').value.trim();
+  const c = document.getElementById('inp-company').value.trim();
+  if (a) { localStorage.setItem('vi_auditor',a); document.getElementById('n-auditeur').value=a; }
+  if (c) localStorage.setItem('vi_company',c);
+  toast('✅ Paramètres sauvegardés !','ok');
+}
+
+function clearAll() {
+  if (!confirm('Effacer TOUTES les inspections et données ?')) return;
+  localStorage.removeItem('vi_inspections');
+  S.inspections = [];
+  toast('🗑 Données effacées','ok');
+  nav('home');
+}
+
+// ──────────────────────────────────────────────
+// UTILS
+// ──────────────────────────────────────────────
+function toast(msg, type='ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast '+type;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
+
+// ——— START ———
+init();
+</script>
+
+</body>
+</html>
