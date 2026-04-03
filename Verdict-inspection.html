@@ -22,14 +22,17 @@
   --gris3: #3A3A3A;
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { background-color: #0A0A0A; }
 html, body { height:100%; }
 body {
-  background: var(--noir);
-  color: var(--blanc);
-  font-family: 'Rajdhani', sans-serif;
+  background-color: #0A0A0A;
+  background: #0A0A0A;
+  color: #F0EEE8;
+  font-family: 'Rajdhani', 'Arial Narrow', Arial, sans-serif;
   font-size: 16px;
   overflow-x: hidden;
 }
+button { -webkit-appearance: none; appearance: none; }
 
 /* ——— HEADER ——— */
 .header {
@@ -43,7 +46,7 @@ position: sticky;
 top: 0;
 z-index: 100;
 }
-.logo { font-family:‘Bebas Neue’,cursive; font-size:26px; color:var(–or); letter-spacing:3px; }
+.logo { font-family:‘Bebas Neue’,Impact,‘Arial Narrow’,Arial,sans-serif; font-size:26px; color:var(–or); letter-spacing:3px; text-transform:uppercase; font-weight:900; }
 .logo span { color:var(–blanc); }
 .btn-gear {
 background:none; border:1px solid var(–gris3); color:#888;
@@ -80,6 +83,8 @@ transition:color 0.2s;
 
 /* ——— BUTTONS ——— */
 .btn-gold {
+-webkit-appearance: none;
+appearance: none;
 background: linear-gradient(135deg, var(–or), var(–or-vif));
 color:var(–noir); border:none; padding:15px 24px;
 border-radius:12px; font-family:‘Rajdhani’,sans-serif;
@@ -89,6 +94,8 @@ transition:all 0.15s;
 }
 .btn-gold:active { transform:scale(0.98); opacity:0.9; }
 .btn-outline {
+-webkit-appearance: none;
+appearance: none;
 background:transparent; color:var(–or); border:2px solid var(–or);
 padding:13px 24px; border-radius:12px; font-family:‘Rajdhani’,sans-serif;
 font-size:16px; font-weight:600; cursor:pointer; width:100%;
@@ -96,6 +103,8 @@ letter-spacing:1px; text-transform:uppercase; transition:all 0.15s;
 }
 .btn-outline:active { background:rgba(212,160,23,0.1); }
 .btn-red {
+-webkit-appearance: none;
+appearance: none;
 background:var(–rouge); color:white; border:none;
 padding:12px 20px; border-radius:10px; font-family:‘Rajdhani’,sans-serif;
 font-size:15px; font-weight:600; cursor:pointer;
@@ -459,7 +468,7 @@ body { background:white; color:black; }
 </div>
 
 <div class="card" style="margin-top:4px;text-align:center">
-  <div style="font-size:12px;color:#444;margin-bottom:12px">v1.0 — Verdict Inspection AI © 2025<br>info@verdictinspection-ai.com</div>
+  <div style="font-size:12px;color:#444;margin-bottom:12px">v1.0 — Verdict Inspection AI © 2025<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6900070f06291f0c1b0d000a1d00071a190c0a1d000607440800470a0604">[email&#160;protected]</a></div>
   <button class="btn-red" onclick="clearAll()">🗑 Effacer toutes les données</button>
 </div>
 ```
@@ -577,356 +586,340 @@ body { background:white; color:black; }
 
 <input type="file" id="file-input" accept="image/*" multiple style="display:none" onchange="onFileChange(event)">
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+
 // ──────────────────────────────────────────────
 // DATA
 // ──────────────────────────────────────────────
 const ZONES = [
-  { id:'reception',   name:'Réception',   emoji:'📦', desc:'Réception des aliments' },
-  { id:'entreposage', name:'Entreposage', emoji:'🗄️', desc:'Entreposage et réfrigération' },
-  { id:'preparation', name:'Préparation', emoji:'🔪', desc:'Préparation alimentaire' },
-  { id:'cuisson',     name:'Cuisson',     emoji:'🍳', desc:'Cuisson et service' },
-  { id:'nettoyage',   name:'Nettoyage',   emoji:'🧹', desc:'Nettoyage et assainissement' },
-  { id:'personnel',   name:'Personnel',   emoji:'👷', desc:'Personnel et hygiène' }
+{ id:‘reception’,   name:‘Réception’,   emoji:‘📦’, desc:‘Réception des aliments’ },
+{ id:‘entreposage’, name:‘Entreposage’, emoji:‘🗄️’, desc:‘Entreposage et réfrigération’ },
+{ id:‘preparation’, name:‘Préparation’, emoji:‘🔪’, desc:‘Préparation alimentaire’ },
+{ id:‘cuisson’,     name:‘Cuisson’,     emoji:‘🍳’, desc:‘Cuisson et service’ },
+{ id:‘nettoyage’,   name:‘Nettoyage’,   emoji:‘🧹’, desc:‘Nettoyage et assainissement’ },
+{ id:‘personnel’,   name:‘Personnel’,   emoji:‘👷’, desc:‘Personnel et hygiène’ }
 ];
 
 let S = {
-  inspections: [],
-  current: null,
-  photos: {},      // zoneId -> [{dataUrl, analysis}]
-  activeZone: 0,
-  fileZone: null
+inspections: [],
+current: null,
+photos: {},      // zoneId -> [{dataUrl, analysis}]
+activeZone: 0,
+fileZone: null
 };
 
 // ──────────────────────────────────────────────
 // INIT
 // ──────────────────────────────────────────────
 function init() {
-  try { S.inspections = JSON.parse(localStorage.getItem('vi_inspections') || '[]'); } catch(e){}
+try { S.inspections = JSON.parse(ls(‘vi_inspections’) || ‘[]’); } catch(e){ S.inspections=[]; }
 
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('n-date').value = today;
+const today = new Date().toISOString().split(‘T’)[0];
+document.getElementById(‘n-date’).value = today;
 
-  const aud = ls('vi_auditor');
-  const cmp = ls('vi_company');
-  const key = ls('vi_key');
+const aud = ls(‘vi_auditor’);
+const cmp = ls(‘vi_company’);
+const key = ls(‘vi_key’);
 
-  if (aud) { document.getElementById('n-auditeur').value = aud; document.getElementById('inp-auditeur').value = aud; }
-  if (cmp) document.getElementById('inp-company').value = cmp;
-  if (key) document.getElementById('inp-apikey').value = '••••••••••••••••';
+if (aud) { document.getElementById(‘n-auditeur’).value = aud; document.getElementById(‘inp-auditeur’).value = aud; }
+if (cmp) document.getElementById(‘inp-company’).value = cmp;
+if (key) document.getElementById(‘inp-apikey’).value = ‘••••••••••••••••’;
 
-  if (!key) { nav('settings'); toast('⚙ Configurez votre clé API pour commencer','err'); }
-  else renderList();
+if (!key) { nav(‘settings’); toast(‘⚙ Configurez votre clé API pour commencer’,‘err’); }
+else renderList();
 }
 
-function ls(k) { return localStorage.getItem(k)||''; }
+function ls(k) { try { return localStorage.getItem(k)||’’; } catch(e){ return ‘’; } }
+function lsSet(k,v) { try { localStorage.setItem(k,v); } catch(e){} }
+function lsRemove(k) { try { localStorage.removeItem(k); } catch(e){} }
 
 // ──────────────────────────────────────────────
 // NAVIGATION
 // ──────────────────────────────────────────────
 function nav(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-'+name).classList.add('active');
+document.querySelectorAll(’.screen’).forEach(s => s.classList.remove(‘active’));
+document.getElementById(‘screen-’+name).classList.add(‘active’);
 
-  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-  if (name==='home') document.getElementById('nav-home').classList.add('active');
-  if (name==='settings') document.getElementById('nav-settings').classList.add('active');
+document.querySelectorAll(’.nav-item’).forEach(i => i.classList.remove(‘active’));
+if (name===‘home’) document.getElementById(‘nav-home’).classList.add(‘active’);
+if (name===‘settings’) document.getElementById(‘nav-settings’).classList.add(‘active’);
 
-  document.getElementById('bottom-nav').style.display = name==='analyse' ? 'none' : 'flex';
-  if (name==='home') renderList();
-  window.scrollTo(0,0);
+document.getElementById(‘bottom-nav’).style.display = name===‘analyse’ ? ‘none’ : ‘flex’;
+if (name===‘home’) renderList();
+window.scrollTo(0,0);
 }
 
 // ──────────────────────────────────────────────
 // HOME
 // ──────────────────────────────────────────────
 function renderList() {
-  const el = document.getElementById('list-inspections');
-  if (!S.inspections.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div>Aucune inspection pour l'instant.<br><span style="color:#555">Créez votre première inspection !</span></div>`;
-    return;
-  }
-  el.innerHTML = [...S.inspections].reverse().map(i => {
-    const sc = i.globalScore||0;
-    const cls = sc<50?'s-rouge':sc<70?'s-jaune':'s-vert';
-    const bc  = sc<50?'#EF5350':sc<70?'#FFA726':'#66BB6A';
-    return `<div class="insp-card" style="border-left-color:${bc}" onclick="viewInspection('${i.id}')">
-      <div class="score-dot ${cls}"><div class="dot-num">${sc}</div><div class="dot-pct">%</div></div>
-      <div class="insp-info">
-        <h3>${i.restaurant}</h3>
-        <p>${i.date} · ${i.type}</p>
-        <p style="color:${bc};font-weight:700;font-size:12px">${scoreLabel(sc)}</p>
-      </div>
-      <div style="margin-left:auto;color:#444;font-size:20px">›</div>
-    </div>`;
-  }).join('');
+const el = document.getElementById(‘list-inspections’);
+if (!S.inspections.length) {
+el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div>Aucune inspection pour l'instant.<br><span style="color:#555">Créez votre première inspection !</span></div>`;
+return;
+}
+el.innerHTML = […S.inspections].reverse().map(i => {
+const sc = i.globalScore||0;
+const cls = sc<50?‘s-rouge’:sc<70?‘s-jaune’:‘s-vert’;
+const bc  = sc<50?’#EF5350’:sc<70?’#FFA726’:’#66BB6A’;
+return `<div class="insp-card" style="border-left-color:${bc}" onclick="viewInspection('${i.id}')"> <div class="score-dot ${cls}"><div class="dot-num">${sc}</div><div class="dot-pct">%</div></div> <div class="insp-info"> <h3>${i.restaurant}</h3> <p>${i.date} · ${i.type}</p> <p style="color:${bc};font-weight:700;font-size:12px">${scoreLabel(sc)}</p> </div> <div style="margin-left:auto;color:#444;font-size:20px">›</div> </div>`;
+}).join(’’);
 }
 
 function viewInspection(id) {
-  const insp = S.inspections.find(i=>i.id===id);
-  if (!insp) return;
-  S.current = insp;
-  renderRapport(insp);
-  nav('rapport');
+const insp = S.inspections.find(i=>i.id===id);
+if (!insp) return;
+S.current = insp;
+renderRapport(insp);
+nav(‘rapport’);
 }
 
-function scoreLabel(s) { return s<50?'🔴 NON-CONFORME':s<70?'🟡 AMÉLIORATION REQUISE':'🟢 CONFORME'; }
-function scoreColor(s) { return s<50?'#EF5350':s<70?'#FFA726':'#66BB6A'; }
+function scoreLabel(s) { return s<50?‘🔴 NON-CONFORME’:s<70?‘🟡 AMÉLIORATION REQUISE’:‘🟢 CONFORME’; }
+function scoreColor(s) { return s<50?’#EF5350’:s<70?’#FFA726’:’#66BB6A’; }
 
 // ──────────────────────────────────────────────
 // NEW INSPECTION
 // ──────────────────────────────────────────────
 function newInspection() {
-  if (!ls('vi_key')) { toast('⚙ Configurez votre clé API d\'abord','err'); nav('settings'); return; }
-  S.photos = {};
-  S.activeZone = 0;
-  ZONES.forEach(z => S.photos[z.id]=[]);
-  document.getElementById('n-date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('n-auditeur').value = ls('vi_auditor');
-  document.getElementById('n-resto').value = '';
-  document.getElementById('n-adresse').value = '';
-  document.getElementById('n-permis').value = '';
-  nav('nouvelle');
+if (!ls(‘vi_key’)) { toast(‘⚙ Configurez votre clé API d'abord’,‘err’); nav(‘settings’); return; }
+S.photos = {};
+S.activeZone = 0;
+ZONES.forEach(z => S.photos[z.id]=[]);
+document.getElementById(‘n-date’).value = new Date().toISOString().split(‘T’)[0];
+document.getElementById(‘n-auditeur’).value = ls(‘vi_auditor’);
+document.getElementById(‘n-resto’).value = ‘’;
+document.getElementById(‘n-adresse’).value = ‘’;
+document.getElementById(‘n-permis’).value = ‘’;
+nav(‘nouvelle’);
 }
 
 function goZones() {
-  const nom = document.getElementById('n-resto').value.trim();
-  if (!nom) { toast('⚠ Entrez le nom de l\'établissement','err'); return; }
-  S.current = {
-    id: Date.now().toString(),
-    restaurant: nom,
-    adresse: document.getElementById('n-adresse').value.trim(),
-    permis: document.getElementById('n-permis').value.trim(),
-    auditeur: document.getElementById('n-auditeur').value.trim()||'Auditeur',
-    date: document.getElementById('n-date').value,
-    type: document.getElementById('n-type').value,
-    zones: {}, globalScore: 0
-  };
-  renderZoneNav();
-  renderZoneBody(0);
-  nav('zones');
+const nom = document.getElementById(‘n-resto’).value.trim();
+if (!nom) { toast(‘⚠ Entrez le nom de l'établissement’,‘err’); return; }
+S.current = {
+id: Date.now().toString(),
+restaurant: nom,
+adresse: document.getElementById(‘n-adresse’).value.trim(),
+permis: document.getElementById(‘n-permis’).value.trim(),
+auditeur: document.getElementById(‘n-auditeur’).value.trim()||‘Auditeur’,
+date: document.getElementById(‘n-date’).value,
+type: document.getElementById(‘n-type’).value,
+zones: {}, globalScore: 0
+};
+renderZoneNav();
+renderZoneBody(0);
+nav(‘zones’);
 }
 
 // ──────────────────────────────────────────────
 // ZONES
 // ──────────────────────────────────────────────
 function renderZoneNav() {
-  document.getElementById('zone-nav').innerHTML = ZONES.map((z,i) => {
-    const photos = S.photos[z.id]||[];
-    const done = photos.length>0 && photos.every(p=>p.analysis);
-    return `<div class="z-pill ${i===S.activeZone?'active':''} ${done?'done':''}" onclick="switchZone(${i})">
-      ${z.emoji} ${z.name}${photos.length?' ('+photos.length+')':''}
-    </div>`;
-  }).join('');
+document.getElementById(‘zone-nav’).innerHTML = ZONES.map((z,i) => {
+const photos = S.photos[z.id]||[];
+const done = photos.length>0 && photos.every(p=>p.analysis);
+return `<div class="z-pill ${i===S.activeZone?'active':''} ${done?'done':''}" onclick="switchZone(${i})"> ${z.emoji} ${z.name}${photos.length?' ('+photos.length+')':''} </div>`;
+}).join(’’);
 }
 
 function renderZoneBody(zi) {
-  S.activeZone = zi;
-  const z = ZONES[zi];
-  const photos = S.photos[z.id]||[];
-  const el = document.getElementById('zone-content');
+S.activeZone = zi;
+const z = ZONES[zi];
+const photos = S.photos[z.id]||[];
+const el = document.getElementById(‘zone-content’);
 
-  el.innerHTML = `<div class="card" style="animation:fadeUp 0.2s ease">
-    <div style="margin-bottom:14px">
-      <div style="font-family:'Bebas Neue',cursive;font-size:20px;color:var(--or);letter-spacing:2px">${z.emoji} ${z.desc.toUpperCase()}</div>
-      <div style="font-size:13px;color:#666;margin-top:3px">1 à 4 photos de cette zone</div>
-    </div>
-    ${photos.length<4?`<div class="upload-zone" onclick="triggerFile('${z.id}')">
-      <div class="upload-icon">📸</div>
-      <div class="upload-txt">Appuyez pour <strong>ajouter une photo</strong></div>
-    </div>`:''}
-    ${photos.length>0?`<div class="photos-grid">
-      ${photos.map((p,i)=>`<div class="photo-item">
-        <img src="${p.dataUrl}" alt="Photo ${i+1}">
-        <div class="photo-status ${p.analysis?'st-ok':'st-wait'}">${p.analysis?'✓ Analysée':'⏳ En attente'}</div>
-        <button class="btn-rm" onclick="removePhoto('${z.id}',${i})">✕</button>
-      </div>`).join('')}
-    </div>`:''}
-    ${!photos.length?`<div style="text-align:center;color:#444;font-size:13px;padding:8px 0">
-      Aucune photo — <span style="color:#555">vous pouvez passer à la prochaine zone.</span>
-    </div>`:''}
-    <div style="display:flex;gap:10px;margin-top:10px">
-      ${zi>0?`<button class="btn-outline" style="flex:1" onclick="switchZone(${zi-1})">← Préc.</button>`:'<div style="flex:1"></div>'}
-      ${zi<ZONES.length-1?`<button class="btn-gold" style="flex:1" onclick="switchZone(${zi+1})">Suiv. →</button>`:''}
-    </div>
+el.innerHTML = `<div class="card" style="animation:fadeUp 0.2s ease"> <div style="margin-bottom:14px"> <div style="font-family:'Bebas Neue',cursive;font-size:20px;color:var(--or);letter-spacing:2px">${z.emoji} ${z.desc.toUpperCase()}</div> <div style="font-size:13px;color:#666;margin-top:3px">1 à 4 photos de cette zone</div> </div> ${photos.length<4?`<div class="upload-zone" onclick="triggerFile('${z.id}')">
+<div class="upload-icon">📸</div>
+<div class="upload-txt">Appuyez pour <strong>ajouter une photo</strong></div>
+</div>`:''} ${photos.length>0?`<div class="photos-grid">
+${photos.map((p,i)=>`<div class="photo-item"> <img src="${p.dataUrl}" alt="Photo ${i+1}"> <div class="photo-status ${p.analysis?'st-ok':'st-wait'}">${p.analysis?'✓ Analysée':'⏳ En attente'}</div> <button class="btn-rm" onclick="removePhoto('${z.id}',${i})">✕</button> </div>`).join(’’)}
+</div>`:''} ${!photos.length?`<div style="text-align:center;color:#444;font-size:13px;padding:8px 0">
+Aucune photo — <span style="color:#555">vous pouvez passer à la prochaine zone.</span>
+</div>`:''} <div style="display:flex;gap:10px;margin-top:10px"> ${zi>0?`<button class="btn-outline" style="flex:1" onclick="switchZone(${zi-1})">← Préc.</button>`:'<div style="flex:1"></div>'} ${zi<ZONES.length-1?`<button class="btn-gold" style="flex:1" onclick="switchZone(${zi+1})">Suiv. →</button>`:’’}
+</div>
+
   </div>`;
 }
 
 function switchZone(i) {
-  S.activeZone = i;
-  renderZoneNav();
-  renderZoneBody(i);
+S.activeZone = i;
+renderZoneNav();
+renderZoneBody(i);
 }
 
 function triggerFile(zoneId) {
-  S.fileZone = zoneId;
-  const fi = document.getElementById('file-input');
-  fi.value = '';
-  fi.click();
+S.fileZone = zoneId;
+const fi = document.getElementById(‘file-input’);
+fi.value = ‘’;
+fi.click();
 }
 
 function onFileChange(e) {
-  const files = Array.from(e.target.files);
-  const zid = S.fileZone;
-  if (!files.length||!zid) return;
-  const cur = S.photos[zid].length;
-  const rem = 4 - cur;
-  files.slice(0,rem).forEach(f => {
-    const r = new FileReader();
-    r.onload = ev => {
-      S.photos[zid].push({ dataUrl:ev.target.result, analysis:null });
-      renderZoneNav();
-      renderZoneBody(S.activeZone);
-    };
-    r.readAsDataURL(f);
-  });
+const files = Array.from(e.target.files);
+const zid = S.fileZone;
+if (!files.length||!zid) return;
+const cur = S.photos[zid].length;
+const rem = 4 - cur;
+files.slice(0,rem).forEach(f => {
+const r = new FileReader();
+r.onload = ev => {
+S.photos[zid].push({ dataUrl:ev.target.result, analysis:null });
+renderZoneNav();
+renderZoneBody(S.activeZone);
+};
+r.readAsDataURL(f);
+});
 }
 
 function removePhoto(zid, i) {
-  S.photos[zid].splice(i,1);
-  renderZoneNav();
-  renderZoneBody(S.activeZone);
+S.photos[zid].splice(i,1);
+renderZoneNav();
+renderZoneBody(S.activeZone);
 }
 
 // ──────────────────────────────────────────────
 // ANALYSIS
 // ──────────────────────────────────────────────
 async function startAnalysis() {
-  const total = ZONES.reduce((s,z)=>s+(S.photos[z.id]?.length||0),0);
-  if (!total) { toast('⚠ Ajoutez au moins une photo','err'); return; }
+const total = ZONES.reduce((s,z)=>s+(S.photos[z.id]?.length||0),0);
+if (!total) { toast(‘⚠ Ajoutez au moins une photo’,‘err’); return; }
 
-  nav('analyse');
-  const log   = document.getElementById('a-log');
-  const stat  = document.getElementById('a-status');
-  const bar   = document.getElementById('a-bar');
-  log.innerHTML = '';
+nav(‘analyse’);
+const log   = document.getElementById(‘a-log’);
+const stat  = document.getElementById(‘a-status’);
+const bar   = document.getElementById(‘a-bar’);
+log.innerHTML = ‘’;
 
-  const queue = [];
-  ZONES.forEach(z => { (S.photos[z.id]||[]).forEach((p,i) => queue.push({z,p,i})); });
+const queue = [];
+ZONES.forEach(z => { (S.photos[z.id]||[]).forEach((p,i) => queue.push({z,p,i})); });
 
-  let done = 0;
-  for (const item of queue) {
-    stat.textContent = `Analyse ${item.z.emoji} ${item.z.desc} — Photo ${item.i+1}...`;
-    const li = document.createElement('div');
-    li.className = 'log-item';
-    li.textContent = `⏳ ${item.z.emoji} ${item.z.name} #${item.i+1}...`;
-    log.appendChild(li);
-    log.scrollTop = log.scrollHeight;
+let done = 0;
+for (const item of queue) {
+stat.textContent = `Analyse ${item.z.emoji} ${item.z.desc} — Photo ${item.i+1}...`;
+const li = document.createElement(‘div’);
+li.className = ‘log-item’;
+li.textContent = `⏳ ${item.z.emoji} ${item.z.name} #${item.i+1}...`;
+log.appendChild(li);
+log.scrollTop = log.scrollHeight;
 
-    try {
-      item.p.analysis = await callClaude(item.p.dataUrl, item.z);
-      li.textContent = `✅ ${item.z.emoji} ${item.z.name} #${item.i+1} — ${item.p.analysis.score}%`;
-      li.style.color = '#66BB6A';
-    } catch(err) {
-      console.error(err);
-      item.p.analysis = { score:50, nonConformites:[], conformites:['Analyse non disponible'], commentaire:'Erreur API: '+err.message };
-      li.textContent = `⚠ ${item.z.emoji} ${item.z.name} #${item.i+1} — Erreur`;
-      li.style.color = '#FFA726';
-    }
-    done++;
-    bar.style.width = (done/queue.length*100)+'%';
-  }
+```
+try {
+  item.p.analysis = await callClaude(item.p.dataUrl, item.z);
+  li.textContent = `✅ ${item.z.emoji} ${item.z.name} #${item.i+1} — ${item.p.analysis.score}%`;
+  li.style.color = '#66BB6A';
+} catch(err) {
+  console.error(err);
+  item.p.analysis = { score:50, nonConformites:[], conformites:['Analyse non disponible'], commentaire:'Erreur API: '+err.message };
+  li.textContent = `⚠ ${item.z.emoji} ${item.z.name} #${item.i+1} — Erreur`;
+  li.style.color = '#FFA726';
+}
+done++;
+bar.style.width = (done/queue.length*100)+'%';
+```
 
-  // Zone summaries
-  ZONES.forEach(z => {
-    const photos = S.photos[z.id]||[];
-    const analyses = photos.map(p=>p.analysis).filter(Boolean);
-    const zScore = analyses.length ? Math.round(analyses.reduce((s,a)=>s+(a.score||0),0)/analyses.length) : null;
-    S.current.zones[z.id] = {
-      name:z.name, emoji:z.emoji, desc:z.desc,
-      score: zScore,
-      nonConformites: analyses.flatMap(a=>a.nonConformites||[]),
-      conformites:    analyses.flatMap(a=>a.conformites||[])
-    };
-  });
+}
 
-  const allScores = queue.map(i=>i.p.analysis?.score||0);
-  S.current.globalScore = allScores.length ? Math.round(allScores.reduce((s,v)=>s+v,0)/allScores.length) : 0;
-  S.current.photos = JSON.parse(JSON.stringify(S.photos)); // deep copy
+// Zone summaries
+ZONES.forEach(z => {
+const photos = S.photos[z.id]||[];
+const analyses = photos.map(p=>p.analysis).filter(Boolean);
+const zScore = analyses.length ? Math.round(analyses.reduce((s,a)=>s+(a.score||0),0)/analyses.length) : null;
+S.current.zones[z.id] = {
+name:z.name, emoji:z.emoji, desc:z.desc,
+score: zScore,
+nonConformites: analyses.flatMap(a=>a.nonConformites||[]),
+conformites:    analyses.flatMap(a=>a.conformites||[])
+};
+});
 
-  S.inspections.push(S.current);
-  localStorage.setItem('vi_inspections', JSON.stringify(S.inspections));
+const allScores = queue.map(i=>i.p.analysis?.score||0);
+S.current.globalScore = allScores.length ? Math.round(allScores.reduce((s,v)=>s+v,0)/allScores.length) : 0;
+S.current.photos = JSON.parse(JSON.stringify(S.photos)); // deep copy
 
-  stat.textContent = 'Analyse terminée ! Génération du rapport...';
-  bar.style.width = '100%';
-  await sleep(900);
-  renderRapport(S.current);
-  nav('rapport');
+S.inspections.push(S.current);
+lsSet(‘vi_inspections’, JSON.stringify(S.inspections));
+
+stat.textContent = ‘Analyse terminée ! Génération du rapport…’;
+bar.style.width = ‘100%’;
+await sleep(900);
+renderRapport(S.current);
+nav(‘rapport’);
 }
 
 async function callClaude(dataUrl, zone) {
-  const key = ls('vi_key');
-  if (!key) throw new Error('Clé API manquante');
+const key = ls(‘vi_key’);
+if (!key) throw new Error(‘Clé API manquante’);
 
-  const b64  = dataUrl.split(',')[1];
-  const mime = dataUrl.split(';')[0].split(':')[1];
+const b64  = dataUrl.split(’,’)[1];
+const mime = dataUrl.split(’;’)[0].split(’:’)[1];
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'x-api-key': key,
-      'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true'
-    },
-    body: JSON.stringify({
-      model:'claude-opus-4-5',
-      max_tokens:1500,
-      messages:[{
-        role:'user',
-        content:[
-          { type:'image', source:{ type:'base64', media_type:mime||'image/jpeg', data:b64 } },
-          { type:'text', text:`Tu es un auditeur MAPAQ/HACCP certifié au Québec. Analyse cette photo de la zone "${zone.desc}" selon la réglementation MAPAQ (Loi sur les produits alimentaires, Guide 5M).
+const res = await fetch(‘https://api.anthropic.com/v1/messages’, {
+method:‘POST’,
+headers:{
+‘Content-Type’:‘application/json’,
+‘x-api-key’: key,
+‘anthropic-version’:‘2023-06-01’,
+‘anthropic-dangerous-direct-browser-access’:‘true’
+},
+body: JSON.stringify({
+model:‘claude-opus-4-5’,
+max_tokens:1500,
+messages:[{
+role:‘user’,
+content:[
+{ type:‘image’, source:{ type:‘base64’, media_type:mime||‘image/jpeg’, data:b64 } },
+{ type:‘text’, text:`Tu es un auditeur MAPAQ/HACCP certifié au Québec. Analyse cette photo de la zone “${zone.desc}” selon la réglementation MAPAQ (Loi sur les produits alimentaires, Guide 5M).
 
 Réponds UNIQUEMENT en JSON valide, sans texte avant ou après, sans balises markdown:
 {
-  "score": 85,
-  "nonConformites": [
-    { "description": "Non-conformité factuelle observée", "risque": "CRITIQUE", "action": "Action corrective spécifique", "delai": "24h" }
-  ],
-  "conformites": ["Point conforme 1", "Point conforme 2"],
-  "commentaire": "Commentaire professionnel de l'auditeur"
+“score”: 85,
+“nonConformites”: [
+{ “description”: “Non-conformité factuelle observée”, “risque”: “CRITIQUE”, “action”: “Action corrective spécifique”, “delai”: “24h” }
+],
+“conformites”: [“Point conforme 1”, “Point conforme 2”],
+“commentaire”: “Commentaire professionnel de l’auditeur”
 }
 
 Niveaux de risque: CRITIQUE (danger immédiat santé), MAJEUR (risque élevé), MINEUR (amélioration recommandée).
-Délais: "24h", "72h", "7 jours", "30 jours".
+Délais: “24h”, “72h”, “7 jours”, “30 jours”.
 Score 0-100 selon conformité MAPAQ. Si image peu claire, score=70 et noter dans commentaire.` }
-        ]
-      }]
-    })
-  });
+]
+}]
+})
+});
 
-  if (!res.ok) {
-    const e = await res.json().catch(()=>({error:{message:'Erreur HTTP '+res.status}}));
-    throw new Error(e.error?.message||'HTTP '+res.status);
-  }
+if (!res.ok) {
+const e = await res.json().catch(()=>({error:{message:’Erreur HTTP ’+res.status}}));
+throw new Error(e.error?.message||’HTTP ’+res.status);
+}
 
-  const d = await res.json();
-  const txt = d.content[0].text.trim().replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-  return JSON.parse(txt);
+const d = await res.json();
+const txt = d.content[0].text.trim().replace(/`json\n?/g,'').replace(/`\n?/g,’’).trim();
+return JSON.parse(txt);
 }
 
 // ──────────────────────────────────────────────
 // RAPPORT
 // ──────────────────────────────────────────────
 function renderRapport(insp) {
-  const sc = insp.globalScore||0;
-  const scCol = scoreColor(sc);
-  const scLbl = scoreLabel(sc);
-  const cmp = ls('vi_company')||'Verdict Inspection AI';
+const sc = insp.globalScore||0;
+const scCol = scoreColor(sc);
+const scLbl = scoreLabel(sc);
+const cmp = ls(‘vi_company’)||‘Verdict Inspection AI’;
 
-  // Collect all NCs sorted CRITIQUE > MAJEUR > MINEUR
-  const order = {CRITIQUE:0,MAJEUR:1,MINEUR:2};
-  const allNCs = [];
-  Object.values(insp.zones||{}).forEach(z => {
-    (z.nonConformites||[]).forEach(nc => allNCs.push({...nc, zoneName:z.name, zoneEmoji:z.emoji}));
-  });
-  allNCs.sort((a,b)=>(order[a.risque]??2)-(order[b.risque]??2));
+// Collect all NCs sorted CRITIQUE > MAJEUR > MINEUR
+const order = {CRITIQUE:0,MAJEUR:1,MINEUR:2};
+const allNCs = [];
+Object.values(insp.zones||{}).forEach(z => {
+(z.nonConformites||[]).forEach(nc => allNCs.push({…nc, zoneName:z.name, zoneEmoji:z.emoji}));
+});
+allNCs.sort((a,b)=>(order[a.risque]??2)-(order[b.risque]??2));
 
-  const el = document.getElementById('rapport-content');
-  el.innerHTML = `
+const el = document.getElementById(‘rapport-content’);
+el.innerHTML = `
 
   <!-- 1. COUVERTURE -->
+
   <div class="rp-cover">
     <div class="rp-logo">${cmp.toUpperCase()}</div>
     <div style="font-size:11px;color:#666;letter-spacing:2px;text-transform:uppercase;margin:5px 0 16px">Rapport d'inspection MAPAQ / HACCP</div>
@@ -944,6 +937,7 @@ function renderRapport(insp) {
   </div>
 
   <!-- 2. TABLEAU DE BORD -->
+
   <div style="margin-bottom:22px">
     <div class="sec-hdr"><div class="sec-num">2</div><h2>TABLEAU DE BORD DES ZONES</h2></div>
     <div class="zone-grid">
@@ -968,6 +962,7 @@ function renderRapport(insp) {
   </div>
 
   <!-- 3. DOSSIER PHOTOS -->
+
   <div style="margin-bottom:22px">
     <div class="sec-hdr"><div class="sec-num">3</div><h2>DOSSIER PHOTOS ANNOTÉES</h2></div>
     ${ZONES.map(z => {
@@ -1004,6 +999,7 @@ function renderRapport(insp) {
   </div>
 
   <!-- 4. PLAN D'ACTION CORRECTIF -->
+
   <div style="margin-bottom:22px">
     <div class="sec-hdr"><div class="sec-num">4</div><h2>PLAN D'ACTION CORRECTIF</h2></div>
     ${!allNCs.length
@@ -1030,6 +1026,7 @@ function renderRapport(insp) {
   </div>
 
   <!-- 5. SIGNATURES -->
+
   <div style="margin-bottom:22px">
     <div class="sec-hdr"><div class="sec-num">5</div><h2>SIGNATURES</h2></div>
     <div class="sig-box">
@@ -1051,54 +1048,41 @@ function renderRapport(insp) {
 // PDF
 // ──────────────────────────────────────────────
 function exportPDF() {
-  toast('📄 Ouverture de l\'impression PDF...','ok');
-  setTimeout(()=>window.print(), 500);
+toast(‘📄 Ouverture de l'impression PDF…’,‘ok’);
+setTimeout(()=>window.print(), 500);
 }
 
 // ──────────────────────────────────────────────
 // SETTINGS
 // ──────────────────────────────────────────────
 function saveApiKey() {
-  const k = document.getElementById('inp-apikey').value.trim();
-  if (!k||k.includes('•')) { toast('⚠ Entrez votre clé API','err'); return; }
-  if (!k.startsWith('sk-ant-')) { toast('⚠ La clé doit commencer par sk-ant-','err'); return; }
-  localStorage.setItem('vi_key', k);
-  document.getElementById('inp-apikey').value = '••••••••••••••••';
-  toast('✅ Clé API sauvegardée !','ok');
+const k = document.getElementById(‘inp-apikey’).value.trim();
+if (!k||k.includes(’•’)) { toast(‘⚠ Entrez votre clé API’,‘err’); return; }
+if (!k.startsWith(‘sk-ant-’)) { toast(‘⚠ La clé doit commencer par sk-ant-’,‘err’); return; }
+lsSet(‘vi_key’, k);
+document.getElementById(‘inp-apikey’).value = ‘••••••••••••••••’;
+toast(‘✅ Clé API sauvegardée !’,‘ok’);
 }
 
 function saveSettings() {
-  const a = document.getElementById('inp-auditeur').value.trim();
-  const c = document.getElementById('inp-company').value.trim();
-  if (a) { localStorage.setItem('vi_auditor',a); document.getElementById('n-auditeur').value=a; }
-  if (c) localStorage.setItem('vi_company',c);
-  toast('✅ Paramètres sauvegardés !','ok');
+const a = document.getElementById(‘inp-auditeur’).value.trim();
+const c = document.getElementById(‘inp-company’).value.trim();
+if (a) { lsSet(‘vi_auditor’,a); document.getElementById(‘n-auditeur’).value=a; }
+if (c) lsSet(‘vi_company’,c);
+toast(‘✅ Paramètres sauvegardés !’,‘ok’);
 }
 
 function clearAll() {
-  if (!confirm('Effacer TOUTES les inspections et données ?')) return;
-  localStorage.removeItem('vi_inspections');
-  S.inspections = [];
-  toast('🗑 Données effacées','ok');
-  nav('home');
+if (!confirm(‘Effacer TOUTES les inspections et données ?’)) return;
+lsRemove(‘vi_inspections’);
+S.inspections = [];
+toast(‘🗑 Données effacées’,‘ok’);
+nav(‘home’);
 }
 
 // ──────────────────────────────────────────────
 // UTILS
 // ──────────────────────────────────────────────
-function toast(msg, type='ok') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast '+type;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3200);
-}
-
-function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
-
-// ——— START ———
-init();
-</script>
-
-</body>
-</html>
+function toast(msg, type=‘ok’) {
+const t = document.getElementById(‘toast’);
+t.textContent = msg;
