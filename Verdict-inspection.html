@@ -5,8 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Verdict Inspection AI</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --noir: #0A0A0A;
@@ -26,13 +24,12 @@ html { background-color: #0A0A0A; }
 html, body { height:100%; }
 body {
   background-color: #0A0A0A;
-  background: #0A0A0A;
   color: #F0EEE8;
-  font-family: 'Rajdhani', 'Arial Narrow', Arial, sans-serif;
+  font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   overflow-x: hidden;
 }
-button { -webkit-appearance: none; appearance: none; }
+button { -webkit-appearance: none !important; appearance: none !important; }
 
 /* ——— HEADER ——— */
 .header {
@@ -46,8 +43,8 @@ position: sticky;
 top: 0;
 z-index: 100;
 }
-.logo { font-family:‘Bebas Neue’,Impact,‘Arial Narrow’,Arial,sans-serif; font-size:26px; color:var(–or); letter-spacing:3px; text-transform:uppercase; font-weight:900; }
-.logo span { color:var(–blanc); }
+.logo { font-family: Impact, ‘Arial Narrow’, Arial, sans-serif; font-size:26px; color:#D4A017; letter-spacing:3px; text-transform:uppercase; font-weight:900; }
+.logo span { color:#F0EEE8; }
 .btn-gear {
 background:none; border:1px solid var(–gris3); color:#888;
 width:38px; height:38px; border-radius:8px; font-size:18px;
@@ -78,26 +75,36 @@ font-weight:600; text-transform:uppercase; letter-spacing:0.5px;
 transition:color 0.2s;
 }
 .nav-item span { font-size:22px; }
-.nav-item.active { color:var(–or); }
+.nav-item.active { color:#D4A017; }
 .with-nav { padding-bottom: calc(68px + env(safe-area-inset-bottom) + 10px); }
 
 /* ——— BUTTONS ——— */
 .btn-gold {
--webkit-appearance: none;
-appearance: none;
-background: linear-gradient(135deg, var(–or), var(–or-vif));
-color:var(–noir); border:none; padding:15px 24px;
-border-radius:12px; font-family:‘Rajdhani’,sans-serif;
-font-size:17px; font-weight:700; cursor:pointer;
-width:100%; letter-spacing:1px; text-transform:uppercase;
-transition:all 0.15s;
+-webkit-appearance: none !important;
+appearance: none !important;
+background: #D4A017 !important;
+background: -webkit-linear-gradient(135deg, #D4A017, #FFD700) !important;
+background: linear-gradient(135deg, #D4A017, #FFD700) !important;
+color: #0A0A0A !important;
+border: none !important;
+padding: 15px 24px;
+border-radius: 12px;
+font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif;
+font-size: 17px;
+font-weight: 700;
+cursor: pointer;
+width: 100%;
+letter-spacing: 1px;
+text-transform: uppercase;
+transition: all 0.15s;
+display: block;
 }
 .btn-gold:active { transform:scale(0.98); opacity:0.9; }
 .btn-outline {
 -webkit-appearance: none;
 appearance: none;
-background:transparent; color:var(–or); border:2px solid var(–or);
-padding:13px 24px; border-radius:12px; font-family:‘Rajdhani’,sans-serif;
+background:transparent; color:#D4A017; border:2px solid #D4A017;
+padding:13px 24px; border-radius:12px; font-family:-apple-system,‘Helvetica Neue’,Arial,sans-serif;
 font-size:16px; font-weight:600; cursor:pointer; width:100%;
 letter-spacing:1px; text-transform:uppercase; transition:all 0.15s;
 }
@@ -105,56 +112,61 @@ letter-spacing:1px; text-transform:uppercase; transition:all 0.15s;
 .btn-red {
 -webkit-appearance: none;
 appearance: none;
-background:var(–rouge); color:white; border:none;
-padding:12px 20px; border-radius:10px; font-family:‘Rajdhani’,sans-serif;
+background:#C62828; color:white; border:none;
+padding:12px 20px; border-radius:10px; font-family:-apple-system,‘Helvetica Neue’,Arial,sans-serif;
 font-size:15px; font-weight:600; cursor:pointer;
 }
 .btn-back {
-background:none; border:none; color:var(–or);
+background:none; border:none; color:#D4A017;
 font-size:26px; cursor:pointer; padding:0 8px 0 0;
 line-height:1;
 }
 
 /* ——— CARDS ——— */
 .card {
-background:var(–gris); border:1px solid var(–gris2);
+background:#1E1E1E; border:1px solid var(–gris2);
 border-radius:16px; padding:18px; margin-bottom:14px;
 }
 .card-gold {
 background: linear-gradient(135deg, #161400, #1E1A00);
-border-color:var(–or);
+border-color:#D4A017;
 }
 
 /* ——— FORMS ——— */
 .form-group { margin-bottom:18px; }
 .lbl {
-display:block; color:var(–or); font-size:12px;
+display:block; color:#D4A017; font-size:12px;
 font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:7px;
 }
 .inp {
 width:100%; background:#141414; border:1px solid var(–gris3);
-color:var(–blanc); padding:13px 15px; border-radius:10px;
-font-family:‘Rajdhani’,sans-serif; font-size:16px; outline:none;
+color:#F0EEE8; padding:13px 15px; border-radius:10px;
+font-family:-apple-system,‘Helvetica Neue’,Arial,sans-serif; font-size:16px; outline:none;
 transition:border-color 0.2s; -webkit-appearance:none;
 }
-.inp:focus { border-color:var(–or); }
+.inp:focus { border-color:#D4A017; }
 select.inp { cursor:pointer; }
 
 /* ——— HOME ——— */
 .hero { text-align:center; padding:24px 0 16px; }
 .hero-title {
-font-family:‘Bebas Neue’,cursive; font-size:44px;
-color:var(–or); letter-spacing:4px; line-height:1;
+font-family: Impact, ‘Arial Narrow’, Arial, sans-serif;
+font-size: 44px;
+color: #D4A017;
+letter-spacing: 4px;
+line-height: 1;
+text-transform: uppercase;
+font-weight: 900;
 }
 .hero-sub { color:#666; font-size:13px; letter-spacing:2px; text-transform:uppercase; margin-top:6px; }
 .hero-badge {
 display:inline-block; background:linear-gradient(135deg,var(–or),var(–or-vif));
-color:var(–noir); padding:5px 14px; border-radius:20px;
+color:#0A0A0A; padding:5px 14px; border-radius:20px;
 font-size:12px; font-weight:700; margin-top:10px; letter-spacing:1px;
 }
 
 .insp-card {
-background:var(–gris); border-radius:14px; padding:15px 16px;
+background:#1E1E1E; border-radius:14px; padding:15px 16px;
 margin-bottom:10px; display:flex; align-items:center; gap:14px;
 border-left:4px solid; cursor:pointer; transition:background 0.15s;
 }
@@ -164,13 +176,13 @@ width:54px; height:54px; border-radius:12px;
 display:flex; flex-direction:column; align-items:center;
 justify-content:center; flex-shrink:0;
 }
-.dot-num { font-family:‘Bebas Neue’,cursive; font-size:22px; line-height:1; }
+.dot-num { font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:22px; line-height:1; }
 .dot-pct { font-size:10px; font-weight:700; }
 .s-rouge { background:rgba(198,40,40,.18); color:#EF5350; border:1px solid rgba(198,40,40,.35); }
 .s-jaune { background:rgba(230,81,0,.18); color:#FFA726; border:1px solid rgba(230,81,0,.35); }
 .s-vert  { background:rgba(27,94,32,.25); color:#66BB6A; border:1px solid rgba(27,94,32,.45); }
 
-.insp-info h3 { font-size:17px; font-weight:700; color:var(–blanc); }
+.insp-info h3 { font-size:17px; font-weight:700; color:#F0EEE8; }
 .insp-info p { font-size:13px; color:#666; margin-top:2px; }
 
 .empty {
@@ -189,12 +201,12 @@ height:1px; background:#222;
 width:30px; height:30px; border-radius:50%;
 display:flex; align-items:center; justify-content:center;
 font-size:13px; font-weight:700; border:2px solid #2A2A2A;
-background:var(–noir); color:#444;
+background:#0A0A0A; color:#444;
 }
-.step.active .step-dot { border-color:var(–or); color:var(–or); background:#0A0A00; }
+.step.active .step-dot { border-color:#D4A017; color:#D4A017; background:#0A0A00; }
 .step.done .step-dot { border-color:var(–vert); background:var(–vert); color:white; }
 .step-lbl { font-size:10px; color:#444; text-transform:uppercase; letter-spacing:0.5px; }
-.step.active .step-lbl { color:var(–or); }
+.step.active .step-lbl { color:#D4A017; }
 .step.done .step-lbl { color:#66BB6A; }
 
 /* ——— ZONE NAV ——— */
@@ -209,7 +221,7 @@ font-size:13px; font-weight:600; cursor:pointer;
 border:1px solid var(–gris3); background:#141414;
 color:#555; transition:all 0.2s; white-space:nowrap;
 }
-.z-pill.active { background:var(–or); color:var(–noir); border-color:var(–or); }
+.z-pill.active { background:#D4A017; color:#0A0A0A; border-color:#D4A017; }
 .z-pill.done { border-color:var(–vert); color:#66BB6A; }
 
 /* ——— PHOTO UPLOAD ——— */
@@ -218,10 +230,10 @@ border:2px dashed var(–gris3); border-radius:14px;
 padding:28px 20px; text-align:center; cursor:pointer;
 transition:border-color 0.2s; margin-bottom:14px;
 }
-.upload-zone:active { border-color:var(–or); }
+.upload-zone:active { border-color:#D4A017; }
 .upload-icon { font-size:38px; margin-bottom:8px; }
 .upload-txt { color:#666; font-size:14px; }
-.upload-txt strong { color:var(–or); }
+.upload-txt strong { color:#D4A017; }
 
 .photos-grid {
 display:grid; grid-template-columns:repeat(2,1fr);
@@ -253,13 +265,13 @@ justify-content:center; min-height:80vh; text-align:center; padding:30px 20px;
 }
 .spinner {
 width:64px; height:64px; border:3px solid #2A2A2A;
-border-top-color:var(–or); border-radius:50%;
+border-top-color:#D4A017; border-radius:50%;
 animation:spin 1s linear infinite; margin-bottom:24px;
 }
 @keyframes spin { to { transform:rotate(360deg); } }
 .analyse-title {
-font-family:‘Bebas Neue’,cursive; font-size:30px;
-color:var(–or); letter-spacing:3px; margin-bottom:10px;
+font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:30px;
+color:#D4A017; letter-spacing:3px; margin-bottom:10px;
 }
 .analyse-sub { color:#666; font-size:14px; margin-bottom:20px; }
 .prog-bar-wrap {
@@ -282,15 +294,15 @@ background:#161616; font-size:13px; color:#666;
 /* ——— RAPPORT ——— */
 .rp-cover {
 background: linear-gradient(160deg, #0A0A0A 0%, #141000 100%);
-border:2px solid var(–or); border-radius:18px;
+border:2px solid #D4A017; border-radius:18px;
 padding:28px 22px; text-align:center; margin-bottom:22px;
 }
 .rp-logo {
-font-family:‘Bebas Neue’,cursive; font-size:32px;
-color:var(–or); letter-spacing:5px;
+font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:32px;
+color:#D4A017; letter-spacing:5px;
 }
 .rp-score {
-font-family:‘Bebas Neue’,cursive; font-size:84px; line-height:1; margin:14px 0 6px;
+font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:84px; line-height:1; margin:14px 0 6px;
 }
 .rp-score-lbl {
 font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:3px;
@@ -301,20 +313,20 @@ padding:9px 0; border-bottom:1px solid #1E1E1E; font-size:14px;
 }
 .info-row:last-child { border-bottom:none; }
 .info-lbl { color:#666; }
-.info-val { color:var(–blanc); font-weight:600; text-align:right; max-width:60%; }
+.info-val { color:#F0EEE8; font-weight:600; text-align:right; max-width:60%; }
 
 .sec-hdr {
 display:flex; align-items:center; gap:10px;
 margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid #1E1E1E;
 }
 .sec-hdr h2 {
-font-family:‘Bebas Neue’,cursive; font-size:20px;
-color:var(–or); letter-spacing:2px;
+font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:20px;
+color:#D4A017; letter-spacing:2px;
 }
 .sec-num {
-background:var(–or); color:var(–noir); width:30px; height:30px;
+background:#D4A017; color:#0A0A0A; width:30px; height:30px;
 border-radius:7px; display:flex; align-items:center; justify-content:center;
-font-family:‘Bebas Neue’,cursive; font-size:16px; flex-shrink:0;
+font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:16px; flex-shrink:0;
 }
 
 .zone-grid {
@@ -324,7 +336,7 @@ display:grid; grid-template-columns:repeat(2,1fr); gap:9px; margin-bottom:22px;
 border-radius:12px; padding:13px; text-align:center;
 }
 .z-card-name { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; opacity:0.8; }
-.z-card-score { font-family:‘Bebas Neue’,cursive; font-size:30px; line-height:1; }
+.z-card-score { font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:30px; line-height:1; }
 .z-card-nc { font-size:11px; margin-top:3px; opacity:0.7; }
 
 .photo-blk { border-radius:12px; overflow:hidden; margin-bottom:14px; border:1px solid #1E1E1E; }
@@ -333,7 +345,7 @@ padding:8px 13px; display:flex; justify-content:space-between;
 align-items:center; font-size:13px;
 }
 .photo-banner strong { font-weight:700; letter-spacing:1px; text-transform:uppercase; }
-.photo-banner .pb-score { font-family:‘Bebas Neue’,cursive; font-size:20px; }
+.photo-banner .pb-score { font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:20px; }
 .photo-blk img { width:100%; display:block; }
 .photo-blk-info { padding:12px; background:#111; }
 
@@ -370,9 +382,9 @@ font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:7px;
 .b-c { background:rgba(198,40,40,.35); color:#EF5350; }
 .b-m { background:rgba(230,81,0,.35); color:#FFA726; }
 .b-mi{ background:rgba(30,136,229,.35); color:#42A5F5; }
-.nc-desc { font-size:15px; font-weight:600; color:var(–blanc); margin-bottom:5px; }
+.nc-desc { font-size:15px; font-weight:600; color:#F0EEE8; margin-bottom:5px; }
 .nc-act { font-size:13px; color:#888; margin-bottom:3px; }
-.nc-delai { font-size:12px; color:var(–or); font-weight:600; }
+.nc-delai { font-size:12px; color:#D4A017; font-weight:600; }
 
 .sig-box {
 border:1px dashed var(–gris3); border-radius:12px;
@@ -383,8 +395,8 @@ padding:22px; text-align:center; margin-bottom:14px;
 
 /* ——— SETTINGS ——— */
 .set-title {
-font-family:‘Bebas Neue’,cursive; font-size:30px;
-color:var(–or); letter-spacing:3px; text-align:center; margin-bottom:6px;
+font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:30px;
+color:#D4A017; letter-spacing:3px; text-align:center; margin-bottom:6px;
 }
 .set-sub { text-align:center; color:#666; font-size:13px; margin-bottom:24px; }
 
@@ -483,7 +495,7 @@ body { background:white; color:black; }
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
       <button class="btn-back" onclick="nav('home')">←</button>
       <div>
-        <div style="font-family:'Bebas Neue',cursive;font-size:22px;color:var(--or);letter-spacing:2px">NOUVELLE INSPECTION</div>
+        <div style="font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:22px;color:#D4A017;letter-spacing:2px">NOUVELLE INSPECTION</div>
         <div style="font-size:12px;color:#666">Étape 1 / 4 — Informations générales</div>
       </div>
     </div>
@@ -540,7 +552,7 @@ body { background:white; color:black; }
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">
       <button class="btn-back" onclick="nav('nouvelle')">←</button>
       <div>
-        <div style="font-family:'Bebas Neue',cursive;font-size:22px;color:var(--or);letter-spacing:2px">PHOTOS PAR ZONE</div>
+        <div style="font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:22px;color:#D4A017;letter-spacing:2px">PHOTOS PAR ZONE</div>
         <div style="font-size:12px;color:#666">Étape 2 / 4 — Ajoutez 1 à 4 photos par zone</div>
       </div>
     </div>
@@ -728,7 +740,7 @@ const z = ZONES[zi];
 const photos = S.photos[z.id]||[];
 const el = document.getElementById(‘zone-content’);
 
-el.innerHTML = `<div class="card" style="animation:fadeUp 0.2s ease"> <div style="margin-bottom:14px"> <div style="font-family:'Bebas Neue',cursive;font-size:20px;color:var(--or);letter-spacing:2px">${z.emoji} ${z.desc.toUpperCase()}</div> <div style="font-size:13px;color:#666;margin-top:3px">1 à 4 photos de cette zone</div> </div> ${photos.length<4?`<div class="upload-zone" onclick="triggerFile('${z.id}')">
+el.innerHTML = `<div class="card" style="animation:fadeUp 0.2s ease"> <div style="margin-bottom:14px"> <div style="font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:20px;color:#D4A017;letter-spacing:2px">${z.emoji} ${z.desc.toUpperCase()}</div> <div style="font-size:13px;color:#666;margin-top:3px">1 à 4 photos de cette zone</div> </div> ${photos.length<4?`<div class="upload-zone" onclick="triggerFile('${z.id}')">
 <div class="upload-icon">📸</div>
 <div class="upload-txt">Appuyez pour <strong>ajouter une photo</strong></div>
 </div>`:''} ${photos.length>0?`<div class="photos-grid">
@@ -1005,7 +1017,7 @@ el.innerHTML = `
     ${!allNCs.length
       ? `<div class="card" style="text-align:center;padding:28px">
           <div style="font-size:38px;margin-bottom:10px">✅</div>
-          <div style="font-family:'Bebas Neue',cursive;font-size:20px;color:#66BB6A;letter-spacing:2px">AUCUNE NON-CONFORMITÉ</div>
+          <div style="font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:20px;color:#66BB6A;letter-spacing:2px">AUCUNE NON-CONFORMITÉ</div>
           <div style="color:#555;font-size:13px;margin-top:6px">L'établissement est en conformité totale.</div>
         </div>`
       : `<div style="font-size:13px;color:#666;margin-bottom:12px">
@@ -1039,7 +1051,7 @@ el.innerHTML = `
     </div>
     <div style="text-align:center;margin-top:18px;font-size:11px;color:#444;line-height:2">
       Rapport généré par Claude AI (Anthropic) via Verdict Inspection AI<br>
-      <span style="color:#888">info@verdictinspection-ai.com</span> &nbsp;·&nbsp; <span style="color:var(--or)">verdictinspection-ai.com</span>
+      <span style="color:#888">info@verdictinspection-ai.com</span> &nbsp;·&nbsp; <span style="color:#D4A017">verdictinspection-ai.com</span>
     </div>
   </div>`;
 }
@@ -1086,3 +1098,19 @@ nav(‘home’);
 function toast(msg, type=‘ok’) {
 const t = document.getElementById(‘toast’);
 t.textContent = msg;
+
+t.className = ’toast ’ + type;
+t.classList.add(‘show’);
+setTimeout(() => t.classList.remove(‘show’), 3200);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ——— START ———
+window.addEventListener(‘DOMContentLoaded’, function() {
+try { init(); } catch(e) { console.error(‘Init error:’, e); }
+});
+</script>
+
+</body>
+</html>
