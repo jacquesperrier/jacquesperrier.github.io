@@ -867,8 +867,8 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <div class="settings-section">
       <div class="settings-title">Google Sheets</div>
       <div class="settings-row">
-        <label>Synchronisation active</label>
-        <div class="toggle" id="toggle-sheets" onclick="toggleSheets()"></div>
+        <label style="color:#FFFFFF">Synchronisation active</label>
+        <button id="toggle-sheets" onclick="toggleSheets()" style="padding:8px 16px;border-radius:20px;border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;cursor:pointer;background:#555;color:#fff;" >OFF</button>
       </div>
       <div class="form-group" style="margin-top:10px">
         <div class="form-label">URL Apps Script</div>
@@ -967,7 +967,11 @@ window.onload = function() {
     sheetsEnabled = s.sheetsEnabled || false;
     sheetsURL = s.sheetsURL || '';
     document.getElementById('sheets-url').value = sheetsURL;
-    if (sheetsEnabled) document.getElementById('toggle-sheets').classList.add('on');
+    if (sheetsEnabled) {
+      const btn = document.getElementById('toggle-sheets');
+      btn.textContent = 'ON';
+      btn.style.background = '#2E7D32';
+    }
   }
   buildHaccpChecklist();
   updateDashboardDate();
@@ -1344,7 +1348,9 @@ async function sendToSheets(entry) {
 
 function toggleSheets() {
   sheetsEnabled = !sheetsEnabled;
-  document.getElementById('toggle-sheets').classList.toggle('on', sheetsEnabled);
+  const btn = document.getElementById('toggle-sheets');
+  btn.textContent = sheetsEnabled ? 'ON' : 'OFF';
+  btn.style.background = sheetsEnabled ? '#2E7D32' : '#555';
 }
 
 function saveSettings() {
