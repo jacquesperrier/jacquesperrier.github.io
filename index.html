@@ -36,10 +36,10 @@
 
 - { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-html { background: #0A0A0A; }
+html { background: #0A0A0A !important; }
 body {
 font-family: ‘Rajdhani’, sans-serif;
-background: #0A0A0A;
+background: #0A0A0A !important;
 color: #FFFFFF;
 min-height: 100vh;
 max-width: 430px;
@@ -47,6 +47,16 @@ margin: 0 auto;
 overflow-x: hidden;
 position: relative;
 }
+/* Fix iOS Safari input autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+-webkit-box-shadow: 0 0 0px 1000px #1E1E1E inset !important;
+-webkit-text-fill-color: #FFFFFF !important;
+caret-color: #FFFFFF;
+}
+/* Fix iOS Safari dark mode */
+.screen { background: #0A0A0A !important; }
 
 /* ── ÉCRANS ── */
 .screen { display: none; flex-direction: column; min-height: 100vh; animation: fadeIn 0.25s ease; }
@@ -172,9 +182,10 @@ position: sticky; top: 0; z-index: 100;
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 .form-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(–or); text-transform: uppercase; }
 .form-input, .form-select, .form-textarea {
-background: var(–noir3); border: 1px solid var(–border); border-radius: 10px;
-color: var(–blanc); font-family: ‘Rajdhani’, sans-serif; font-size: 15px;
+background: #1E1E1E !important; border: 1px solid rgba(212,160,23,0.2); border-radius: 10px;
+color: #FFFFFF !important; font-family: ‘Rajdhani’, sans-serif; font-size: 15px;
 padding: 12px 14px; width: 100%; outline: none;
+-webkit-appearance: none; -webkit-text-fill-color: #FFFFFF !important;
 transition: border-color 0.2s;
 }
 .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(–or); }
@@ -310,7 +321,7 @@ background: #0A0A0A;
 }
 .login-logo-wrap { text-align: center; margin-bottom: 40px; }
 .login-v {
-width: 80px; height: 80px; background: linear-gradient(135deg, #D4A017, #FFD700);
+width: 80px; height: 80px; background: linear-gradient(135deg, #B8860B, #D4A017, #C8960E);
 border-radius: 16px; display: flex; align-items: center; justify-content: center;
 font-family: ‘Cormorant Garamond’, serif; font-weight: 700; font-size: 52px;
 color: var(–noir); margin: 0 auto 16px; box-shadow: 0 0 40px rgba(212,160,23,0.3);
@@ -1012,7 +1023,7 @@ function showScreen(name) {
 }
 
 function openForm(type) { showScreen(type); }
-function showFormation() { showScreen('formation'); }
+function showFormation() { window.location.href = 'formation.html'; }
 
 function goBack() {
   showScreen('dashboard');
