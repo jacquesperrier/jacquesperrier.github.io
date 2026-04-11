@@ -1,1 +1,1262 @@
+<!DOCTYPE html>
 
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Verdict — Formation HACCP</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { background: #0A0A0A; color: #FFFFFF; font-family: 'Rajdhani', sans-serif; min-height: 100vh; max-width: 430px; margin: 0 auto; overflow-x: hidden; }
+
+.screen { display: none; flex-direction: column; min-height: 100vh; animation: fadeIn 0.25s ease; }
+.screen.active { display: flex; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* HEADER */
+.header {
+background: linear-gradient(180deg, #000 0%, #141414 100%);
+border-bottom: 1px solid rgba(212,160,23,0.2);
+padding: 14px 18px;
+display: flex; align-items: center; gap: 12px;
+position: sticky; top: 0; z-index: 100;
+}
+.logo-v {
+width: 36px; height: 36px; background: linear-gradient(135deg, #D4A017, #FFD700);
+border-radius: 7px; display: flex; align-items: center; justify-content: center;
+font-family: ‘Cormorant Garamond’, serif; font-weight: 700; font-size: 22px; color: #0A0A0A;
+}
+.header-title { font-family: ‘Cormorant Garamond’, serif; }
+.header-title .brand { font-size: 18px; font-weight: 700; color: #D4A017; letter-spacing: 1px; }
+.header-title .sub { font-size: 10px; color: #888; letter-spacing: 2px; text-transform: uppercase; }
+.btn-back { background: none; border: none; color: #D4A017; font-size: 22px; cursor: pointer; padding: 4px; margin-left: auto; }
+
+/* MODULES LIST */
+.modules-header { padding: 20px 18px 10px; }
+.modules-header h1 { font-family: ‘Cormorant Garamond’, serif; font-size: 28px; color: #FFFFFF; }
+.modules-header p { font-size: 12px; color: #888; margin-top: 4px; }
+
+.progress-bar-wrap { margin: 12px 18px; background: #1E1E1E; border-radius: 20px; height: 6px; }
+.progress-bar { height: 6px; border-radius: 20px; background: linear-gradient(90deg, #D4A017, #FFD700); transition: width 0.5s ease; }
+
+.module-list { padding: 0 18px 100px; display: flex; flex-direction: column; gap: 12px; }
+.module-item {
+background: #141414; border: 1px solid rgba(212,160,23,0.2); border-radius: 14px;
+padding: 16px; cursor: pointer; transition: all 0.2s;
+display: flex; align-items: center; gap: 14px;
+position: relative; overflow: hidden;
+}
+.module-item::before {
+content: ‘’; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+background: linear-gradient(90deg, #D4A017, transparent);
+}
+.module-item:active { transform: scale(0.98); }
+.module-item.completed { border-color: rgba(76,175,80,0.3); }
+.module-item.completed::before { background: linear-gradient(90deg, #4CAF50, transparent); }
+.module-icon { font-size: 32px; flex-shrink: 0; }
+.module-info { flex: 1; }
+.module-name { font-size: 15px; font-weight: 700; color: #FFFFFF; }
+.module-meta { font-size: 11px; color: #888; margin-top: 3px; }
+.module-badge {
+font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+flex-shrink: 0;
+}
+.badge-done { background: rgba(76,175,80,0.15); color: #4CAF50; border: 1px solid #2E7D32; }
+.badge-todo { background: rgba(212,160,23,0.12); color: #D4A017; border: 1px solid rgba(212,160,23,0.4); }
+.badge-locked { background: rgba(136,136,136,0.1); color: #888; border: 1px solid #555; }
+
+/* LESSONS LIST */
+.lessons-header { padding: 20px 18px 10px; }
+.lessons-header h2 { font-family: ‘Cormorant Garamond’, serif; font-size: 24px; color: #FFFFFF; }
+.lessons-header .module-desc { font-size: 13px; color: #888; margin-top: 6px; line-height: 1.4; }
+
+.lesson-list { padding: 0 18px 100px; display: flex; flex-direction: column; gap: 10px; }
+.lesson-item {
+background: #141414; border: 1px solid rgba(212,160,23,0.2); border-radius: 12px;
+padding: 14px 16px; cursor: pointer; transition: all 0.2s;
+display: flex; align-items: center; gap: 12px;
+}
+.lesson-item:active { transform: scale(0.98); background: #1E1E1E; }
+.lesson-item.completed { border-color: rgba(76,175,80,0.3); }
+.lesson-num {
+width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(212,160,23,0.4);
+display: flex; align-items: center; justify-content: center;
+font-size: 13px; font-weight: 700; color: #D4A017; flex-shrink: 0;
+}
+.lesson-item.completed .lesson-num { background: rgba(76,175,80,0.15); border-color: #4CAF50; color: #4CAF50; }
+.lesson-info { flex: 1; }
+.lesson-title { font-size: 14px; font-weight: 600; color: #FFFFFF; }
+.lesson-duration { font-size: 11px; color: #888; margin-top: 2px; }
+.lesson-arrow { color: #D4A017; font-size: 16px; }
+
+/* LESSON CONTENT */
+.lesson-content { padding: 0 0 100px; overflow-y: auto; }
+.lesson-hero {
+background: linear-gradient(135deg, #141414, #1E1E1E);
+border-bottom: 1px solid rgba(212,160,23,0.2);
+padding: 20px 18px;
+}
+.lesson-hero .lesson-num-big {
+font-size: 11px; color: #D4A017; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px;
+}
+.lesson-hero h3 { font-family: ‘Cormorant Garamond’, serif; font-size: 26px; color: #FFFFFF; line-height: 1.2; }
+.lesson-hero .duration { font-size: 12px; color: #888; margin-top: 6px; }
+
+.content-block { padding: 16px 18px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.content-block h4 { font-size: 13px; letter-spacing: 2px; color: #D4A017; text-transform: uppercase; margin-bottom: 10px; }
+.content-block p { font-size: 14px; color: #CCC; line-height: 1.6; margin-bottom: 10px; }
+.content-block p:last-child { margin-bottom: 0; }
+
+.key-points { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.key-points li {
+background: rgba(212,160,23,0.08); border: 1px solid rgba(212,160,23,0.2);
+border-radius: 8px; padding: 10px 14px;
+font-size: 13px; color: #FFFFFF; line-height: 1.4;
+display: flex; align-items: flex-start; gap: 10px;
+}
+.key-points li::before { content: ‘✦’; color: #D4A017; flex-shrink: 0; margin-top: 1px; }
+
+.warning-box {
+background: rgba(198,40,40,0.1); border: 1px solid rgba(198,40,40,0.3);
+border-radius: 10px; padding: 12px 14px; margin: 10px 0;
+font-size: 13px; color: #FF8A80; line-height: 1.5;
+}
+.warning-box::before { content: ’⚠️ ’; }
+
+.info-box {
+background: rgba(33,150,243,0.1); border: 1px solid rgba(33,150,243,0.3);
+border-radius: 10px; padding: 12px 14px; margin: 10px 0;
+font-size: 13px; color: #90CAF9; line-height: 1.5;
+}
+.info-box::before { content: ’ℹ️ ’; }
+
+.temp-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+.temp-table th { background: rgba(212,160,23,0.15); color: #D4A017; font-size: 11px; letter-spacing: 1px; padding: 8px 10px; text-align: left; }
+.temp-table td { padding: 8px 10px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #CCC; }
+.temp-table tr:last-child td { border-bottom: none; }
+
+/* QUIZ */
+.quiz-section { padding: 16px 18px; }
+.quiz-section h4 { font-size: 13px; letter-spacing: 2px; color: #D4A017; text-transform: uppercase; margin-bottom: 16px; }
+.quiz-question { margin-bottom: 20px; }
+.quiz-q { font-size: 14px; font-weight: 600; color: #FFFFFF; margin-bottom: 10px; line-height: 1.4; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+background: #1E1E1E; border: 1px solid rgba(212,160,23,0.2);
+border-radius: 8px; padding: 10px 14px; cursor: pointer;
+font-size: 13px; color: #CCC; transition: all 0.15s;
+display: flex; align-items: center; gap: 10px;
+}
+.quiz-option:active { background: #2A2A2A; }
+.quiz-option.selected { background: rgba(212,160,23,0.1); border-color: #D4A017; color: #FFFFFF; }
+.quiz-option.correct { background: rgba(76,175,80,0.15); border-color: #4CAF50; color: #4CAF50; }
+.quiz-option.wrong { background: rgba(198,40,40,0.15); border-color: #C62828; color: #FF8A80; }
+.quiz-letter {
+width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(212,160,23,0.4);
+display: flex; align-items: center; justify-content: center;
+font-size: 11px; font-weight: 700; color: #D4A017; flex-shrink: 0;
+}
+
+.quiz-feedback { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 8px; display: none; line-height: 1.4; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); color: #81C784; }
+.quiz-feedback.wrong-fb { background: rgba(198,40,40,0.1); border: 1px solid rgba(198,40,40,0.3); color: #FF8A80; }
+
+/* BTN */
+.btn-wrap { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; padding: 12px 18px; background: linear-gradient(transparent, #0A0A0A 40%); z-index: 200; }
+.btn-primary {
+width: 100%; padding: 16px;
+background: linear-gradient(135deg, #D4A017, #FFD700);
+border: none; border-radius: 12px; color: #0A0A0A;
+font-family: ‘Rajdhani’, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 3px;
+cursor: pointer;
+}
+
+/* SCORE */
+.score-screen { padding: 40px 18px; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
+.score-circle-big {
+width: 140px; height: 140px; border-radius: 50%;
+border: 8px solid rgba(212,160,23,0.2);
+display: flex; flex-direction: column; align-items: center; justify-content: center;
+background: #141414;
+}
+.score-circle-big .score-num { font-size: 42px; font-weight: 700; color: #D4A017; line-height: 1; }
+.score-circle-big .score-label { font-size: 12px; color: #888; }
+.score-title { font-family: ‘Cormorant Garamond’, serif; font-size: 28px; color: #FFFFFF; }
+.score-msg { font-size: 14px; color: #888; line-height: 1.5; max-width: 300px; }
+.score-badge { background: rgba(212,160,23,0.12); border: 1px solid #D4A017; border-radius: 20px; padding: 8px 20px; font-size: 12px; font-weight: 700; color: #D4A017; letter-spacing: 1px; }
+
+/* TOAST */
+.toast {
+position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+background: #141414; border: 1px solid #D4A017; border-radius: 10px;
+padding: 12px 20px; font-size: 13px; font-weight: 600; color: #D4A017;
+opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: #4CAF50; color: #4CAF50; }
+</style>
+
+</head>
+<body>
+
+<!-- SCREEN: MODULE LIST -->
+
+<div id="screen-modules" class="screen active">
+  <div class="header">
+    <div class="logo-v">V</div>
+    <div class="header-title">
+      <div class="brand">FORMATION</div>
+      <div class="sub">Modules HACCP · MAPAQ</div>
+    </div>
+    <button class="btn-back" onclick="goHome()">🏠</button>
+  </div>
+  <div class="modules-header">
+    <h1>Vos formations</h1>
+    <p>6 modules · 35 leçons · Certifications incluses</p>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="global-progress" style="width:0%"></div>
+  </div>
+  <div class="module-list" id="module-list"></div>
+</div>
+
+<!-- SCREEN: LESSON LIST -->
+
+<div id="screen-lessons" class="screen">
+  <div class="header">
+    <div class="logo-v">V</div>
+    <div class="header-title">
+      <div class="brand" id="lessons-module-name">MODULE</div>
+      <div class="sub">Leçons disponibles</div>
+    </div>
+    <button class="btn-back" onclick="showScreen('modules')">←</button>
+  </div>
+  <div class="lessons-header">
+    <h2 id="lessons-title"></h2>
+    <p class="module-desc" id="lessons-desc"></p>
+  </div>
+  <div class="lesson-list" id="lesson-list"></div>
+</div>
+
+<!-- SCREEN: LESSON CONTENT -->
+
+<div id="screen-lesson" class="screen">
+  <div class="header">
+    <div class="logo-v">V</div>
+    <div class="header-title">
+      <div class="brand" id="lesson-module-name">LEÇON</div>
+      <div class="sub" id="lesson-progress-label">Leçon 1/7</div>
+    </div>
+    <button class="btn-back" id="lesson-back-btn">←</button>
+  </div>
+  <div class="lesson-content" id="lesson-content"></div>
+  <div class="btn-wrap">
+    <button class="btn-primary" id="btn-next-lesson" onclick="nextLesson()">SUIVANT →</button>
+  </div>
+</div>
+
+<!-- SCREEN: SCORE -->
+
+<div id="screen-score" class="screen">
+  <div class="header">
+    <div class="logo-v">V</div>
+    <div class="header-title">
+      <div class="brand">RÉSULTAT</div>
+      <div class="sub">Module complété</div>
+    </div>
+  </div>
+  <div class="score-screen">
+    <div class="score-circle-big">
+      <div class="score-num" id="final-score">0%</div>
+      <div class="score-label">Score</div>
+    </div>
+    <div class="score-title" id="score-title">Bien joué!</div>
+    <div class="score-msg" id="score-msg"></div>
+    <div class="score-badge" id="score-badge"></div>
+  </div>
+  <div class="btn-wrap" style="display:flex;gap:10px">
+    <button class="btn-primary" style="background:#1E1E1E;color:#D4A017;border:1px solid #D4A017" onclick="retryModule()">↺ RECOMMENCER</button>
+    <button class="btn-primary" onclick="showScreen('modules')">MODULES →</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+const MODULES = [
+  {
+    id: 'haccp',
+    icon: '🦠',
+    name: 'HACCP — Principes fondamentaux',
+    meta: '7 leçons · 45 min · Niveau 1',
+    desc: 'Maîtrisez les 7 principes HACCP, l\'identification des points critiques et la mise en place d\'un plan de maîtrise sanitaire conforme aux exigences MAPAQ.',
+    lessons: [
+      {
+        title: 'Introduction au HACCP',
+        duration: '5 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 1', title: 'Introduction au HACCP', duration: '5 min de lecture' },
+          { type: 'text', heading: 'Qu\'est-ce que le HACCP?', body: 'HACCP signifie Hazard Analysis Critical Control Points — en français, Analyse des dangers et maîtrise des points critiques. C\'est un système préventif de gestion de la sécurité alimentaire reconnu mondialement.\n\nDéveloppé dans les années 1960 pour les astronautes de la NASA, le HACCP est aujourd\'hui obligatoire dans de nombreux pays, dont le Canada, pour les établissements alimentaires.' },
+          { type: 'keypoints', heading: 'Points clés', points: [
+            'Le HACCP est préventif, pas réactif — on anticipe les dangers avant qu\'ils surviennent',
+            'Reconnu par l\'Organisation Mondiale de la Santé (OMS) et Santé Canada',
+            'Obligatoire au Québec pour les établissements sous réglementation MAPAQ',
+            'Applicable à toute la chaîne alimentaire — de la ferme à la table'
+          ]},
+          { type: 'info', text: 'Au Québec, la Loi sur les produits alimentaires et ses règlements d\'application exigent que les exploitants d\'établissements alimentaires contrôlent les risques pour la salubrité des aliments.' },
+          { type: 'quiz', questions: [
+            { q: 'Que signifie l\'acronyme HACCP?', options: ['Hygiène Alimentaire et Contrôle des Conditions de Production', 'Hazard Analysis Critical Control Points', 'Haute Autorité de Certification des Conditions de Production', 'Hygiène et Assurance Contrôle des Conditions Préventives'], correct: 1, feedback: 'HACCP = Hazard Analysis Critical Control Points (Analyse des dangers et maîtrise des points critiques).' },
+            { q: 'Le HACCP est un système:', options: ['Réactif — on agit après un problème', 'Préventif — on anticipe les dangers', 'Optionnel pour les restaurants', 'Seulement pour les grandes usines'], correct: 1, feedback: 'Le HACCP est fondamentalement préventif. On identifie et contrôle les dangers avant qu\'ils causent un problème.' },
+            { q: 'Qui a développé le HACCP à l\'origine?', options: ['L\'Organisation Mondiale de la Santé', 'La NASA pour les astronautes', 'Le gouvernement canadien', 'L\'Union Européenne'], correct: 1, feedback: 'Le HACCP a été développé dans les années 1960 pour garantir la sécurité alimentaire des astronautes de la NASA.' }
+          ]}
+        ]
+      },
+      {
+        title: 'Les 7 principes HACCP',
+        duration: '8 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 2', title: 'Les 7 principes HACCP', duration: '8 min de lecture' },
+          { type: 'text', heading: 'Les 7 principes fondamentaux', body: 'Le système HACCP repose sur 7 principes qui forment une séquence logique. Chaque principe s\'appuie sur le précédent pour créer un système complet de gestion des risques alimentaires.' },
+          { type: 'keypoints', heading: 'Les 7 principes', points: [
+            '1. Analyser les dangers — identifier tous les dangers biologiques, chimiques et physiques',
+            '2. Identifier les CCP — déterminer les points de contrôle critiques',
+            '3. Établir les limites critiques — définir les seuils acceptables pour chaque CCP',
+            '4. Surveiller les CCP — mettre en place des procédures de surveillance',
+            '5. Actions correctives — définir les mesures en cas de déviation',
+            '6. Vérification — confirmer que le système fonctionne correctement',
+            '7. Documentation — tenir des registres et enregistrements'
+          ]},
+          { type: 'warning', text: 'Un plan HACCP sans documentation n\'est pas valide. Les registres sont la preuve que vous appliquez le système — c\'est exactement ce que l\'app Verdict permet de faire automatiquement.' },
+          { type: 'quiz', questions: [
+            { q: 'Combien y a-t-il de principes HACCP?', options: ['5', '6', '7', '8'], correct: 2, feedback: 'Il y a exactement 7 principes HACCP, formant une séquence logique et complète.' },
+            { q: 'Quel est le 2e principe HACCP?', options: ['Analyser les dangers', 'Identifier les CCP', 'Établir les limites critiques', 'Surveiller les CCP'], correct: 1, feedback: 'Le 2e principe est l\'identification des Points de Contrôle Critiques (CCP).' },
+            { q: 'Pourquoi la documentation est-elle essentielle?', options: ['C\'est optionnel', 'C\'est la preuve que vous appliquez le système', 'Seulement pour les grandes entreprises', 'Pour satisfaire les clients'], correct: 1, feedback: 'La documentation est la preuve tangible que votre système HACCP fonctionne. Sans enregistrements, vous ne pouvez pas prouver votre conformité.' }
+          ]}
+        ]
+      },
+      {
+        title: 'Identification des dangers',
+        duration: '7 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 3', title: 'Identification des dangers', duration: '7 min de lecture' },
+          { type: 'text', heading: 'Les 3 types de dangers alimentaires', body: 'Le premier principe HACCP consiste à identifier tous les dangers potentiels. On distingue trois catégories principales de dangers qui peuvent rendre un aliment dangereux pour la consommation.' },
+          { type: 'keypoints', heading: 'Catégories de dangers', points: [
+            'Dangers biologiques — bactéries (Salmonella, E. coli, Listeria), virus, parasites. C\'est la catégorie la plus fréquente et la plus dangereuse',
+            'Dangers chimiques — résidus de pesticides, produits de nettoyage, métaux lourds, additifs en excès',
+            'Dangers physiques — corps étrangers (os, verre, métal, plastique, bijoux) pouvant causer des blessures'
+          ]},
+          { type: 'warning', text: 'Salmonella et E. coli O157:H7 sont responsables de milliers d\'hospitalisations chaque année au Canada. La cuisson adéquate (74°C minimum) les élimine efficacement.' },
+          { type: 'quiz', questions: [
+            { q: 'Combien y a-t-il de catégories de dangers alimentaires?', options: ['2', '3', '4', '5'], correct: 1, feedback: 'Il y a 3 catégories: biologiques, chimiques et physiques.' },
+            { q: 'Quelle catégorie de danger est la plus fréquente?', options: ['Physique', 'Chimique', 'Biologique', 'Radioactif'], correct: 2, feedback: 'Les dangers biologiques (bactéries, virus, parasites) sont les plus fréquents et responsables de la majorité des TIAC (Toxi-infections alimentaires collectives).' },
+            { q: 'Un bijou tombé dans un aliment est un danger:', options: ['Biologique', 'Chimique', 'Physique', 'Radiologique'], correct: 2, feedback: 'Un bijou est un danger physique — un corps étranger pouvant causer des blessures.' }
+          ]}
+        ]
+      },
+      {
+        title: 'Points de Contrôle Critiques (CCP)',
+        duration: '8 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 4', title: 'Points de Contrôle Critiques', duration: '8 min de lecture' },
+          { type: 'text', heading: 'Qu\'est-ce qu\'un CCP?', body: 'Un Point de Contrôle Critique (CCP) est une étape du processus de production où une mesure de maîtrise peut être appliquée pour prévenir, éliminer ou réduire à un niveau acceptable un danger pour la sécurité alimentaire.\n\nIl est crucial de distinguer les CCP des simples mesures de contrôle (CP) qui gèrent des conditions générales d\'hygiène.' },
+          { type: 'keypoints', heading: 'Exemples de CCP en restauration', points: [
+            'Cuisson — température à cœur suffisante pour détruire les pathogènes',
+            'Refroidissement rapide — de 60°C à 4°C en moins de 2 heures',
+            'Réception des marchandises — vérification de la température à la livraison',
+            'Maintien au chaud — minimum 60°C pour les aliments servis chauds',
+            'Congélation — maintien à -18°C ou moins'
+          ]},
+          { type: 'info', text: 'L\'arbre de décision HACCP aide à déterminer si une étape est un CCP. On pose 4 questions clés pour chaque danger identifié à chaque étape.' },
+          { type: 'quiz', questions: [
+            { q: 'Un CCP est une étape où on peut:', options: ['Seulement observer les problèmes', 'Prévenir, éliminer ou réduire un danger à un niveau acceptable', 'Former les employés', 'Nettoyer les équipements'], correct: 1, feedback: 'Un CCP est une étape où une mesure de maîtrise peut prévenir, éliminer ou réduire un danger.' },
+            { q: 'La cuisson est un exemple de CCP car:', options: ['C\'est obligatoire par la loi', 'Elle peut détruire les pathogènes à la bonne température', 'C\'est la dernière étape', 'C\'est la plus facile à contrôler'], correct: 1, feedback: 'La cuisson à température adéquate détruit les pathogènes (bactéries dangereuses), ce qui en fait un CCP classique.' },
+            { q: 'La limite critique pour la cuisson de la volaille est:', options: ['65°C', '74°C', '85°C', '100°C'], correct: 2, feedback: 'La volaille doit être cuite à 85°C minimum à cœur pour garantir la destruction des pathogènes comme Salmonella.' }
+          ]}
+        ]
+      },
+      {
+        title: 'Limites critiques et surveillance',
+        duration: '6 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 5', title: 'Limites critiques et surveillance', duration: '6 min de lecture' },
+          { type: 'text', heading: 'Définir les limites critiques', body: 'Une limite critique est la valeur maximale ou minimale à laquelle un paramètre biologique, chimique ou physique doit être contrôlé pour prévenir, éliminer ou réduire un danger.\n\nCes limites sont souvent définies par la réglementation (comme les températures de conservation) ou par des données scientifiques validées.' },
+          { type: 'keypoints', heading: 'Limites critiques courantes', points: [
+            'Réfrigération: 0°C à 4°C maximum',
+            'Congélation: -18°C ou moins',
+            'Cuisson viande: 74°C minimum à cœur',
+            'Cuisson volaille: 85°C minimum à cœur',
+            'Maintien chaud: 60°C minimum',
+            'Refroidissement: de 60°C à 4°C en moins de 2 heures'
+          ]},
+          { type: 'quiz', questions: [
+            { q: 'Quelle est la température maximale de réfrigération?', options: ['2°C', '4°C', '6°C', '8°C'], correct: 1, feedback: 'Les réfrigérateurs doivent maintenir une température entre 0°C et 4°C maximum.' },
+            { q: 'La viande de bœuf doit être cuite à cœur à minimum:', options: ['65°C', '68°C', '74°C', '80°C'], correct: 2, feedback: 'La viande (bœuf, porc) doit atteindre 74°C à cœur pour détruire les pathogènes.' },
+            { q: 'Le refroidissement rapide doit amener les aliments de 60°C à 4°C en:', options: ['30 minutes', '1 heure', '2 heures', '4 heures'], correct: 2, feedback: 'Le refroidissement de 60°C à 4°C doit se faire en moins de 2 heures pour éviter la zone de danger.' }
+          ]}
+        ]
+      },
+      {
+        title: 'Actions correctives',
+        duration: '5 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 6', title: 'Actions correctives', duration: '5 min de lecture' },
+          { type: 'text', heading: 'Que faire quand une limite est dépassée?', body: 'Une action corrective est la procédure à suivre lorsqu\'une limite critique n\'est pas respectée. Elle doit être définie à l\'avance pour chaque CCP afin d\'agir rapidement et efficacement en cas de déviation.' },
+          { type: 'keypoints', heading: 'Exemples d\'actions correctives', points: [
+            'Température de réfrigération trop haute → Vérifier le thermostat, transférer les aliments, appeler le technicien',
+            'Cuisson insuffisante → Poursuivre la cuisson jusqu\'à atteindre la température requise',
+            'Livraison hors température → Refuser la livraison et documenter le refus',
+            'Produit contaminé → Isoler, identifier et détruire le lot concerné'
+          ]},
+          { type: 'warning', text: 'Toute action corrective doit être documentée avec: la date, l\'heure, le problème constaté, l\'action prise et le nom de la personne responsable. L\'app Verdict automatise cette documentation.' },
+          { type: 'quiz', questions: [
+            { q: 'Une action corrective doit être définie:', options: ['Après que le problème survient', 'À l\'avance pour chaque CCP', 'Par le gérant seulement', 'Une fois par année'], correct: 1, feedback: 'Les actions correctives doivent être définies à l\'avance pour chaque CCP afin de pouvoir agir rapidement.' },
+            { q: 'Si une livraison arrive hors température, vous devez:', options: ['Accepter quand même si c\'est urgent', 'Refuser et documenter', 'Mettre au réfrigérateur sans noter', 'Appeler le fournisseur uniquement'], correct: 1, feedback: 'Une livraison hors température doit être refusée et le refus documenté pour traçabilité.' },
+            { q: 'Quand une limite critique est dépassée, on doit d\'abord:', options: ['Continuer normalement', 'Appliquer l\'action corrective prédéfinie', 'Attendre que ça se règle tout seul', 'Cacher le problème'], correct: 1, feedback: 'L\'action corrective prédéfinie doit être appliquée immédiatement quand une limite est dépassée.' }
+          ]}
+        ]
+      },
+      {
+        title: 'Documentation et traçabilité',
+        duration: '6 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 7', title: 'Documentation et traçabilité', duration: '6 min de lecture' },
+          { type: 'text', heading: 'L\'importance des enregistrements', body: 'La documentation est le 7e principe HACCP et souvent le plus négligé. Sans registres, votre plan HACCP n\'existe pas aux yeux d\'un inspecteur. Les enregistrements prouvent que votre système fonctionne réellement.\n\nLa traçabilité permet de retracer l\'historique d\'un produit alimentaire à toutes les étapes de sa vie, de la production à la consommation.' },
+          { type: 'keypoints', heading: 'Documents essentiels MAPAQ', points: [
+            'Registre des températures (réfrigérateurs, congélateurs, cuisson) — quotidien',
+            'Registre de réception des marchandises — à chaque livraison',
+            'Fiches de nettoyage et désinfection — selon votre programme',
+            'Registre des formations du personnel',
+            'Fiches d\'actions correctives — chaque fois qu\'une limite est dépassée'
+          ]},
+          { type: 'info', text: 'L\'app Verdict automatise toute cette documentation. Chaque entrée est horodatée et associée à un employé, créant une traçabilité complète et conforme aux exigences MAPAQ.' },
+          { type: 'quiz', questions: [
+            { q: 'La documentation est le principe HACCP numéro:', options: ['5', '6', '7', '4'], correct: 2, feedback: 'La documentation et les enregistrements constituent le 7e et dernier principe HACCP.' },
+            { q: 'Sans registres, lors d\'une inspection MAPAQ:', options: ['C\'est acceptable si vous expliquez verbalement', 'Vous ne pouvez pas prouver que votre système fonctionne', 'L\'inspecteur vous fait confiance', 'C\'est seulement une recommandation'], correct: 1, feedback: 'Sans registres, vous ne pouvez pas prouver que votre plan HACCP est appliqué — c\'est une non-conformité majeure.' },
+            { q: 'La traçabilité permet de:', options: ['Calculer les profits', 'Retracer l\'historique d\'un produit à toutes les étapes', 'Former le personnel', 'Calculer les températures'], correct: 1, feedback: 'La traçabilité permet de retracer l\'historique complet d\'un produit alimentaire, essentielle en cas de rappel ou d\'intoxication.' }
+          ]}
+        ]
+      }
+    ]
+  },
+  {
+    id: 'temperatures',
+    icon: '🌡️',
+    name: 'Contrôle des températures',
+    meta: '5 leçons · 30 min · Niveau 1',
+    desc: 'Maîtrisez les températures critiques MAPAQ, l\'utilisation correcte des thermomètres et les procédures de contrôle pour chaque étape de la chaîne alimentaire.',
+    lessons: [
+      {
+        title: 'La zone de danger',
+        duration: '6 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 1', title: 'La zone de danger', duration: '6 min de lecture' },
+          { type: 'text', heading: 'Qu\'est-ce que la zone de danger?', body: 'La zone de danger thermique est la plage de températures entre 4°C et 60°C dans laquelle les bactéries se multiplient rapidement. Dans cette zone, le nombre de bactéries peut doubler toutes les 20 minutes dans des conditions idéales.\n\nUn aliment ne doit pas rester dans la zone de danger plus de 2 heures cumulatives.' },
+          { type: 'keypoints', heading: 'Points essentiels', points: [
+            'Zone de danger: 4°C à 60°C',
+            'Doublement des bactéries toutes les 20 minutes dans la zone optimale',
+            'Maximum 2 heures cumulatives dans la zone de danger',
+            'En dessous de 4°C: croissance ralentie mais pas arrêtée',
+            'Au dessus de 60°C: la plupart des pathogènes sont détruits'
+          ]},
+          { type: 'warning', text: 'Un plat laissé à température ambiante (20°C) pendant 4 heures peut contenir des millions de bactéries — même si l\'aliment semble et sent bon.' },
+          { type: 'quiz', questions: [
+            { q: 'La zone de danger thermique se situe entre:', options: ['0°C et 40°C', '4°C et 60°C', '5°C et 65°C', '0°C et 60°C'], correct: 1, feedback: 'La zone de danger est entre 4°C et 60°C — la plage où les bactéries se multiplient le plus rapidement.' },
+            { q: 'Dans la zone de danger, les bactéries peuvent doubler:', options: ['Toutes les 2 heures', 'Toutes les heures', 'Toutes les 20 minutes', 'Toutes les 5 minutes'], correct: 2, feedback: 'Dans des conditions idéales, les bactéries peuvent doubler toutes les 20 minutes dans la zone de danger.' },
+            { q: 'Un aliment ne doit pas rester dans la zone de danger plus de:', options: ['30 minutes', '1 heure', '2 heures', '4 heures'], correct: 2, feedback: 'La règle des 2 heures: un aliment ne doit pas rester dans la zone de danger (4°C à 60°C) plus de 2 heures au total.' }
+          ]}
+        ]
+      },
+      {
+        title: 'Températures de réfrigération',
+        duration: '6 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 2', title: 'Températures de réfrigération', duration: '6 min de lecture' },
+          { type: 'text', heading: 'Conservation au froid', body: 'La réfrigération ralentit la croissance des bactéries mais ne les détruit pas. Il est crucial de maintenir les bons niveaux de température pour chaque type d\'aliment.' },
+          { type: 'table', heading: 'Températures requises', headers: ['Type d\'aliment', 'Température max'], rows: [
+            ['Viandes fraîches, volaille, poisson', '4°C'],
+            ['Produits laitiers', '4°C'],
+            ['Fruits et légumes coupés', '4°C'],
+            ['Plats préparés, charcuteries', '4°C'],
+            ['Œufs', '4°C'],
+            ['Congélés', '-18°C ou moins']
+          ]},
+          { type: 'keypoints', heading: 'Bonnes pratiques', points: [
+            'Vérifier la température 2 fois par jour minimum — matin et soir',
+            'Placer un thermomètre dans la partie la plus chaude du réfrigérateur',
+            'Ne jamais surcharger le réfrigérateur — l\'air doit circuler',
+            'Appliquer le principe FIFO (premier entré, premier sorti)',
+            'Couvrir et étiqueter tous les aliments avec la date'
+          ]},
+          { type: 'quiz', questions: [
+            { q: 'La température maximale pour les viandes fraîches est:', options: ['2°C', '4°C', '6°C', '8°C'], correct: 1, feedback: 'Les viandes fraîches, volaille et poisson doivent être conservés à 4°C maximum.' },
+            { q: 'La réfrigération détruit les bactéries?', options: ['Oui, complètement', 'Non, elle ralentit seulement leur croissance', 'Oui, en 24 heures', 'Seulement si on ajoute du sel'], correct: 1, feedback: 'La réfrigération ralentit la croissance des bactéries mais ne les détruit pas. C\'est pourquoi les durées de conservation sont limitées.' },
+            { q: 'FIFO signifie:', options: ['Froid Intense, Fermeture Obligatoire', 'Premier entré, premier sorti', 'Freezer In, Freezer Out', 'Frais Immédiatement, Frais Obligatoire'], correct: 1, feedback: 'FIFO = First In, First Out = Premier entré, premier sorti. Les produits les plus anciens sont utilisés en premier.' }
+          ]}
+        ]
+      },
+      {
+        title: 'Températures de cuisson',
+        duration: '7 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 3', title: 'Températures de cuisson', duration: '7 min de lecture' },
+          { type: 'text', heading: 'La cuisson comme CCP', body: 'La cuisson est le principal Point de Contrôle Critique en cuisine. Des températures insuffisantes permettent aux pathogènes de survivre et de provoquer des intoxications alimentaires graves.' },
+          { type: 'table', heading: 'Températures minimales à cœur', headers: ['Aliment', 'Température min.'], rows: [
+            ['Volaille entière (poulet, dinde)', '85°C'],
+            ['Viandes hachées (bœuf, porc)', '74°C'],
+            ['Viandes non hachées (bœuf, agneau)', '74°C'],
+            ['Porc entier', '74°C'],
+            ['Poisson et fruits de mer', '70°C'],
+            ['Œufs et plats aux œufs', '74°C'],
+            ['Rôtis de bœuf (méthode temps/temp)', '63°C + repos']
+          ]},
+          { type: 'warning', text: 'La couleur n\'est pas un indicateur fiable de cuisson! Un hamburger peut être brun à l\'intérieur et encore dangereux, ou rose et parfaitement cuit. Utilisez toujours un thermomètre.' },
+          { type: 'quiz', questions: [
+            { q: 'La température minimale à cœur pour la volaille est:', options: ['74°C', '80°C', '85°C', '90°C'], correct: 2, feedback: 'La volaille (poulet, dinde) doit atteindre 85°C à cœur minimum pour détruire Salmonella et autres pathogènes.' },
+            { q: 'Comment vérifier si une viande est cuite?', options: ['Par la couleur', 'Par le toucher', 'Avec un thermomètre à sonde', 'Par le temps de cuisson uniquement'], correct: 2, feedback: 'Seul un thermomètre à sonde permet de vérifier avec certitude que la température à cœur est atteinte.' },
+            { q: 'Les viandes hachées doivent être cuites à:', options: ['65°C', '70°C', '74°C', '80°C'], correct: 2, feedback: 'Les viandes hachées (bœuf, porc) doivent atteindre 74°C car le hachage peut amener des bactéries de surface au centre.' }
+          ]}
+        ]
+      },
+      {
+        title: 'Refroidissement et réchauffage',
+        duration: '6 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 4', title: 'Refroidissement et réchauffage', duration: '6 min de lecture' },
+          { type: 'text', heading: 'Le refroidissement rapide', body: 'Le refroidissement des aliments cuits est une étape critique souvent négligée. Si les aliments refroidissent trop lentement, les bactéries peuvent se multiplier dangereusement avant que la température descende à un niveau sûr.' },
+          { type: 'keypoints', heading: 'Règle du refroidissement en 2 étapes', points: [
+            'Étape 1: De 60°C à 21°C en 2 heures maximum',
+            'Étape 2: De 21°C à 4°C en 4 heures maximum',
+            'Total: Refroidissement complet en 6 heures maximum',
+            'Méthodes: bain de glace, réfrigérateur à air forcé, récipients peu profonds',
+            'Ne jamais mettre un grand contenant chaud directement au réfrigérateur'
+          ]},
+          { type: 'info', text: 'Pour le réchauffage, les aliments doivent atteindre 74°C en moins de 2 heures. Ne jamais réchauffer deux fois le même aliment.' },
+          { type: 'quiz', questions: [
+            { q: 'Le refroidissement de 60°C à 21°C doit se faire en:', options: ['1 heure', '2 heures', '4 heures', '6 heures'], correct: 1, feedback: 'La première étape du refroidissement (60°C à 21°C) doit se faire en 2 heures maximum.' },
+            { q: 'La temperature pour le réchauffage doit atteindre:', options: ['60°C', '68°C', '74°C', '85°C'], correct: 2, feedback: 'Les aliments réchauffés doivent atteindre 74°C en moins de 2 heures.' },
+            { q: 'On peut réchauffer un aliment réchauffé une 2e fois?', options: ['Oui si c\'est en moins d\'1 heure', 'Oui si la température atteint 85°C', 'Non, jamais', 'Seulement pour les soupes'], correct: 2, feedback: 'On ne doit jamais réchauffer un aliment qui a déjà été réchauffé — risque élevé de contamination.' }
+          ]}
+        ]
+      },
+      {
+        title: 'Utilisation du thermomètre',
+        duration: '5 min',
+        content: [
+          { type: 'intro', num: 'LEÇON 5', title: 'Utilisation du thermomètre', duration: '5 min de lecture' },
+          { type: 'text', heading: 'Le thermomètre: votre outil essentiel', body: 'Un thermomètre précis et bien utilisé est indispensable pour le contrôle HACCP. Il existe plusieurs types adaptés à différents usages.' },
+          { type: 'keypoints', heading: 'Types de thermomètres et usages', points: [
+            'Thermomètre à sonde numérique — pour mesurer la température à cœur des aliments',
+            'Thermomètre infrarouge — pour la surface des aliments et équipements, lecture rapide',
+            'Thermomètre de réfrigérateur — surveillance continue, se place dans l\'appareil',
+            'Sonde datalogger (capteur IoT) — surveillance 24/7 avec alertes automatiques'
+          ]},
+          { type: 'keypoints', heading: 'Procédure de mesure correcte', points: [
+            '1. Désinfecter la sonde avant et après chaque mesure',
+            '2. Insérer la sonde dans la partie la plus épaisse de l\'aliment',
+            '3. Attendre la stabilisation (5-10 secondes)',
+            '4. Lire et enregistrer la température immédiatement',
+            '5. Calibrer le thermomètre régulièrement (méthode eau glacée: 0°C)'
+          ]},
+          { type: 'quiz', questions: [
+            { q: 'Pour mesurer la température à cœur d\'un poulet, on utilise:', options: ['Thermomètre infrarouge', 'Thermomètre à sonde numérique', 'Thermomètre de réfrigérateur', 'Notre main'], correct: 1, feedback: 'Le thermomètre à sonde numérique est le seul qui permet de mesurer avec précision la température à cœur d\'un aliment.' },
+            { q: 'Avant de mesurer un aliment, la sonde doit être:', options: ['Froide', 'Chaude', 'Désinfectée', 'Sèche seulement'], correct: 2, feedback: 'La sonde doit être désinfectée avant chaque usage pour éviter la contamination croisée.' },
+            { q: 'La méthode eau glacée sert à:', options: ['Refroidir les aliments rapidement', 'Calibrer le thermomètre (vérification à 0°C)', 'Nettoyer la sonde', 'Mesurer la température de réfrigération'], correct: 1, feedback: 'La méthode eau glacée (glace + eau = 0°C) permet de vérifier et calibrer la précision du thermomètre.' }
+          ]}
+        ]
+      }
+    ]
+  },
+  {
+    id: 'nettoyage',
+    icon: '🧴',
+    name: 'Nettoyage et désinfection',
+    meta: '6 leçons · 35 min · Niveau 2',
+    desc: 'Apprenez les protocoles de nettoyage et désinfection conformes MAPAQ, les produits approuvés et la fréquence requise pour chaque zone de votre établissement.',
+    lessons: [
+      { title: 'Nettoyage vs désinfection', duration: '5 min', content: [
+        { type: 'intro', num: 'LEÇON 1', title: 'Nettoyage vs désinfection', duration: '5 min' },
+        { type: 'text', heading: 'Deux étapes distinctes et essentielles', body: 'Nettoyage et désinfection sont deux processus différents qui doivent être réalisés dans l\'ordre. Le nettoyage élimine les saletés visibles; la désinfection détruit les micro-organismes.' },
+        { type: 'keypoints', heading: 'La différence essentielle', points: [
+          'Nettoyage: élimination des saletés, graisses et débris visibles avec détergent',
+          'Désinfection: destruction des micro-organismes invisibles avec un désinfectant',
+          'L\'ordre est crucial: toujours nettoyer AVANT de désinfecter',
+          'Désinfecter sans nettoyer d\'abord = inefficace (la saleté protège les bactéries)',
+          'Les deux étapes ensemble = surface propre ET sécuritaire'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'Quelle est la bonne séquence?', options: ['Désinfecter puis nettoyer', 'Nettoyer puis désinfecter', 'Peut importe l\'ordre', 'Seulement nettoyer suffit'], correct: 1, feedback: 'On nettoie toujours AVANT de désinfecter. La saleté bloque l\'action du désinfectant.' },
+          { q: 'La désinfection seule sans nettoyage est:', options: ['Aussi efficace', 'Plus efficace', 'Inefficace car la saleté protège les bactéries', 'Suffisante pour les surfaces peu utilisées'], correct: 2, feedback: 'Sans nettoyage préalable, la saleté forme une barrière protectrice pour les bactéries, rendant la désinfection inefficace.' },
+          { q: 'Le nettoyage élimine:', options: ['Les bactéries uniquement', 'Les virus uniquement', 'Les saletés, graisses et débris visibles', 'Tous les micro-organismes'], correct: 2, feedback: 'Le nettoyage élimine les contaminations visibles (saletés, graisses). C\'est la désinfection qui détruit les micro-organismes.' }
+        ]}
+      ]},
+      { title: 'Produits approuvés MAPAQ', duration: '6 min', content: [
+        { type: 'intro', num: 'LEÇON 2', title: 'Produits approuvés MAPAQ', duration: '6 min' },
+        { type: 'text', heading: 'Choisir les bons produits', body: 'Tous les produits de nettoyage et désinfection utilisés en contact avec les surfaces alimentaires doivent être approuvés pour usage alimentaire et conformes aux normes MAPAQ.' },
+        { type: 'keypoints', heading: 'Désinfectants approuvés', points: [
+          'Solutions chlorées (eau de Javel diluée): 100-200 ppm de chlore libre',
+          'Composés d\'ammonium quaternaire (QUAT): selon les instructions du fabricant',
+          'Acide peracétique: solution appropriée selon usage',
+          'Iodophores: selon concentration recommandée',
+          'Alcool éthylique: 70% minimum pour certaines surfaces'
+        ]},
+        { type: 'warning', text: 'Ne jamais mélanger des produits de nettoyage différents — certaines combinaisons produisent des gaz toxiques dangereux (ex: eau de Javel + ammoniaque = gaz chloramine).' },
+        { type: 'quiz', questions: [
+          { q: 'La concentration recommandée pour une solution chlorée de désinfection est:', options: ['10-50 ppm', '100-200 ppm', '500-1000 ppm', '1000-2000 ppm'], correct: 1, feedback: 'Une solution chlorée de 100-200 ppm est efficace pour désinfecter les surfaces alimentaires sans être dangereuse.' },
+          { q: 'Peut-on mélanger eau de Javel et ammoniaque?', options: ['Oui, pour plus d\'efficacité', 'Non, ça produit des gaz toxiques', 'Oui si c\'est dilué', 'Seulement en petites quantités'], correct: 1, feedback: 'Mélanger eau de Javel et ammoniaque produit du gaz chloramine, un gaz toxique dangereux pour les voies respiratoires.' },
+          { q: 'Les produits de désinfection doivent être:', options: ['Les moins chers possible', 'Approuvés pour usage alimentaire', 'Les plus concentrés possible', 'Parfumés pour indiquer qu\'ils ont été utilisés'], correct: 1, feedback: 'En cuisine, tous les désinfectants doivent être approuvés pour usage alimentaire et conformes aux réglementations MAPAQ.' }
+        ]}
+      ]},
+      { title: 'Plan de nettoyage', duration: '7 min', content: [
+        { type: 'intro', num: 'LEÇON 3', title: 'Plan de nettoyage', duration: '7 min' },
+        { type: 'text', heading: 'Créer votre plan de nettoyage', body: 'Un plan de nettoyage et désinfection (PND) est un document qui précise pour chaque zone et équipement: quoi nettoyer, quand, comment, avec quels produits et qui est responsable.' },
+        { type: 'keypoints', heading: 'Fréquences minimales requises', points: [
+          'Surfaces de contact alimentaire (planches, couteaux): après chaque usage',
+          'Surfaces de travail et équipements: minimum toutes les 4 heures en service continu',
+          'Réfrigérateurs: hebdomadaire ou selon besoin',
+          'Hottes et filtres: selon accumulation (minimum mensuel)',
+          'Sols et murs: quotidien pour les zones de production',
+          'Poignées, interrupteurs: plusieurs fois par jour'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'Les planches à découper doivent être nettoyées et désinfectées:', options: ['Une fois par jour', 'Après chaque service', 'Après chaque usage', 'Une fois par semaine'], correct: 2, feedback: 'Les planches à découper sont des surfaces de contact direct avec les aliments — elles doivent être nettoyées et désinfectées après chaque usage.' },
+          { q: 'Un plan de nettoyage doit préciser:', options: ['Seulement les produits à utiliser', 'Quoi, quand, comment, produits et responsable', 'Seulement la fréquence', 'Seulement qui est responsable'], correct: 1, feedback: 'Un plan de nettoyage complet précise: quoi nettoyer, quand, comment, avec quels produits et qui est responsable.' },
+          { q: 'Les réfrigérateurs doivent être nettoyés au minimum:', options: ['Quotidiennement', 'Hebdomadairement', 'Mensuellement', 'Annuellement'], correct: 1, feedback: 'Les réfrigérateurs doivent être nettoyés hebdomadairement au minimum, ou plus souvent si nécessaire.' }
+        ]}
+      ]},
+      { title: 'Code couleur des équipements', duration: '5 min', content: [
+        { type: 'intro', num: 'LEÇON 4', title: 'Code couleur des équipements', duration: '5 min' },
+        { type: 'text', heading: 'Prévenir la contamination croisée', body: 'Le système de code couleur (planches à découper, couteaux, linges) est une mesure préventive essentielle contre la contamination croisée. Chaque couleur est assignée à un type d\'aliment.' },
+        { type: 'keypoints', heading: 'Code couleur standard', points: [
+          '🔴 Rouge: viandes crues (bœuf, porc, agneau)',
+          '🟡 Jaune: volaille crue (poulet, dinde, canard)',
+          '🔵 Bleu: poissons et fruits de mer',
+          '🟢 Vert: fruits et légumes',
+          '⚪ Blanc: produits laitiers, boulangerie, aliments cuits',
+          '🟤 Marron/Beige: légumes-racines, viandes cuites'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'Quelle couleur de planche est réservée à la volaille crue?', options: ['Rouge', 'Jaune', 'Bleu', 'Vert'], correct: 1, feedback: 'Jaune = volaille crue. Cette séparation prévient la contamination croisée de Salmonella de la volaille vers d\'autres aliments.' },
+          { q: 'Le code couleur prévient principalement:', options: ['La mauvaise utilisation des couteaux', 'La contamination croisée entre aliments', 'L\'usure prématurée des planches', 'Le vol d\'équipements'], correct: 1, feedback: 'Le code couleur prévient la contamination croisée — le transfert de pathogènes d\'un aliment à l\'autre via les équipements.' },
+          { q: 'La planche blanche est utilisée pour:', options: ['Viandes crues', 'Légumes', 'Produits laitiers et aliments cuits', 'Poissons'], correct: 2, feedback: 'La planche blanche est réservée aux produits laitiers, boulangerie et aliments cuits — aliments à risque réduit.' }
+        ]}
+      ]},
+      { title: 'Lutte antiparasitaire', duration: '6 min', content: [
+        { type: 'intro', num: 'LEÇON 5', title: 'Lutte antiparasitaire', duration: '6 min' },
+        { type: 'text', heading: 'Prévention des nuisibles', body: 'La présence de nuisibles (rongeurs, insectes) est une non-conformité grave lors d\'une inspection MAPAQ. Un programme préventif est obligatoire et beaucoup moins coûteux que des mesures curatives.' },
+        { type: 'keypoints', heading: 'Mesures préventives essentielles', points: [
+          'Sceller toutes les fissures, trous et passages dans les murs, planchers et plafonds',
+          'Installer des grillages sur toutes les ouvertures extérieures',
+          'Stocker les aliments dans des contenants hermétiques, surélevés du sol',
+          'Vider les poubelles régulièrement — jamais laisser déborder',
+          'Contrôle professionnel certifié: inspection mensuelle recommandée',
+          'Documenter toute activité antiparasitaire'
+        ]},
+        { type: 'warning', text: 'La présence de rongeurs peut entraîner la fermeture immédiate de l\'établissement par MAPAQ. Un seul rongeur constaté lors d\'une inspection est une non-conformité critique.' },
+        { type: 'quiz', questions: [
+          { q: 'La présence de rongeurs lors d\'une inspection MAPAQ est:', options: ['Une simple recommandation', 'Une non-conformité mineure', 'Une non-conformité critique pouvant entraîner la fermeture', 'Acceptable si c\'est 1 seul'], correct: 2, feedback: 'La présence de rongeurs est une non-conformité critique — elle peut entraîner la fermeture immédiate de l\'établissement.' },
+          { q: 'Les aliments doivent être stockés:', options: ['Directement sur le sol', 'Dans des contenants hermétiques, surélevés du sol', 'Dans des sacs ouverts', 'Sans règle particulière'], correct: 1, feedback: 'Les aliments doivent être dans des contenants hermétiques et surélevés du sol pour prévenir l\'accès aux nuisibles.' },
+          { q: 'Un programme antiparasitaire préventif est:', options: ['Optionnel', 'Obligatoire', 'Seulement pour les grands restaurants', 'Seulement en été'], correct: 1, feedback: 'Un programme antiparasitaire préventif est obligatoire pour tous les établissements alimentaires sous réglementation MAPAQ.' }
+        ]}
+      ]},
+      { title: 'Gestion des déchets', duration: '6 min', content: [
+        { type: 'intro', num: 'LEÇON 6', title: 'Gestion des déchets', duration: '6 min' },
+        { type: 'text', heading: 'Importance de la gestion des déchets', body: 'Une mauvaise gestion des déchets attire les nuisibles, génère des odeurs désagréables et peut contaminer les aliments. C\'est un point systématiquement vérifié par MAPAQ.' },
+        { type: 'keypoints', heading: 'Bonnes pratiques', points: [
+          'Poubelles avec couvercle hermétique obligatoires en cuisine',
+          'Vider les poubelles avant qu\'elles débordent — minimum à chaque service',
+          'Nettoyer et désinfecter les poubelles régulièrement',
+          'Zone de collecte externe séparée de la zone de réception des marchandises',
+          'Conteneurs externes fermés et étanches',
+          'Déchets dangereux (huiles usées, produits chimiques) séparés et disposés selon les règlements'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'Les poubelles en cuisine doivent avoir:', options: ['Aucune exigence particulière', 'Un couvercle hermétique', 'Être de couleur verte', 'Être en plastique transparent'], correct: 1, feedback: 'Les poubelles en cuisine doivent avoir un couvercle hermétique pour prévenir la contamination et l\'accès aux nuisibles.' },
+          { q: 'Les poubelles doivent être vidées:', options: ['Une fois par jour', 'Avant qu\'elles débordent, minimum à chaque service', 'Quand elles sont pleines à 100%', 'Une fois par semaine'], correct: 1, feedback: 'Les poubelles doivent être vidées avant débordement — au minimum à chaque service.' },
+          { q: 'La zone de collecte des déchets doit être:', options: ['Adjacente à la zone de réception', 'Séparée de la zone de réception des marchandises', 'Dans la cuisine principale', 'Sans règle particulière'], correct: 1, feedback: 'La zone de collecte des déchets doit être séparée de la zone de réception pour éviter la contamination croisée.' }
+        ]}
+      ]}
+    ]
+  },
+  {
+    id: 'mapaq',
+    icon: '📋',
+    name: 'Réglementation MAPAQ',
+    meta: '8 leçons · 60 min · Niveau 2',
+    desc: 'Comprendre la réglementation québécoise en matière de sécurité alimentaire, les obligations des exploitants, le processus d\'inspection et les conséquences des non-conformités.',
+    lessons: [
+      { title: 'Le MAPAQ et son rôle', duration: '7 min', content: [
+        { type: 'intro', num: 'LEÇON 1', title: 'Le MAPAQ et son rôle', duration: '7 min' },
+        { type: 'text', heading: 'Ministère de l\'Agriculture, des Pêcheries et de l\'Alimentation du Québec', body: 'Le MAPAQ est l\'organisme gouvernemental québécois responsable de l\'application des lois et règlements sur les aliments. Il a pour mandat de protéger la santé publique en s\'assurant que les aliments vendus au Québec sont sains et salubres.' },
+        { type: 'keypoints', heading: 'Rôles principaux du MAPAQ', points: [
+          'Délivrance et renouvellement des permis d\'exploitation alimentaire',
+          'Inspection des établissements alimentaires',
+          'Application de la Loi sur les produits alimentaires',
+          'Investigation des plaintes et toxi-infections alimentaires',
+          'Formation et sensibilisation des exploitants',
+          'Rappels de produits alimentaires dangereux'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'Le MAPAQ est responsable de:', options: ['La fiscalité des restaurants', 'L\'application des lois sur la sécurité alimentaire au Québec', 'La formation culinaire', 'Les importations alimentaires fédérales'], correct: 1, feedback: 'Le MAPAQ applique la Loi sur les produits alimentaires et règlements pour protéger la santé publique alimentaire au Québec.' },
+          { q: 'Le MAPAQ délivre:', options: ['Les licences d\'alcool', 'Les permis d\'exploitation alimentaire', 'Les certificats de chef', 'Les inscriptions à la TPS'], correct: 1, feedback: 'Le MAPAQ est responsable de la délivrance et du renouvellement des permis d\'exploitation alimentaire au Québec.' },
+          { q: 'Qui peut faire l\'objet d\'une inspection MAPAQ?', options: ['Seulement les grands restaurants', 'Tout établissement qui transforme ou vend des aliments', 'Seulement les usines de transformation', 'Seulement les épiceries'], correct: 1, feedback: 'Tout établissement qui transforme, vend ou distribue des aliments peut faire l\'objet d\'une inspection MAPAQ.' }
+        ]}
+      ]},
+      { title: 'Permis d\'exploitation', duration: '8 min', content: [
+        { type: 'intro', num: 'LEÇON 2', title: 'Permis d\'exploitation', duration: '8 min' },
+        { type: 'text', heading: 'Obligations de permis', body: 'Tout exploitant d\'un établissement alimentaire au Québec doit détenir un permis valide délivré par le MAPAQ. Ce permis doit être affiché à la vue du public dans l\'établissement.' },
+        { type: 'keypoints', heading: 'Types de permis et obligations', points: [
+          'Permis de restaurateur: pour tout restaurant servant des repas',
+          'Permis de détaillant: pour les épiceries et marchés',
+          'Permis de transformateur: pour les usines de transformation',
+          'Renouvellement annuel obligatoire avant expiration',
+          'Affichage visible dans l\'établissement obligatoire',
+          'Toute modification (agrandissement, changement de menu) peut nécessiter un nouveau permis'
+        ]},
+        { type: 'warning', text: 'Exploiter sans permis valide est une infraction pouvant entraîner des amendes jusqu\'à 250 000$ et la fermeture immédiate de l\'établissement.' },
+        { type: 'quiz', questions: [
+          { q: 'Le permis MAPAQ doit être:', options: ['Conservé dans un tiroir', 'Affiché à la vue du public', 'Envoyé annuellement au MAPAQ', 'Renouvelé aux 5 ans'], correct: 1, feedback: 'Le permis MAPAQ doit être affiché à la vue du public — l\'inspecteur vérifie cela systématiquement.' },
+          { q: 'Les permis MAPAQ doivent être renouvelés:', options: ['Tous les 5 ans', 'Tous les 3 ans', 'Annuellement', 'Jamais si rien ne change'], correct: 2, feedback: 'Les permis MAPAQ sont renouvelés annuellement. L\'exploitant doit renouveler avant l\'expiration.' },
+          { q: 'Exploiter sans permis valide peut entraîner:', options: ['Un simple avertissement', 'Une amende jusqu\'à 250 000$ et fermeture', 'Seulement une amende de 500$', 'Rien si c\'est la première fois'], correct: 1, feedback: 'Exploiter sans permis est une infraction grave pouvant entraîner des amendes importantes et la fermeture immédiate.' }
+        ]}
+      ]},
+      { title: 'Le processus d\'inspection', duration: '8 min', content: [
+        { type: 'intro', num: 'LEÇON 3', title: 'Le processus d\'inspection', duration: '8 min' },
+        { type: 'text', heading: 'Comment se déroule une inspection', body: 'Les inspections MAPAQ peuvent être annoncées ou inopinées. La plupart des inspections de routine sont inopinées — l\'inspecteur arrive sans avertissement préalable.' },
+        { type: 'keypoints', heading: 'Déroulement d\'une inspection', points: [
+          '1. Présentation de l\'inspecteur et de sa carte d\'identité officielle',
+          '2. Visite des lieux: cuisine, réserves, zones de réception, vestiaires',
+          '3. Vérification des registres de températures et documentation',
+          '4. Entretien avec le gestionnaire et le personnel',
+          '5. Identification et notation des non-conformités',
+          '6. Rapport d\'inspection remis à l\'exploitant',
+          '7. Délai pour corriger les non-conformités'
+        ]},
+        { type: 'info', text: 'Vous avez le droit d\'accompagner l\'inspecteur pendant toute la visite et de poser des questions. Soyez coopératif et transparent — cela joue en votre faveur.' },
+        { type: 'quiz', questions: [
+          { q: 'Les inspections MAPAQ de routine sont généralement:', options: ['Toujours annoncées 48h à l\'avance', 'Inopinées (sans avertissement)', 'Planifiées en début d\'année', 'Optionnelles pour les bons restaurants'], correct: 1, feedback: 'La plupart des inspections de routine sont inopinées pour observer les conditions réelles d\'opération.' },
+          { q: 'Lors d\'une inspection, vous devez:', options: ['Demander à l\'inspecteur de revenir plus tard', 'Être coopératif et transparent', 'Refuser l\'accès aux zones privées', 'Contacter votre avocat immédiatement'], correct: 1, feedback: 'La coopération et la transparence sont essentielles lors d\'une inspection. L\'obstruction peut aggraver votre situation.' },
+          { q: 'L\'inspecteur doit présenter:', options: ['Son permis de conduire', 'Sa carte d\'identité officielle', 'Une lettre du MAPAQ', 'Aucun document'], correct: 1, feedback: 'L\'inspecteur doit présenter sa carte d\'identité officielle du MAPAQ au début de l\'inspection.' }
+        ]}
+      ]},
+      { title: 'Types de non-conformités', duration: '8 min', content: [
+        { type: 'intro', num: 'LEÇON 4', title: 'Types de non-conformités', duration: '8 min' },
+        { type: 'text', heading: 'Classification des infractions', body: 'Le MAPAQ classe les non-conformités selon leur niveau de risque pour la santé publique. Cette classification détermine l\'urgence des corrections requises et les sanctions potentielles.' },
+        { type: 'keypoints', heading: 'Niveaux de non-conformités', points: [
+          'Priorité 1 (ROUGE — Critique): danger immédiat pour la santé — corriger immédiatement ou fermeture',
+          'Priorité 2 (JAUNE — Majeure): risque sérieux mais pas immédiat — corriger sous 7 jours',
+          'Priorité 3 (VERT — Mineure): risque faible — corriger lors de la prochaine inspection'
+        ]},
+        { type: 'keypoints', heading: 'Exemples de non-conformités critiques', points: [
+          'Présence de nuisibles actifs (rongeurs, cafards)',
+          'Températures dangereuses des aliments potentiellement dangereux',
+          'Absence totale de contrôle des températures',
+          'Personnel malade en contact avec les aliments',
+          'Absence de lavage des mains après contamination'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'Une non-conformité critique (Priorité 1) doit être corrigée:', options: ['Sous 30 jours', 'Sous 7 jours', 'Immédiatement ou fermeture', 'Lors de la prochaine inspection'], correct: 2, feedback: 'Une non-conformité critique représente un danger immédiat — elle doit être corrigée immédiatement, sinon l\'établissement peut être fermé.' },
+          { q: 'La présence de rongeurs actifs est une non-conformité:', options: ['Mineure', 'Majeure', 'Critique', 'Acceptable en hiver'], correct: 2, feedback: 'La présence de nuisibles actifs est une non-conformité critique — danger immédiat de contamination des aliments.' },
+          { q: 'Une non-conformité majeure (Priorité 2) doit être corrigée sous:', options: ['24 heures', '7 jours', '30 jours', '3 mois'], correct: 1, feedback: 'Les non-conformités majeures doivent être corrigées sous 7 jours et vérifiées lors d\'une inspection de suivi.' }
+        ]}
+      ]},
+      { title: 'Sanctions et amendes', duration: '7 min', content: [
+        { type: 'intro', num: 'LEÇON 5', title: 'Sanctions et amendes', duration: '7 min' },
+        { type: 'text', heading: 'Conséquences des infractions', body: 'La Loi sur les produits alimentaires prévoit des sanctions significatives pour les exploitants qui ne respectent pas les normes de salubrité. Ces sanctions peuvent avoir un impact majeur sur votre entreprise.' },
+        { type: 'keypoints', heading: 'Types de sanctions', points: [
+          'Avis de non-conformité: document formel exigeant des corrections',
+          'Amende administrative: de 500$ à 250 000$ selon la gravité',
+          'Ordonnance de fermeture temporaire: jusqu\'à correction des problèmes',
+          'Fermeture permanente: pour infractions graves répétées',
+          'Poursuites pénales: pour fraudes ou danger délibéré',
+          'Publication sur le registre public MAPAQ (impact réputationnel)'
+        ]},
+        { type: 'warning', text: 'Les amendes et fermetures sont publiques et accessibles sur le site du MAPAQ. Votre réputation peut être sérieusement affectée — c\'est souvent plus dommageable que l\'amende elle-même.' },
+        { type: 'quiz', questions: [
+          { q: 'Les amendes MAPAQ peuvent aller jusqu\'à:', options: ['10 000$', '50 000$', '250 000$', '1 000 000$'], correct: 2, feedback: 'La Loi sur les produits alimentaires prévoit des amendes pouvant atteindre 250 000$ pour les infractions graves.' },
+          { q: 'Les sanctions MAPAQ sont:', options: ['Confidentielles', 'Publiques et accessibles en ligne', 'Seulement communiquées à l\'exploitant', 'Effacées après 1 an'], correct: 1, feedback: 'Les sanctions MAPAQ sont publiques et accessibles sur le registre en ligne — impact direct sur la réputation.' },
+          { q: 'Une fermeture temporaire peut être ordonnée:', options: ['Seulement pour les chaînes de restaurants', 'Jusqu\'à correction des problèmes', 'Seulement le temps d\'une inspection', 'Jamais sans avertissement'], correct: 1, feedback: 'Une fermeture temporaire est ordonnée jusqu\'à ce que les problèmes soient corrigés et vérifiés par l\'inspecteur.' }
+        ]}
+      ]},
+      { title: 'Obligations de l\'exploitant', duration: '8 min', content: [
+        { type: 'intro', num: 'LEÇON 6', title: 'Obligations de l\'exploitant', duration: '8 min' },
+        { type: 'text', heading: 'Vos responsabilités légales', body: 'En tant qu\'exploitant d\'un établissement alimentaire, vous êtes légalement responsable de la salubrité des aliments servis ou vendus. Cette responsabilité ne peut être déléguée.' },
+        { type: 'keypoints', heading: 'Obligations principales', points: [
+          'Détenir et maintenir un permis MAPAQ valide',
+          'Appliquer et documenter un programme de contrôle de la salubrité',
+          'Former adéquatement tout le personnel en manipulation des aliments',
+          'Maintenir les installations en bon état de propreté et réparation',
+          'Corriger rapidement toute non-conformité identifiée',
+          'Signaler au MAPAQ tout cas de toxi-infection alimentaire',
+          'Coopérer avec les inspecteurs'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'La responsabilité de la salubrité alimentaire repose sur:', options: ['Le chef cuisinier uniquement', 'Les employés', 'L\'exploitant (propriétaire/gestionnaire)', 'Le fournisseur d\'aliments'], correct: 2, feedback: 'L\'exploitant (propriétaire ou gestionnaire) est légalement responsable de la salubrité des aliments — cette responsabilité ne peut être déléguée.' },
+          { q: 'En cas de toxi-infection alimentaire, l\'exploitant doit:', options: ['Attendre de voir si d\'autres cas surviennent', 'Le signaler au MAPAQ', 'Garder ça confidentiel', 'Seulement consulter son avocat'], correct: 1, feedback: 'Tout cas de toxi-infection alimentaire doit être signalé au MAPAQ — c\'est une obligation légale.' },
+          { q: 'La formation du personnel est:', options: ['Recommandée seulement', 'Une obligation de l\'exploitant', 'La responsabilité des employés eux-mêmes', 'Seulement requise pour les nouveaux employés'], correct: 1, feedback: 'L\'exploitant a l\'obligation légale de former adéquatement tout le personnel en manipulation des aliments.' }
+        ]}
+      ]},
+      { title: 'Plan de maîtrise sanitaire', duration: '8 min', content: [
+        { type: 'intro', num: 'LEÇON 7', title: 'Plan de maîtrise sanitaire', duration: '8 min' },
+        { type: 'text', heading: 'Qu\'est-ce qu\'un PMS?', body: 'Un Plan de Maîtrise Sanitaire (PMS) est un document qui regroupe l\'ensemble des mesures préventives et correctives mises en place pour garantir la sécurité des aliments. C\'est la feuille de route de votre programme HACCP.' },
+        { type: 'keypoints', heading: 'Composantes d\'un PMS', points: [
+          'Description de l\'établissement et des activités',
+          'Diagrammes de flux pour chaque type d\'aliment produit',
+          'Analyse des dangers et identification des CCP',
+          'Limites critiques et procédures de surveillance',
+          'Actions correctives pour chaque CCP',
+          'Programme de vérification',
+          'Registres et documents de traçabilité'
+        ]},
+        { type: 'info', text: 'L\'app Verdict génère automatiquement la documentation requise pour votre PMS — chaque enregistrement de température, nettoyage et réception contribue à votre dossier de conformité.' },
+        { type: 'quiz', questions: [
+          { q: 'Un Plan de Maîtrise Sanitaire (PMS) regroupe:', options: ['Seulement les recettes', 'L\'ensemble des mesures pour garantir la sécurité alimentaire', 'Seulement les horaires du personnel', 'Les informations financières'], correct: 1, feedback: 'Le PMS regroupe toutes les mesures préventives et correctives pour garantir la sécurité alimentaire.' },
+          { q: 'Un diagramme de flux décrit:', options: ['L\'organigramme des employés', 'Toutes les étapes de production d\'un aliment', 'Le plan d\'urgence', 'Les températures requises'], correct: 1, feedback: 'Un diagramme de flux décrit toutes les étapes par lesquelles passe un aliment, de la réception jusqu\'au service.' },
+          { q: 'L\'app Verdict contribue à votre PMS en:', options: ['Remplaçant complètement le PMS', 'Générant automatiquement la documentation de traçabilité', 'Faisant les inspections', 'Contactant MAPAQ pour vous'], correct: 1, feedback: 'Verdict automatise la documentation — chaque entrée crée un enregistrement horodaté contribuant à votre dossier MAPAQ.' }
+        ]}
+      ]},
+      { title: 'Gestion des rappels', duration: '7 min', content: [
+        { type: 'intro', num: 'LEÇON 8', title: 'Gestion des rappels', duration: '7 min' },
+        { type: 'text', heading: 'Rappels de produits alimentaires', body: 'Un rappel survient quand un aliment potentiellement dangereux doit être retiré du marché. La traçabilité permet de gérer rapidement les rappels et de protéger vos clients.' },
+        { type: 'keypoints', heading: 'Procédure de rappel', points: [
+          'Identifier immédiatement les lots concernés grâce aux registres de réception',
+          'Retirer du service et isoler les produits suspects',
+          'Contacter le MAPAQ et votre fournisseur',
+          'Informer les clients qui auraient pu consommer le produit (si applicable)',
+          'Documenter toutes les actions prises',
+          'Conserver les enregistrements pour enquête'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'En cas de rappel d\'un produit, la première étape est:', options: ['Attendre la confirmation officielle', 'Identifier les lots concernés et retirer du service', 'Continuer le service et surveiller', 'Contacter les médias'], correct: 1, feedback: 'La première étape est d\'identifier et retirer immédiatement les lots concernés pour protéger les clients.' },
+          { q: 'La traçabilité lors des rappels permet de:', options: ['Éviter d\'agir rapidement', 'Identifier précisément quels lots sont affectés', 'Ignorer les produits suspects', 'Continuer la vente jusqu\'à confirmation'], correct: 1, feedback: 'La traçabilité (registres de réception) permet d\'identifier exactement quels lots sont affectés et d\'agir rapidement.' },
+          { q: 'Lors d\'un rappel, vous devez contacter:', options: ['Seulement votre assureur', 'Le MAPAQ et votre fournisseur', 'Seulement les médias', 'Personne si vous gérez vous-même'], correct: 1, feedback: 'Vous devez contacter le MAPAQ et votre fournisseur lors d\'un rappel — c\'est obligatoire par la loi.' }
+        ]}
+      ]}
+    ]
+  },
+  {
+    id: 'hygiene',
+    icon: '🤲',
+    name: 'Hygiène personnelle',
+    meta: '4 leçons · 20 min · Niveau 1',
+    desc: 'Standards d\'hygiène personnelle requis pour la manipulation des aliments, procédures de lavage des mains, tenue vestimentaire et gestion des maladies.',
+    lessons: [
+      { title: 'Lavage des mains', duration: '6 min', content: [
+        { type: 'intro', num: 'LEÇON 1', title: 'Lavage des mains', duration: '6 min' },
+        { type: 'text', heading: 'La mesure préventive la plus efficace', body: 'Le lavage des mains est la mesure préventive la plus simple et la plus efficace contre la contamination alimentaire. Des études montrent que le lavage correct des mains élimine 99% des bactéries présentes.' },
+        { type: 'keypoints', heading: 'Procédure de lavage en 6 étapes', points: [
+          '1. Mouiller les mains avec eau chaude (au moins 38°C)',
+          '2. Appliquer du savon liquide (jamais de savon en pain)',
+          '3. Frotter vigoureusement au moins 20 secondes (toutes les surfaces)',
+          '4. Rincer abondamment sous l\'eau courante',
+          '5. Sécher avec des serviettes à usage unique',
+          '6. Fermer le robinet avec la serviette propre'
+        ]},
+        { type: 'keypoints', heading: 'Quand se laver les mains?', points: [
+          'En arrivant au travail et après toute pause',
+          'Après être allé aux toilettes — OBLIGATOIRE',
+          'Après avoir touché de la viande crue, volaille, poisson',
+          'Après avoir touché son visage, cheveux, nez',
+          'Après avoir manipulé des déchets ou produits de nettoyage',
+          'Avant et après avoir mangé ou fumé'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'Le lavage des mains dure minimum:', options: ['5 secondes', '10 secondes', '20 secondes', '1 minute'], correct: 2, feedback: 'Le frottage doit durer au moins 20 secondes (le temps de chanter "Bonne fête" deux fois) pour être efficace.' },
+          { q: 'Après être allé aux toilettes, le lavage des mains est:', options: ['Recommandé', 'Optionnel si on a utilisé du papier', 'Obligatoire', 'Seulement si on a les mains visiblement souillées'], correct: 2, feedback: 'Le lavage des mains après les toilettes est absolument obligatoire — pas de place au compromis.' },
+          { q: 'Pour sécher les mains, on utilise:', options: ['Sa tenue de travail', 'Un séchoir à air chaud uniquement', 'Des serviettes à usage unique', 'Un linge de cuisine réutilisable'], correct: 2, feedback: 'Des serviettes à usage unique sont requises pour éviter la contamination croisée via un linge partagé.' }
+        ]}
+      ]},
+      { title: 'Tenue vestimentaire', duration: '5 min', content: [
+        { type: 'intro', num: 'LEÇON 2', title: 'Tenue vestimentaire', duration: '5 min' },
+        { type: 'text', heading: 'Standards de tenue', body: 'La tenue de travail joue un rôle crucial dans la prévention de la contamination. Des vêtements propres et appropriés réduisent le risque de contamination des aliments par les cheveux, les bijoux ou les contaminants extérieurs.' },
+        { type: 'keypoints', heading: 'Exigences de tenue', points: [
+          'Couvre-chef obligatoire couvrant complètement les cheveux',
+          'Tablier propre, changé si souillé',
+          'Chaussures fermées et antidérapantes',
+          'Aucun bijou aux mains et poignets (bagues, bracelets, montres)',
+          'Ongles courts, propres et sans vernis',
+          'Tenue de travail réservée à l\'usage en cuisine — ne pas la porter dans la rue'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'En cuisine, les bijoux aux mains sont:', options: ['Acceptables si discrets', 'Interdits (bagues, bracelets, montres)', 'Autorisés sauf la bague de mariage', 'Sans importance'], correct: 1, feedback: 'Les bijoux aux mains et poignets sont interdits en cuisine — ils peuvent tomber dans les aliments et cachent des bactéries.' },
+          { q: 'Le couvre-chef doit:', options: ['Être simplement joli', 'Couvrir complètement les cheveux', 'Être porté seulement par les cuisiniers', 'Être optionnel si les cheveux sont courts'], correct: 1, feedback: 'Le couvre-chef doit couvrir complètement tous les cheveux pour éviter qu\'ils tombent dans les aliments.' },
+          { q: 'La tenue de travail devrait:', options: ['Être portée pour faire les courses aussi', 'Être réservée à l\'usage en cuisine', 'Être changée seulement quand elle est très sale', 'Être de couleur blanche obligatoirement'], correct: 1, feedback: 'La tenue de travail ne doit pas être portée hors de la cuisine pour éviter d\'apporter des contaminants extérieurs.' }
+        ]}
+      ]},
+      { title: 'Maladies et exclusions', duration: '5 min', content: [
+        { type: 'intro', num: 'LEÇON 3', title: 'Maladies et exclusions', duration: '5 min' },
+        { type: 'text', heading: 'Quand ne pas travailler', body: 'Un employé malade qui manipule des aliments peut contaminer des dizaines, voire des centaines de clients. Certaines conditions exigent une exclusion totale; d\'autres permettent un travail avec restrictions.' },
+        { type: 'keypoints', heading: 'Exclusion totale requise', points: [
+          'Vomissements ou diarrhée — cesser immédiatement et attendre 48h après la fin des symptômes',
+          'Jaunisse (ictère) — consulter un médecin, peut indiquer une hépatite A',
+          'Infection à Salmonella, E. coli O157:H7, Listeria, Norovirus — exclusion jusqu\'à autorisation médicale',
+          'Mal de gorge avec fièvre — exclusion ou travail sans contact alimentaire direct'
+        ]},
+        { type: 'warning', text: 'Le Norovirus est extrêmement contagieux. Une personne infectée peut contaminer jusqu\'à 1000 personnes. L\'exclusion est obligatoire 48h après la fin de tous les symptômes.' },
+        { type: 'quiz', questions: [
+          { q: 'Un employé ayant de la diarrhée peut revenir travailler:', options: ['Dès qu\'il se sent mieux', 'Le lendemain', '48h après la fin des symptômes', 'Immédiatement avec des gants'], correct: 2, feedback: 'Il faut attendre 48 heures après la fin de tous les symptômes de diarrhée avant de retourner en cuisine.' },
+          { q: 'Un employé malade qui manipule des aliments peut:', options: ['Contaminer de nombreux clients', 'Travailler normalement avec des gants', 'Travailler si ce n\'est pas grave', 'Décider lui-même s\'il peut travailler'], correct: 0, feedback: 'Un seul employé malade peut contaminer des dizaines à des centaines de clients — l\'exclusion protège tout le monde.' },
+          { q: 'La jaunisse (ictère) peut indiquer:', options: ['Un simple rhume', 'Une hépatite A transmissible par les aliments', 'Un manque de vitamines', 'Un problème cutané bénin'], correct: 1, feedback: 'La jaunisse peut indiquer une hépatite A, qui est transmissible via les aliments — consultation médicale obligatoire.' }
+        ]}
+      ]},
+      { title: 'Comportements en cuisine', duration: '4 min', content: [
+        { type: 'intro', num: 'LEÇON 4', title: 'Comportements en cuisine', duration: '4 min' },
+        { type: 'text', heading: 'Comportements interdits en zone de production', body: 'Certains comportements en cuisine peuvent causer une contamination directe des aliments. Ces règles doivent être connues et respectées par tout le personnel.' },
+        { type: 'keypoints', heading: 'Comportements interdits', points: [
+          'Manger, boire ou mâcher de la gomme en zone de production',
+          'Fumer en cuisine ou à moins de 9 mètres d\'une entrée d\'air',
+          'Toucher son visage, nez, bouche, oreilles lors de la manipulation des aliments',
+          'Goûter avec les doigts ou reprendre une cuillère ayant touché les lèvres',
+          'Tousser ou éternuer sans se détourner des aliments',
+          'Porter des gants troués ou déchirés'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'Manger en zone de production est:', options: ['Acceptable pendant une courte pause', 'Interdit', 'Autorisé si on lave les mains après', 'Permis pour le personnel de nuit'], correct: 1, feedback: 'Manger en zone de production est strictement interdit — les aliments consommés peuvent contaminer les surfaces et les aliments produits.' },
+          { q: 'Pour goûter un aliment, on utilise:', options: ['Son doigt', 'Une cuillère propre à usage unique', 'La même cuillère qu\'on remet dans le plat', 'N\'importe quel ustensile'], correct: 1, feedback: 'On utilise toujours une cuillère propre à usage unique pour goûter — jamais les doigts ni une cuillère déjà portée aux lèvres.' },
+          { q: 'Que faire si on doit éternuer en cuisine?', options: ['Éternuer dans ses mains et continuer', 'Se détourner des aliments, utiliser un mouchoir et se laver les mains', 'Éternuer dans son coude sans se laver les mains', 'Continuer normalement'], correct: 1, feedback: 'Se détourner des aliments, utiliser un mouchoir jetable puis se laver les mains — les gouttelettes peuvent contaminer les aliments.' }
+        ]}
+      ]}
+    ]
+  },
+  {
+    id: 'allergenes',
+    icon: '⚠️',
+    name: 'Allergènes alimentaires',
+    meta: '5 leçons · 40 min · Niveau 2',
+    desc: 'Identifier les 14 allergènes prioritaires, comprendre les réactions allergiques et anaphylactiques, et mettre en place des procédures pour protéger les clients allergiques.',
+    lessons: [
+      { title: 'Les 14 allergènes prioritaires', duration: '8 min', content: [
+        { type: 'intro', num: 'LEÇON 1', title: 'Les 14 allergènes prioritaires', duration: '8 min' },
+        { type: 'text', heading: 'Allergènes à déclaration obligatoire', body: 'Santé Canada exige la déclaration de 14 allergènes prioritaires sur les étiquettes alimentaires. Ces allergènes causent la majorité des réactions allergiques graves au Canada.' },
+        { type: 'keypoints', heading: 'Les 14 allergènes prioritaires', points: [
+          '1. Arachides (cacahuètes) — risque anaphylactique élevé',
+          '2. Noix (amandes, noix de cajou, pistaches, etc.)',
+          '3. Graines de sésame',
+          '4. Lait (incluant lactose et caséine)',
+          '5. Œufs',
+          '6. Poissons (morue, saumon, tilapia, etc.)',
+          '7. Crustacés (crevettes, homard, crabe)',
+          '8. Mollusques (palourdes, huîtres, moules, pétoncles)',
+          '9. Blé et triticale (gluten)',
+          '10. Soya',
+          '11. Moutarde',
+          '12. Sulfites (>10 ppm)',
+          '13. Anhydride sulfureux',
+          '14. Graines de sésame (maintenant séparées des noix)'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'Combien y a-t-il d\'allergènes prioritaires au Canada?', options: ['8', '10', '12', '14'], correct: 3, feedback: 'Santé Canada exige la déclaration de 14 allergènes prioritaires sur les étiquettes alimentaires.' },
+          { q: 'Les arachides sont particulièrement dangereuses car:', options: ['Elles sont peu utilisées', 'Elles peuvent causer des réactions anaphylactiques graves', 'Elles sont difficiles à détecter', 'Elles ne sont pas dans la liste des 14'], correct: 1, feedback: 'Les arachides peuvent causer des réactions anaphylactiques potentiellement mortelles, même en très petites quantités.' },
+          { q: 'Le gluten est présent dans:', options: ['Le maïs', 'Le riz', 'Le blé et triticale', 'La pomme de terre'], correct: 2, feedback: 'Le gluten est une protéine présente dans le blé, l\'orge, le seigle et le triticale.' }
+        ]}
+      ]},
+      { title: 'Réactions allergiques', duration: '8 min', content: [
+        { type: 'intro', num: 'LEÇON 2', title: 'Réactions allergiques', duration: '8 min' },
+        { type: 'text', heading: 'Types de réactions et gravité', body: 'Les réactions allergiques peuvent varier de légères à mortelles. La réaction la plus grave, l\'anaphylaxie, peut être fatale en quelques minutes sans traitement approprié.' },
+        { type: 'keypoints', heading: 'Symptômes par niveau de gravité', points: [
+          'Léger: démangeaisons, urticaire, nez qui coule, larmoiement',
+          'Modéré: gonflement, nausées, vomissements, crampes abdominales',
+          'Grave (anaphylaxie): difficultés respiratoires, gonflement de la gorge, chute de tension, perte de conscience',
+          'L\'anaphylaxie peut survenir en 2 à 30 minutes après l\'exposition',
+          'Traitement: épinéphrine (EpiPen) + appel au 911 immédiatement'
+        ]},
+        { type: 'warning', text: 'L\'anaphylaxie est une urgence médicale mortelle. Si un client présente des difficultés respiratoires après avoir mangé, appelez le 911 immédiatement — n\'attendez pas.' },
+        { type: 'quiz', questions: [
+          { q: 'L\'anaphylaxie est:', options: ['Une réaction légère', 'Une réaction modérée', 'Une réaction grave pouvant être mortelle', 'Un simple inconfort digestif'], correct: 2, feedback: 'L\'anaphylaxie est une réaction allergique grave et potentiellement mortelle qui nécessite une intervention immédiate.' },
+          { q: 'En cas d\'anaphylaxie, le traitement d\'urgence est:', options: ['De l\'eau et du repos', 'Des antihistaminiques', 'Épinéphrine (EpiPen) + appel au 911', 'Attendre que ça passe'], correct: 2, feedback: 'L\'anaphylaxie nécessite une injection d\'épinéphrine (EpiPen) et un appel au 911 immédiat — chaque minute compte.' },
+          { q: 'L\'anaphylaxie peut survenir:', options: ['Seulement 2 heures après l\'exposition', 'En 2 à 30 minutes après l\'exposition', 'Seulement le lendemain', 'Jamais si la quantité est petite'], correct: 1, feedback: 'L\'anaphylaxie peut survenir en 2 à 30 minutes — et même une trace minime d\'allergène peut déclencher une réaction sévère.' }
+        ]}
+      ]},
+      { title: 'Contamination croisée allergènes', duration: '8 min', content: [
+        { type: 'intro', num: 'LEÇON 3', title: 'Contamination croisée allergènes', duration: '8 min' },
+        { type: 'text', heading: 'La contamination croisée invisible', body: 'La contamination croisée allergénique est le transfert involontaire d\'un allergène d\'un aliment vers un autre. Elle est souvent invisible et constitue le principal risque pour les personnes allergiques en restauration.' },
+        { type: 'keypoints', heading: 'Sources de contamination croisée', points: [
+          'Équipements partagés non nettoyés: couteaux, planches, poêles',
+          'Surfaces de travail partagées sans nettoyage entre les préparations',
+          'Huile de friture partagée (ex: frites et poissons dans la même friteuse)',
+          'Mains du personnel non lavées entre la manipulation de différents aliments',
+          'Ustensiles plongés dans plusieurs plats',
+          'Vapeurs de cuisson dans un espace confiné'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'La contamination croisée allergénique est:', options: ['Toujours visible', 'Souvent invisible mais dangereuse', 'Seulement possible avec les arachides', 'Inévitable en restauration'], correct: 1, feedback: 'La contamination croisée allergénique est souvent invisible — une trace infime peut causer une réaction grave.' },
+          { q: 'Utiliser la même friteuse pour les frites et le poisson peut causer:', options: ['Aucun problème', 'Contamination croisée au poisson pour les personnes allergiques', 'Seulement un problème de goût', 'Un problème seulement si la friteuse est sale'], correct: 1, feedback: 'Une friteuse partagée peut contaminer les frites avec des protéines de poisson — dangereux pour les allergiques au poisson.' },
+          { q: 'Pour prévenir la contamination croisée allergénique, on doit:', options: ['Utiliser le même équipement pour tout', 'Nettoyer et désinfecter les équipements entre chaque usage', 'Seulement avertir les clients', 'Rien de spécial si on porte des gants'], correct: 1, feedback: 'Nettoyer et désinfecter tous les équipements entre les préparations est essentiel pour prévenir la contamination croisée.' }
+        ]}
+      ]},
+      { title: 'Communication avec les clients', duration: '8 min', content: [
+        { type: 'intro', num: 'LEÇON 4', title: 'Communication avec les clients', duration: '8 min' },
+        { type: 'text', heading: 'Votre responsabilité envers les clients allergiques', body: 'La communication transparente avec les clients allergiques est à la fois une obligation légale et une responsabilité morale. Une information incorrecte peut coûter une vie.' },
+        { type: 'keypoints', heading: 'Bonnes pratiques de communication', points: [
+          'Être honnête sur les ingrédients — ne jamais deviner',
+          'Consulter les fiches techniques des fournisseurs',
+          'Avoir un menu avec les allergènes clairement identifiés',
+          'Former tout le personnel (serveurs et cuisiniers) sur les allergènes',
+          'Si vous n\'êtes pas certain — dites-le et recommandez une alternative sûre',
+          'Ne jamais minimiser la préoccupation d\'un client allergique'
+        ]},
+        { type: 'warning', text: 'Ne jamais dire "il y en a juste un peu" ou "ça devrait aller". Pour une personne allergique, une trace peut être mortelle. En cas de doute, soyez honnête et proposez une alternative certifiée sans allergène.' },
+        { type: 'quiz', questions: [
+          { q: 'Si un client allergique demande si un plat contient des arachides et vous n\'êtes pas sûr:', options: ['Dire que non pour ne pas perdre la vente', 'Dire oui pour être prudent', 'Vérifier les fiches techniques ou proposer une alternative sûre', 'Dire que c\'est en petite quantité seulement'], correct: 2, feedback: 'En cas de doute, vérifiez les fiches techniques ou proposez une alternative certifiée sûre. Ne jamais deviner avec les allergènes.' },
+          { q: 'Un serveur doit:', options: ['Seulement prendre les commandes sans connaître les allergènes', 'Connaître les allergènes du menu pour informer les clients', 'Référer tous les clients allergiques à la cuisine', 'Minimiser les préoccupations des clients anxieux'], correct: 1, feedback: 'Tout le personnel, incluant les serveurs, doit être formé sur les allergènes du menu pour pouvoir informer correctement les clients.' },
+          { q: 'Dire à un client allergique "il y en a juste un peu" est:', options: ['Acceptable si la quantité est vraiment petite', 'Un bon service clientèle', 'Dangereux — même une trace peut être mortelle', 'Approprié si le client ne semble pas très allergique'], correct: 2, feedback: 'Pour une personne allergique, même une trace minime peut déclencher une réaction mortelle. Ne jamais minimiser.' }
+        ]}
+      ]},
+      { title: 'Étiquetage et menus', duration: '8 min', content: [
+        { type: 'intro', num: 'LEÇON 5', title: 'Étiquetage et menus', duration: '8 min' },
+        { type: 'text', heading: 'Obligations d\'étiquetage', body: 'Les règlements sur l\'étiquetage des aliments au Canada exigent la déclaration claire des allergènes prioritaires. Ces obligations s\'appliquent aux aliments préemballés et aux menus dans certaines circonstances.' },
+        { type: 'keypoints', heading: 'Exigences d\'étiquetage', points: [
+          'Tous les allergènes prioritaires doivent être déclarés sur les étiquettes des aliments préemballés',
+          'La mention "peut contenir" ou "fabriqué dans une usine qui utilise" doit être présente si risque de contamination croisée',
+          'Pour les menus: identifier clairement les allergènes dans chaque plat',
+          'Former le personnel sur tous les changements de recettes ou de fournisseurs',
+          'Mettre à jour les menus et fiches techniques lors de tout changement d\'ingrédients'
+        ]},
+        { type: 'quiz', questions: [
+          { q: 'La mention "peut contenir des traces de noix" indique:', options: ['Que le produit contient beaucoup de noix', 'Un risque de contamination croisée lors de la fabrication', 'Que le produit est sûr pour les personnes allergiques', 'Une erreur d\'étiquetage'], correct: 1, feedback: 'La mention "peut contenir" indique un risque de contamination croisée lors de la fabrication — à prendre au sérieux pour les personnes allergiques.' },
+          { q: 'Lors d\'un changement de fournisseur, vous devez:', options: ['Rien changer si le produit semble identique', 'Vérifier les nouveaux ingrédients et mettre à jour les fiches', 'Seulement informer le chef cuisinier', 'Attendre les réclamations des clients'], correct: 1, feedback: 'Tout changement de fournisseur peut modifier la composition des allergènes — vérifiez et mettez à jour vos fiches techniques.' },
+          { q: 'Les fiches techniques des fournisseurs servent à:', options: ['Comparer les prix', 'Connaître la composition exacte des ingrédients incluant les allergènes', 'Déterminer les portions', 'Calculer les calories'], correct: 1, feedback: 'Les fiches techniques contiennent la composition exacte des ingrédients, incluant les allergènes — indispensables pour informer correctement les clients.' }
+        ]}
+      ]}
+    ]
+  }
+];
+
+// ── STATE ──────────────────────────────────────────────────
+let progress = JSON.parse(localStorage.getItem('verdict_formation_progress') || '{}');
+let currentModule = null;
+let currentLesson = null;
+let quizAnswers = {};
+let quizCorrect = 0;
+let quizTotal = 0;
+
+// ── INIT ──────────────────────────────────────────────────
+function init() {
+  renderModules();
+  updateGlobalProgress();
+}
+
+function updateGlobalProgress() {
+  let total = 0, done = 0;
+  MODULES.forEach(m => {
+    m.lessons.forEach(l => {
+      total++;
+      if (progress[m.id + '_' + m.lessons.indexOf(l)]) done++;
+    });
+  });
+  const pct = total > 0 ? Math.round(done/total*100) : 0;
+  document.getElementById('global-progress').style.width = pct + '%';
+}
+
+function renderModules() {
+  const list = document.getElementById('module-list');
+  list.innerHTML = MODULES.map((m, mi) => {
+    const totalLessons = m.lessons.length;
+    const doneLessons = m.lessons.filter((l, li) => progress[m.id + '_' + li]).length;
+    const completed = doneLessons === totalLessons;
+    const badge = completed
+      ? '<span class="module-badge badge-done">✓ Complété</span>'
+      : doneLessons > 0
+        ? `<span class="module-badge badge-todo">${doneLessons}/${totalLessons}</span>`
+        : '<span class="module-badge badge-todo">À faire</span>';
+    return `<div class="module-item ${completed?'completed':''}" onclick="openModule(${mi})">
+      <div class="module-icon">${m.icon}</div>
+      <div class="module-info">
+        <div class="module-name">${m.name}</div>
+        <div class="module-meta">${m.meta}</div>
+      </div>
+      ${badge}
+    </div>`;
+  }).join('');
+}
+
+function openModule(mi) {
+  currentModule = MODULES[mi];
+  document.getElementById('lessons-module-name').textContent = currentModule.icon + ' ' + currentModule.id.toUpperCase();
+  document.getElementById('lessons-title').textContent = currentModule.name;
+  document.getElementById('lessons-desc').textContent = currentModule.desc;
+  renderLessons();
+  showScreen('lessons');
+}
+
+function renderLessons() {
+  const list = document.getElementById('lesson-list');
+  list.innerHTML = currentModule.lessons.map((l, li) => {
+    const done = progress[currentModule.id + '_' + li];
+    return `<div class="lesson-item ${done?'completed':''}" onclick="openLesson(${li})">
+      <div class="lesson-num">${done ? '✓' : li+1}</div>
+      <div class="lesson-info">
+        <div class="lesson-title">${l.title}</div>
+        <div class="lesson-duration">${l.duration}</div>
+      </div>
+      <div class="lesson-arrow">→</div>
+    </div>`;
+  }).join('');
+}
+
+function openLesson(li) {
+  currentLesson = li;
+  quizAnswers = {};
+  quizCorrect = 0;
+  quizTotal = 0;
+  document.getElementById('lesson-module-name').textContent = currentModule.icon + ' ' + currentModule.name.split('—')[0].trim().toUpperCase();
+  document.getElementById('lesson-progress-label').textContent = 'Leçon ' + (li+1) + '/' + currentModule.lessons.length;
+  document.getElementById('lesson-back-btn').onclick = () => showScreen('lessons');
+  renderLesson();
+  showScreen('lesson');
+}
+
+function renderLesson() {
+  const lesson = currentModule.lessons[currentLesson];
+  let html = '';
+  lesson.content.forEach((block, bi) => {
+    if (block.type === 'intro') {
+      html += `<div class="lesson-hero">
+        <div class="lesson-num-big">${block.num} · ${block.duration}</div>
+        <h3>${block.title}</h3>
+      </div>`;
+    } else if (block.type === 'text') {
+      const paras = block.body.split('\n\n').map(p => `<p>${p}</p>`).join('');
+      html += `<div class="content-block"><h4>${block.heading}</h4>${paras}</div>`;
+    } else if (block.type === 'keypoints') {
+      const items = block.points.map(p => `<li>${p}</li>`).join('');
+      html += `<div class="content-block"><h4>${block.heading}</h4><ul class="key-points">${items}</ul></div>`;
+    } else if (block.type === 'warning') {
+      html += `<div class="content-block"><div class="warning-box">${block.text}</div></div>`;
+    } else if (block.type === 'info') {
+      html += `<div class="content-block"><div class="info-box">${block.text}</div></div>`;
+    } else if (block.type === 'table') {
+      const headers = block.headers.map(h => `<th>${h}</th>`).join('');
+      const rows = block.rows.map(r => `<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+      html += `<div class="content-block"><h4>${block.heading}</h4><table class="temp-table"><tr>${headers}</tr>${rows}</table></div>`;
+    } else if (block.type === 'quiz') {
+      quizTotal += block.questions.length;
+      let qhtml = '<div class="quiz-section"><h4>Quiz de la leçon</h4>';
+      block.questions.forEach((q, qi) => {
+        const qid = `q_${bi}_${qi}`;
+        const letters = ['A','B','C','D'];
+        const opts = q.options.map((o, oi) => `<div class="quiz-option" id="${qid}_${oi}" onclick="selectAnswer('${qid}', ${oi}, ${q.correct}, '${qid}_fb', this)">
+          <span class="quiz-letter">${letters[oi]}</span>${o}</div>`).join('');
+        qhtml += `<div class="quiz-question">
+          <div class="quiz-q">${qi+1}. ${q.q}</div>
+          <div class="quiz-options">${opts}</div>
+          <div class="quiz-feedback" id="${qid}_fb"></div>
+        </div>`;
+      });
+      qhtml += '</div>';
+      html += qhtml;
+    }
+  });
+  document.getElementById('lesson-content').innerHTML = html;
+  const isLast = currentLesson === currentModule.lessons.length - 1;
+  document.getElementById('btn-next-lesson').textContent = isLast ? 'TERMINER LE MODULE ✓' : 'LEÇON SUIVANTE →';
+}
+
+function selectAnswer(qid, selected, correct, fbId, el) {
+  if (quizAnswers[qid] !== undefined) return;
+  quizAnswers[qid] = selected;
+  const opts = document.querySelectorAll(`[id^="${qid}_"]:not([id$="_fb"])`);
+  opts.forEach((opt, i) => {
+    if (i === correct) opt.classList.add('correct');
+    else if (i === selected && selected !== correct) opt.classList.add('wrong');
+  });
+  const fb = document.getElementById(fbId);
+  const lesson = currentModule.lessons[currentLesson];
+  let feedback = '';
+  lesson.content.forEach(block => {
+    if (block.type === 'quiz') {
+      block.questions.forEach((q, qi) => {
+        if (fbId.includes(`_${qi}_fb`) || fbId.endsWith(`_${qi}_fb`)) feedback = q.feedback;
+      });
+    }
+  });
+  // Find the right feedback
+  const parts = fbId.replace('_fb','').split('_');
+  const bi = parseInt(parts[1]);
+  const qi = parseInt(parts[2]);
+  const qblock = lesson.content.filter(b => b.type === 'quiz')[0];
+  if (qblock && qblock.questions[qi]) {
+    feedback = qblock.questions[qi].feedback;
+  }
+  if (selected === correct) {
+    quizCorrect++;
+    fb.textContent = '✅ ' + feedback;
+    fb.className = 'quiz-feedback show correct-fb';
+  } else {
+    fb.textContent = '❌ ' + feedback;
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+}
+
+function nextLesson() {
+  progress[currentModule.id + '_' + currentLesson] = true;
+  localStorage.setItem('verdict_formation_progress', JSON.stringify(progress));
+  const isLast = currentLesson === currentModule.lessons.length - 1;
+  if (isLast) {
+    showScore();
+  } else {
+    currentLesson++;
+    quizAnswers = {};
+    quizCorrect = 0;
+    quizTotal = 0;
+    document.getElementById('lesson-progress-label').textContent = 'Leçon ' + (currentLesson+1) + '/' + currentModule.lessons.length;
+    renderLesson();
+    document.getElementById('lesson-content').scrollTop = 0;
+    window.scrollTo(0,0);
+  }
+}
+
+function showScore() {
+  const doneLessons = currentModule.lessons.filter((l, li) => progress[currentModule.id + '_' + li]).length;
+  const pct = Math.round(doneLessons / currentModule.lessons.length * 100);
+  document.getElementById('final-score').textContent = pct + '%';
+  if (pct === 100) {
+    document.getElementById('score-title').textContent = '🏆 Module complété!';
+    document.getElementById('score-msg').textContent = 'Félicitations! Vous avez complété toutes les leçons de ce module. Votre maîtrise de ce sujet contribue directement à la sécurité alimentaire de votre établissement.';
+    document.getElementById('score-badge').textContent = '✓ CERTIFICATION ' + currentModule.name.split('—')[0].trim().toUpperCase();
+  } else {
+    document.getElementById('score-title').textContent = 'Bonne progression!';
+    document.getElementById('score-msg').textContent = `Vous avez complété ${doneLessons} leçon(s) sur ${currentModule.lessons.length}. Continuez pour obtenir votre certification.`;
+    document.getElementById('score-badge').textContent = doneLessons + '/' + currentModule.lessons.length + ' LEÇONS COMPLÉTÉES';
+  }
+  renderModules();
+  updateGlobalProgress();
+  showScreen('score');
+}
+
+function retryModule() {
+  currentModule.lessons.forEach((l, li) => {
+    delete progress[currentModule.id + '_' + li];
+  });
+  localStorage.setItem('verdict_formation_progress', JSON.stringify(progress));
+  renderModules();
+  updateGlobalProgress();
+  openLesson(0);
+}
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goHome() {
+  if (window.opener) window.close();
+  else window.location.href = 'index.html';
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' '+type : '');
+  setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+
+init();
+</script>
+
+</body>
+</html>
