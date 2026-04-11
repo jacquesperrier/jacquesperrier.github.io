@@ -6,6 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Verdict">
+<meta name="theme-color" content="#D4A017">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Verdict Inspection AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -265,7 +269,7 @@ background: var(–noir2);
 .score-jaune .score-num { color: var(–jaune); }
 .score-vert .score-num { color: var(–vert-bright); }
 
-/* ── SETTINGS GOOGLE SHEETS ── */
+/* ── SETTINGS ── */
 .settings-section { padding: 16px 18px; border-bottom: 1px solid var(–border); }
 .settings-title { font-size: 10px; letter-spacing: 2px; color: var(–or); text-transform: uppercase; margin-bottom: 12px; }
 .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
@@ -363,11 +367,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
 <!-- ÉCRAN LOGIN -->
-
-<!-- ══════════════════════════════════════════════════════ -->
 
 <div id="screen-login" class="screen active">
   <div class="login-logo-wrap">
@@ -389,11 +389,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
 <!-- ÉCRAN DASHBOARD -->
-
-<!-- ══════════════════════════════════════════════════════ -->
 
 <div id="screen-dashboard" class="screen">
   <div class="app-header">
@@ -409,12 +405,10 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
       <button class="btn-deconnect" onclick="doLogout()">✕</button>
     </div>
   </div>
-
   <div class="dash-welcome">
     <div class="greeting">Aujourd'hui</div>
     <div class="user-name" id="dash-username">Bienvenue</div>
   </div>
-
   <div class="dash-stats">
     <div class="stat-cell">
       <span class="stat-icon">🧹</span>
@@ -437,7 +431,6 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
       <span class="stat-val" id="stat-heures">0/0</span>
     </div>
   </div>
-
   <div class="quick-actions">
     <button class="btn-quick" onclick="openForm('nettoyage')">+ Nettoyage</button>
     <button class="btn-quick" onclick="openForm('temperature')">+ Température</button>
@@ -445,7 +438,6 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <button class="btn-quick" onclick="openForm('heures')">+ Heures</button>
     <button class="btn-quick" onclick="openForm('haccp')">+ Inspection</button>
   </div>
-
   <div class="modules-title">VUE D'ENSEMBLE</div>
   <div class="modules-grid">
     <div class="module-card" onclick="openForm('nettoyage')">
@@ -493,7 +485,6 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
       <div class="mod-count" id="mod-formation">4</div>
     </div>
   </div>
-
   <div class="recent-title">ENTRÉES RÉCENTES</div>
   <div class="entries-list" id="entries-list">
     <div class="empty-state">
@@ -502,7 +493,6 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
       <small>Commencez par ajouter une tâche avec les boutons ci-dessus</small>
     </div>
   </div>
-
   <div style="height:70px"></div>
   <div class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('dashboard')"><span class="nav-icon">🏠</span>Accueil</div>
@@ -511,11 +501,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
 <!-- FORMULAIRE NETTOYAGE -->
-
-<!-- ══════════════════════════════════════════════════════ -->
 
 <div id="screen-nettoyage" class="screen">
   <div class="form-header">
@@ -581,11 +567,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
 <!-- FORMULAIRE TEMPÉRATURE -->
-
-<!-- ══════════════════════════════════════════════════════ -->
 
 <div id="screen-temperature" class="screen">
   <div class="form-header">
@@ -641,11 +623,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
 <!-- FORMULAIRE RÉCEPTION -->
-
-<!-- ══════════════════════════════════════════════════════ -->
 
 <div id="screen-reception" class="screen">
   <div class="form-header">
@@ -710,11 +688,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
-<!-- FORMULAIRE HEURES / PRÉSENCE -->
-
-<!-- ══════════════════════════════════════════════════════ -->
+<!-- FORMULAIRE HEURES -->
 
 <div id="screen-heures" class="screen">
   <div class="form-header">
@@ -761,18 +735,13 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
 <!-- FORMULAIRE INSPECTION HACCP -->
-
-<!-- ══════════════════════════════════════════════════════ -->
 
 <div id="screen-haccp" class="screen">
   <div class="form-header">
     <button class="btn-back" onclick="goBack()">←</button>
     <div class="form-header-title">🔍 Inspection HACCP</div>
   </div>
-
   <div style="padding:12px 18px 4px;display:flex;justify-content:space-between;align-items:center">
     <div style="font-size:11px;color:var(--gris)">Tap sur chaque point pour changer le statut</div>
     <div class="score-ring-wrap" style="padding:0">
@@ -782,19 +751,13 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
       </div>
     </div>
   </div>
-
   <div id="haccp-checklist" style="padding-bottom:80px"></div>
-
   <div class="btn-save-wrap">
     <button class="btn-save" onclick="saveEntry('haccp')">GÉNÉRER RAPPORT</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
 <!-- FORMATION -->
-
-<!-- ══════════════════════════════════════════════════════ -->
 
 <div id="screen-formation" class="screen">
   <div class="form-header">
@@ -854,11 +817,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
 <!-- HISTORIQUE -->
-
-<!-- ══════════════════════════════════════════════════════ -->
 
 <div id="screen-history" class="screen">
   <div class="app-header">
@@ -892,11 +851,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
 <!-- RÉGLAGES -->
-
-<!-- ══════════════════════════════════════════════════════ -->
 
 <div id="screen-settings" class="screen">
   <div class="app-header">
@@ -952,12 +907,6 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
 
 <div class="toast" id="toast"></div>
 
-<!-- ══════════════════════════════════════════════════════ -->
-
-<!-- JAVASCRIPT -->
-
-<!-- ══════════════════════════════════════════════════════ -->
-
 <script>
 // ── État global ──────────────────────────────────────────
 let currentUser = '';
@@ -1006,7 +955,7 @@ const HACCP_CHECKLIST = [
   ]},
 ];
 
-let haccpState = {}; // id -> 'ok'|'nc'|'na'
+let haccpState = {};
 
 // ── Initialisation ───────────────────────────────────────
 window.onload = function() {
@@ -1040,7 +989,6 @@ function doLogin() {
   document.getElementById('temp-employe').value = name;
   document.getElementById('rec-employe').value = name;
   document.getElementById('heure-employe').value = name;
-  // Set current time for heures
   const now = new Date();
   document.getElementById('heure-time').value = now.toTimeString().slice(0,5);
   showScreen('dashboard');
@@ -1059,13 +1007,8 @@ function showScreen(name) {
   currentScreen = name;
 }
 
-function openForm(type) {
-  showScreen(type);
-}
-
-function showFormation() {
-  showScreen('formation');
-}
+function openForm(type) { showScreen(type); }
+function showFormation() { showScreen('formation'); }
 
 function goBack() {
   showScreen('dashboard');
@@ -1076,7 +1019,6 @@ function goBack() {
 function switchTab(tab) {
   showScreen(tab);
   if (tab === 'history') renderHistory('tous');
-  // update nav
   document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
 }
 
@@ -1101,7 +1043,6 @@ function checkTemp() {
   const zone = document.getElementById('temp-zone').value;
   const alertEl = document.getElementById('temp-alert');
   if (isNaN(val)) { alertEl.className = 'temp-alert'; return; }
-
   let status = 'ok', msg = '';
   if (zone.includes('Réfrigér') || zone.includes('positive')) {
     if (val > 4) { status='danger'; msg='⚠️ DANGER — Doit être ≤ 4°C (actuel: '+val+'°C)'; }
@@ -1211,68 +1152,54 @@ function updateHaccpScore() {
 function saveEntry(type) {
   const now = new Date();
   let entry = {
-    id: Date.now(),
-    type,
-    employe: currentUser,
+    id: Date.now(), type, employe: currentUser,
     date: now.toISOString(),
     heure: now.toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'}),
   };
-
   if (type === 'nettoyage') {
     const zone = document.getElementById('net-zone').value;
     const typeNet = document.getElementById('net-type').value;
     if (!zone) { showToast('Choisissez une zone', 'error'); return; }
-    entry.zone = zone;
-    entry.typeNettoyage = typeNet;
+    entry.zone = zone; entry.typeNettoyage = typeNet;
     entry.conforme = radioState['net'] || 'non_selectionne';
     entry.commentaire = document.getElementById('net-comment').value;
-    entry.desc = zone;
-    entry.status = entry.conforme === 'oui' ? 'ok' : 'nc';
+    entry.desc = zone; entry.status = entry.conforme === 'oui' ? 'ok' : 'nc';
     resetForm('nettoyage');
-  }
-  else if (type === 'temperature') {
+  } else if (type === 'temperature') {
     const val = document.getElementById('temp-val').value;
     const zone = document.getElementById('temp-zone').value;
     if (!zone || !val) { showToast('Remplissez tous les champs', 'error'); return; }
-    entry.zone = zone;
-    entry.temperature = val;
+    entry.zone = zone; entry.temperature = val;
     entry.typeTemp = document.getElementById('temp-type').value;
     entry.commentaire = document.getElementById('temp-comment').value;
     entry.desc = zone + ' : ' + val + '°C';
-    // Determine status
-    const v = parseFloat(val);
-    entry.status = 'ok';
+    const v = parseFloat(val); entry.status = 'ok';
     if (zone.includes('Réfrig') && v > 4) entry.status = 'nc';
     if (zone.includes('Congél') && v > -18) entry.status = 'nc';
     if (zone.includes('Volaille') && v < 85) entry.status = 'nc';
     if (zone.includes('Viande') && v < 74) entry.status = 'nc';
     resetForm('temperature');
-  }
-  else if (type === 'reception') {
+  } else if (type === 'reception') {
     const four = document.getElementById('rec-fournisseur').value;
     const cat = document.getElementById('rec-categorie').value;
     if (!cat) { showToast('Choisissez une catégorie', 'error'); return; }
-    entry.fournisseur = four;
-    entry.categorie = cat;
+    entry.fournisseur = four; entry.categorie = cat;
     entry.temperature = document.getElementById('rec-temp').value;
     entry.emballage = radioState['rec'] || 'non_selectionne';
     entry.commentaire = document.getElementById('rec-comment').value;
     entry.desc = (four || 'Livraison') + ' — ' + cat;
     entry.status = entry.emballage === 'oui' ? 'ok' : 'nc';
     resetForm('reception');
-  }
-  else if (type === 'heures') {
+  } else if (type === 'heures') {
     const poste = document.getElementById('heure-poste').value;
     if (!heureType) { showToast('Sélectionnez arrivée ou départ', 'error'); return; }
-    entry.poste = poste;
-    entry.typeHeure = heureType;
+    entry.poste = poste; entry.typeHeure = heureType;
     entry.heureSaisie = document.getElementById('heure-time').value;
     entry.commentaire = document.getElementById('heure-comment').value;
     entry.desc = (heureType === 'arrive' ? 'Arrivée' : 'Départ') + (poste ? ' — ' + poste : '');
     entry.status = 'ok';
     resetForm('heures');
-  }
-  else if (type === 'haccp') {
+  } else if (type === 'haccp') {
     let total = 0, ok = 0, nc = 0;
     HACCP_CHECKLIST.forEach(s => s.items.forEach(item => {
       if (haccpState[item.id] !== 'na') {
@@ -1282,18 +1209,14 @@ function saveEntry(type) {
       }
     }));
     const score = total > 0 ? Math.round(ok/total*100) : 0;
-    entry.score = score;
-    entry.haccpState = {...haccpState};
+    entry.score = score; entry.haccpState = {...haccpState};
     entry.desc = 'Score: ' + score + '/100 — ' + nc + ' NC détectées';
     entry.status = score >= 70 ? 'ok' : score >= 50 ? 'warn' : 'nc';
     document.getElementById('mod-haccp').textContent = score + '%';
   }
-
   entries.unshift(entry);
   localStorage.setItem('verdict_entries', JSON.stringify(entries));
-
   if (sheetsEnabled && sheetsURL) sendToSheets(entry);
-
   showToast('✅ Enregistré avec succès', 'success');
   setTimeout(() => { goBack(); }, 900);
 }
@@ -1337,7 +1260,6 @@ function resetForm(type) {
 function updateStats() {
   const today = new Date().toDateString();
   const todayEntries = entries.filter(e => new Date(e.date).toDateString() === today);
-
   const counts = { nettoyage:0, temperature:0, reception:0, heures:0 };
   const nc = { nettoyage:0, temperature:0, reception:0, heures:0 };
   todayEntries.forEach(e => {
@@ -1346,10 +1268,8 @@ function updateStats() {
       if (e.status === 'nc') nc[e.type]++;
     }
   });
-
   ['nettoyage','temperature','reception','heures'].forEach(t => {
     const shortKey = { nettoyage:'nettoyage', temperature:'temp', reception:'reception', heures:'heures' }[t];
-    const val = counts[t] + '/' + counts[t];
     const el1 = document.getElementById('stat-' + shortKey);
     const el2 = document.getElementById('mod-' + shortKey);
     if (el1) { el1.textContent = counts[t] + '/0'; el1.className = 'stat-val' + (nc[t]>0?' danger':''); }
@@ -1415,8 +1335,7 @@ async function sendToSheets(entry) {
   if (!sheetsURL) return;
   try {
     await fetch(sheetsURL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(entry)
     });
@@ -1452,6 +1371,15 @@ function showToast(msg, type) {
   t.textContent = msg;
   t.className = 'toast show' + (type ? ' '+type : '');
   setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+
+// ── PWA Service Worker ───────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('Verdict PWA: Service Worker actif'))
+      .catch(err => console.warn('SW non enregistré:', err));
+  });
 }
 </script>
 
