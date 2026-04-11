@@ -32,6 +32,8 @@
 }
 
 - { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  button { -webkit-appearance: none; appearance: none; }
+  a, button { color: inherit; text-decoration: none; }
 
 html { background: #0A0A0A; }
 body {
@@ -320,9 +322,13 @@ color: var(–noir); margin: 0 auto 16px; box-shadow: 0 0 50px rgba(201,150,60,0
 width: 100%; padding: 16px;
 background: linear-gradient(135deg, #7D5A1E 0%, #C9963C 30%, #F0D080 50%, #C9963C 70%, #7D5A1E 100%);
 border: none; border-radius: 12px;
-color: var(–noir); font-family: ‘Rajdhani’, sans-serif;
+color: #0A0A0A; font-family: ‘Rajdhani’, sans-serif;
 font-size: 14px; font-weight: 700; letter-spacing: 3px;
 cursor: pointer; margin-top: 4px;
+-webkit-appearance: none;
+appearance: none;
+text-decoration: none;
+-webkit-text-fill-color: #0A0A0A;
 box-shadow: 0 4px 20px rgba(201,150,60,0.4);
 }
 
@@ -384,9 +390,9 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     </div>
     <div class="form-group">
       <div class="form-label">NIP</div>
-      <input class="form-input" id="login-pin" type="password" inputmode="numeric" placeholder="••••" maxlength="4">
+      <input class="form-input" id="login-pin" type="password" inputmode="numeric" placeholder="----" maxlength="4">
     </div>
-    <button class="btn-login" onclick="doLogin()">DÉMARRER</button>
+    <button type="button" class="btn-login" onclick="doLogin()">DÉMARRER</button>
   </div>
 </div>
 
@@ -407,7 +413,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     </div>
     <div class="header-right">
       <div class="header-date" id="dash-date"></div>
-      <button class="btn-deconnect" onclick="doLogout()">✕</button>
+      <button type="button" class="btn-deconnect" onclick="doLogout()">✕</button>
     </div>
   </div>
 
@@ -440,11 +446,11 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   </div>
 
   <div class="quick-actions">
-    <button class="btn-quick" onclick="openForm('nettoyage')">+ Nettoyage</button>
-    <button class="btn-quick" onclick="openForm('temperature')">+ Température</button>
-    <button class="btn-quick" onclick="openForm('reception')">+ Réception</button>
-    <button class="btn-quick" onclick="openForm('heures')">+ Heures</button>
-    <button class="btn-quick" onclick="openForm('haccp')">+ Inspection</button>
+    <button type="button" class="btn-quick" onclick="openForm('nettoyage')">+ Nettoyage</button>
+    <button type="button" class="btn-quick" onclick="openForm('temperature')">+ Température</button>
+    <button type="button" class="btn-quick" onclick="openForm('reception')">+ Réception</button>
+    <button type="button" class="btn-quick" onclick="openForm('heures')">+ Heures</button>
+    <button type="button" class="btn-quick" onclick="openForm('haccp')">+ Inspection</button>
   </div>
 
   <div class="modules-title">VUE D'ENSEMBLE</div>
@@ -481,7 +487,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
           <div class="mod-status">Audit complet MAPAQ</div>
         </div>
       </div>
-      <div class="mod-count" id="mod-haccp">—</div>
+      <div class="mod-count" id="mod-haccp">--</div>
     </div>
     <div class="module-card haccp" onclick="showFormation()">
       <div class="mod-left">
@@ -520,7 +526,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
 
 <div id="screen-nettoyage" class="screen">
   <div class="form-header">
-    <button class="btn-back" onclick="goBack()">←</button>
+    <button type="button" class="btn-back" onclick="goBack()">←</button>
     <div class="form-header-title">🧹 Nettoyage</div>
   </div>
   <div class="form-body">
@@ -531,10 +537,10 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <div class="form-group">
       <div class="form-label">Zone / Équipement</div>
       <select class="form-select" id="net-zone">
-        <option value="">— Choisir —</option>
-        <option>Cuisine — Zone préparation</option>
-        <option>Cuisine — Plancha / Friteuse</option>
-        <option>Cuisine — Fourneaux</option>
+        <option value="">-- Choisir --</option>
+        <option>Cuisine -- Zone préparation</option>
+        <option>Cuisine -- Plancha / Friteuse</option>
+        <option>Cuisine -- Fourneaux</option>
         <option>Réfrigérateurs / Congélateurs</option>
         <option>Salle à manger</option>
         <option>Toilettes clients</option>
@@ -548,7 +554,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <div class="form-group">
       <div class="form-label">Type de nettoyage</div>
       <select class="form-select" id="net-type">
-        <option value="">— Choisir —</option>
+        <option value="">-- Choisir --</option>
         <option>Nettoyage de routine</option>
         <option>Désinfection complète</option>
         <option>Nettoyage profond</option>
@@ -566,8 +572,8 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <div class="form-group">
       <div class="form-label">Photo (optionnel)</div>
       <div class="photo-row">
-        <button class="btn-photo btn-photo-cam" onclick="triggerCamera('net-photo-input')">📸 Caméra</button>
-        <button class="btn-photo btn-photo-file" onclick="document.getElementById('net-photo-input').click()">🗂 Fichier</button>
+        <button type="button" class="btn-photo btn-photo-cam" onclick="triggerCamera('net-photo-input')">📸 Caméra</button>
+        <button type="button" class="btn-photo btn-photo-file" onclick="document.getElementById('net-photo-input').click()">🗂 Fichier</button>
       </div>
       <input type="file" id="net-photo-input" accept="image/*" onchange="previewPhoto(this,'net-preview')">
       <div class="photo-preview" id="net-preview"><img id="net-preview-img" src=""></div>
@@ -578,7 +584,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     </div>
   </div>
   <div class="btn-save-wrap">
-    <button class="btn-save" onclick="saveEntry('nettoyage')">ENREGISTRER</button>
+    <button type="button" class="btn-save" onclick="saveEntry('nettoyage')">ENREGISTRER</button>
   </div>
 </div>
 
@@ -590,7 +596,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
 
 <div id="screen-temperature" class="screen">
   <div class="form-header">
-    <button class="btn-back" onclick="goBack()">←</button>
+    <button type="button" class="btn-back" onclick="goBack()">←</button>
     <div class="form-header-title">🌡️ Température</div>
   </div>
   <div class="form-body">
@@ -601,16 +607,16 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <div class="form-group">
       <div class="form-label">Équipement / Zone</div>
       <select class="form-select" id="temp-zone">
-        <option value="">— Choisir —</option>
-        <option>Réfrigérateur 1 — Cuisine</option>
-        <option>Réfrigérateur 2 — Préparation</option>
+        <option value="">-- Choisir --</option>
+        <option>Réfrigérateur 1 -- Cuisine</option>
+        <option>Réfrigérateur 2 -- Préparation</option>
         <option>Congélateur principal</option>
         <option>Chambre froide positive</option>
         <option>Chambre froide négative</option>
         <option>Bain-marie / Maintien chaud</option>
-        <option>Cuisson — Viande</option>
-        <option>Cuisson — Volaille</option>
-        <option>Cuisson — Poisson</option>
+        <option>Cuisson -- Viande</option>
+        <option>Cuisson -- Volaille</option>
+        <option>Cuisson -- Poisson</option>
         <option>Livraison reçue</option>
       </select>
     </div>
@@ -638,7 +644,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     </div>
   </div>
   <div class="btn-save-wrap">
-    <button class="btn-save" onclick="saveEntry('temperature')">ENREGISTRER</button>
+    <button type="button" class="btn-save" onclick="saveEntry('temperature')">ENREGISTRER</button>
   </div>
 </div>
 
@@ -650,7 +656,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
 
 <div id="screen-reception" class="screen">
   <div class="form-header">
-    <button class="btn-back" onclick="goBack()">←</button>
+    <button type="button" class="btn-back" onclick="goBack()">←</button>
     <div class="form-header-title">📦 Réception marchandise</div>
   </div>
   <div class="form-body">
@@ -665,7 +671,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <div class="form-group">
       <div class="form-label">Catégorie de produit</div>
       <select class="form-select" id="rec-categorie">
-        <option value="">— Choisir —</option>
+        <option value="">-- Choisir --</option>
         <option>Viandes fraîches</option>
         <option>Volailles</option>
         <option>Poissons / Fruits de mer</option>
@@ -695,8 +701,8 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <div class="form-group">
       <div class="form-label">Photo (optionnel)</div>
       <div class="photo-row">
-        <button class="btn-photo btn-photo-cam" onclick="triggerCamera('rec-photo-input')">📸 Caméra</button>
-        <button class="btn-photo btn-photo-file" onclick="document.getElementById('rec-photo-input').click()">🗂 Fichier</button>
+        <button type="button" class="btn-photo btn-photo-cam" onclick="triggerCamera('rec-photo-input')">📸 Caméra</button>
+        <button type="button" class="btn-photo btn-photo-file" onclick="document.getElementById('rec-photo-input').click()">🗂 Fichier</button>
       </div>
       <input type="file" id="rec-photo-input" accept="image/*" onchange="previewPhoto(this,'rec-preview')">
       <div class="photo-preview" id="rec-preview"><img id="rec-preview-img" src=""></div>
@@ -707,7 +713,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     </div>
   </div>
   <div class="btn-save-wrap">
-    <button class="btn-save" onclick="saveEntry('reception')">ENREGISTRER</button>
+    <button type="button" class="btn-save" onclick="saveEntry('reception')">ENREGISTRER</button>
   </div>
 </div>
 
@@ -719,7 +725,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
 
 <div id="screen-heures" class="screen">
   <div class="form-header">
-    <button class="btn-back" onclick="goBack()">←</button>
+    <button type="button" class="btn-back" onclick="goBack()">←</button>
     <div class="form-header-title">⏱️ Heures / Présence</div>
   </div>
   <div class="form-body">
@@ -730,7 +736,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <div class="form-group">
       <div class="form-label">Poste / Rôle</div>
       <select class="form-select" id="heure-poste">
-        <option value="">— Choisir —</option>
+        <option value="">-- Choisir --</option>
         <option>Chef cuisinier</option>
         <option>Cuisinier</option>
         <option>Commis de cuisine</option>
@@ -758,7 +764,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     </div>
   </div>
   <div class="btn-save-wrap">
-    <button class="btn-save" onclick="saveEntry('heures')">ENREGISTRER</button>
+    <button type="button" class="btn-save" onclick="saveEntry('heures')">ENREGISTRER</button>
   </div>
 </div>
 
@@ -770,7 +776,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
 
 <div id="screen-haccp" class="screen">
   <div class="form-header">
-    <button class="btn-back" onclick="goBack()">←</button>
+    <button type="button" class="btn-back" onclick="goBack()">←</button>
     <div class="form-header-title">🔍 Inspection HACCP</div>
   </div>
 
@@ -778,7 +784,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <div style="font-size:11px;color:var(--gris)">Tap sur chaque point pour changer le statut</div>
     <div class="score-ring-wrap" style="padding:0">
       <div class="score-circle" id="haccp-score-circle">
-        <div class="score-num" id="haccp-score-num">—</div>
+        <div class="score-num" id="haccp-score-num">--</div>
         <div class="score-label">/100</div>
       </div>
     </div>
@@ -787,7 +793,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   <div id="haccp-checklist" style="padding-bottom:80px"></div>
 
   <div class="btn-save-wrap">
-    <button class="btn-save" onclick="saveEntry('haccp')">GÉNÉRER RAPPORT</button>
+    <button type="button" class="btn-save" onclick="saveEntry('haccp')">GÉNÉRER RAPPORT</button>
   </div>
 </div>
 
@@ -801,7 +807,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
 
 <div id="screen-formation" class="screen">
   <div class="form-header">
-    <button class="btn-back" onclick="goBack()">←</button>
+    <button type="button" class="btn-back" onclick="goBack()">←</button>
     <div class="form-header-title">🎓 Formation</div>
   </div>
   <div style="padding:16px 0 80px">
@@ -809,7 +815,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
     <div class="formation-card" onclick="openModule(0)">
       <div class="f-icon">🦠</div>
       <div class="f-info">
-        <div class="f-title">HACCP — Principes fondamentaux</div>
+        <div class="f-title">HACCP -- Principes fondamentaux</div>
         <div class="f-sub">4 leçons · 3 quiz · Niveau 1</div>
       </div>
       <div class="f-badge" id="badge-mod-0">À faire</div>
@@ -861,7 +867,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
 
 <div id="screen-module" class="screen">
   <div class="form-header">
-    <button class="btn-back" onclick="showScreen('formation');refreshBadges()">←</button>
+    <button type="button" class="btn-back" onclick="showScreen('formation');refreshBadges()">←</button>
     <div class="form-header-title" id="module-header-title">Module</div>
     <div style="font-size:11px;color:var(--or);margin-left:auto" id="module-progress-label">1/7</div>
   </div>
@@ -893,7 +899,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
   <!-- Bouton suivant -->
 
   <div class="btn-save-wrap">
-    <button class="btn-save" id="module-next-btn" onclick="moduleNext()">SUIVANT →</button>
+    <button type="button" class="btn-save" id="module-next-btn" onclick="moduleNext()">SUIVANT →</button>
   </div>
 </div>
 
@@ -962,7 +968,7 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
         <div class="form-label">URL Apps Script</div>
         <input class="form-input" id="sheets-url" type="url" placeholder="https://script.google.com/macros/s/…/exec">
       </div>
-      <button class="btn-save" style="margin-top:10px;padding:12px" onclick="saveSettings()">SAUVEGARDER</button>
+      <button type="button" class="btn-save" style="margin-top:10px;padding:12px" onclick="saveSettings()">SAUVEGARDER</button>
     </div>
     <div class="settings-section">
       <div class="settings-title">Établissement</div>
@@ -974,11 +980,11 @@ display: flex; align-items: center; gap: 12px; cursor: pointer;
         <div class="form-label">No. Permis MAPAQ</div>
         <input class="form-input" id="set-permis" type="text" placeholder="Numéro de permis">
       </div>
-      <button class="btn-save" style="margin-top:10px;padding:12px" onclick="saveSettings()">SAUVEGARDER</button>
+      <button type="button" class="btn-save" style="margin-top:10px;padding:12px" onclick="saveSettings()">SAUVEGARDER</button>
     </div>
     <div class="settings-section">
       <div class="settings-title">Données locales</div>
-      <button class="btn-save" style="margin-top:0;padding:12px;background:var(--rouge-pale);color:var(--rouge);box-shadow:none;border:1px solid var(--rouge)" onclick="clearData()">EFFACER TOUTES LES DONNÉES</button>
+      <button type="button" class="btn-save" style="margin-top:0;padding:12px;background:var(--rouge-pale);color:var(--rouge);box-shadow:none;border:1px solid var(--rouge)" onclick="clearData()">EFFACER TOUTES LES DONNÉES</button>
     </div>
     <div style="padding:20px 18px;text-align:center;color:var(--gris);font-size:11px">
       Verdict Inspection AI · v2.0<br>verdictinspection-ai.com
@@ -1148,19 +1154,19 @@ function checkTemp() {
 
   let status = 'ok', msg = '';
   if (zone.includes('Réfrigér') || zone.includes('positive')) {
-    if (val > 4) { status='danger'; msg='⚠️ DANGER — Doit être ≤ 4°C (actuel: '+val+'°C)'; }
-    else { status='ok'; msg='✅ Conforme — Température acceptable'; }
+    if (val > 4) { status='danger'; msg='⚠️ DANGER -- Doit être ≤ 4°C (actuel: '+val+'°C)'; }
+    else { status='ok'; msg='✅ Conforme -- Température acceptable'; }
   } else if (zone.includes('Congél') || zone.includes('négative')) {
-    if (val > -18) { status='danger'; msg='⚠️ DANGER — Doit être ≤ -18°C (actuel: '+val+'°C)'; }
+    if (val > -18) { status='danger'; msg='⚠️ DANGER -- Doit être ≤ -18°C (actuel: '+val+'°C)'; }
     else { status='ok'; msg='✅ Conforme'; }
   } else if (zone.includes('Volaille')) {
-    if (val < 85) { status='danger'; msg='⚠️ DANGER — Doit être ≥ 85°C (actuel: '+val+'°C)'; }
+    if (val < 85) { status='danger'; msg='⚠️ DANGER -- Doit être ≥ 85°C (actuel: '+val+'°C)'; }
     else { status='ok'; msg='✅ Cuisson conforme'; }
   } else if (zone.includes('Viande')) {
-    if (val < 74) { status='danger'; msg='⚠️ DANGER — Doit être ≥ 74°C (actuel: '+val+'°C)'; }
+    if (val < 74) { status='danger'; msg='⚠️ DANGER -- Doit être ≥ 74°C (actuel: '+val+'°C)'; }
     else { status='ok'; msg='✅ Cuisson conforme'; }
   } else if (zone.includes('chaud') || zone.includes('Maintien')) {
-    if (val < 60) { status='warn'; msg='⚠️ ATTENTION — Doit être ≥ 60°C'; }
+    if (val < 60) { status='warn'; msg='⚠️ ATTENTION -- Doit être ≥ 60°C'; }
     else { status='ok'; msg='✅ Conforme'; }
   }
   alertEl.className = 'temp-alert show ' + status;
@@ -1174,9 +1180,9 @@ function checkRecTemp() {
   const cat = document.getElementById('rec-categorie').value;
   let status = 'ok', msg = '✅ Température de réception conforme';
   if (cat.includes('Viande') || cat.includes('Volaille') || cat.includes('Poisson')) {
-    if (val > 4) { status='danger'; msg='⚠️ REFUS REQUIS — Produit réfrigéré > 4°C'; }
+    if (val > 4) { status='danger'; msg='⚠️ REFUS REQUIS -- Produit réfrigéré > 4°C'; }
   } else if (cat.includes('Surgelés')) {
-    if (val > -12) { status='danger'; msg='⚠️ REFUS REQUIS — Surgelé partiellement décongelé'; }
+    if (val > -12) { status='danger'; msg='⚠️ REFUS REQUIS -- Surgelé partiellement décongelé'; }
   }
   alertEl.className = 'temp-alert show ' + status;
   alertEl.textContent = msg;
@@ -1246,7 +1252,7 @@ function updateHaccpScore() {
   const score = total > 0 ? Math.round(ok / total * 100) : null;
   const el = document.getElementById('haccp-score-num');
   const circle = document.getElementById('haccp-score-circle');
-  if (score === null) { el.textContent = '—'; circle.className = 'score-circle'; return; }
+  if (score === null) { el.textContent = '--'; circle.className = 'score-circle'; return; }
   el.textContent = score;
   circle.className = 'score-circle ' + (score < 50 ? 'score-rouge' : score < 70 ? 'score-jaune' : 'score-vert');
 }
@@ -1301,7 +1307,7 @@ function saveEntry(type) {
     entry.temperature = document.getElementById('rec-temp').value;
     entry.emballage = radioState['rec'] || 'non_selectionne';
     entry.commentaire = document.getElementById('rec-comment').value;
-    entry.desc = (four || 'Livraison') + ' — ' + cat;
+    entry.desc = (four || 'Livraison') + ' -- ' + cat;
     entry.status = entry.emballage === 'oui' ? 'ok' : 'nc';
     resetForm('reception');
   }
@@ -1312,7 +1318,7 @@ function saveEntry(type) {
     entry.typeHeure = heureType;
     entry.heureSaisie = document.getElementById('heure-time').value;
     entry.commentaire = document.getElementById('heure-comment').value;
-    entry.desc = (heureType === 'arrive' ? 'Arrivée' : 'Départ') + (poste ? ' — ' + poste : '');
+    entry.desc = (heureType === 'arrive' ? 'Arrivée' : 'Départ') + (poste ? ' -- ' + poste : '');
     entry.status = 'ok';
     resetForm('heures');
   }
@@ -1328,7 +1334,7 @@ function saveEntry(type) {
     const score = total > 0 ? Math.round(ok/total*100) : 0;
     entry.score = score;
     entry.haccpState = {...haccpState};
-    entry.desc = 'Score: ' + score + '/100 — ' + nc + ' NC détectées';
+    entry.desc = 'Score: ' + score + '/100 -- ' + nc + ' NC détectées';
     entry.status = score >= 70 ? 'ok' : score >= 50 ? 'warn' : 'nc';
     document.getElementById('mod-haccp').textContent = score + '%';
   }
@@ -1493,7 +1499,7 @@ function clearData() {
 // ── DONNÉES MODULES FORMATION ────────────────────────────
 const MODULES = [
   {
-    titre: "HACCP — Principes fondamentaux", icon: "🦠",
+    titre: "HACCP -- Principes fondamentaux", icon: "🦠",
     steps: [
       { type:'lecon', icon:'🦠', titre:'Qu\'est-ce que le HACCP?',
         corps:`Le <strong>HACCP</strong> (Hazard Analysis Critical Control Points) est un système préventif de sécurité alimentaire reconnu mondialement.<br><br>
@@ -1508,20 +1514,20 @@ const MODULES = [
       { type:'lecon', icon:'🎯', titre:'Les Points de Contrôle Critiques (CCP)',
         corps:`Un <strong>CCP (Critical Control Point)</strong> est une étape du processus où une mesure de contrôle peut être appliquée pour prévenir ou éliminer un danger alimentaire.<br><br>
         <strong>Exemples de CCP en cuisine :</strong><br>
-        • Cuisson des viandes (température interne)<br>
-        • Refroidissement rapide des préparations<br>
-        • Réception des marchandises réfrigérées<br>
-        • Maintien en température chaude (service)<br><br>
+        - Cuisson des viandes (température interne)<br>
+        - Refroidissement rapide des préparations<br>
+        - Réception des marchandises réfrigérées<br>
+        - Maintien en température chaude (service)<br><br>
         Chaque CCP doit avoir une <strong>limite critique mesurable</strong> (ex: ≥74°C pour le bœuf haché).`,
         cle:'💡 Si un CCP est dévié → action corrective IMMÉDIATE obligatoire' },
       { type:'lecon', icon:'📝', titre:'Documentation et traçabilité',
         corps:`La <strong>documentation HACCP</strong> est votre preuve de conformité lors d'une inspection MAPAQ.<br><br>
         <strong>Documents obligatoires :</strong><br>
-        • Registres de températures (quotidiens)<br>
-        • Fiches de nettoyage et désinfection<br>
-        • Registres de réception des marchandises<br>
-        • Fiches de formation du personnel<br>
-        • Procédures correctives documentées<br><br>
+        - Registres de températures (quotidiens)<br>
+        - Fiches de nettoyage et désinfection<br>
+        - Registres de réception des marchandises<br>
+        - Fiches de formation du personnel<br>
+        - Procédures correctives documentées<br><br>
         <strong>Conservation :</strong> minimum <strong>1 an</strong> pour la plupart des registres MAPAQ.`,
         cle:'💡 Pas de documentation = pas de preuve = infraction MAPAQ' },
       { type:'quiz', question:'Que signifie l\'acronyme HACCP?',
@@ -1529,7 +1535,7 @@ const MODULES = [
         bonne:2, explication:'HACCP = Hazard Analysis Critical Control Points (Analyse des dangers et points critiques pour leur maîtrise).' },
       { type:'quiz', question:'Lequel est un danger BIOLOGIQUE?',
         options:['Un fragment de verre dans un plat','La bactérie Salmonella','Un résidu de produit nettoyant','Un os dans la viande'],
-        bonne:1, explication:'Salmonella est une bactérie — danger biologique. Verre et os = physique, nettoyant = chimique.' },
+        bonne:1, explication:'Salmonella est une bactérie -- danger biologique. Verre et os = physique, nettoyant = chimique.' },
       { type:'quiz', question:'Quelle est la durée minimale de conservation des registres MAPAQ?',
         options:['3 mois','6 mois','1 an','2 ans'],
         bonne:2, explication:'Les registres HACCP doivent être conservés au minimum 1 an selon les exigences MAPAQ.' },
@@ -1539,7 +1545,7 @@ const MODULES = [
     titre: "Contrôle des températures", icon: "🌡️",
     steps: [
       { type:'lecon', icon:'🌡️', titre:'La zone de danger thermique',
-        corps:`La <strong>zone de danger</strong> se situe entre <strong>4°C et 60°C</strong>. Dans cette plage, les bactéries se multiplient rapidement — certaines doublent toutes les 20 minutes!<br><br>
+        corps:`La <strong>zone de danger</strong> se situe entre <strong>4°C et 60°C</strong>. Dans cette plage, les bactéries se multiplient rapidement -- certaines doublent toutes les 20 minutes!<br><br>
         <strong>Règle des 2 heures :</strong> Un aliment ne doit pas rester dans la zone de danger plus de <strong>2 heures cumulées</strong>. Au-delà, il doit être jeté.<br><br>
         <strong>Températures clés MAPAQ :</strong><br>
         🔵 Réfrigération : ≤ 4°C<br>
@@ -1562,10 +1568,10 @@ const MODULES = [
         1. De 60°C à 21°C en <strong>maximum 2 heures</strong><br>
         2. De 21°C à 4°C en <strong>maximum 4 heures supplémentaires</strong><br><br>
         <strong>Techniques de refroidissement :</strong><br>
-        • Bain de glace et eau froide<br>
-        • Diviser en petites portions<br>
-        • Cellule de refroidissement rapide<br>
-        • Ne jamais couvrir avant refroidissement complet`,
+        - Bain de glace et eau froide<br>
+        - Diviser en petites portions<br>
+        - Cellule de refroidissement rapide<br>
+        - Ne jamais couvrir avant refroidissement complet`,
         cle:'💡 Total : 60°C → 4°C en maximum 6 heures. Sinon JETER.' },
       { type:'lecon', icon:'📦', titre:'Températures à la réception',
         corps:`La réception des marchandises est un point de contrôle critique. Tout produit hors norme doit être <strong>refusé</strong>.<br><br>
@@ -1582,16 +1588,16 @@ const MODULES = [
       { type:'quiz', question:'Combien de temps maximum un aliment peut-il rester dans la zone de danger?',
         options:['30 minutes','1 heure','2 heures','4 heures'],
         bonne:2, explication:'La règle des 2 heures : au-delà de 2 heures cumulées entre 4°C et 60°C, l\'aliment doit être jeté.' },
-      { type:'quiz', question:'Un surgelé livré à -10°C — que faites-vous?',
+      { type:'quiz', question:'Un surgelé livré à -10°C -- que faites-vous?',
         options:['Vous l\'acceptez, il fait encore froid','Vous le mettez immédiatement au congélateur','Vous refusez la livraison et documentez le refus','Vous vérifiez l\'odeur avant de décider'],
-        bonne:2, explication:'Un surgelé > -12°C indique une décongélation partielle. REFUS obligatoire — risque bactérien élevé.' },
+        bonne:2, explication:'Un surgelé > -12°C indique une décongélation partielle. REFUS obligatoire -- risque bactérien élevé.' },
     ]
   },
   {
     titre: "Nettoyage et désinfection", icon: "🧴",
     steps: [
       { type:'lecon', icon:'🧹', titre:'Nettoyage vs Désinfection',
-        corps:`Ces deux étapes sont souvent confondues — mais elles sont <strong>distinctes et complémentaires</strong>.<br><br>
+        corps:`Ces deux étapes sont souvent confondues -- mais elles sont <strong>distinctes et complémentaires</strong>.<br><br>
         <strong>🧹 Nettoyage :</strong><br>
         Élimination des saletés visibles, graisses et résidus alimentaires. Utilise eau + détergent. Rend la surface propre à l'œil, mais des bactéries restent présentes.<br><br>
         <strong>🧴 Désinfection :</strong><br>
@@ -1600,23 +1606,23 @@ const MODULES = [
         cle:'💡 Nettoyer sans désinfecter = surface visuellement propre mais bactériologiquement dangereuse' },
       { type:'lecon', icon:'📅', titre:'Fréquences de nettoyage HACCP',
         corps:`<strong>Après chaque usage (ou toutes les 4h) :</strong><br>
-        • Planches à découper<br>
-        • Ustensiles de cuisine<br>
-        • Surfaces de travail en contact avec aliments<br><br>
+        - Planches à découper<br>
+        - Ustensiles de cuisine<br>
+        - Surfaces de travail en contact avec aliments<br><br>
         <strong>Quotidien (fin de service) :</strong><br>
-        • Équipements (friteuse, plancha, four)<br>
-        • Planchers et drains<br>
-        • Poignées de portes et réfrigérateurs<br><br>
+        - Équipements (friteuse, plancha, four)<br>
+        - Planchers et drains<br>
+        - Poignées de portes et réfrigérateurs<br><br>
         <strong>Hebdomadaire :</strong><br>
-        • Hottes et filtres<br>
-        • Réfrigérateurs (intérieur complet)<br>
-        • Murs et plafonds cuisine<br><br>
+        - Hottes et filtres<br>
+        - Réfrigérateurs (intérieur complet)<br>
+        - Murs et plafonds cuisine<br><br>
         <strong>Mensuel :</strong><br>
-        • Congélateurs<br>
-        • Zone de réception`,
+        - Congélateurs<br>
+        - Zone de réception`,
         cle:'💡 Un calendrier de nettoyage affiché = preuve de conformité MAPAQ' },
       { type:'lecon', icon:'🎨', titre:'Code couleur des planches à découper',
-        corps:`Le code couleur prévient la contamination croisée. Au Québec, les planches en <strong>bois sont INTERDITES</strong> — synthétique obligatoire.<br><br>
+        corps:`Le code couleur prévient la contamination croisée. Au Québec, les planches en <strong>bois sont INTERDITES</strong> -- synthétique obligatoire.<br><br>
         🔴 <strong>Rouge</strong> : Viandes crues (bœuf, porc, agneau)<br>
         🟡 <strong>Jaune</strong> : Volailles crues<br>
         🔵 <strong>Bleu</strong> : Poissons et fruits de mer crus<br>
@@ -1628,9 +1634,9 @@ const MODULES = [
       { type:'lecon', icon:'☣️', titre:'Produits désinfectants approuvés',
         corps:`Tous les désinfectants utilisés en cuisine doivent être <strong>approuvés Santé Canada</strong> pour contact alimentaire.<br><br>
         <strong>Types courants :</strong><br>
-        • <strong>Chlore (eau de Javel) :</strong> 200 ppm pour surfaces alimentaires. Efficace, peu coûteux. Rincer après contact.<br>
-        • <strong>Ammonium quaternaire (QUAT) :</strong> 200-400 ppm. Pas de rinçage requis si concentration correcte.<br>
-        • <strong>Acide peracétique :</strong> Pour équipements sensibles, sans rinçage.<br><br>
+        - <strong>Chlore (eau de Javel) :</strong> 200 ppm pour surfaces alimentaires. Efficace, peu coûteux. Rincer après contact.<br>
+        - <strong>Ammonium quaternaire (QUAT) :</strong> 200-400 ppm. Pas de rinçage requis si concentration correcte.<br>
+        - <strong>Acide peracétique :</strong> Pour équipements sensibles, sans rinçage.<br><br>
         ⚠️ Vérifier la concentration avec des <strong>bandelettes de test</strong>. Une solution trop diluée = inefficace. Trop concentrée = résidu chimique dangereux.`,
         cle:'💡 Toujours respecter le dosage du fabricant et vérifier avec bandelettes.' },
       { type:'quiz', question:'Quel est l\'ordre correct pour désinfecter une surface?',
@@ -1640,7 +1646,7 @@ const MODULES = [
         options:['Rouge','Jaune','Bleu','Vert'],
         bonne:1, explication:'Jaune = volaille crue. Rouge = viandes rouges crues. Bleu = poissons. Vert = légumes.' },
       { type:'quiz', question:'Les planches en bois sont-elles permises en cuisine professionnelle au Québec?',
-        options:['Oui, si bien nettoyées','Oui, pour les légumes seulement','Non, interdites — synthétique obligatoire','Oui, si elles ont moins de 2 ans'],
+        options:['Oui, si bien nettoyées','Oui, pour les légumes seulement','Non, interdites -- synthétique obligatoire','Oui, si elles ont moins de 2 ans'],
         bonne:2, explication:'Les planches en bois sont INTERDITES par le MAPAQ en cuisine professionnelle car elles absorbent les bactéries et ne peuvent être correctement désinfectées.' },
     ]
   },
@@ -1651,39 +1657,39 @@ const MODULES = [
         corps:`Au Québec, la sécurité alimentaire est encadrée par la <strong>Loi sur les produits alimentaires (L.R.Q., c. P-29)</strong> et ses règlements d'application.<br><br>
         <strong>Le MAPAQ (Ministère de l'Agriculture, des Pêcheries et de l'Alimentation du Québec)</strong> est l'organisme responsable des inspections et de l'application de la loi.<br><br>
         <strong>Tout établissement alimentaire doit :</strong><br>
-        • Détenir un <strong>permis MAPAQ</strong> valide<br>
-        • Avoir un responsable certifié <strong>Gestionnaire d'établissement alimentaire</strong><br>
-        • Respecter les normes d'hygiène et salubrité<br>
-        • Se soumettre aux inspections sans préavis`,
+        - Détenir un <strong>permis MAPAQ</strong> valide<br>
+        - Avoir un responsable certifié <strong>Gestionnaire d'établissement alimentaire</strong><br>
+        - Respecter les normes d'hygiène et salubrité<br>
+        - Se soumettre aux inspections sans préavis`,
         cle:'💡 Opérer sans permis MAPAQ valide = fermeture immédiate et amende de 2 000$ à 750 000$' },
       { type:'lecon', icon:'🔍', titre:'Le processus d\'inspection MAPAQ',
         corps:`Les inspecteurs MAPAQ peuvent se présenter <strong>sans préavis</strong> à tout moment pendant les heures d'ouverture.<br><br>
         <strong>Ce qu'ils vérifient :</strong><br>
-        • Températures (réfrig., cuisson, maintien)<br>
-        • Hygiène du personnel<br>
-        • Nettoyage et désinfection<br>
-        • Gestion des matières résiduelles<br>
-        • Lutte contre les nuisibles<br>
-        • Documentation HACCP<br>
-        • Permis et certifications<br><br>
+        - Températures (réfrig., cuisson, maintien)<br>
+        - Hygiène du personnel<br>
+        - Nettoyage et désinfection<br>
+        - Gestion des matières résiduelles<br>
+        - Lutte contre les nuisibles<br>
+        - Documentation HACCP<br>
+        - Permis et certifications<br><br>
         <strong>Résultats possibles :</strong><br>
         ✅ Conforme | ⚠️ Avis de correction | 🔴 Fermeture administrative`,
         cle:'💡 Verdict Inspection AI prépare votre établissement à passer l\'inspection haut la main!' },
       { type:'lecon', icon:'⚖️', titre:'Les infractions et pénalités',
         corps:`<strong>Infractions mineures (avis verbal/écrit) :</strong><br>
-        • Nettoyage incomplet de certaines zones<br>
-        • Registres partiellement complétés<br>
-        • Étiquetage incomplet<br><br>
+        - Nettoyage incomplet de certaines zones<br>
+        - Registres partiellement complétés<br>
+        - Étiquetage incomplet<br><br>
         <strong>Infractions majeures (ordonnance de correction) :</strong><br>
-        • Températures non conformes<br>
-        • Manque d'hygiène du personnel<br>
-        • Planches en bois utilisées<br>
-        • Absence de registres HACCP<br><br>
+        - Températures non conformes<br>
+        - Manque d'hygiène du personnel<br>
+        - Planches en bois utilisées<br>
+        - Absence de registres HACCP<br><br>
         <strong>Infractions critiques (fermeture immédiate) :</strong><br>
-        • Infestation de nuisibles active<br>
-        • Contamination croisée sévère<br>
-        • Absence totale de contrôle HACCP<br>
-        • Amende : jusqu'à <strong>750 000$</strong> pour une entreprise`,
+        - Infestation de nuisibles active<br>
+        - Contamination croisée sévère<br>
+        - Absence totale de contrôle HACCP<br>
+        - Amende : jusqu'à <strong>750 000$</strong> pour une entreprise`,
         cle:'💡 Une fermeture administrative = perte de revenus + réputation détruite' },
       { type:'lecon', icon:'🏆', titre:'Certification Gestionnaire MAPAQ',
         corps:`Tout établissement alimentaire au Québec doit avoir au moins une personne détenant la certification <strong>Gestionnaire d'établissement alimentaire</strong>.<br><br>
@@ -1692,12 +1698,12 @@ const MODULES = [
         2. Réussir l'examen MAPAQ (≥ 70%)<br>
         3. Renouveler aux 5 ans<br><br>
         <strong>Contenu de la formation :</strong><br>
-        • Microbiologie alimentaire de base<br>
-        • Principes HACCP<br>
-        • Nettoyage et désinfection<br>
-        • Réception et entreposage<br>
-        • Hygiène du personnel<br>
-        • Exigences réglementaires MAPAQ`,
+        - Microbiologie alimentaire de base<br>
+        - Principes HACCP<br>
+        - Nettoyage et désinfection<br>
+        - Réception et entreposage<br>
+        - Hygiène du personnel<br>
+        - Exigences réglementaires MAPAQ`,
         cle:'💡 Sans gestionnaire certifié = infraction = fermeture possible' },
       { type:'quiz', question:'Qui peut effectuer une inspection MAPAQ?',
         options:['Seulement avec rendez-vous 48h à l\'avance','Sans préavis, à tout moment pendant les heures d\'ouverture','Seulement une fois par an','Seulement si une plainte a été déposée'],
@@ -1713,7 +1719,7 @@ const MODULES = [
   {
     titre: "Hygiène personnelle", icon: "🤲",
     steps: [
-      { type:'lecon', icon:'🤲', titre:'Le lavage des mains — technique correcte',
+      { type:'lecon', icon:'🤲', titre:'Le lavage des mains -- technique correcte',
         corps:`Le lavage des mains est la mesure préventive <strong>la plus efficace</strong> contre la contamination alimentaire.<br><br>
         <strong>Technique en 6 étapes (20 secondes minimum) :</strong><br>
         1. Mouiller les mains à l'eau tiède<br>
@@ -1723,10 +1729,10 @@ const MODULES = [
         5. Sécher avec papier à usage unique<br>
         6. Fermer le robinet avec le papier<br><br>
         <strong>Moments obligatoires :</strong><br>
-        • Avant de commencer le travail<br>
-        • Après avoir touché des aliments crus<br>
-        • Après les toilettes • Après avoir toussé/éternué<br>
-        • Après manipulation de déchets`,
+        - Avant de commencer le travail<br>
+        - Après avoir touché des aliments crus<br>
+        - Après les toilettes - Après avoir toussé/éternué<br>
+        - Après manipulation de déchets`,
         cle:'💡 20 secondes = chanter Happy Birthday 2 fois. Les gants ne remplacent PAS le lavage des mains!' },
       { type:'lecon', icon:'👨‍🍳', titre:'Tenue de travail réglementaire',
         corps:`La tenue de travail est une barrière physique contre la contamination.<br><br>
@@ -1750,25 +1756,25 @@ const MODULES = [
         🚫 Fièvre typhoïde diagnostiquée<br>
         🚫 Infection à E. coli O157:H7, Salmonella typhi, Norovirus<br><br>
         <strong>Restriction (pas de contact direct avec aliments) :</strong><br>
-        ⚠️ Rhume/toux/grippe — port du masque<br>
-        ⚠️ Plaie infectée sur les mains — pansement + gant<br><br>
+        ⚠️ Rhume/toux/grippe -- port du masque<br>
+        ⚠️ Plaie infectée sur les mains -- pansement + gant<br><br>
         Le responsable a l'<strong>obligation légale</strong> d'exclure un employé malade.`,
         cle:'💡 Norovirus = 1 employé malade peut contaminer des centaines de clients via les aliments' },
       { type:'lecon', icon:'🩹', titre:'Blessures et plaies en cuisine',
         corps:`Les blessures sont fréquentes en cuisine. Une mauvaise gestion crée un risque de contamination.<br><br>
         <strong>Protocole obligatoire :</strong><br>
         1. Nettoyer et désinfecter la plaie immédiatement<br>
-        2. Appliquer un pansement <strong>de couleur vive (bleu de préférence)</strong> — détectable dans les aliments<br>
+        2. Appliquer un pansement <strong>de couleur vive (bleu de préférence)</strong> -- détectable dans les aliments<br>
         3. Porter un gant imperméable par-dessus<br>
         4. Changer pansement + gant toutes les 2 heures ou si mouillé<br><br>
         <strong>⚠️ Si la blessure est profonde :</strong><br>
-        • Retirer l'employé de la manipulation des aliments<br>
-        • Assigner à des tâches sans contact alimentaire<br><br>
+        - Retirer l'employé de la manipulation des aliments<br>
+        - Assigner à des tâches sans contact alimentaire<br><br>
         Les pansements bleus sont recommandés car détectables par les détecteurs de métaux.`,
         cle:'💡 Pansement bleu = recommandation HACCP internationale. Jamais de pansement couleur chair!' },
       { type:'quiz', question:'Combien de temps minimum doit durer le lavage des mains?',
         options:['5 secondes','10 secondes','20 secondes','1 minute'],
-        bonne:2, explication:'20 secondes minimum — soit le temps de chanter Happy Birthday 2 fois. En dessous, les bactéries ne sont pas éliminées efficacement.' },
+        bonne:2, explication:'20 secondes minimum -- soit le temps de chanter Happy Birthday 2 fois. En dessous, les bactéries ne sont pas éliminées efficacement.' },
       { type:'quiz', question:'Un employé a eu de la diarrhée hier soir. Peut-il travailler aujourd\'hui?',
         options:['Oui, s\'il se lave bien les mains','Oui, s\'il porte des gants','Non, il doit rester absent 48h après le dernier symptôme','Non, il doit rester absent 24h'],
         bonne:2, explication:'L\'exclusion est obligatoire pour minimum 48 heures après le dernier épisode de diarrhée ou vomissements.' },
@@ -1789,17 +1795,17 @@ const MODULES = [
         🫘 Soja | 🌻 Graines de sésame<br>
         🌱 Moutarde | 🥜 Graines de tournesol<br>
         🌿 Sulfites (>10 ppm) | 📦 Triticale<br><br>
-        Une réaction allergique grave peut mener à l'<strong>anaphylaxie</strong> — urgence médicale pouvant être <strong>fatale en minutes</strong>.`,
+        Une réaction allergique grave peut mener à l'<strong>anaphylaxie</strong> -- urgence médicale pouvant être <strong>fatale en minutes</strong>.`,
         cle:'💡 "Je suis juste un peu allergique" n\'existe pas. Chaque allergie est potentiellement mortelle.' },
       { type:'lecon', icon:'🔀', titre:'La contamination croisée par allergènes',
         corps:`La contamination croisée par allergènes peut survenir même si l'aliment allergène n'est pas dans la recette.<br><br>
         <strong>Sources de contamination croisée :</strong><br>
-        • Surfaces de travail partagées<br>
-        • Ustensiles non lavés entre préparations<br>
-        • Huile de friture partagée (ex: friture de poisson puis frites)<br>
-        • Mains de l'employé<br>
-        • Éclaboussures lors de la cuisson<br>
-        • Emballages mal étiquetés<br><br>
+        - Surfaces de travail partagées<br>
+        - Ustensiles non lavés entre préparations<br>
+        - Huile de friture partagée (ex: friture de poisson puis frites)<br>
+        - Mains de l'employé<br>
+        - Éclaboussures lors de la cuisson<br>
+        - Emballages mal étiquetés<br><br>
         <strong>Protocole pour client allergique :</strong><br>
         1. Informer le chef immédiatement<br>
         2. Utiliser ustensiles et surfaces propres<br>
@@ -1810,23 +1816,23 @@ const MODULES = [
       { type:'lecon', icon:'📢', titre:'Obligations d\'information au client',
         corps:`En restauration au Québec, vous avez des <strong>obligations légales</strong> d'informer les clients sur les allergènes.<br><br>
         <strong>Obligations :</strong><br>
-        • Informer sur demande de la présence d'allergènes<br>
-        • Former le personnel à reconnaître les allergènes<br>
-        • Pouvoir identifier tous les ingrédients de chaque plat<br>
-        • Signaler "contient des traces possibles de..." si contamination croisée possible<br><br>
+        - Informer sur demande de la présence d'allergènes<br>
+        - Former le personnel à reconnaître les allergènes<br>
+        - Pouvoir identifier tous les ingrédients de chaque plat<br>
+        - Signaler "contient des traces possibles de..." si contamination croisée possible<br><br>
         <strong>Bonnes pratiques :</strong><br>
         ✅ Fiche allergènes par plat affichée en cuisine<br>
         ✅ Mention "Avisez votre serveur de toute allergie" sur le menu<br>
         ✅ Formation allergènes pour tout le personnel (minimum annuelle)<br>
         ✅ Stylo épinéphrine (EpiPen) disponible en cas d'urgence`,
-        cle:'💡 Ne jamais dire "Je pense que..." — vérifier TOUJOURS les ingrédients exacts.' },
-      { type:'lecon', icon:'🚨', titre:'Réaction allergique — protocole d\'urgence',
+        cle:'💡 Ne jamais dire "Je pense que..." -- vérifier TOUJOURS les ingrédients exacts.' },
+      { type:'lecon', icon:'🚨', titre:'Réaction allergique -- protocole d\'urgence',
         corps:`Si un client présente une réaction allergique, agissez IMMÉDIATEMENT.<br><br>
         <strong>Signes d'anaphylaxie :</strong><br>
-        • Urticaire, rougeurs, gonflement du visage<br>
-        • Difficulté à respirer, sifflement<br>
-        • Chute de pression, étourdissements<br>
-        • Vomissements, crampes intenses<br><br>
+        - Urticaire, rougeurs, gonflement du visage<br>
+        - Difficulté à respirer, sifflement<br>
+        - Chute de pression, étourdissements<br>
+        - Vomissements, crampes intenses<br><br>
         <strong>Protocole d'urgence :</strong><br>
         1. 🚨 Appeler le 911 IMMÉDIATEMENT<br>
         2. 💉 Administrer l'EpiPen si disponible et autorisé<br>
@@ -1840,10 +1846,10 @@ const MODULES = [
         bonne:2, explication:'Santé Canada reconnaît 14 allergènes prioritaires qui doivent être déclarés obligatoirement sur les étiquettes alimentaires.' },
       { type:'quiz', question:'Un client allergique aux arachides vous demande si un plat en contient. Que répondez-vous?',
         options:['"Je pense que non, mais je ne suis pas sûr"','Vous vérifiez TOUS les ingrédients exacts avant de répondre','Vous lui dites que la cuisine est sécuritaire en général','Vous lui suggérez de choisir un autre restaurant'],
-        bonne:1, explication:'Vous devez TOUJOURS vérifier les ingrédients exacts. "Je pense" n\'est pas acceptable — une réponse incorrecte peut être mortelle.' },
+        bonne:1, explication:'Vous devez TOUJOURS vérifier les ingrédients exacts. "Je pense" n\'est pas acceptable -- une réponse incorrecte peut être mortelle.' },
       { type:'quiz', question:'Quel numéro appeler en cas de réaction anaphylactique?',
         options:['811','411','311','911'],
-        bonne:3, explication:'911 — l\'anaphylaxie est une urgence médicale pouvant être fatale. Appeler immédiatement, même si le client dit que "ça va aller".' },
+        bonne:3, explication:'911 -- l\'anaphylaxie est une urgence médicale pouvant être fatale. Appeler immédiatement, même si le client dit que "ça va aller".' },
     ]
   },
 ];
@@ -1885,7 +1891,7 @@ function renderStep() {
   const total = mod.steps.length;
 
   // Header
-  document.getElementById('module-header-title').textContent = mod.icon + ' ' + mod.titre.split('—')[0].trim();
+  document.getElementById('module-header-title').textContent = mod.icon + ' ' + mod.titre.split('--')[0].trim();
   document.getElementById('module-progress-label').textContent = (currentStep + 1) + '/' + total;
   document.getElementById('module-progress-bar').style.width = ((currentStep + 1) / total * 100) + '%';
 
@@ -1987,10 +1993,16 @@ function moduleNext() {
   }
 }
 
-// Init badges — appelé depuis window.onload
+// Init badges -- appelé depuis window.onload
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show' + (type ? ' '+type : '');
+  setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
   setTimeout(() => { t.className = 'toast'; }, 2800);
 }
 </script>
