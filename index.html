@@ -1065,6 +1065,7 @@ window.onload = function() {
   }
   buildHaccpChecklist();
   updateDashboardDate();
+  refreshBadges();
 };
 
 function updateDashboardDate() {
@@ -1854,8 +1855,7 @@ let quizAnswered = false;
 let moduleCompleted = {};
 
 // Charger état sauvegardé
-const savedModules = localStorage.getItem('verdict_modules');
-if (savedModules) moduleCompleted = JSON.parse(savedModules);
+try { const savedModules = localStorage.getItem('verdict_modules'); if (savedModules) moduleCompleted = JSON.parse(savedModules); } catch(e) {}
 
 function refreshBadges() {
   MODULES.forEach((m, i) => {
@@ -1987,8 +1987,7 @@ function moduleNext() {
   }
 }
 
-// Init badges au chargement
-setTimeout(refreshBadges, 100);
+// Init badges — appelé depuis window.onload
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show' + (type ? ' '+type : '');
