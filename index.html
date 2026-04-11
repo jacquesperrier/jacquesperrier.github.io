@@ -225,7 +225,7 @@ input[type=“file”]{display:none;}
       <button type="button" class="btn-deconnect" onclick="doLogout()">&times;</button>
     </div>
   </div>
-  <div class="dash-welcome">
+  <div class="dash-welcome" style="background:#0A0A0A!important">
     <div class="greeting">Aujourd'hui</div>
     <div class="user-name" id="dash-username">Bienvenue</div>
   </div>
@@ -235,14 +235,14 @@ input[type=“file”]{display:none;}
     <div class="stat-cell"><span class="stat-icon">&#128230;</span><span class="stat-label">R&eacute;ception</span><span class="stat-val" id="stat-reception">0</span></div>
     <div class="stat-cell"><span class="stat-icon">&#9201;&#65039;</span><span class="stat-label">Heures</span><span class="stat-val" id="stat-heures">0</span></div>
   </div>
-  <div class="quick-actions">
+  <div class="quick-actions" style="background:#0A0A0A">
     <button type="button" class="btn-quick" onclick="openForm('nettoyage')">+ Nettoyage</button>
     <button type="button" class="btn-quick" onclick="openForm('temperature')">+ Temp&eacute;rature</button>
     <button type="button" class="btn-quick" onclick="openForm('reception')">+ R&eacute;ception</button>
     <button type="button" class="btn-quick" onclick="openForm('heures')">+ Heures</button>
     <button type="button" class="btn-quick" onclick="openForm('haccp')">+ Inspection</button>
   </div>
-  <div class="modules-title">VUE D'ENSEMBLE</div>
+  <div class="modules-title" style="background:#0A0A0A">VUE D'ENSEMBLE</div>
   <div class="modules-grid">
     <div class="module-card" onclick="openForm('nettoyage')">
       <div class="mod-icon">&#129529;</div>
@@ -307,7 +307,7 @@ input[type=“file”]{display:none;}
 
 <!-- NETTOYAGE -->
 
-<div id="screen-nettoyage" class="screen">
+<div id="screen-nettoyage" class="screen" style="background:#0A0A0A">
   <div class="form-header">
     <button type="button" class="btn-back" onclick="goBack()">&#8592;</button>
     <div class="form-header-title">&#129529; Nettoyage</div>
@@ -364,7 +364,7 @@ input[type=“file”]{display:none;}
 
 <!-- TEMPERATURE -->
 
-<div id="screen-temperature" class="screen">
+<div id="screen-temperature" class="screen" style="background:#0A0A0A">
   <div class="form-header">
     <button type="button" class="btn-back" onclick="goBack()">&#8592;</button>
     <div class="form-header-title">&#127777;&#65039; Temp&eacute;rature</div>
@@ -412,7 +412,7 @@ input[type=“file”]{display:none;}
 
 <!-- RECEPTION -->
 
-<div id="screen-reception" class="screen">
+<div id="screen-reception" class="screen" style="background:#0A0A0A">
   <div class="form-header">
     <button type="button" class="btn-back" onclick="goBack()">&#8592;</button>
     <div class="form-header-title">&#128230; R&eacute;ception marchandise</div>
@@ -466,7 +466,7 @@ input[type=“file”]{display:none;}
 
 <!-- HEURES -->
 
-<div id="screen-heures" class="screen">
+<div id="screen-heures" class="screen" style="background:#0A0A0A">
   <div class="form-header">
     <button type="button" class="btn-back" onclick="goBack()">&#8592;</button>
     <div class="form-header-title">&#9201;&#65039; Heures / Pr&eacute;sence</div>
@@ -501,7 +501,7 @@ input[type=“file”]{display:none;}
 
 <!-- HACCP -->
 
-<div id="screen-haccp" class="screen">
+<div id="screen-haccp" class="screen" style="background:#0A0A0A">
   <div class="form-header">
     <button type="button" class="btn-back" onclick="goBack()">&#8592;</button>
     <div class="form-header-title">&#128269; Inspection HACCP</div>
@@ -519,7 +519,7 @@ input[type=“file”]{display:none;}
 
 <!-- FORMATION LIST -->
 
-<div id="screen-formation" class="screen">
+<div id="screen-formation" class="screen" style="background:#0A0A0A">
   <div class="form-header">
     <button type="button" class="btn-back" onclick="goBack()">&#8592;</button>
     <div class="form-header-title">&#127891; Formation</div>
@@ -537,7 +537,7 @@ input[type=“file”]{display:none;}
 
 <!-- MODULE VIEWER -->
 
-<div id="screen-module" class="screen">
+<div id="screen-module" class="screen" style="background:#0A0A0A">
   <div class="form-header">
     <button type="button" class="btn-back" onclick="showScreen('formation');refreshBadges();">&#8592;</button>
     <div class="form-header-title" id="module-header-title">Module</div>
