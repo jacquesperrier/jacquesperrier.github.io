@@ -1336,20 +1336,23 @@ function filterHistory(type, el) {
 
 // ── Google Sheets ────────────────────────────────────────
 async function sendToSheets(entry) {
-  if (!sheetsURL) return;
+  if (!sheetsEnabled || !sheetsURL) return;
   try {
     const formURL = 'https://docs.google.com/forms/d/e/1FAIpQLScDbY9Ml-wo1d1ZkXW5KQOdapIQAel0TCr6ZdbNtw_vLHSwiw/formResponse';
-    const params = new URLSearchParams({
-      'entry.686966143': entry.date || '',
-      'entry.337620953': entry.heure || '',
-      'entry.1079792077': entry.employe || '',
-      'entry.244071539': entry.type || '',
-      'entry.1880593244': entry.desc || '',
-      'entry.72125058': entry.status || '',
-      'entry.772977649': entry.zone || '',
-      'entry.1928548650': entry.commentaire || ''
+    const body = 'entry.686966143=' + encodeURIComponent(entry.date || '')
+      + '&entry.337620953=' + encodeURIComponent(entry.heure || '')
+      + '&entry.1079792077=' + encodeURIComponent(entry.employe || '')
+      + '&entry.244071539=' + encodeURIComponent(entry.type || '')
+      + '&entry.1880593244=' + encodeURIComponent(entry.desc || '')
+      + '&entry.72125058=' + encodeURIComponent(entry.status || '')
+      + '&entry.772977649=' + encodeURIComponent(entry.zone || '')
+      + '&entry.1928548650=' + encodeURIComponent(entry.commentaire || '');
+    await fetch(formURL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body
     });
-    await fetch(formURL, { method: 'POST', mode: 'no-cors', body: params });
   } catch(e) { console.warn('Sheets sync failed:', e); }
 }
 
