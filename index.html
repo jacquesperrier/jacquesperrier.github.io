@@ -182,8 +182,30 @@ input[type=“file”]{display:none;}
 
 /* MODULE FORMATION */
 #module-progress-bar{height:4px;background:var(–gold-grad);transition:width 0.4s;width:0%;}
-</style>
 
+input, select, textarea {
+-webkit-appearance: none !important;
+appearance: none !important;
+background-color: #1E1E1E !important;
+color: #FFFFFF !important;
+border-radius: 10px !important;
+}
+input:focus, select:focus, textarea:focus {
+background-color: #1E1E1E !important;
+color: #FFFFFF !important;
+outline: none !important;
+border-color: #C9963C !important;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+-webkit-box-shadow: 0 0 0 1000px #1E1E1E inset !important;
+-webkit-text-fill-color: #FFFFFF !important;
+}
+select option { background: #1E1E1E; color: #FFFFFF; }
+html, body { background: #0A0A0A !important; }
+
+</style>
 </head>
 <body>
 
