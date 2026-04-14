@@ -519,6 +519,8 @@ body { background: white; color: black; }
 }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
 </head>
 <body>
 
@@ -969,29 +971,27 @@ Rôle    : ${role}
   btn.textContent = '⏳ Envoi en cours…';
 
   try {
-    const res = await fetch('https://formspree.io/f/xdadypze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        _subject: sujet,
+    await emailjs.send(
+      'service_paf1614',
+      'template_3zszvy8',
+      {
+        subject:  sujet,
         message:  body,
-        signature_conducteur: sigData
-      })
-    });
+        to_email: 'jacquesperrier.audit@gmail.com'
+      },
+      '-Cn4Qd616ddyqBqKU'
+    );
 
-    if (res.ok) {
-      toast.style.background = parseInt(cntFail) > 0 ? '#e74c3c' : '#2ecc71';
-      toast.textContent = parseInt(cntFail) > 0
-        ? `⚠ ${cntFail} défaut(s) majeur(s) — rapport envoyé`
-        : '✔ Rapport envoyé à Mjacquesperrier@gmail.com';
-      btn.textContent = '✔ Envoyé';
-      btn.style.opacity = '0.6';
-    } else {
-      throw new Error('Formspree error');
-    }
+    toast.style.background = parseInt(cntFail) > 0 ? '#e74c3c' : '#2ecc71';
+    toast.textContent = parseInt(cntFail) > 0
+      ? `⚠ ${cntFail} défaut(s) majeur(s) — rapport envoyé`
+      : '✔ Rapport envoyé à jacquesperrier.audit@gmail.com';
+    btn.textContent = '✔ Envoyé';
+    btn.style.opacity = '0.6';
+
   } catch (err) {
     toast.style.background = '#e67e22';
-    toast.textContent = '⚠ Erreur réseau — réessaie';
+    toast.textContent = '⚠ Erreur — ' + (err.text || 'réessaie');
     btn.disabled = false;
     btn.textContent = '✔ Soumettre l\'inspection';
   }
