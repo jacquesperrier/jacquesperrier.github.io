@@ -9,17 +9,17 @@
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap');
 
 :root {
-–bg: #0d0d0d;
-–surface: #141414;
-–surface2: #1a1a1a;
-–border: #2a2a2a;
-–accent: #f5a623;
-–accent2: #e8530a;
-–ok: #2ecc71;
-–warn: #f5a623;
-–fail: #e74c3c;
-–text: #e8e8e8;
-–muted: #666;
+–bg: #ffffff;
+–surface: #f7f7f7;
+–surface2: #eeeeee;
+–border: #d0d0d0;
+–accent: #E8600A;
+–accent2: #c94f00;
+–ok: #1a7c3e;
+–warn: #d97706;
+–fail: #dc2626;
+–text: #111111;
+–muted: #444;
 –mono: ‘Share Tech Mono’, monospace;
 –display: ‘Rajdhani’, sans-serif;
 –body: ‘Exo 2’, sans-serif;
@@ -35,10 +35,9 @@ min-height: 100vh;
 padding: 0;
 }
 
-/* HEADER */
 .header {
-background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
-border-bottom: 3px solid var(–accent);
+background: linear-gradient(135deg, #E8600A 0%, #c94f00 100%);
+border-bottom: 3px solid #a03d00;
 padding: 20px 20px 16px;
 position: relative;
 overflow: hidden;
@@ -49,7 +48,7 @@ content: ‘’;
 position: absolute;
 top: -30px; right: -30px;
 width: 120px; height: 120px;
-border: 2px solid rgba(245,166,35,0.15);
+border: 2px solid rgba(255,255,255,0.15);
 border-radius: 50%;
 }
 
@@ -58,7 +57,7 @@ content: ‘’;
 position: absolute;
 top: -10px; right: -10px;
 width: 60px; height: 60px;
-border: 2px solid rgba(245,166,35,0.25);
+border: 2px solid rgba(255,255,255,0.25);
 border-radius: 50%;
 }
 
@@ -73,14 +72,14 @@ font-size: 22px;
 font-weight: 700;
 letter-spacing: 3px;
 text-transform: uppercase;
-color: var(–accent);
+color: #ffffff;
 line-height: 1.1;
 }
 
 .header p {
 font-family: var(–mono);
 font-size: 10px;
-color: var(–muted);
+color: rgba(255,255,255,0.7);
 letter-spacing: 2px;
 margin-top: 4px;
 text-transform: uppercase;
@@ -210,7 +209,7 @@ transition: background 0.15s;
 flex: 1;
 font-size: 12.5px;
 font-weight: 500;
-color: #ccc;
+color: #111;
 letter-spacing: 0.3px;
 }
 
@@ -243,8 +242,8 @@ font-family: var(–mono);
 font-weight: 600;
 cursor: pointer;
 transition: all 0.15s;
-color: var(–muted);
-background: var(–bg);
+color: #444;
+background: #fff;
 user-select: none;
 -webkit-tap-highlight-color: transparent;
 }
@@ -804,7 +803,7 @@ function initSig(num) {
   window.addEventListener('resize', resize);
 
   const ctx = canvas.getContext('2d');
-  ctx.strokeStyle = '#f5a623';
+  ctx.strokeStyle = '#E8600A';
   ctx.lineWidth   = 2;
   ctx.lineCap     = 'round';
 
