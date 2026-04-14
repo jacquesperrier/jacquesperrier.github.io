@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ronde de Sécurité – Véhicule</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap');
+
+:root {
+–bg: #0d0d0d;
+–surface: #141414;
+–surface2: #1a1a1a;
+–border: #2a2a2a;
+–accent: #f5a623;
+–accent2: #e8530a;
+–ok: #2ecc71;
+–warn: #f5a623;
+–fail: #e74c3c;
+–text: #e8e8e8;
+–muted: #666;
+–mono: ‘Share Tech Mono’, monospace;
+–display: ‘Rajdhani’, sans-serif;
+–body: ‘Exo 2’, sans-serif;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: var(–body);
+min-height: 100vh;
+padding: 0;
+}
+
+/* HEADER */
+.header {
+background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+border-bottom: 3px solid var(–accent);
+padding: 20px 20px 16px;
+position: relative;
+overflow: hidden;
+}
+
+.header::before {
+content: ‘’;
+position: absolute;
+top: -30px; right: -30px;
+width: 120px; height: 120px;
+border: 2px solid rgba(245,166,35,0.15);
+border-radius: 50%;
+}
+
+.header::after {
+content: ‘’;
+position: absolute;
+top: -10px; right: -10px;
+width: 60px; height: 60px;
+border: 2px solid rgba(245,166,35,0.25);
+border-radius: 50%;
+}
+
+.header-icon {
+font-size: 28px;
+margin-bottom: 6px;
+}
+
+.header h1 {
+font-family: var(–display);
+font-size: 22px;
+font-weight: 700;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–accent);
+line-height: 1.1;
+}
+
+.header p {
+font-family: var(–mono);
+font-size: 10px;
+color: var(–muted);
+letter-spacing: 2px;
+margin-top: 4px;
+text-transform: uppercase;
+}
+
+/* FORM CONTAINER */
+.form-wrap {
+max-width: 640px;
+margin: 0 auto;
+padding: 16px;
+}
+
+/* SECTION */
+.section {
+margin-bottom: 16px;
+border: 1px solid var(–border);
+border-radius: 6px;
+overflow: hidden;
+}
+
+.section-header {
+background: var(–surface2);
+border-bottom: 1px solid var(–border);
+padding: 10px 14px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.section-header .icon { font-size: 14px; }
+
+.section-header h2 {
+font-family: var(–display);
+font-size: 13px;
+font-weight: 700;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–accent);
+}
+
+.section-body { padding: 12px 14px; background: var(–surface); }
+
+/* INFO GRID */
+.info-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+}
+
+.info-grid .full { grid-column: 1 / -1; }
+
+.field-label {
+font-family: var(–mono);
+font-size: 10px;
+color: var(–muted);
+letter-spacing: 1px;
+text-transform: uppercase;
+margin-bottom: 4px;
+}
+
+.field-label .emoji { margin-right: 4px; }
+
+input[type=“text”],
+input[type=“date”],
+input[type=“time”],
+input[type=“number”],
+textarea {
+width: 100%;
+background: var(–bg);
+border: 1px solid var(–border);
+border-radius: 4px;
+color: var(–text);
+font-family: var(–mono);
+font-size: 13px;
+padding: 8px 10px;
+outline: none;
+transition: border-color 0.2s;
+}
+
+input:focus, textarea:focus {
+border-color: var(–accent);
+box-shadow: 0 0 0 2px rgba(245,166,35,0.1);
+}
+
+/* INSPECTION ROWS */
+.inspect-legend {
+display: flex;
+gap: 12px;
+margin-bottom: 10px;
+padding-bottom: 10px;
+border-bottom: 1px solid var(–border);
+flex-wrap: wrap;
+}
+
+.legend-item {
+font-family: var(–mono);
+font-size: 10px;
+display: flex;
+align-items: center;
+gap: 4px;
+color: var(–muted);
+}
+
+.dot {
+width: 10px; height: 10px;
+border-radius: 50%;
+display: inline-block;
+}
+
+.dot-ok { background: var(–ok); }
+.dot-warn { background: var(–warn); }
+.dot-fail { background: var(–fail); }
+
+.inspect-row {
+display: flex;
+align-items: center;
+padding: 7px 0;
+border-bottom: 1px solid rgba(255,255,255,0.04);
+gap: 10px;
+transition: background 0.15s;
+}
+
+.inspect-row:last-child { border-bottom: none; }
+.inspect-row:hover { background: rgba(245,166,35,0.03); margin: 0 -14px; padding: 7px 14px; }
+
+.item-name {
+flex: 1;
+font-size: 12.5px;
+font-weight: 500;
+color: #ccc;
+letter-spacing: 0.3px;
+}
+
+.radio-group {
+display: flex;
+gap: 6px;
+flex-shrink: 0;
+}
+
+.radio-btn {
+position: relative;
+}
+
+.radio-btn input[type=“radio”] {
+position: absolute;
+opacity: 0;
+width: 0; height: 0;
+}
+
+.radio-btn label {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 38px;
+height: 30px;
+border-radius: 4px;
+border: 1.5px solid var(–border);
+font-size: 11px;
+font-family: var(–mono);
+font-weight: 600;
+cursor: pointer;
+transition: all 0.15s;
+color: var(–muted);
+background: var(–bg);
+user-select: none;
+-webkit-tap-highlight-color: transparent;
+}
+
+.radio-btn.ok input:checked + label {
+background: rgba(46,204,113,0.15);
+border-color: var(–ok);
+color: var(–ok);
+}
+
+.radio-btn.warn input:checked + label {
+background: rgba(245,166,35,0.15);
+border-color: var(–warn);
+color: var(–warn);
+}
+
+.radio-btn.fail input:checked + label {
+background: rgba(231,76,60,0.15);
+border-color: var(–fail);
+color: var(–fail);
+}
+
+.radio-btn label:hover {
+border-color: #444;
+color: #aaa;
+}
+
+/* STATUS SUMMARY BAR */
+.summary-bar {
+display: flex;
+gap: 8px;
+margin-bottom: 14px;
+padding: 10px 14px;
+background: var(–bg);
+border: 1px solid var(–border);
+border-radius: 6px;
+}
+
+.summary-item {
+flex: 1;
+text-align: center;
+}
+
+.summary-count {
+font-family: var(–display);
+font-size: 22px;
+font-weight: 700;
+line-height: 1;
+}
+
+.summary-count.ok-count { color: var(–ok); }
+.summary-count.warn-count { color: var(–warn); }
+.summary-count.fail-count { color: var(–fail); }
+
+.summary-label {
+font-family: var(–mono);
+font-size: 9px;
+color: var(–muted);
+letter-spacing: 1px;
+text-transform: uppercase;
+margin-top: 2px;
+}
+
+/* NOTES */
+.notes-list {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.note-row {
+display: flex;
+align-items: flex-start;
+gap: 8px;
+}
+
+.note-bullet {
+font-family: var(–mono);
+color: var(–accent);
+font-size: 16px;
+line-height: 1.6;
+flex-shrink: 0;
+}
+
+.note-row input {
+flex: 1;
+}
+
+/* IDENTIFICATION */
+.id-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+margin-bottom: 14px;
+}
+
+.radio-check-group {
+display: flex;
+gap: 10px;
+margin-top: 4px;
+}
+
+.check-label {
+display: flex;
+align-items: center;
+gap: 6px;
+font-size: 13px;
+cursor: pointer;
+color: #bbb;
+-webkit-tap-highlight-color: transparent;
+}
+
+.check-label input { display: none; }
+
+.check-box {
+width: 18px; height: 18px;
+border: 1.5px solid var(–border);
+border-radius: 3px;
+background: var(–bg);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 11px;
+transition: all 0.15s;
+flex-shrink: 0;
+}
+
+.check-label input:checked ~ .check-box {
+background: rgba(245,166,35,0.15);
+border-color: var(–accent);
+color: var(–accent);
+}
+
+.sig-field {
+background: var(–bg);
+border: 1px solid var(–border);
+border-radius: 4px;
+height: 60px;
+display: flex;
+align-items: center;
+padding: 0 12px;
+font-family: ‘Cursive’, serif;
+font-size: 11px;
+color: var(–muted);
+margin-top: 6px;
+cursor: pointer;
+transition: border-color 0.2s;
+position: relative;
+overflow: hidden;
+}
+
+.sig-field canvas {
+position: absolute;
+top: 0; left: 0;
+width: 100%; height: 100%;
+}
+
+.sig-field .sig-placeholder {
+font-family: var(–mono);
+font-size: 10px;
+letter-spacing: 1px;
+color: var(–muted);
+pointer-events: none;
+z-index: 1;
+}
+
+.sig-clear {
+position: absolute;
+top: 6px; right: 8px;
+font-size: 9px;
+font-family: var(–mono);
+color: var(–muted);
+background: rgba(0,0,0,0.5);
+border: 1px solid var(–border);
+border-radius: 3px;
+padding: 2px 5px;
+cursor: pointer;
+z-index: 2;
+display: none;
+letter-spacing: 0.5px;
+}
+
+.sig-field:hover { border-color: rgba(245,166,35,0.4); }
+
+/* DECLARATION */
+.declaration-text {
+font-size: 12px;
+color: #999;
+line-height: 1.6;
+margin-bottom: 12px;
+font-style: italic;
+border-left: 2px solid var(–accent);
+padding-left: 10px;
+}
+
+/* SUBMIT BUTTON */
+.submit-wrap {
+padding: 16px;
+max-width: 640px;
+margin: 0 auto;
+}
+
+.btn-submit {
+width: 100%;
+background: linear-gradient(135deg, var(–accent) 0%, var(–accent2) 100%);
+border: none;
+border-radius: 6px;
+color: #000;
+font-family: var(–display);
+font-size: 15px;
+font-weight: 700;
+letter-spacing: 3px;
+text-transform: uppercase;
+padding: 15px;
+cursor: pointer;
+transition: opacity 0.2s, transform 0.1s;
+-webkit-tap-highlight-color: transparent;
+}
+
+.btn-submit:active { transform: scale(0.98); opacity: 0.9; }
+
+.btn-print {
+width: 100%;
+background: transparent;
+border: 1px solid var(–border);
+border-radius: 6px;
+color: var(–muted);
+font-family: var(–display);
+font-size: 13px;
+font-weight: 600;
+letter-spacing: 2px;
+text-transform: uppercase;
+padding: 12px;
+cursor: pointer;
+margin-top: 8px;
+transition: border-color 0.2s, color 0.2s;
+-webkit-tap-highlight-color: transparent;
+}
+
+.btn-print:hover { border-color: var(–accent); color: var(–accent); }
+
+/* TOAST */
+.toast {
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%) translateY(80px);
+background: var(–ok);
+color: #000;
+font-family: var(–mono);
+font-size: 12px;
+font-weight: 600;
+padding: 10px 20px;
+border-radius: 30px;
+letter-spacing: 1px;
+transition: transform 0.3s ease;
+z-index: 999;
+white-space: nowrap;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* SECTION DIVIDER */
+.sub-divider {
+height: 1px;
+background: var(–border);
+margin: 10px 0;
+}
+
+@media print {
+body { background: white; color: black; }
+.btn-submit, .btn-print, .submit-wrap { display: none; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+  <div class="header-icon">🚛</div>
+  <h1>Ronde de Sécurité</h1>
+  <p>Inspection véhicule · Formulaire officiel</p>
+</div>
+
+<div class="form-wrap">
+
+  <!-- INFO GÉNÉRALE -->
+
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">📋</span>
+      <h2>Informations générales</h2>
+    </div>
+    <div class="section-body">
+      <div class="info-grid">
+        <div>
+          <div class="field-label"><span class="emoji">📅</span>Date</div>
+          <input type="date" id="date">
+        </div>
+        <div>
+          <div class="field-label"><span class="emoji">⏰</span>Heure</div>
+          <input type="time" id="heure">
+        </div>
+        <div class="full">
+          <div class="field-label"><span class="emoji">📍</span>Lieu</div>
+          <input type="text" id="lieu" placeholder="Ex. : Dépôt Gatineau, secteur A">
+        </div>
+        <div>
+          <div class="field-label"><span class="emoji">🚛</span>Véhicule</div>
+          <input type="text" id="vehicule" placeholder="Marque / modèle">
+        </div>
+        <div>
+          <div class="field-label"><span class="emoji">🔢</span>Plaque</div>
+          <input type="text" id="plaque" placeholder="Ex. : ABC-1234">
+        </div>
+        <div class="full">
+          <div class="field-label"><span class="emoji">📊</span>Kilométrage</div>
+          <input type="number" id="km" placeholder="Ex. : 45280">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOMMAIRE LIVE -->
+
+  <div class="summary-bar" id="summaryBar">
+    <div class="summary-item">
+      <div class="summary-count ok-count" id="cnt-ok">0</div>
+      <div class="summary-label">✔ OK</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-count warn-count" id="cnt-warn">0</div>
+      <div class="summary-label">⚠ Mineurs</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-count fail-count" id="cnt-fail">0</div>
+      <div class="summary-label">✕ Majeurs</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-count" id="cnt-total" style="color:#555">0/33</div>
+      <div class="summary-label">Complétés</div>
+    </div>
+  </div>
+
+  <!-- INSPECTION OBLIGATOIRE -->
+
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">🔎</span>
+      <h2>Inspection obligatoire</h2>
+    </div>
+    <div class="section-body">
+      <div class="inspect-legend">
+        <div class="legend-item"><span class="dot dot-ok"></span>OK</div>
+        <div class="legend-item"><span class="dot dot-warn"></span>Mineur</div>
+        <div class="legend-item"><span class="dot dot-fail"></span>Majeur</div>
+      </div>
+      <div id="inspect-obligatoire">
+        <!-- rows injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAT GÉNÉRAL -->
+
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">📋</span>
+      <h2>État général</h2>
+    </div>
+    <div class="section-body">
+      <div id="inspect-general">
+        <!-- rows injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- DÉFECTUOSITÉS -->
+
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">⚠️</span>
+      <h2>Défectuosités / Notes</h2>
+    </div>
+    <div class="section-body">
+      <div class="notes-list">
+        <div class="note-row">
+          <span class="note-bullet">›</span>
+          <input type="text" placeholder="Décrire la défectuosité ou remarque...">
+        </div>
+        <div class="note-row">
+          <span class="note-bullet">›</span>
+          <input type="text" placeholder="Décrire la défectuosité ou remarque...">
+        </div>
+        <div class="note-row">
+          <span class="note-bullet">›</span>
+          <input type="text" placeholder="Décrire la défectuosité ou remarque...">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDENTIFICATION -->
+
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">👤</span>
+      <h2>Identification</h2>
+    </div>
+    <div class="section-body">
+      <div class="id-grid">
+        <div>
+          <div class="field-label">Nom</div>
+          <input type="text" id="nom" placeholder="Nom de famille">
+        </div>
+        <div>
+          <div class="field-label">Prénom</div>
+          <input type="text" id="prenom" placeholder="Prénom">
+        </div>
+      </div>
+      <div>
+        <div class="field-label">Ronde effectuée par</div>
+        <div class="radio-check-group">
+          <label class="check-label">
+            <input type="radio" name="role" value="conducteur">
+            <span class="check-box">✓</span>
+            Conducteur
+          </label>
+          <label class="check-label">
+            <input type="radio" name="role" value="autre">
+            <span class="check-box">✓</span>
+            Autre
+          </label>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="field-label">Signature</div>
+        <div class="sig-field" id="sigField1">
+          <canvas id="sigCanvas1"></canvas>
+          <span class="sig-placeholder" id="sigPlaceholder1">⬡ Signer ici</span>
+          <span class="sig-clear" id="sigClear1" onclick="clearSig(1)">EFFACER</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DÉCLARATION -->
+
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">✔️</span>
+      <h2>Déclaration</h2>
+    </div>
+    <div class="section-body">
+      <p class="declaration-text">Je confirme que cette inspection a été effectuée conformément aux exigences applicables.</p>
+      <div class="field-label">Signature conducteur</div>
+      <div class="sig-field" id="sigField2">
+        <canvas id="sigCanvas2"></canvas>
+        <span class="sig-placeholder" id="sigPlaceholder2">⬡ Signature conducteur</span>
+        <span class="sig-clear" id="sigClear2" onclick="clearSig(2)">EFFACER</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /form-wrap -->
+
+<div class="submit-wrap">
+  <button class="btn-submit" onclick="submitForm()">✔ Soumettre l'inspection</button>
+  <button class="btn-print" onclick="window.print()">🖨 Imprimer / PDF</button>
+</div>
+
+<div class="toast" id="toast">✔ Formulaire soumis avec succès</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const OBLIGATOIRE = [
+  'Attelage','Châssis / carrosserie','Chauffage / dégivrage',
+  'Commandes conducteur','Direction','Essuie-glace / lave',
+  'Matériel urgence','Phares / feux','Pneus','Portes / issues',
+  'Rétroviseurs / vitres','Roues / fixation','Sièges','Suspension',
+  'Carburant','Échappement','Freins électriques',
+  'Freins hydrauliques','Freins pneumatiques'
+];
+
+const GENERAL = [
+  'Propreté','Triangle urgence','Carte / papiers','Assurance',
+  'Liste défauts','Ceinture sécurité','Autocollants',
+  'Trousse premiers soins','Extincteur','Courroies',
+  'Liquide refroidissement','Huile moteur','Gyrophare / flèche',
+  'Attache remorque'
+];
+
+// ─── BUILD ROWS ──────────────────────────────────────────────────────────────
+function buildRows(items, containerId, prefix) {
+  const container = document.getElementById(containerId);
+  items.forEach((name, i) => {
+    const id = `${prefix}_${i}`;
+    const row = document.createElement('div');
+    row.className = 'inspect-row';
+    row.innerHTML = `
+      <span class="item-name">${name}</span>
+      <div class="radio-group">
+        <div class="radio-btn ok">
+          <input type="radio" name="${id}" id="${id}_ok" value="ok" onchange="updateSummary()">
+          <label for="${id}_ok">OK</label>
+        </div>
+        <div class="radio-btn warn">
+          <input type="radio" name="${id}" id="${id}_warn" value="warn" onchange="updateSummary()">
+          <label for="${id}_warn">⚠</label>
+        </div>
+        <div class="radio-btn fail">
+          <input type="radio" name="${id}" id="${id}_fail" value="fail" onchange="updateSummary()">
+          <label for="${id}_fail">✕</label>
+        </div>
+      </div>`;
+    container.appendChild(row);
+  });
+}
+
+buildRows(OBLIGATOIRE, 'inspect-obligatoire', 'obl');
+buildRows(GENERAL,     'inspect-general',     'gen');
+
+const TOTAL = OBLIGATOIRE.length + GENERAL.length;
+document.getElementById('cnt-total').textContent = `0/${TOTAL}`;
+
+// ─── SUMMARY ─────────────────────────────────────────────────────────────────
+function updateSummary() {
+  let ok = 0, warn = 0, fail = 0, done = 0;
+  document.querySelectorAll('input[type="radio"]:checked').forEach(r => {
+    if (r.name.startsWith('obl') || r.name.startsWith('gen')) {
+      done++;
+      if (r.value === 'ok')   ok++;
+      if (r.value === 'warn') warn++;
+      if (r.value === 'fail') fail++;
+    }
+  });
+  document.getElementById('cnt-ok').textContent   = ok;
+  document.getElementById('cnt-warn').textContent = warn;
+  document.getElementById('cnt-fail').textContent = fail;
+  document.getElementById('cnt-total').textContent = `${done}/${TOTAL}`;
+}
+
+// ─── SIGNATURE PADS ──────────────────────────────────────────────────────────
+function initSig(num) {
+  const canvas  = document.getElementById(`sigCanvas${num}`);
+  const field   = document.getElementById(`sigField${num}`);
+  const holder  = document.getElementById(`sigPlaceholder${num}`);
+  const clearBtn= document.getElementById(`sigClear${num}`);
+
+  const resize = () => {
+    canvas.width  = field.offsetWidth;
+    canvas.height = field.offsetHeight;
+  };
+  resize();
+  window.addEventListener('resize', resize);
+
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#f5a623';
+  ctx.lineWidth   = 2;
+  ctx.lineCap     = 'round';
+
+  let drawing = false, lastX, lastY;
+
+  const getPos = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const src  = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+  };
+
+  const start = (e) => {
+    drawing = true;
+    holder.style.display = 'none';
+    clearBtn.style.display = 'block';
+    const p = getPos(e);
+    lastX = p.x; lastY = p.y;
+    e.preventDefault();
+  };
+
+  const draw = (e) => {
+    if (!drawing) return;
+    const p = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    lastX = p.x; lastY = p.y;
+    e.preventDefault();
+  };
+
+  const stop = () => { drawing = false; };
+
+  canvas.addEventListener('mousedown',  start);
+  canvas.addEventListener('mousemove',  draw);
+  canvas.addEventListener('mouseup',    stop);
+  canvas.addEventListener('mouseleave', stop);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove',  draw,  { passive: false });
+  canvas.addEventListener('touchend',   stop);
+}
+
+function clearSig(num) {
+  const canvas  = document.getElementById(`sigCanvas${num}`);
+  const holder  = document.getElementById(`sigPlaceholder${num}`);
+  const clearBtn= document.getElementById(`sigClear${num}`);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  holder.style.display = 'block';
+  clearBtn.style.display = 'none';
+}
+
+initSig(1);
+initSig(2);
+
+// ─── CHECKBOX VISUAL ──────────────────────────────────────────────────────────
+document.querySelectorAll('.check-label input[type="radio"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    document.querySelectorAll('.check-label input[type="radio"]').forEach(r => {
+      r.nextElementSibling.textContent = r.checked ? '✓' : ' ';
+    });
+  });
+});
+
+// ─── AUTO DATE/TIME ───────────────────────────────────────────────────────────
+(function() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('date').value =
+    `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  document.getElementById('heure').value =
+    `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+})();
+
+// ─── SUBMIT + FORMSPREE EMAIL ─────────────────────────────────────────────────
+async function submitForm() {
+  const toast = document.getElementById('toast');
+  const btn   = document.querySelector('.btn-submit');
+
+  // ── Collect data ──
+  const date     = document.getElementById('date').value;
+  const heure    = document.getElementById('heure').value;
+  const lieu     = document.getElementById('lieu').value;
+  const vehicule = document.getElementById('vehicule').value;
+  const plaque   = document.getElementById('plaque').value;
+  const km       = document.getElementById('km').value;
+  const nom      = document.getElementById('nom').value;
+  const prenom   = document.getElementById('prenom').value;
+  const roleEl   = document.querySelector('input[name="role"]:checked');
+  const role     = roleEl ? roleEl.value : 'Non indiqué';
+
+  const cntOk   = document.getElementById('cnt-ok').textContent;
+  const cntWarn = document.getElementById('cnt-warn').textContent;
+  const cntFail = document.getElementById('cnt-fail').textContent;
+
+  // ── Build inspection results ──
+  const allItems = [
+    ...OBLIGATOIRE.map((n,i) => ({ name: n, prefix: 'obl', i })),
+    ...GENERAL.map((n,i)     => ({ name: n, prefix: 'gen', i }))
+  ];
+
+  let okList = [], warnList = [], failList = [], nonCoché = [];
+  allItems.forEach(({ name, prefix, i }) => {
+    const checked = document.querySelector(`input[name="${prefix}_${i}"]:checked`);
+    if (!checked)               nonCoché.push(name);
+    else if (checked.value === 'ok')   okList.push(name);
+    else if (checked.value === 'warn') warnList.push(name);
+    else if (checked.value === 'fail') failList.push(name);
+  });
+
+  // ── Notes ──
+  const noteInputs = document.querySelectorAll('.notes-list input');
+  const notes = [...noteInputs].map(i => i.value).filter(v => v.trim());
+
+  // ── Signature image (canvas 2 = conducteur) ──
+  const sigCanvas = document.getElementById('sigCanvas2');
+  const sigData   = sigCanvas.toDataURL('image/png');
+
+  // ── Build email body ──
+  const statutGlobal = parseInt(cntFail) > 0
+    ? `⚠️ DÉFAUTS MAJEURS DÉTECTÉS (${cntFail})`
+    : parseInt(cntWarn) > 0
+    ? `⚠ Mineurs seulement (${cntWarn})`
+    : '✅ Tout conforme';
+
+  const body = `
+RONDE DE SÉCURITÉ – VÉHICULE
+════════════════════════════════
+
+📅 Date    : ${date}
+⏰ Heure   : ${heure}
+📍 Lieu    : ${lieu || '—'}
+🚛 Véhicule: ${vehicule || '—'}
+🔢 Plaque  : ${plaque || '—'}
+📊 KM      : ${km || '—'}
+
+STATUT GLOBAL : ${statutGlobal}
+
+────────────────────────────────
+RÉSUMÉ
+────────────────────────────────
+✔ OK      : ${cntOk}
+⚠ Mineurs : ${cntWarn}
+✕ Majeurs : ${cntFail}
+${nonCoché.length ? `\n⚪ Non cochés (${nonCoché.length}) :\n${nonCoché.map(n => '  - ' + n).join('\n')}` : ''}
+
+${failList.length ? `────────────────────────────────\n❌ DÉFAUTS MAJEURS :\n${failList.map(n => '  ✕ ' + n).join('\n')}\n` : ''}
+${warnList.length ? `────────────────────────────────\n⚠️ DÉFAUTS MINEURS :\n${warnList.map(n => '  ⚠ ' + n).join('\n')}\n` : ''}
+${notes.length ? `────────────────────────────────\nNOTES / DÉFECTUOSITÉS :\n${notes.map(n => '  › ' + n).join('\n')}\n` : ''}
+────────────────────────────────
+CONDUCTEUR
+────────────────────────────────
+Nom     : ${nom || '—'} ${prenom || ''}
+Rôle    : ${role}
+
+— Rapport généré automatiquement par le formulaire Ronde de Sécurité —
+`.trim();
+
+  const sujet = `[Ronde Sécurité] ${vehicule || 'Véhicule'} – ${plaque || '—'} – ${date} ${parseInt(cntFail) > 0 ? '⚠ MAJEUR' : '✅ OK'}`;
+
+  // ── Send via Formspree ──
+  btn.disabled = true;
+  btn.textContent = '⏳ Envoi en cours…';
+
+  try {
+    const res = await fetch('https://formspree.io/f/xpzygkqr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: sujet,
+        message:  body,
+        signature_conducteur: sigData
+      })
+    });
+
+    if (res.ok) {
+      toast.style.background = parseInt(cntFail) > 0 ? '#e74c3c' : '#2ecc71';
+      toast.textContent = parseInt(cntFail) > 0
+        ? `⚠ ${cntFail} défaut(s) majeur(s) — rapport envoyé`
+        : '✔ Rapport envoyé à Mjacquesperrier@gmail.com';
+      btn.textContent = '✔ Envoyé';
+      btn.style.opacity = '0.6';
+    } else {
+      throw new Error('Formspree error');
+    }
+  } catch (err) {
+    toast.style.background = '#e67e22';
+    toast.textContent = '⚠ Erreur réseau — réessaie';
+    btn.disabled = false;
+    btn.textContent = '✔ Soumettre l\'inspection';
+  }
+
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+</script>
+
+</body>
+</html>
