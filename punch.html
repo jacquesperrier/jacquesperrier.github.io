@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>PUNCH · Verdict Inspection AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --noir:#0A0A0A;--noir-2:#15151A;--or:#D4A017;--or-clair:#FFD700;
+    --vert:#1B5E20;--rouge:#C62828;--texte:#F5F1E8;--gris:#6B6B6B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--noir);color:var(--texte);font-family:'Space Mono',monospace;min-height:100vh;overflow-x:hidden;}
+  body{background:radial-gradient(circle at 20% 0%, rgba(212,160,23,0.08), transparent 50%),radial-gradient(circle at 80% 100%, rgba(212,160,23,0.05), transparent 50%),var(--noir);}
+  .app{max-width:480px;margin:0 auto;padding:24px 20px 120px;min-height:100vh;}
+  header{text-align:center;padding:16px 0 28px;border-bottom:1px solid rgba(212,160,23,0.2);margin-bottom:28px;}
+  .logo{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;letter-spacing:2px;color:var(--or);line-height:1;}
+  .logo .dot{color:var(--or-clair);}
+  .tagline{font-size:10px;letter-spacing:4px;color:var(--gris);margin-top:8px;text-transform:uppercase;}
+  .horloge{font-family:'Space Mono',monospace;font-size:42px;font-weight:700;margin-top:20px;letter-spacing:3px;color:var(--texte);}
+  .date{font-size:12px;color:var(--or);letter-spacing:2px;margin-top:4px;text-transform:uppercase;}
+  .etape{display:none;animation:fade 0.4s ease;}
+  .etape.actif{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .titre-etape{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--or);margin-bottom:6px;font-weight:500;}
+  .sous-titre{font-size:11px;color:var(--gris);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
+  .nip-display{background:var(--noir-2);border:1px solid rgba(212,160,23,0.3);padding:22px;text-align:center;margin-bottom:20px;border-radius:2px;font-size:32px;letter-spacing:16px;color:var(--or-clair);min-height:72px;}
+  .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .touche{background:var(--noir-2);border:1px solid rgba(212,160,23,0.25);color:var(--texte);font-size:22px;font-family:'Space Mono',monospace;padding:20px 0;border-radius:2px;cursor:pointer;transition:all 0.15s;font-weight:700;}
+  .touche:active{background:var(--or);color:var(--noir);transform:scale(0.96);}
+  .touche.efface{color:var(--rouge);font-size:16px;}
+  .touche.valider{background:var(--or);color:var(--noir);border-color:var(--or);}
+  .boutons-punch{display:grid;gap:16px;margin-top:8px;}
+  .btn-punch{background:var(--noir-2);border:2px solid var(--or);color:var(--texte);padding:28px 20px;border-radius:4px;cursor:pointer;font-family:'Space Mono',monospace;font-size:14px;letter-spacing:3px;text-transform:uppercase;transition:all 0.2s;display:flex;justify-content:space-between;align-items:center;}
+  .btn-punch:active{background:var(--or);color:var(--noir);transform:scale(0.98);}
+  .btn-punch .icone{font-size:28px;color:var(--or);}
+  .btn-punch:active .icone{color:var(--noir);}
+  .btn-punch.sortie{border-color:var(--rouge);}
+  .btn-punch.sortie .icone{color:var(--rouge);}
+  .btn-punch.sortie:active{background:var(--rouge);color:var(--texte);}
+  .btn-punch.sortie:active .icone{color:var(--texte);}
+  .camera-wrap{background:var(--noir-2);border:1px solid rgba(212,160,23,0.3);border-radius:2px;overflow:hidden;aspect-ratio:1/1;position:relative;margin-bottom:16px;}
+  video,canvas{width:100%;height:100%;object-fit:cover;display:block;}
+  .photo-preview{display:none;}
+  .photo-preview.actif{display:block;}
+  .cadre-visage{position:absolute;inset:20%;border:2px dashed var(--or);border-radius:50%;pointer-events:none;opacity:0.5;}
+  .statut-gps{font-size:11px;letter-spacing:2px;color:var(--gris);display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:12px;background:var(--noir-2);border-left:2px solid var(--or);text-transform:uppercase;}
+  .statut-gps.ok{border-left-color:var(--vert);color:var(--texte);}
+  .statut-gps.erreur{border-left-color:var(--rouge);color:var(--rouge);}
+  .point{width:8px;height:8px;border-radius:50%;background:var(--gris);animation:pulse 1.5s infinite;}
+  .statut-gps.ok .point{background:var(--vert);}
+  .statut-gps.erreur .point{background:var(--rouge);animation:none;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+  textarea{width:100%;background:var(--noir-2);border:1px solid rgba(212,160,23,0.25);color:var(--texte);padding:14px;border-radius:2px;font-family:'Space Mono',monospace;font-size:14px;resize:vertical;min-height:80px;margin-bottom:12px;}
+  textarea:focus{outline:none;border-color:var(--or);}
+  .btn-secondaire{background:transparent;border:1px solid var(--or);color:var(--or);padding:12px;width:100%;border-radius:2px;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+  .btn-principal{background:var(--or);border:none;color:var(--noir);padding:18px;width:100%;border-radius:2px;cursor:pointer;font-family:'Space Mono',monospace;font-size:13px;letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-top:8px;}
+  .btn-principal:active{background:var(--or-clair);}
+  .btn-principal:disabled{background:var(--gris);cursor:not-allowed;}
+  .confirme{text-align:center;padding:40px 20px;}
+  .coche{width:80px;height:80px;border:2px solid var(--or);border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--or);}
+  .recap{background:var(--noir-2);border-left:3px solid var(--or);padding:18px;margin:20px 0;text-align:left;font-size:12px;line-height:1.8;}
+  .recap b{color:var(--or);letter-spacing:1px;}
+  footer{position:fixed;bottom:0;left:0;right:0;background:var(--noir);border-top:1px solid rgba(212,160,23,0.2);padding:12px;text-align:center;font-size:9px;letter-spacing:2px;color:var(--gris);text-transform:uppercase;}
+  footer b{color:var(--or);}
+  .erreur-msg{color:var(--rouge);font-size:12px;text-align:center;margin-top:8px;min-height:16px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">VERDICT<span class="dot">.</span></div>
+    <div class="tagline">Module Punch · Anti-Fraude</div>
+    <div class="horloge" id="horloge">--:--:--</div>
+    <div class="date" id="date">—</div>
+  </header>
+  <section class="etape actif" id="etape-nip">
+    <div class="titre-etape">Identification</div>
+    <div class="sous-titre">Entrez votre NIP employé</div>
+    <div class="nip-display" id="nip-display"></div>
+    <div class="pad">
+      <button class="touche" data-n="1">1</button><button class="touche" data-n="2">2</button><button class="touche" data-n="3">3</button>
+      <button class="touche" data-n="4">4</button><button class="touche" data-n="5">5</button><button class="touche" data-n="6">6</button>
+      <button class="touche" data-n="7">7</button><button class="touche" data-n="8">8</button><button class="touche" data-n="9">9</button>
+      <button class="touche efface" id="effacer">EFFACER</button><button class="touche" data-n="0">0</button><button class="touche valider" id="valider-nip">OK</button>
+    </div>
+    <div class="erreur-msg" id="erreur-nip"></div>
+  </section>
+  <section class="etape" id="etape-type">
+    <div class="titre-etape" id="salutation">Bonjour</div>
+    <div class="sous-titre">Sélectionnez votre action</div>
+    <div class="boutons-punch">
+      <button class="btn-punch" data-type="entree"><span>Entrée</span><span class="icone">→</span></button>
+      <button class="btn-punch sortie" data-type="sortie"><span>Sortie</span><span class="icone">←</span></button>
+    </div>
+  </section>
+  <section class="etape" id="etape-verif">
+    <div class="titre-etape">Vérification</div>
+    <div class="sous-titre">GPS + Selfie obligatoires</div>
+    <div class="statut-gps" id="statut-gps"><span class="point"></span><span id="texte-gps">Localisation en cours…</span></div>
+    <div class="camera-wrap"><video id="video" autoplay playsinline muted></video><canvas id="canvas" class="photo-preview"></canvas><div class="cadre-visage"></div></div>
+    <button class="btn-secondaire" id="btn-photo">📸 Capturer Selfie</button>
+    <textarea id="notes" placeholder="Notes (optionnel)…"></textarea>
+    <button class="btn-principal" id="btn-soumettre" disabled>Confirmer le Punch</button>
+    <div class="erreur-msg" id="erreur-verif"></div>
+  </section>
+  <section class="etape" id="etape-fin">
+    <div class="confirme">
+      <div class="coche">✓</div>
+      <div class="titre-etape" id="titre-fin">Punch enregistré</div>
+      <div class="sous-titre">Email envoyé</div>
+      <div class="recap" id="recap"></div>
+      <button class="btn-principal" onclick="reinitialiser()">Nouveau Punch</button>
+    </div>
+  </section>
+</div>
+<footer><b>VERDICT INSPECTION AI</b> · info@verdictinspection-ai.com · 819-525-4555</footer>
+<script>
+const CONFIG = {
+  EMAIL: 'info@verdictinspection-ai.com',
+  EMPLOYES: { '1234': 'Jacques Perrier', '5678': 'Employé Démo', '9999': 'Gestionnaire' }
+};
+function majHorloge(){
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2,'0'),mm = String(d.getMinutes()).padStart(2,'0'),ss = String(d.getSeconds()).padStart(2,'0');
+  document.getElementById('horloge').textContent = `${hh}:${mm}:${ss}`;
+  const jours = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],mois = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+  document.getElementById('date').textContent = `${jours[d.getDay()]} ${d.getDate()} ${mois[d.getMonth()]} ${d.getFullYear()}`;
+}
+setInterval(majHorloge, 1000); majHorloge();
+const etat = { nip:'', employe:'', type:'', gps:null, photoSelfie:null, notes:'' };
+function afficher(id){ document.querySelectorAll('.etape').forEach(e=>e.classList.remove('actif')); document.getElementById(id).classList.add('actif'); }
+const nipDisplay = document.getElementById('nip-display');
+document.querySelectorAll('.touche[data-n]').forEach(b=>{
+  b.addEventListener('click',()=>{ if(etat.nip.length<4){ etat.nip += b.dataset.n; nipDisplay.textContent = '•'.repeat(etat.nip.length); } });
+});
+document.getElementById('effacer').addEventListener('click',()=>{ etat.nip=''; nipDisplay.textContent=''; document.getElementById('erreur-nip').textContent=''; });
+document.getElementById('valider-nip').addEventListener('click',()=>{
+  const nom = CONFIG.EMPLOYES[etat.nip];
+  if(!nom){ document.getElementById('erreur-nip').textContent = '✕ NIP invalide'; etat.nip=''; nipDisplay.textContent=''; return; }
+  etat.employe = nom;
+  document.getElementById('salutation').textContent = 'Bonjour ' + nom.split(' ')[0];
+  afficher('etape-type');
+});
+document.querySelectorAll('.btn-punch').forEach(b=>{
+  b.addEventListener('click',()=>{ etat.type = b.dataset.type; afficher('etape-verif'); demarrerVerifications(); });
+});
+async function demarrerVerifications(){
+  const statutGps = document.getElementById('statut-gps'),texteGps = document.getElementById('texte-gps');
+  if(!navigator.geolocation){ statutGps.classList.add('erreur'); texteGps.textContent = 'GPS non disponible'; }
+  else {
+    navigator.geolocation.getCurrentPosition(
+      pos=>{ etat.gps = { lat: pos.coords.latitude, lng: pos.coords.longitude, precision: Math.round(pos.coords.accuracy) };
+        statutGps.classList.add('ok'); texteGps.textContent = `GPS OK · ±${etat.gps.precision}m`; verifierEtatBouton(); },
+      err=>{ statutGps.classList.add('erreur'); texteGps.textContent = 'Refusé ou timeout'; },
+      { enableHighAccuracy:true, timeout:10000 }
+    );
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'user', width:640, height:640 }, audio:false });
+    document.getElementById('video').srcObject = stream;
+  }catch(e){ document.getElementById('erreur-verif').textContent = '✕ Caméra refusée'; }
+}
+document.getElementById('btn-photo').addEventListener('click',()=>{
+  const v = document.getElementById('video'),c = document.getElementById('canvas');
+  c.width = v.videoWidth; c.height = v.videoHeight; c.getContext('2d').drawImage(v,0,0);
+  etat.photoSelfie = c.toDataURL('image/jpeg', 0.6);
+  v.style.display='none'; c.classList.add('actif');
+  document.getElementById('btn-photo').textContent = '✓ Selfie capturé · Reprendre';
+  document.getElementById('btn-photo').onclick = ()=>{
+    v.style.display='block'; c.classList.remove('actif'); etat.photoSelfie=null;
+    document.getElementById('btn-photo').textContent = '📸 Capturer Selfie';
+    document.getElementById('btn-photo').onclick = null; verifierEtatBouton();
+  };
+  verifierEtatBouton();
+});
+function verifierEtatBouton(){ document.getElementById('btn-soumettre').disabled = !(etat.gps && etat.photoSelfie); }
+document.getElementById('btn-soumettre').addEventListener('click',async()=>{
+  etat.notes = document.getElementById('notes').value.trim();
+  const btn = document.getElementById('btn-soumettre');
+  btn.disabled = true; btn.textContent = 'Envoi en cours…';
+  const heure = new Date().toLocaleString('fr-CA', { timeZone: 'America/Montreal' });
+  const lienCarte = `https://www.google.com/maps?q=${etat.gps.lat},${etat.gps.lng}`;
+  sauvegarderLocal();
+  const formData = new FormData();
+  formData.append('_subject', `${etat.type.toUpperCase()} · ${etat.employe} · ${heure}`);
+  formData.append('_template', 'box');
+  formData.append('_captcha', 'false');
+  formData.append('Employé', etat.employe);
+  formData.append('NIP', etat.nip);
+  formData.append('Type', etat.type.toUpperCase());
+  formData.append('Heure', heure);
+  formData.append('GPS', `${etat.gps.lat.toFixed(5)}, ${etat.gps.lng.toFixed(5)} (±${etat.gps.precision}m)`);
+  formData.append('Carte', lienCarte);
+  formData.append('Notes', etat.notes || '(aucune)');
+  formData.append('Selfie', etat.photoSelfie);
+  let envoiReussi = false;
+  try{
+    const resp = await fetch(`https://formsubmit.co/ajax/${CONFIG.EMAIL}`, { method:'POST', body: formData });
+    if(resp.ok) envoiReussi = true;
+  }catch(e){ console.error('Erreur envoi:', e); }
+  document.getElementById('titre-fin').textContent = etat.type === 'entree' ? 'Entrée enregistrée' : 'Sortie enregistrée';
+  document.getElementById('recap').innerHTML = `
+    <b>Employé :</b> ${etat.employe}<br>
+    <b>Type :</b> ${etat.type.toUpperCase()}<br>
+    <b>Heure :</b> ${heure}<br>
+    <b>GPS :</b> ${etat.gps.lat.toFixed(5)}, ${etat.gps.lng.toFixed(5)}<br>
+    <b>Selfie :</b> ✓ Capturé<br>
+    ${etat.notes ? '<b>Notes :</b> '+etat.notes+'<br>' : ''}
+    <b>Email :</b> ${envoiReussi ? '✓ Envoyé à '+CONFIG.EMAIL : '⚠ Échec (sauvegardé localement)'}`;
+  afficher('etape-fin'); arreterCamera();
+});
+function sauvegarderLocal(){
+  const punchs = JSON.parse(localStorage.getItem('verdict_punchs')||'[]');
+  punchs.push({ horodatage: new Date().toISOString(), employe: etat.employe, type: etat.type, gps: etat.gps, notes: etat.notes });
+  localStorage.setItem('verdict_punchs', JSON.stringify(punchs));
+}
+function arreterCamera(){ const v = document.getElementById('video'); if(v.srcObject) v.srcObject.getTracks().forEach(t=>t.stop()); }
+function reinitialiser(){
+  etat.nip=''; etat.employe=''; etat.type=''; etat.gps=null; etat.photoSelfie=null; etat.notes='';
+  nipDisplay.textContent=''; document.getElementById('erreur-nip').textContent='';
+  document.getElementById('notes').value=''; document.getElementById('statut-gps').className='statut-gps';
+  document.getElementById('texte-gps').textContent='Localisation en cours…';
+  const c = document.getElementById('canvas'); c.classList.remove('actif');
+  document.getElementById('video').style.display='block';
+  document.getElementById('btn-photo').textContent = '📸 Capturer Selfie';
+  document.getElementById('btn-soumettre').disabled = true;
+  document.getElementById('btn-soumettre').textContent = 'Confirmer le Punch';
+  afficher('etape-nip');
+}
+</script>
+</body>
+</html>
