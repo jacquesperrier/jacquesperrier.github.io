@@ -93,8 +93,8 @@
     <div class="titre-etape" id="salutation">Bonjour</div>
     <div class="sous-titre">Sélectionnez votre action</div>
     <div class="boutons-punch">
-      <button class="btn-punch" data-type="entree"><span>Entrée</span><span class="icone">→</span></button>
-      <button class="btn-punch sortie" data-type="sortie"><span>Sortie</span><span class="icone">←</span></button>
+      <button class="btn-punch" data-type="ENTREE"><span>Entrée</span><span class="icone">→</span></button>
+      <button class="btn-punch sortie" data-type="SORTIE"><span>Sortie</span><span class="icone">←</span></button>
     </div>
   </section>
   <section class="etape" id="etape-verif">
@@ -111,7 +111,7 @@
     <div class="confirme">
       <div class="coche">✓</div>
       <div class="titre-etape" id="titre-fin">Punch enregistré</div>
-      <div class="sous-titre">Email envoyé</div>
+      <div class="sous-titre">Envoi confirmé</div>
       <div class="recap" id="recap"></div>
       <button class="btn-principal" onclick="reinitialiser()">Nouveau Punch</button>
     </div>
@@ -120,15 +120,15 @@
 <footer><b>VERDICT INSPECTION AI</b> · info@verdictinspection-ai.com · 819-525-4555</footer>
 <script>
 const CONFIG = {
-  EMAIL: 'info@verdictinspection-ai.com',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzt058KEQSxl_MtH29FRDYEK30NrA1oO0JZfAU2xb6Z5f847MibYTD7N12EOGUr4ILyww/exec',
   EMPLOYES: { '1234': 'Jacques Perrier', '5678': 'Employé Démo', '9999': 'Gestionnaire' }
 };
 function majHorloge(){
   const d = new Date();
   const hh = String(d.getHours()).padStart(2,'0'),mm = String(d.getMinutes()).padStart(2,'0'),ss = String(d.getSeconds()).padStart(2,'0');
-  document.getElementById('horloge').textContent = `${hh}:${mm}:${ss}`;
-  const jours = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],mois = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
-  document.getElementById('date').textContent = `${jours[d.getDay()]} ${d.getDate()} ${mois[d.getMonth()]} ${d.getFullYear()}`;
+  document.getElementById('horloge').textContent = hh+':'+mm+':'+ss;
+  const jours = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],mois = ['Jan','Fev','Mar','Avr','Mai','Juin','Juil','Aout','Sep','Oct','Nov','Dec'];
+  document.getElementById('date').textContent = jours[d.getDay()]+' '+d.getDate()+' '+mois[d.getMonth()]+' '+d.getFullYear();
 }
 setInterval(majHorloge, 1000); majHorloge();
 const etat = { nip:'', employe:'', type:'', gps:null, photoSelfie:null, notes:'' };
@@ -154,7 +154,7 @@ async function demarrerVerifications(){
   else {
     navigator.geolocation.getCurrentPosition(
       pos=>{ etat.gps = { lat: pos.coords.latitude, lng: pos.coords.longitude, precision: Math.round(pos.coords.accuracy) };
-        statutGps.classList.add('ok'); texteGps.textContent = `GPS OK · ±${etat.gps.precision}m`; verifierEtatBouton(); },
+        statutGps.classList.add('ok'); texteGps.textContent = 'GPS OK · ±'+etat.gps.precision+'m'; verifierEtatBouton(); },
       err=>{ statutGps.classList.add('erreur'); texteGps.textContent = 'Refusé ou timeout'; },
       { enableHighAccuracy:true, timeout:10000 }
     );
@@ -183,41 +183,31 @@ document.getElementById('btn-soumettre').addEventListener('click',async()=>{
   const btn = document.getElementById('btn-soumettre');
   btn.disabled = true; btn.textContent = 'Envoi en cours…';
   const heure = new Date().toLocaleString('fr-CA', { timeZone: 'America/Montreal' });
-  const lienCarte = `https://www.google.com/maps?q=${etat.gps.lat},${etat.gps.lng}`;
-  sauvegarderLocal();
-  const formData = new FormData();
-  formData.append('_subject', `${etat.type.toUpperCase()} · ${etat.employe} · ${heure}`);
-  formData.append('_template', 'box');
-  formData.append('_captcha', 'false');
-  formData.append('Employé', etat.employe);
-  formData.append('NIP', etat.nip);
-  formData.append('Type', etat.type.toUpperCase());
-  formData.append('Heure', heure);
-  formData.append('GPS', `${etat.gps.lat.toFixed(5)}, ${etat.gps.lng.toFixed(5)} (±${etat.gps.precision}m)`);
-  formData.append('Carte', lienCarte);
-  formData.append('Notes', etat.notes || '(aucune)');
-  formData.append('Selfie', etat.photoSelfie);
+  const payload = {
+    employe: etat.employe, nip: etat.nip, type: etat.type,
+    gps_lat: etat.gps.lat.toFixed(5), gps_lng: etat.gps.lng.toFixed(5),
+    notes: etat.notes
+  };
   let envoiReussi = false;
   try{
-    const resp = await fetch(`https://formsubmit.co/ajax/${CONFIG.EMAIL}`, { method:'POST', body: formData });
-    if(resp.ok) envoiReussi = true;
+    await fetch(CONFIG.APPS_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify(payload)
+    });
+    envoiReussi = true;
   }catch(e){ console.error('Erreur envoi:', e); }
-  document.getElementById('titre-fin').textContent = etat.type === 'entree' ? 'Entrée enregistrée' : 'Sortie enregistrée';
-  document.getElementById('recap').innerHTML = `
-    <b>Employé :</b> ${etat.employe}<br>
-    <b>Type :</b> ${etat.type.toUpperCase()}<br>
-    <b>Heure :</b> ${heure}<br>
-    <b>GPS :</b> ${etat.gps.lat.toFixed(5)}, ${etat.gps.lng.toFixed(5)}<br>
-    <b>Selfie :</b> ✓ Capturé<br>
-    ${etat.notes ? '<b>Notes :</b> '+etat.notes+'<br>' : ''}
-    <b>Email :</b> ${envoiReussi ? '✓ Envoyé à '+CONFIG.EMAIL : '⚠ Échec (sauvegardé localement)'}`;
+  document.getElementById('titre-fin').textContent = etat.type === 'ENTREE' ? 'Entrée enregistrée' : 'Sortie enregistrée';
+  document.getElementById('recap').innerHTML =
+    '<b>Employé :</b> '+etat.employe+'<br>'+
+    '<b>Type :</b> '+etat.type+'<br>'+
+    '<b>Heure :</b> '+heure+'<br>'+
+    '<b>GPS :</b> '+etat.gps.lat.toFixed(5)+', '+etat.gps.lng.toFixed(5)+'<br>'+
+    '<b>Selfie :</b> ✓ Capturé<br>'+
+    (etat.notes ? '<b>Notes :</b> '+etat.notes+'<br>' : '')+
+    '<b>Enregistrement :</b> '+(envoiReussi ? '✓ Envoyé' : '⚠ Échec');
   afficher('etape-fin'); arreterCamera();
 });
-function sauvegarderLocal(){
-  const punchs = JSON.parse(localStorage.getItem('verdict_punchs')||'[]');
-  punchs.push({ horodatage: new Date().toISOString(), employe: etat.employe, type: etat.type, gps: etat.gps, notes: etat.notes });
-  localStorage.setItem('verdict_punchs', JSON.stringify(punchs));
-}
 function arreterCamera(){ const v = document.getElementById('video'); if(v.srcObject) v.srcObject.getTracks().forEach(t=>t.stop()); }
 function reinitialiser(){
   etat.nip=''; etat.employe=''; etat.type=''; etat.gps=null; etat.photoSelfie=null; etat.notes='';
