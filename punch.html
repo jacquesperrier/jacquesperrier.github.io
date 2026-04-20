@@ -120,7 +120,7 @@
 <footer><b>VERDICT INSPECTION AI</b> · info@verdictinspection-ai.com · 819-525-4555</footer>
 <script>
 const CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzt058KEQSxl_MtH29FRDYEK30NrA1oO0JZfAU2xb6Z5f847MibYTD7N12EOGUr4ILyww/exec',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxzuTnjFO2ll6tbCqAWnulbjgBLfvpQ4w8JoE66GF0w5YVpQoBAKaYveiDWdtu_Zpydcg/exec',
   EMPLOYES: { '1234': 'Jacques Perrier', '5678': 'Employé Démo', '9999': 'Gestionnaire' }
 };
 function majHorloge(){
@@ -167,7 +167,7 @@ async function demarrerVerifications(){
 document.getElementById('btn-photo').addEventListener('click',()=>{
   const v = document.getElementById('video'),c = document.getElementById('canvas');
   c.width = v.videoWidth; c.height = v.videoHeight; c.getContext('2d').drawImage(v,0,0);
-  etat.photoSelfie = c.toDataURL('image/jpeg', 0.6);
+  etat.photoSelfie = c.toDataURL('image/jpeg', 0.5);
   v.style.display='none'; c.classList.add('actif');
   document.getElementById('btn-photo').textContent = '✓ Selfie capturé · Reprendre';
   document.getElementById('btn-photo').onclick = ()=>{
@@ -186,7 +186,8 @@ document.getElementById('btn-soumettre').addEventListener('click',async()=>{
   const payload = {
     employe: etat.employe, nip: etat.nip, type: etat.type,
     gps_lat: etat.gps.lat.toFixed(5), gps_lng: etat.gps.lng.toFixed(5),
-    notes: etat.notes
+    notes: etat.notes,
+    photo: etat.photoSelfie
   };
   let envoiReussi = false;
   try{
