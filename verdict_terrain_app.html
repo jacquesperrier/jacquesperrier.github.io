@@ -1,1 +1,423 @@
+<!DOCTYPE html>
 
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Verdict Inspection AI - Terrain</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root {
+  --noir:#0A0A0A; --or:#C9A84C; --or-vif:#F0C040; --or-lt:#FDF8EC;
+  --blanc:#FFFFFF; --gris:#F4F3F1; --gris-md:#E0DDD8; --gris-dk:#9A9590;
+  --rouge:#C0392B; --rouge-lt:#FDF0EE; --jaune:#E67E22; --jaune-lt:#FEF7EE;
+  --vert:#1B6B3A; --vert-lt:#EBF5F0;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body { font-family:'DM Sans',sans-serif; background:var(--noir); color:var(--blanc); min-height:100vh; }
+
+.app-header { background:var(–noir); padding:20px 20px 0; }
+.app-header::after { content:’’; display:block; height:2px; background:linear-gradient(90deg,var(–or),var(–or-vif),transparent); margin-top:16px; }
+.header-row { display:flex; justify-content:space-between; align-items:center; }
+.brand { font-family:‘Playfair Display’,serif; font-size:20px; color:var(–blanc); }
+.brand em { color:var(–or); font-style:normal; }
+.version-chip { background:var(–or); color:var(–noir); font-size:10px; font-weight:600; padding:3px 8px; border-radius:20px; }
+
+.steps-nav { display:flex; padding:16px 20px 0; position:relative; }
+.steps-nav::before { content:’’; position:absolute; top:28px; left:44px; right:44px; height:1px; background:#2A2A2A; z-index:0; }
+.step-dot { display:flex; flex-direction:column; align-items:center; flex:1; gap:5px; position:relative; z-index:1; }
+.step-circle { width:28px; height:28px; border-radius:50%; border:2px solid #333; background:var(–noir); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#444; transition:all .3s; }
+.step-dot.active .step-circle { border-color:var(–or); background:var(–or); color:var(–noir); }
+.step-dot.done .step-circle { border-color:var(–vert); background:var(–vert); color:var(–blanc); }
+.step-label { font-size:9px; color:#444; text-align:center; text-transform:uppercase; }
+.step-dot.active .step-label { color:var(–or); }
+.step-dot.done .step-label { color:var(–vert); }
+
+.screen { display:none; padding:20px; animation:fadeIn .3s ease; }
+.screen.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+.screen-title { font-family:‘Playfair Display’,serif; font-size:22px; margin-bottom:4px; }
+.screen-sub { font-size:12px; color:var(–gris-dk); margin-bottom:20px; line-height:1.5; }
+
+.card { background:#141414; border:1px solid #222; border-radius:12px; padding:16px; margin-bottom:14px; }
+.card-label { font-size:10px; font-weight:600; color:var(–or); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+
+.field { margin-bottom:12px; }
+.field label { display:block; font-size:11px; color:var(–gris-dk); font-weight:500; margin-bottom:5px; }
+.field input, .field select, .field textarea { width:100%; background:#1C1C1C; border:1px solid #2E2E2E; border-radius:8px; color:var(–blanc); font-family:‘DM Sans’,sans-serif; font-size:14px; padding:11px 14px; outline:none; transition:border-color .2s; -webkit-appearance:none; }
+.field input:focus, .field select:focus { border-color:var(–or); }
+.field input::placeholder { color:#3A3A3A; }
+.field select option { background:#1C1C1C; }
+.field-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+.upload-zone { border:2px dashed #2E2E2E; border-radius:12px; padding:24px 16px; text-align:center; cursor:pointer; transition:all .2s; position:relative; margin-bottom:14px; }
+.upload-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; font-size:16px; }
+.upload-icon { font-size:36px; margin-bottom:8px; }
+.upload-title { font-size:14px; font-weight:600; margin-bottom:4px; }
+.upload-hint { font-size:11px; color:var(–gris-dk); }
+.upload-or { display:flex; align-items:center; gap:10px; margin:10px 0; color:var(–gris-dk); font-size:11px; }
+.upload-or::before,.upload-or::after { content:’’; flex:1; height:1px; background:#222; }
+
+.preview-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+.preview-item { aspect-ratio:1; border-radius:8px; overflow:hidden; position:relative; background:#1C1C1C; border:1px solid #2E2E2E; }
+.preview-item img { width:100%; height:100%; object-fit:cover; }
+.preview-item .rm { position:absolute; top:4px; right:4px; background:rgba(0,0,0,.7); color:white; border:none; border-radius:50%; width:22px; height:22px; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.photo-count { font-size:11px; color:var(–gris-dk); text-align:right; margin-top:-8px; margin-bottom:10px; }
+
+.zone-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.zone-btn { background:#1C1C1C; border:1px solid #2E2E2E; border-radius:10px; padding:10px 12px; cursor:pointer; text-align:left; transition:all .2s; color:var(–blanc); font-family:‘DM Sans’,sans-serif; }
+.zone-btn.selected { background:#16140E; border-color:var(–or); }
+.zone-btn .zi { font-size:18px; margin-bottom:4px; display:block; }
+.zone-btn .zn { font-size:12px; font-weight:600; display:block; }
+.zone-btn .zs { font-size:10px; color:var(–gris-dk); }
+
+.btn-primary { width:100%; background:linear-gradient(135deg,var(–or),var(–or-vif)); color:var(–noir); border:none; border-radius:12px; padding:15px; font-family:‘DM Sans’,sans-serif; font-size:15px; font-weight:700; cursor:pointer; margin-top:8px; box-shadow:0 4px 20px rgba(201,168,76,.25); transition:all .2s; }
+.btn-primary:active { transform:scale(.98); }
+.btn-primary:disabled { background:#2A2A2A; color:#444; box-shadow:none; cursor:not-allowed; }
+.btn-secondary { width:100%; background:transparent; color:var(–gris-dk); border:1px solid #2E2E2E; border-radius:12px; padding:13px; font-family:‘DM Sans’,sans-serif; font-size:14px; cursor:pointer; margin-top:8px; }
+
+.analyse-status { display:flex; flex-direction:column; align-items:center; padding:40px 20px; text-align:center; }
+.spinner { width:60px; height:60px; border:3px solid #222; border-top-color:var(–or); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:20px; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.analyse-title { font-family:‘Playfair Display’,serif; font-size:20px; margin-bottom:8px; }
+.analyse-steps { width:100%; margin-top:24px; }
+.analyse-step { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid #1A1A1A; font-size:13px; color:var(–gris-dk); transition:color .3s; }
+.analyse-step.done { color:var(–blanc); }
+.analyse-step.active { color:var(–or); }
+.step-ico { font-size:16px; min-width:24px; }
+
+.result-score { text-align:center; padding:24px 0 20px; }
+.score-ring { width:100px; height:100px; border-radius:50%; border:4px solid; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto 12px; }
+.score-num { font-family:‘Playfair Display’,serif; font-size:30px; font-weight:700; line-height:1; }
+.raw-box { background:#0F1A0F; border:1px solid var(–vert); border-radius:12px; padding:16px; margin-bottom:14px; }
+.raw-label { font-size:11px; color:var(–vert); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.raw-content { font-size:11px; color:var(–blanc); background:#111; border-radius:6px; padding:10px; border:1px solid #1E2E1E; font-family:monospace; white-space:pre-wrap; word-break:break-word; max-height:300px; overflow-y:auto; }
+
+.error-box { background:#2D0A08; border:1px solid var(–rouge); border-radius:8px; padding:12px; margin-bottom:12px; font-size:11px; color:#e57373; line-height:1.5; word-break:break-word; }
+
+.toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(60px); background:#1C1C1C; border:1px solid var(–or); color:var(–blanc); padding:10px 20px; border-radius:30px; font-size:13px; transition:transform .3s ease; z-index:999; white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+.bottom-safe { height:30px; }
+</style>
+
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-row">
+    <div class="brand">VERDICT <em>AI</em></div>
+    <div class="version-chip">TERRAIN v3.0</div>
+  </div>
+  <div style="font-size:11px;color:var(--gris-dk);margin-top:4px;">Inspection HACCP/MAPAQ • Powered by Claude AI</div>
+</div>
+
+<div class="steps-nav" id="stepsNav">
+  <div class="step-dot active" id="sd1"><div class="step-circle">1</div><div class="step-label">Client</div></div>
+  <div class="step-dot" id="sd2"><div class="step-circle">2</div><div class="step-label">Photos</div></div>
+  <div class="step-dot" id="sd3"><div class="step-circle">3</div><div class="step-label">Zones</div></div>
+  <div class="step-dot" id="sd4"><div class="step-circle">4</div><div class="step-label">Analyse</div></div>
+  <div class="step-dot" id="sd5"><div class="step-circle">5</div><div class="step-label">Rapport</div></div>
+</div>
+
+<div class="screen active" id="screen1">
+  <div class="screen-title">Infos établissement</div>
+  <div class="screen-sub">Remplissez les informations du client avant l'inspection.</div>
+  <div class="card">
+    <div class="card-label">📋 Identification</div>
+    <div class="field"><label>Nom de l'établissement *</label><input type="text" id="nom" placeholder="Restaurant Le Bon Goût..."/></div>
+    <div class="field"><label>Adresse *</label><input type="text" id="adresse" placeholder="123 rue Principale, Gatineau..."/></div>
+    <div class="field-row">
+      <div class="field"><label>No permis MAPAQ</label><input type="text" id="permis" placeholder="QC-XXXXX"/></div>
+      <div class="field"><label>Date *</label><input type="date" id="dateInsp"/></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">👤 Contact responsable</div>
+    <div class="field"><label>Nom du responsable *</label><input type="text" id="responsable" placeholder="Prénom Nom..."/></div>
+    <div class="field-row">
+      <div class="field"><label>Courriel *</label><input type="email" id="email" placeholder="nom@resto.com"/></div>
+      <div class="field"><label>Cellulaire *</label><input type="tel" id="tel" placeholder="819-555-0000"/></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">🏷️ Type d'inspection</div>
+    <div class="field"><label>Type</label>
+      <select id="typeInsp">
+        <option>Inspection de routine</option>
+        <option>Inspection de suivi</option>
+        <option>Suite à une plainte</option>
+        <option>Pré-certification HACCP</option>
+        <option>Urgence / Incident</option>
+      </select>
+    </div>
+  </div>
+  <button class="btn-primary" id="btn1" onclick="goStep(2)" disabled>Suivant — Photos →</button>
+</div>
+
+<div class="screen" id="screen2">
+  <div class="screen-title">Photos & Vidéos</div>
+  <div class="screen-sub">Prenez ou sélectionnez les photos d'inspection. Min 1, max 10.</div>
+  <div id="prevGrid" class="preview-grid" style="display:none;"></div>
+  <div class="photo-count" id="photoCount" style="display:none;"></div>
+  <div class="upload-zone">
+    <input type="file" id="fi1" accept="image/*" multiple capture="environment" onchange="addFiles(this.files)">
+    <div class="upload-icon">📷</div>
+    <div class="upload-title">Prendre une photo</div>
+    <div class="upload-hint">Appareil photo</div>
+  </div>
+  <div class="upload-or">ou</div>
+  <div class="upload-zone" style="padding:14px 16px;">
+    <input type="file" id="fi2" accept="image/*" multiple onchange="addFiles(this.files)">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:22px;">🖼️</span>
+      <div><div style="font-size:13px;font-weight:600;">Choisir depuis la galerie</div><div style="font-size:11px;color:var(--gris-dk);">Photos existantes</div></div>
+    </div>
+  </div>
+  <button class="btn-primary" id="btn2" onclick="goStep(3)" disabled>Suivant — Zones →</button>
+  <button class="btn-secondary" onclick="goStep(1)">← Retour</button>
+</div>
+
+<div class="screen" id="screen3">
+  <div class="screen-title">Zones inspectées</div>
+  <div class="screen-sub">Sélectionnez toutes les zones couvertes.</div>
+  <div class="card">
+    <div class="card-label">🗺️ Zones HACCP / 5M MAPAQ</div>
+    <div class="zone-grid">
+      <button class="zone-btn" data-z="Réception" onclick="toggleZone(this)"><span class="zi">📦</span><span class="zn">Réception</span><span class="zs">Matière</span></button>
+      <button class="zone-btn" data-z="Réfrigération" onclick="toggleZone(this)"><span class="zi">❄️</span><span class="zn">Réfrigération</span><span class="zs">Matière/Milieu</span></button>
+      <button class="zone-btn" data-z="Préparation" onclick="toggleZone(this)"><span class="zi">🔪</span><span class="zn">Préparation</span><span class="zs">Méthode</span></button>
+      <button class="zone-btn" data-z="Cuisson" onclick="toggleZone(this)"><span class="zi">🍳</span><span class="zn">Cuisson</span><span class="zs">CCP Température</span></button>
+      <button class="zone-btn" data-z="Hygiène" onclick="toggleZone(this)"><span class="zi">🧼</span><span class="zn">Hygiène</span><span class="zs">Main-d'œuvre</span></button>
+      <button class="zone-btn" data-z="Équipements" onclick="toggleZone(this)"><span class="zi">⚙️</span><span class="zn">Équipements</span><span class="zs">Matériel</span></button>
+      <button class="zone-btn" data-z="Nettoyage" onclick="toggleZone(this)"><span class="zi">🧹</span><span class="zn">Nettoyage</span><span class="zs">Milieu</span></button>
+      <button class="zone-btn" data-z="Registres" onclick="toggleZone(this)"><span class="zi">📋</span><span class="zn">Registres</span><span class="zs">Documentation</span></button>
+    </div>
+  </div>
+  <button class="btn-primary" id="btn3" onclick="startAnalyse()" disabled>🚀 Lancer l'analyse IA →</button>
+  <button class="btn-secondary" onclick="goStep(2)">← Retour</button>
+</div>
+
+<div class="screen" id="screen4">
+  <div class="analyse-status">
+    <div class="spinner" id="spinner"></div>
+    <div class="analyse-title">Analyse en cours...</div>
+    <div style="font-size:12px;color:var(--gris-dk);">Claude AI analyse vos photos HACCP</div>
+    <div class="analyse-steps" id="aSteps">
+      <div class="analyse-step" id="as1"><span class="step-ico">📤</span><span>Envoi des photos...</span></div>
+      <div class="analyse-step" id="as2"><span class="step-ico">🔍</span><span>Analyse HACCP (Claude AI)...</span></div>
+      <div class="analyse-step" id="as3"><span class="step-ico">⚖️</span><span>Calcul score IFS (A/B/C/D)...</span></div>
+      <div class="analyse-step" id="as4"><span class="step-ico">📄</span><span>Interprétation résultats...</span></div>
+      <div class="analyse-step" id="as5"><span class="step-ico">🔗</span><span>Finalisation...</span></div>
+    </div>
+    <div id="errBox" class="error-box" style="display:none;width:100%;margin-top:16px;"></div>
+    <button id="retryBtn" class="btn-secondary" onclick="goStep(3)" style="display:none;margin-top:12px;">← Réessayer</button>
+  </div>
+</div>
+
+<div class="screen" id="screen5">
+  <div class="screen-title">Analyse prête ✓</div>
+  <div class="screen-sub">Claude a analysé vos photos selon HACCP/MAPAQ/IFS.</div>
+  <div class="result-score">
+    <div class="score-ring" id="scoreRing" style="border-color:var(--jaune);">
+      <div class="score-num" id="scoreNum" style="color:var(--jaune);">--</div>
+      <div style="font-size:9px;color:var(--gris-dk);">/ 100</div>
+    </div>
+    <div style="font-weight:700;font-size:14px;margin-top:4px;" id="scoreVerdict">En traitement...</div>
+    <div style="font-size:11px;color:var(--gris-dk);margin-top:4px;" id="scoreDetail"></div>
+  </div>
+  <div class="raw-box">
+    <div class="raw-label">📊 Rapport complet Claude AI</div>
+    <div class="raw-content" id="rawContent">Chargement...</div>
+  </div>
+  <button class="btn-primary" onclick="newInspection()">➕ Nouvelle inspection</button>
+  <button class="btn-secondary" onclick="copyRaw()">📋 Copier le rapport</button>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="bottom-safe"></div>
+
+<script>
+const FUNCTION_URL = 'https://wzjkhehikjiteqvooucl.supabase.co/functions/v1/haccp-report';
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6amtoZWhpa2ppdGVxdm9vdWNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDU4MTQsImV4cCI6MjA5MTY4MTgxNH0.KFNXY1xfjoVWk37XP3M2L4bQzQC0ANdP7Ln2mD781P0';
+
+const st = { files:[], zones:new Set(), client:{}, lastResult:null, step:1 };
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('dateInsp').value = new Date().toISOString().split('T')[0];
+  ['nom','adresse','responsable','email','tel'].forEach(id => {
+    document.getElementById(id).addEventListener('input', checkStep1);
+  });
+});
+
+function checkStep1() {
+  const ok = ['nom','adresse','responsable','email','tel'].every(id => document.getElementById(id).value.trim());
+  document.getElementById('btn1').disabled = !ok;
+}
+
+function goStep(n) {
+  if (n === 2) {
+    st.client = {
+      nom: document.getElementById('nom').value,
+      adresse: document.getElementById('adresse').value,
+      permis: document.getElementById('permis').value || '-',
+      responsable: document.getElementById('responsable').value,
+      email: document.getElementById('email').value,
+      tel: document.getElementById('tel').value,
+      date: document.getElementById('dateInsp').value,
+      type: document.getElementById('typeInsp').value,
+    };
+  }
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen'+n).classList.add('active');
+  st.step = n;
+  updateNav(n);
+  window.scrollTo(0,0);
+}
+
+function updateNav(n) {
+  for (let i=1; i<=5; i++) {
+    const d = document.getElementById('sd'+i);
+    d.classList.remove('active','done');
+    if (i < n) d.classList.add('done');
+    else if (i === n) d.classList.add('active');
+    d.querySelector('.step-circle').textContent = i < n ? '✓' : i;
+  }
+}
+
+function addFiles(files) {
+  Array.from(files).forEach(f => { if (st.files.length < 10) st.files.push(f); });
+  renderPreviews();
+  document.getElementById('btn2').disabled = !st.files.length;
+}
+
+function renderPreviews() {
+  const g = document.getElementById('prevGrid');
+  const c = document.getElementById('photoCount');
+  if (!st.files.length) { g.style.display='none'; c.style.display='none'; return; }
+  g.style.display='grid'; c.style.display='block';
+  c.textContent = st.files.length + ' photo(s) sélectionnée(s)';
+  g.innerHTML = '';
+  st.files.forEach((f,i) => {
+    const d = document.createElement('div'); d.className='preview-item';
+    const img = document.createElement('img'); img.src=URL.createObjectURL(f);
+    const btn = document.createElement('button'); btn.className='rm'; btn.textContent='×';
+    btn.onclick = e => { e.stopPropagation(); st.files.splice(i,1); renderPreviews(); document.getElementById('btn2').disabled=!st.files.length; };
+    d.appendChild(img); d.appendChild(btn); g.appendChild(d);
+  });
+}
+
+function toggleZone(btn) {
+  const z = btn.dataset.z;
+  if (st.zones.has(z)) { st.zones.delete(z); btn.classList.remove('selected'); }
+  else { st.zones.add(z); btn.classList.add('selected'); }
+  document.getElementById('btn3').disabled = !st.zones.size;
+}
+
+async function startAnalyse() {
+  goStep(4);
+  document.getElementById('errBox').style.display = 'none';
+  document.getElementById('retryBtn').style.display = 'none';
+  document.getElementById('spinner').style.display = 'block';
+
+  const steps = ['as1','as2','as3','as4','as5'];
+  const delays = [500,1500,3000,5000,7000];
+  steps.forEach((id,i) => {
+    setTimeout(() => { document.getElementById(id).classList.add('active'); }, delays[i]);
+  });
+
+  try {
+    document.getElementById('as1').classList.add('active');
+    const photosB64 = await Promise.all(st.files.map(f => new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res({ data: r.result.split(',')[1], type: f.type || 'image/jpeg', name: f.name });
+      r.onerror = rej;
+      r.readAsDataURL(f);
+    })));
+
+    const payload = { ...st.client, photos: photosB64 };
+
+    const res = await fetch(FUNCTION_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error((data && data.error) ? data.error : 'Erreur serveur ' + res.status);
+    }
+
+    steps.forEach(id => {
+      const el = document.getElementById(id);
+      el.classList.remove('active'); el.classList.add('done');
+      el.querySelector('.step-ico').textContent = '✅';
+    });
+
+    showResult(data);
+
+  } catch(err) {
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('errBox').style.display = 'block';
+    document.getElementById('errBox').textContent = '❌ ' + (err.name || 'Erreur') + ': ' + (err.message || 'inconnu');
+    document.getElementById('retryBtn').style.display = 'block';
+    console.error('Full error:', err);
+    steps.forEach(id => {
+      document.getElementById(id).classList.remove('active');
+    });
+  }
+}
+
+function showResult(data) {
+  st.lastResult = data;
+  const sc = data.score || (data.audit && data.audit.score) || 0;
+  const verdict = data.verdict || (data.audit && (data.audit.verdict || data.audit.statut)) || 'ANALYSÉ';
+  const col = sc>=95?'#B7950B':sc>=75?'#1B6B3A':sc>=50?'#E67E22':'#C0392B';
+  
+  document.getElementById('scoreNum').textContent = sc ? sc + '%' : '--';
+  document.getElementById('scoreNum').style.color = col;
+  document.getElementById('scoreRing').style.borderColor = col;
+  document.getElementById('scoreVerdict').textContent = verdict;
+  document.getElementById('scoreVerdict').style.color = col;
+  document.getElementById('scoreDetail').textContent = 'Seuil IFS : 75% | KO = échec immédiat';
+
+  document.getElementById('rawContent').textContent = JSON.stringify(data, null, 2);
+
+  goStep(5);
+}
+
+function copyRaw() {
+  const txt = JSON.stringify(st.lastResult, null, 2);
+  navigator.clipboard.writeText(txt).then(() => showToast('✅ Rapport copié!')).catch(() => showToast('Erreur copie'));
+}
+
+function newInspection() {
+  st.files=[]; st.zones=new Set(); st.client={}; st.lastResult=null;
+  ['nom','adresse','permis','responsable','email','tel'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('dateInsp').value = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('.zone-btn.selected').forEach(b => b.classList.remove('selected'));
+  document.getElementById('prevGrid').style.display='none';
+  document.getElementById('photoCount').style.display='none';
+  document.getElementById('btn1').disabled=true;
+  document.getElementById('btn2').disabled=true;
+  document.getElementById('btn3').disabled=true;
+  document.querySelectorAll('.analyse-step').forEach((s,i) => {
+    s.classList.remove('active','done');
+    s.querySelector('.step-ico').textContent=['📤','🔍','⚖️','📄','🔗'][i];
+  });
+  document.getElementById('spinner').style.display='block';
+  goStep(1);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+
+</body>
+</html>
