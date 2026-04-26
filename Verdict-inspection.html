@@ -3,1113 +3,622 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Verdict Inspection AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Verdict Inspection">
+<title>Verdict Inspection AI — Rapport MAPAQ</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxODAgMTgwJz4KICA8cmVjdCB3aWR0aD0nMTgwJyBoZWlnaHQ9JzE4MCcgcng9JzQwJyBmaWxsPScjMUExQTFBJy8+CiAgPHRleHQgeD0nOTAnIHk9JzcyJyBmb250LWZhbWlseT0nQXJpYWwgQmxhY2ssQXJpYWwnIGZvbnQtd2VpZ2h0PScxMDAnIGZvbnQtc2l6ZT0nNTInIGZpbGw9JyNENEEwMTcnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGxldHRlci1zcGFjaW5nPScyJz5WSUE8L3RleHQ+CiAgPGxpbmUgeDE9JzQ1JyB5MT0nODgnIHgyPScxMzUnIHkyPSc4OCcgc3Ryb2tlPScjRDRBMDE3JyBzdHJva2Utd2lkdGg9JzMnLz4KICA8dGV4dCB4PSc5MCcgeT0nMTE1JyBmb250LWZhbWlseT0nQXJpYWwnIGZvbnQtd2VpZ2h0PSc3MDAnIGZvbnQtc2l6ZT0nMTYnIGZpbGw9JyNENEEwMTcnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGxldHRlci1zcGFjaW5nPSczJz5WRVJESUNUPC90ZXh0PgogIDx0ZXh0IHg9JzkwJyB5PScxMzUnIGZvbnQtZmFtaWx5PSdBcmlhbCcgZm9udC13ZWlnaHQ9JzQwMCcgZm9udC1zaXplPScxMScgZmlsbD0nI2ZmZmZmZicgdGV4dC1hbmNob3I9J21pZGRsZScgbGV0dGVyLXNwYWNpbmc9JzInPklOU1BFQ1RJT04gQUk8L3RleHQ+Cjwvc3ZnPg==">
 <style>
-:root {
-  --noir: #0A0A0A;
-  --or: #D4A017;
-  --or-vif: #FFD700;
-  --vert: #1B5E20;
-  --vert-pale: #C8E6C9;
-  --rouge: #C62828;
-  --jaune: #E65100;
-  --blanc: #F0EEE8;
-  --gris: #1E1E1E;
-  --gris2: #2A2A2A;
-  --gris3: #3A3A3A;
-}
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html { background-color: #0A0A0A; }
-html, body { height:100%; }
-body {
-  background-color: #0A0A0A;
-  color: #F0EEE8;
-  font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 16px;
-  overflow-x: hidden;
-}
-button { -webkit-appearance: none !important; appearance: none !important; }
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Source+Sans+3:wght@400;600&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+  body{font-family:'Source Sans 3','Segoe UI',Arial,sans-serif;background:#1A1A1A;color:#1A1A1A;}
 
-/* ——— HEADER ——— */
-.header {
-background: linear-gradient(135deg, #0A0A0A 0%, #111100 100%);
-border-bottom: 2px solid var(–or);
-padding: 14px 20px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-position: sticky;
-top: 0;
-z-index: 100;
-}
-.logo { font-family: Impact, ‘Arial Narrow’, Arial, sans-serif; font-size:26px; color:#D4A017; letter-spacing:3px; text-transform:uppercase; font-weight:900; }
-.logo span { color:#F0EEE8; }
-.btn-gear {
-background:none; border:1px solid var(–gris3); color:#888;
-width:38px; height:38px; border-radius:8px; font-size:18px;
-cursor:pointer; display:flex; align-items:center; justify-content:center;
-}
-
-/* ——— SCREENS ——— */
-.screen { display:none; padding:20px 18px; min-height:calc(100vh - 68px); }
-.screen.active { display:block; animation:fadeUp 0.25s ease; }
-@keyframes fadeUp {
-from { opacity:0; transform:translateY(8px); }
-to   { opacity:1; transform:translateY(0); }
-}
-
-/* ——— BOTTOM NAV ——— */
-.bottom-nav {
-position:fixed; bottom:0; left:0; right:0;
-background:#111; border-top:1px solid #222;
+/* ── ÉCRAN ACCUEIL APP ── */
+#accueil{
+min-height:100vh;
+background:#1A1A1A;
 display:flex;
-padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-z-index:100;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+padding:40px 24px;
+gap:32px;
 }
-.nav-item {
-flex:1; display:flex; flex-direction:column;
-align-items:center; gap:3px; padding:5px 0;
-cursor:pointer; color:#444; font-size:11px;
-font-weight:600; text-transform:uppercase; letter-spacing:0.5px;
-transition:color 0.2s;
+.app-logo{
+font-family:‘Montserrat’,sans-serif;
+font-size:28px;
+font-weight:900;
+letter-spacing:4px;
+color:#D4A017;
+text-align:center;
+line-height:1.2;
 }
-.nav-item span { font-size:22px; }
-.nav-item.active { color:#D4A017; }
-.with-nav { padding-bottom: calc(68px + env(safe-area-inset-bottom) + 10px); }
+.app-logo span{
+display:block;
+font-size:11px;
+color:#fff;
+letter-spacing:2px;
+font-weight:600;
+margin-top:6px;
+text-transform:uppercase;
+}
+.app-divider{width:60px;height:3px;background:#D4A017;border-radius:2px;}
+.btn-nouveau{
+background:#D4A017;
+color:#1A1A1A;
+font-family:‘Montserrat’,sans-serif;
+font-size:16px;
+font-weight:900;
+letter-spacing:2px;
+text-transform:uppercase;
+padding:18px 40px;
+border-radius:50px;
+border:none;
+cursor:pointer;
+width:100%;
+max-width:320px;
+box-shadow:0 4px 20px rgba(212,160,23,0.4);
+}
+.app-footer{font-size:10px;color:#555;letter-spacing:1px;text-align:center;}
 
-/* ——— BUTTONS ——— */
-.btn-gold {
--webkit-appearance: none !important;
-appearance: none !important;
-background: #D4A017 !important;
-background: -webkit-linear-gradient(135deg, #D4A017, #FFD700) !important;
-background: linear-gradient(135deg, #D4A017, #FFD700) !important;
-color: #0A0A0A !important;
-border: none !important;
-padding: 15px 24px;
-border-radius: 12px;
-font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif;
-font-size: 17px;
-font-weight: 700;
-cursor: pointer;
-width: 100%;
-letter-spacing: 1px;
-text-transform: uppercase;
-transition: all 0.15s;
-display: block;
-}
-.btn-gold:active { transform:scale(0.98); opacity:0.9; }
-.btn-outline {
--webkit-appearance: none;
-appearance: none;
-background:transparent; color:#D4A017; border:2px solid #D4A017;
-padding:13px 24px; border-radius:12px; font-family:-apple-system,‘Helvetica Neue’,Arial,sans-serif;
-font-size:16px; font-weight:600; cursor:pointer; width:100%;
-letter-spacing:1px; text-transform:uppercase; transition:all 0.15s;
-}
-.btn-outline:active { background:rgba(212,160,23,0.1); }
-.btn-red {
--webkit-appearance: none;
-appearance: none;
-background:#C62828; color:white; border:none;
-padding:12px 20px; border-radius:10px; font-family:-apple-system,‘Helvetica Neue’,Arial,sans-serif;
-font-size:15px; font-weight:600; cursor:pointer;
-}
-.btn-back {
-background:none; border:none; color:#D4A017;
-font-size:26px; cursor:pointer; padding:0 8px 0 0;
-line-height:1;
-}
+/* ── RAPPORT ── */
+#rapport{display:none;}
+.page{width:100%;max-width:820px;margin:0 auto;background:#fff;position:relative;page-break-after:always;}
 
-/* ——— CARDS ——— */
-.card {
-background:#1E1E1E; border:1px solid var(–gris2);
-border-radius:16px; padding:18px; margin-bottom:14px;
-}
-.card-gold {
-background: linear-gradient(135deg, #161400, #1E1A00);
-border-color:#D4A017;
-}
+.entete{background:#1A1A1A;border-bottom:3px solid #D4A017;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+.entete-logo{font-family:‘Montserrat’,sans-serif;font-size:16px;font-weight:900;letter-spacing:3px;color:#D4A017;}
+.entete-sub{font-size:8px;color:#fff;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.entete-meta{text-align:right;}
+.entete-no{font-size:12px;font-weight:700;color:#D4A017;}
+.entete-info{font-size:10px;color:#ccc;}
 
-/* ——— FORMS ——— */
-.form-group { margin-bottom:18px; }
-.lbl {
-display:block; color:#D4A017; font-size:12px;
-font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:7px;
-}
-.inp {
-width:100%; background:#141414; border:1px solid var(–gris3);
-color:#F0EEE8; padding:13px 15px; border-radius:10px;
-font-family:-apple-system,‘Helvetica Neue’,Arial,sans-serif; font-size:16px; outline:none;
-transition:border-color 0.2s; -webkit-appearance:none;
-}
-.inp:focus { border-color:#D4A017; }
-select.inp { cursor:pointer; }
+.hero{background:#1A1A1A;padding:24px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.hero-title{font-family:‘Montserrat’,sans-serif;font-size:20px;font-weight:900;color:#fff;line-height:1.2;}
+.hero-title span{color:#D4A017;}
+.hero-sub{font-size:11px;color:#D4A017;margin-top:8px;font-weight:600;}
+.score-box{background:#fff;border-radius:10px;width:95px;height:95px;min-width:95px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid #D4A017;flex-shrink:0;}
+.score-pct{font-family:‘Montserrat’,sans-serif;font-size:26px;font-weight:900;color:#1A1A1A;line-height:1;}
+.score-lbl{font-size:8px;font-weight:700;color:#666;margin-top:2px;text-transform:uppercase;letter-spacing:1px;}
+.score-verdict{font-size:9px;font-weight:900;padding:2px 8px;border-radius:20px;margin-top:4px;}
 
-/* ——— HOME ——— */
-.hero { text-align:center; padding:24px 0 16px; }
-.hero-title {
-font-family: Impact, ‘Arial Narrow’, Arial, sans-serif;
-font-size: 44px;
-color: #D4A017;
-letter-spacing: 4px;
-line-height: 1;
-text-transform: uppercase;
-font-weight: 900;
-}
-.hero-sub { color:#666; font-size:13px; letter-spacing:2px; text-transform:uppercase; margin-top:6px; }
-.hero-badge {
-display:inline-block; background:linear-gradient(135deg,var(–or),var(–or-vif));
-color:#0A0A0A; padding:5px 14px; border-radius:20px;
-font-size:12px; font-weight:700; margin-top:10px; letter-spacing:1px;
-}
+.body{padding:16px 20px 80px;}
 
-.insp-card {
-background:#1E1E1E; border-radius:14px; padding:15px 16px;
-margin-bottom:10px; display:flex; align-items:center; gap:14px;
-border-left:4px solid; cursor:pointer; transition:background 0.15s;
-}
-.insp-card:active { background:#2A2A2A; }
-.score-dot {
-width:54px; height:54px; border-radius:12px;
-display:flex; flex-direction:column; align-items:center;
-justify-content:center; flex-shrink:0;
-}
-.dot-num { font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:22px; line-height:1; }
-.dot-pct { font-size:10px; font-weight:700; }
-.s-rouge { background:rgba(198,40,40,.18); color:#EF5350; border:1px solid rgba(198,40,40,.35); }
-.s-jaune { background:rgba(230,81,0,.18); color:#FFA726; border:1px solid rgba(230,81,0,.35); }
-.s-vert  { background:rgba(27,94,32,.25); color:#66BB6A; border:1px solid rgba(27,94,32,.45); }
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.field{background:#f9f5ec;border-left:3px solid #D4A017;padding:10px 12px;border-radius:0 6px 6px 0;}
+.field-label{font-size:8px;font-weight:700;letter-spacing:1.5px;color:#D4A017;text-transform:uppercase;margin-bottom:3px;}
+.field input, .field select{width:100%;border:none;background:transparent;font-size:13px;font-weight:600;color:#1A1A1A;font-family:‘Source Sans 3’,sans-serif;outline:none;}
 
-.insp-info h3 { font-size:17px; font-weight:700; color:#F0EEE8; }
-.insp-info p { font-size:13px; color:#666; margin-top:2px; }
+.sep{height:2px;background:linear-gradient(to right,#D4A017,transparent);margin:14px 0;}
+.section-title{font-family:‘Montserrat’,sans-serif;font-size:11px;font-weight:900;color:#8B1A1A;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:’’;flex:1;height:2px;background:linear-gradient(to right,#D4A017,transparent);}
 
-.empty {
-text-align:center; padding:50px 20px; color:#444;
-}
-.empty-icon { font-size:48px; margin-bottom:14px; }
+.nc-pills{display:flex;gap:8px;margin-bottom:16px;}
+.nc-pill{flex:1;border-radius:8px;padding:10px 6px;text-align:center;color:#fff;}
+.nc-pill.crit{background:#FF7043;}
+.nc-pill.maj{background:#FFA726;color:#1A1A1A;}
+.nc-pill.min{background:#9E9E9E;}
+.nc-pill.conf{background:#66BB6A;}
+.nc-pill input{background:transparent;border:none;outline:none;font-family:‘Montserrat’,sans-serif;font-size:24px;font-weight:900;width:100%;text-align:center;color:inherit;}
+.nc-pill-lbl{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
 
-/* ——— STEPS ——— */
-.steps { display:flex; justify-content:space-between; margin-bottom:22px; position:relative; }
-.steps::before {
-content:’’; position:absolute; top:15px; left:30px; right:30px;
-height:1px; background:#222;
-}
-.step { display:flex; flex-direction:column; align-items:center; gap:5px; position:relative; z-index:1; }
-.step-dot {
-width:30px; height:30px; border-radius:50%;
-display:flex; align-items:center; justify-content:center;
-font-size:13px; font-weight:700; border:2px solid #2A2A2A;
-background:#0A0A0A; color:#444;
-}
-.step.active .step-dot { border-color:#D4A017; color:#D4A017; background:#0A0A00; }
-.step.done .step-dot { border-color:var(–vert); background:var(–vert); color:white; }
-.step-lbl { font-size:10px; color:#444; text-transform:uppercase; letter-spacing:0.5px; }
-.step.active .step-lbl { color:#D4A017; }
-.step.done .step-lbl { color:#66BB6A; }
+.band-or{background:#8B6914;padding:8px 20px;color:#fff;font-family:‘Montserrat’,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.band-or::before{content:’’;width:3px;height:14px;background:#fff;border-radius:2px;flex-shrink:0;}
 
-/* ——— ZONE NAV ——— */
-.zone-nav {
-display:flex; gap:8px; overflow-x:auto;
-padding-bottom:10px; margin-bottom:18px; scrollbar-width:none;
-}
-.zone-nav::-webkit-scrollbar { display:none; }
-.z-pill {
-flex-shrink:0; padding:8px 14px; border-radius:20px;
-font-size:13px; font-weight:600; cursor:pointer;
-border:1px solid var(–gris3); background:#141414;
-color:#555; transition:all 0.2s; white-space:nowrap;
-}
-.z-pill.active { background:#D4A017; color:#0A0A0A; border-color:#D4A017; }
-.z-pill.done { border-color:var(–vert); color:#66BB6A; }
+/* Zone photo */
+.photo-card{border:1px solid #ddd;border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.photo-header{background:#8B1A1A;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;}
+.photo-zone-name{font-family:‘Montserrat’,sans-serif;font-size:11px;font-weight:800;color:#fff;letter-spacing:1px;text-transform:uppercase;}
+.photo-zone-score{font-family:‘Montserrat’,sans-serif;font-size:14px;font-weight:900;color:#f0c070;}
+.photo-wrapper{position:relative;background:#222;min-height:160px;display:flex;align-items:center;justify-content:center;}
+.photo-wrapper img{width:100%;height:auto;opacity:0.87;display:block;}
+.photo-wrapper svg{position:absolute;top:0;left:0;width:100%;height:100%;}
+.photo-placeholder{color:#555;font-size:13px;text-align:center;padding:40px 20px;}
+.photo-footer{background:#1A1A1A;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;}
+.photo-nc-count{font-size:10px;color:#f0c070;font-weight:700;}
+.photo-conf-count{font-size:10px;color:#66BB6A;font-weight:700;}
 
-/* ——— PHOTO UPLOAD ——— */
-.upload-zone {
-border:2px dashed var(–gris3); border-radius:14px;
-padding:28px 20px; text-align:center; cursor:pointer;
-transition:border-color 0.2s; margin-bottom:14px;
-}
-.upload-zone:active { border-color:#D4A017; }
-.upload-icon { font-size:38px; margin-bottom:8px; }
-.upload-txt { color:#666; font-size:14px; }
-.upload-txt strong { color:#D4A017; }
+.nc-detail{padding:12px 16px;background:#fafafa;}
+.nc-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed #e0e0e0;}
+.nc-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.nc-code{font-family:‘Montserrat’,sans-serif;font-size:11px;font-weight:900;color:#D4A017;min-width:48px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#fff;}
+.badge.crit{background:#FF7043;}
+.badge.maj{background:#FFA726;color:#1A1A1A;}
+.badge.conf{background:#66BB6A;}
+.nc-desc{font-size:11px;color:#1A1A1A;line-height:1.5;margin-top:2px;}
+.nc-action{font-size:10px;color:#8B1A1A;font-style:italic;margin-top:3px;}
 
-.photos-grid {
-display:grid; grid-template-columns:repeat(2,1fr);
-gap:10px; margin-bottom:14px;
-}
-.photo-item {
-position:relative; border-radius:10px; overflow:hidden; aspect-ratio:4/3;
-}
-.photo-item img { width:100%; height:100%; object-fit:cover; display:block; }
-.photo-status {
-position:absolute; bottom:0; left:0; right:0;
-padding:5px 8px; font-size:11px; font-weight:700;
-text-transform:uppercase; letter-spacing:0.5px;
-}
-.st-wait { background:rgba(0,0,0,.75); color:var(–or-vif); }
-.st-ok   { background:rgba(27,94,32,.85); color:#C8E6C9; }
-.st-err  { background:rgba(198,40,40,.85); color:white; }
-.btn-rm {
-position:absolute; top:5px; right:5px; background:rgba(0,0,0,.7);
-color:white; border:none; width:26px; height:26px;
-border-radius:50%; font-size:14px; cursor:pointer;
-display:flex; align-items:center; justify-content:center;
-}
+/* Plan actions */
+.action-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;}
+.action-table th{background:#f5edd6;color:#D4A017;padding:8px 10px;text-align:left;font-family:‘Montserrat’,sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid #D4A017;}
+.action-table td{padding:8px 10px;border-bottom:1px solid #eee;vertical-align:top;}
+.action-table tr:nth-child(even) td{background:#fafafa;}
+.prio{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:800;color:#fff;white-space:nowrap;}
+.prio.immed{background:#8B1A1A;}
+.prio.u24{background:#E65100;}
+.prio.u48{background:#BF360C;}
+.prio.plan{background:#546E7A;}
 
-/* ——— ANALYSE ——— */
-.analyse-wrap {
-display:flex; flex-direction:column; align-items:center;
-justify-content:center; min-height:80vh; text-align:center; padding:30px 20px;
-}
-.spinner {
-width:64px; height:64px; border:3px solid #2A2A2A;
-border-top-color:#D4A017; border-radius:50%;
-animation:spin 1s linear infinite; margin-bottom:24px;
-}
-@keyframes spin { to { transform:rotate(360deg); } }
-.analyse-title {
-font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:30px;
-color:#D4A017; letter-spacing:3px; margin-bottom:10px;
-}
-.analyse-sub { color:#666; font-size:14px; margin-bottom:20px; }
-.prog-bar-wrap {
-background:#2A2A2A; border-radius:6px; height:6px;
-overflow:hidden; width:100%; max-width:320px; margin:0 auto 20px;
-}
-.prog-bar {
-height:100%; background:linear-gradient(90deg,var(–or),var(–or-vif));
-border-radius:6px; transition:width 0.5s ease; width:0;
-}
-.log-wrap {
-width:100%; max-width:340px; text-align:left;
-max-height:200px; overflow-y:auto;
-}
-.log-item {
-padding:7px 10px; margin-bottom:5px; border-radius:8px;
-background:#161616; font-size:13px; color:#666;
-}
+/* Signatures */
+.sig-row{display:flex;gap:16px;margin-bottom:16px;}
+.sig-box{flex:1;border:1px solid #ddd;border-radius:8px;overflow:hidden;}
+.sig-box-header{background:#8B1A1A;padding:7px 14px;color:#fff;font-family:‘Montserrat’,sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+.sig-box-body{padding:12px 14px;background:#fafafa;}
+.sig-info{font-size:10px;color:#555;line-height:1.7;margin-top:8px;}
+.sig-info strong{color:#1A1A1A;}
+.btn-clear{font-size:9px;padding:3px 10px;border:1px solid #D4A017;border-radius:20px;background:#fff;color:#D4A017;font-weight:700;cursor:pointer;margin-top:6px;display:inline-block;}
+.btn-clear2{font-size:9px;padding:3px 10px;border:1px solid #1A1A1A;border-radius:20px;background:#fff;color:#1A1A1A;font-weight:700;cursor:pointer;margin-top:6px;display:inline-block;}
 
-/* ——— RAPPORT ——— */
-.rp-cover {
-background: linear-gradient(160deg, #0A0A0A 0%, #141000 100%);
-border:2px solid #D4A017; border-radius:18px;
-padding:28px 22px; text-align:center; margin-bottom:22px;
-}
-.rp-logo {
-font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:32px;
-color:#D4A017; letter-spacing:5px;
-}
-.rp-score {
-font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:84px; line-height:1; margin:14px 0 6px;
-}
-.rp-score-lbl {
-font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:3px;
-}
-.info-row {
-display:flex; justify-content:space-between; align-items:center;
-padding:9px 0; border-bottom:1px solid #1E1E1E; font-size:14px;
-}
-.info-row:last-child { border-bottom:none; }
-.info-lbl { color:#666; }
-.info-val { color:#F0EEE8; font-weight:600; text-align:right; max-width:60%; }
+.legal{padding:10px 14px;background:#f5f5f5;border-left:3px solid #D4A017;border-radius:0 6px 6px 0;font-size:9px;color:#666;line-height:1.6;margin-bottom:16px;}
 
-.sec-hdr {
-display:flex; align-items:center; gap:10px;
-margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid #1E1E1E;
-}
-.sec-hdr h2 {
-font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:20px;
-color:#D4A017; letter-spacing:2px;
-}
-.sec-num {
-background:#D4A017; color:#0A0A0A; width:30px; height:30px;
-border-radius:7px; display:flex; align-items:center; justify-content:center;
-font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:16px; flex-shrink:0;
-}
+.footer-band{background:#1A1A1A;padding:7px 20px;display:flex;justify-content:space-between;align-items:center;}
+.footer-band span{color:#aaa;font-size:8px;}
+.footer-brand{color:#D4A017 !important;font-weight:700 !important;font-size:9px !important;letter-spacing:1px !important;}
 
-.zone-grid {
-display:grid; grid-template-columns:repeat(2,1fr); gap:9px; margin-bottom:22px;
-}
-.z-card {
-border-radius:12px; padding:13px; text-align:center;
-}
-.z-card-name { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; opacity:0.8; }
-.z-card-score { font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:30px; line-height:1; }
-.z-card-nc { font-size:11px; margin-top:3px; opacity:0.7; }
+/* Bouton flottant télécharger */
+#btn-dl{position:fixed;bottom:20px;right:16px;background:#D4A017;color:#1A1A1A;font-family:‘Montserrat’,sans-serif;font-size:12px;font-weight:900;padding:12px 20px;border-radius:50px;box-shadow:0 4px 20px rgba(0,0,0,0.35);cursor:pointer;display:none;align-items:center;gap:6px;z-index:9999;letter-spacing:1px;text-transform:uppercase;border:none;}
 
-.photo-blk { border-radius:12px; overflow:hidden; margin-bottom:14px; border:1px solid #1E1E1E; }
-.photo-banner {
-padding:8px 13px; display:flex; justify-content:space-between;
-align-items:center; font-size:13px;
-}
-.photo-banner strong { font-weight:700; letter-spacing:1px; text-transform:uppercase; }
-.photo-banner .pb-score { font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:20px; }
-.photo-blk img { width:100%; display:block; }
-.photo-blk-info { padding:12px; background:#111; }
-
-.nc-row {
-display:flex; align-items:flex-start; gap:8px;
-padding:6px 0; border-bottom:1px solid #181818; font-size:13px;
-}
-.nc-row:last-child { border-bottom:none; }
-.nc-risk {
-font-size:11px; font-weight:700; white-space:nowrap;
-padding:2px 7px; border-radius:5px; flex-shrink:0;
-}
-.risk-c { background:rgba(198,40,40,.3); color:#EF5350; }
-.risk-m { background:rgba(230,81,0,.3); color:#FFA726; }
-.risk-mi{ background:rgba(30,136,229,.3); color:#42A5F5; }
-
-.conf-row {
-display:flex; align-items:flex-start; gap:8px;
-padding:8px 0; border-bottom:1px solid #1A1A1A; font-size:14px; color:#999;
-}
-.conf-row:last-child { border-bottom:none; }
-.conf-chk { color:#66BB6A; font-size:15px; flex-shrink:0; }
-
-.nc-card {
-border-radius:12px; padding:15px; margin-bottom:10px; border-left:4px solid;
-}
-.nc-c { background:rgba(198,40,40,.12); border-color:#EF5350; }
-.nc-m { background:rgba(230,81,0,.12); border-color:#FFA726; }
-.nc-mi{ background:rgba(30,136,229,.12); border-color:#42A5F5; }
-.nc-badge {
-display:inline-block; padding:2px 9px; border-radius:5px;
-font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:7px;
-}
-.b-c { background:rgba(198,40,40,.35); color:#EF5350; }
-.b-m { background:rgba(230,81,0,.35); color:#FFA726; }
-.b-mi{ background:rgba(30,136,229,.35); color:#42A5F5; }
-.nc-desc { font-size:15px; font-weight:600; color:#F0EEE8; margin-bottom:5px; }
-.nc-act { font-size:13px; color:#888; margin-bottom:3px; }
-.nc-delai { font-size:12px; color:#D4A017; font-weight:600; }
-
-.sig-box {
-border:1px dashed var(–gris3); border-radius:12px;
-padding:22px; text-align:center; margin-bottom:14px;
-}
-.sig-lbl { font-size:12px; color:#555; text-transform:uppercase; letter-spacing:2px; margin-bottom:36px; }
-.sig-line { border-top:1px solid var(–gris3); padding-top:7px; font-size:13px; color:#555; }
-
-/* ——— SETTINGS ——— */
-.set-title {
-font-family:Impact,‘Arial Narrow’,Arial,sans-serif; font-size:30px;
-color:#D4A017; letter-spacing:3px; text-align:center; margin-bottom:6px;
-}
-.set-sub { text-align:center; color:#666; font-size:13px; margin-bottom:24px; }
-
-/* ——— TOAST ——— */
-.toast {
-position:fixed; bottom:82px; left:16px; right:16px;
-background:var(–gris2); border:1px solid var(–gris3);
-border-radius:12px; padding:13px 15px; font-size:14px;
-font-weight:600; z-index:200; transform:translateY(14px);
-opacity:0; transition:all 0.3s; pointer-events:none;
-}
-.toast.show { transform:translateY(0); opacity:1; }
-.toast.ok  { border-color:var(–vert); color:#66BB6A; }
-.toast.err { border-color:var(–rouge); color:#EF5350; }
-
-/* ——— PRINT ——— */
-@media print {
-.header, .bottom-nav, .btn-gold, .btn-outline, .no-print { display:none !important; }
-body { background:white; color:black; }
-.screen { display:none !important; }
-#screen-rapport { display:block !important; padding:0; }
-.rp-cover { border:2px solid #D4A017; page-break-after:always; }
-.nc-card { break-inside:avoid; }
-.photo-blk { break-inside:avoid; }
+@media print{
+#accueil,#btn-dl,.btn-clear,.btn-clear2{display:none !important;}
+#rapport{display:block !important;}
+body{background:#fff;}
+.page{box-shadow:none;margin:0;}
 }
 </style>
 
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ══════════════════════════════ -->
 
-<div class="header">
-  <div class="logo">VERDICT<span> AI</span></div>
-  <button class="btn-gear" onclick="nav('settings')">⚙</button>
+<!--  ÉCRAN D'ACCUEIL APP           -->
+
+<!-- ══════════════════════════════ -->
+
+<div id="accueil">
+  <div class="app-logo">
+    VERDICT<br>INSPECTION AI
+    <span>Auditeur en hygiène et salubrité</span>
+  </div>
+  <div class="app-divider"></div>
+  <button class="btn-nouveau" onclick="nouveauRapport()">
+    ＋ Nouveau rapport
+  </button>
+  <div class="app-footer">MAPAQ / HACCP • Jacques Perrier<br>info@verdictinspection-ai.com</div>
 </div>
 
-<!-- TOAST -->
+<!-- ══════════════════════════════ -->
 
-<div class="toast" id="toast"></div>
+<!--  RAPPORT COMPLET               -->
 
-<!-- ========== HOME ========== -->
+<!-- ══════════════════════════════ -->
 
-<div class="screen with-nav active" id="screen-home">
+<div id="rapport">
+
+<!-- PAGE 1 — COUVERTURE -->
+
+<div class="page" id="p1">
+  <div class="entete">
+    <div>
+      <div class="entete-logo">VERDICT INSPECTION AI</div>
+      <div class="entete-sub">Auditeur en hygiène et salubrité • MAPAQ / HACCP</div>
+    </div>
+    <div class="entete-meta">
+      <div class="entete-no">RAPPORT Nº <span id="no-rapport">____</span></div>
+      <div class="entete-info" id="date-entete">____</div>
+      <div class="entete-info">Inspecteur : Jacques Perrier</div>
+    </div>
+  </div>
+
   <div class="hero">
-    <div class="hero-title">TABLEAU DE BORD</div>
-    <div class="hero-sub">Inspections MAPAQ / HACCP</div>
-    <div class="hero-badge">✦ POWERED BY CLAUDE AI</div>
+    <div style="flex:1;min-width:0;">
+      <div class="hero-title">RAPPORT D'INSPECTION<br><span>SALUBRITÉ ALIMENTAIRE</span></div>
+      <div class="hero-sub">Norme : Règlement sur les aliments — MAPAQ / HACCP</div>
+    </div>
+    <div class="score-box">
+      <div class="score-pct" id="score-display">—</div>
+      <div class="score-lbl">Score global</div>
+      <div class="score-verdict" id="verdict-display" style="background:#eee;color:#666;">—</div>
+    </div>
   </div>
-  <button class="btn-gold" style="margin:18px 0 20px" onclick="newInspection()">+ NOUVELLE INSPECTION</button>
-  <div id="list-inspections"></div>
-</div>
 
-<!-- ========== SETTINGS ========== -->
-
-<div class="screen with-nav" id="screen-settings">
-  <div style="padding-top:16px">
-    <div class="set-title">⚙ PARAMÈTRES</div>
-    <div class="set-sub">Configuration de Verdict Inspection AI</div>
-
-```
-<div class="card card-gold">
-  <div class="form-group">
-    <label class="lbl">🔑 Clé API Anthropic (Claude)</label>
-    <input type="password" class="inp" id="inp-apikey" placeholder="sk-ant-api03-...">
-    <div style="margin-top:7px;font-size:12px;color:#555;">Sauvegardée localement sur votre appareil uniquement.</div>
-  </div>
-  <button class="btn-gold" onclick="saveApiKey()">SAUVEGARDER LA CLÉ</button>
-</div>
-
-<div class="card" style="margin-top:4px">
-  <div class="form-group">
-    <label class="lbl">👤 Nom de l'auditeur</label>
-    <input type="text" class="inp" id="inp-auditeur" placeholder="Jacques Perrier, CFA">
-  </div>
-  <div class="form-group">
-    <label class="lbl">🏢 Entreprise</label>
-    <input type="text" class="inp" id="inp-company" placeholder="Verdict Inspection AI">
-  </div>
-  <button class="btn-gold" onclick="saveSettings()">SAUVEGARDER</button>
-</div>
-
-<div class="card" style="margin-top:4px;text-align:center">
-  <div style="font-size:12px;color:#444;margin-bottom:12px">v1.0 — Verdict Inspection AI © 2025<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6900070f06291f0c1b0d000a1d00071a190c0a1d000607440800470a0604">[email&#160;protected]</a></div>
-  <button class="btn-red" onclick="clearAll()">🗑 Effacer toutes les données</button>
-</div>
-```
-
-  </div>
-</div>
-
-<!-- ========== NOUVELLE INSPECTION ========== -->
-
-<div class="screen with-nav" id="screen-nouvelle">
-  <div style="padding-top:8px">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
-      <button class="btn-back" onclick="nav('home')">←</button>
-      <div>
-        <div style="font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:22px;color:#D4A017;letter-spacing:2px">NOUVELLE INSPECTION</div>
-        <div style="font-size:12px;color:#666">Étape 1 / 4 — Informations générales</div>
+  <div class="body">
+    <div class="field-grid">
+      <div class="field">
+        <div class="field-label">Établissement</div>
+        <input type="text" id="f-etab" placeholder="Nom de l'établissement">
+      </div>
+      <div class="field">
+        <div class="field-label">No permis MAPAQ</div>
+        <input type="text" id="f-permis" placeholder="XXXX-XXXX">
+      </div>
+      <div class="field" style="grid-column:1/-1;">
+        <div class="field-label">Adresse</div>
+        <input type="text" id="f-adresse" placeholder="Adresse complète, Ville, QC">
+      </div>
+      <div class="field">
+        <div class="field-label">Responsable présent</div>
+        <input type="text" id="f-resp" placeholder="Prénom Nom, titre">
+      </div>
+      <div class="field">
+        <div class="field-label">Date d'inspection</div>
+        <input type="date" id="f-date" onchange="majDate()">
+      </div>
+      <div class="field">
+        <div class="field-label">Score global (%)</div>
+        <input type="number" id="f-score" min="0" max="100" placeholder="ex: 72" onchange="majScore()">
+      </div>
+      <div class="field">
+        <div class="field-label">Type d'inspection</div>
+        <select id="f-type">
+          <option>Complète</option>
+          <option>Partielle</option>
+          <option>Suivi</option>
+          <option>Surprise</option>
+        </select>
       </div>
     </div>
 
 ```
-<div class="steps">
-  <div class="step active"><div class="step-dot">1</div><div class="step-lbl">Info</div></div>
-  <div class="step"><div class="step-dot">2</div><div class="step-lbl">Photos</div></div>
-  <div class="step"><div class="step-dot">3</div><div class="step-lbl">Analyse</div></div>
-  <div class="step"><div class="step-dot">4</div><div class="step-lbl">Rapport</div></div>
-</div>
-
-<div class="card">
-  <div class="form-group">
-    <label class="lbl">🏪 Nom de l'établissement *</label>
-    <input type="text" class="inp" id="n-resto" placeholder="Restaurant Le Bouchon">
+<div class="sep"></div>
+<div class="section-title">Résumé des constatations</div>
+<div class="nc-pills">
+  <div class="nc-pill crit">
+    <input type="number" id="n-crit" value="0" min="0">
+    <div class="nc-pill-lbl">Critique</div>
   </div>
-  <div class="form-group">
-    <label class="lbl">📍 Adresse</label>
-    <input type="text" class="inp" id="n-adresse" placeholder="123 rue Principale, Gatineau QC">
+  <div class="nc-pill maj">
+    <input type="number" id="n-maj" value="0" min="0">
+    <div class="nc-pill-lbl">Majeur</div>
   </div>
-  <div class="form-group">
-    <label class="lbl">📋 No. permis MAPAQ</label>
-    <input type="text" class="inp" id="n-permis" placeholder="QC-2025-XXXXX">
+  <div class="nc-pill min">
+    <input type="number" id="n-min" value="0" min="0">
+    <div class="nc-pill-lbl">Mineur</div>
   </div>
-  <div class="form-group">
-    <label class="lbl">👤 Auditeur</label>
-    <input type="text" class="inp" id="n-auditeur" placeholder="Jacques Perrier, CFA">
-  </div>
-  <div class="form-group">
-    <label class="lbl">📅 Date d'inspection</label>
-    <input type="date" class="inp" id="n-date">
-  </div>
-  <div class="form-group" style="margin-bottom:0">
-    <label class="lbl">📝 Type d'inspection</label>
-    <select class="inp" id="n-type">
-      <option>Inspection de routine</option>
-      <option>Inspection de suivi</option>
-      <option>Inspection sur plainte</option>
-      <option>Pré-ouverture</option>
-    </select>
+  <div class="nc-pill conf">
+    <input type="number" id="n-conf" value="0" min="0">
+    <div class="nc-pill-lbl">Conforme</div>
   </div>
 </div>
-<button class="btn-gold" onclick="goZones()">SUIVANT : PHOTOS DES ZONES →</button>
 ```
 
   </div>
+  <div class="footer-band">
+    <span>info@verdictinspection-ai.com • 819-525-4555</span>
+    <span class="footer-brand">VERDICT INSPECTION AI</span>
+    <span>Page 1 / 4</span>
+  </div>
 </div>
 
-<!-- ========== ZONES / PHOTOS ========== -->
+<!-- PAGE 2 — PHOTO ANNOTÉE -->
 
-<div class="screen with-nav" id="screen-zones">
-  <div style="padding-top:8px">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">
-      <button class="btn-back" onclick="nav('nouvelle')">←</button>
-      <div>
-        <div style="font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:22px;color:#D4A017;letter-spacing:2px">PHOTOS PAR ZONE</div>
-        <div style="font-size:12px;color:#666">Étape 2 / 4 — Ajoutez 1 à 4 photos par zone</div>
+<div class="page" id="p2">
+  <div class="entete">
+    <div>
+      <div class="entete-logo">VERDICT INSPECTION AI</div>
+      <div class="entete-sub">Auditeur en hygiène et salubrité • MAPAQ / HACCP</div>
+    </div>
+    <div class="entete-meta">
+      <div class="entete-no">RAPPORT Nº <span class="sync-no">____</span></div>
+      <div class="entete-info sync-etab">____</div>
+    </div>
+  </div>
+  <div class="band-or">Fiche photo annotée</div>
+
+  <div class="body">
+    <div class="photo-card">
+      <div class="photo-header">
+        <span class="photo-zone-name"><input type="text" id="f-zone" placeholder="Zone inspectée" style="background:transparent;border:none;outline:none;color:#fff;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;width:200px;"></span>
+        <span class="photo-zone-score"><input type="text" id="f-zone-score" placeholder="__%" style="background:transparent;border:none;outline:none;color:#f0c070;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;width:60px;text-align:right;"></span>
+      </div>
+
+```
+  <!-- Zone upload photo -->
+  <div class="photo-wrapper" id="photo-wrapper" onclick="document.getElementById('photo-input').click()">
+    <div class="photo-placeholder" id="photo-placeholder">
+      📷 Appuyez pour ajouter une photo
+    </div>
+    <img id="photo-img" src="" alt="" style="display:none;">
+    <svg id="photo-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%;display:none;"></svg>
+    <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none;" onchange="chargerPhoto(event)">
+  </div>
+
+  <div class="photo-footer">
+    <span class="photo-nc-count">⚠ <input type="number" id="f-nc-count" value="0" min="0" style="width:30px;background:transparent;border:none;outline:none;color:#f0c070;font-weight:700;font-size:10px;"> NC</span>
+    <span style="font-size:12px;color:#66BB6A;letter-spacing:3px;">✓ ✓ ✓</span>
+    <span class="photo-conf-count">✔ <input type="number" id="f-conf-count" value="0" min="0" style="width:30px;background:transparent;border:none;outline:none;color:#66BB6A;font-weight:700;font-size:10px;"> conformes</span>
+  </div>
+
+  <div class="nc-detail" id="nc-liste">
+    <!-- NC 1 -->
+    <div class="nc-item">
+      <div style="min-width:56px;">
+        <div class="nc-code">NC-01</div>
+        <select class="badge-select" style="font-size:9px;border:1px solid #eee;border-radius:20px;padding:1px 4px;background:#fff;margin-top:2px;" onchange="majBadge(this)">
+          <option value="crit">Critique</option>
+          <option value="maj">Majeur</option>
+          <option value="conf">Mineur</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <input type="text" placeholder="Description de la non-conformité..." class="nc-desc" style="width:100%;border:none;border-bottom:1px dashed #ddd;outline:none;font-size:11px;color:#1A1A1A;padding:2px 0;background:transparent;">
+        <input type="text" placeholder="→ Action corrective..." class="nc-action" style="width:100%;border:none;outline:none;font-size:10px;color:#8B1A1A;font-style:italic;padding:2px 0;background:transparent;margin-top:4px;">
       </div>
     </div>
-    <div class="zone-nav" id="zone-nav"></div>
-    <div id="zone-content"></div>
-    <button class="btn-gold" id="btn-analyser" onclick="startAnalysis()" style="margin-top:8px">🔍 ANALYSER AVEC L'IA</button>
-  </div>
-</div>
-
-<!-- ========== ANALYSE ========== -->
-
-<div class="screen" id="screen-analyse">
-  <div class="analyse-wrap">
-    <div class="spinner"></div>
-    <div class="analyse-title">ANALYSE IA EN COURS</div>
-    <div class="analyse-sub" id="a-status">Initialisation...</div>
-    <div class="prog-bar-wrap">
-      <div class="prog-bar" id="a-bar"></div>
+    <!-- NC 2 -->
+    <div class="nc-item">
+      <div style="min-width:56px;">
+        <div class="nc-code">NC-02</div>
+        <select class="badge-select" style="font-size:9px;border:1px solid #eee;border-radius:20px;padding:1px 4px;background:#fff;margin-top:2px;" onchange="majBadge(this)">
+          <option value="crit">Critique</option>
+          <option value="maj">Majeur</option>
+          <option value="conf">Mineur</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <input type="text" placeholder="Description de la non-conformité..." class="nc-desc" style="width:100%;border:none;border-bottom:1px dashed #ddd;outline:none;font-size:11px;color:#1A1A1A;padding:2px 0;background:transparent;">
+        <input type="text" placeholder="→ Action corrective..." class="nc-action" style="width:100%;border:none;outline:none;font-size:10px;color:#8B1A1A;font-style:italic;padding:2px 0;background:transparent;margin-top:4px;">
+      </div>
     </div>
-    <div class="log-wrap" id="a-log"></div>
+    <!-- NC 3 -->
+    <div class="nc-item">
+      <div style="min-width:56px;">
+        <div class="nc-code">NC-03</div>
+        <select class="badge-select" style="font-size:9px;border:1px solid #eee;border-radius:20px;padding:1px 4px;background:#fff;margin-top:2px;" onchange="majBadge(this)">
+          <option value="crit">Critique</option>
+          <option value="maj">Majeur</option>
+          <option value="conf">Mineur</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <input type="text" placeholder="Description de la non-conformité..." class="nc-desc" style="width:100%;border:none;border-bottom:1px dashed #ddd;outline:none;font-size:11px;color:#1A1A1A;padding:2px 0;background:transparent;">
+        <input type="text" placeholder="→ Action corrective..." class="nc-action" style="width:100%;border:none;outline:none;font-size:10px;color:#8B1A1A;font-style:italic;padding:2px 0;background:transparent;margin-top:4px;">
+      </div>
+    </div>
   </div>
 </div>
-
-<!-- ========== RAPPORT ========== -->
-
-<div class="screen with-nav" id="screen-rapport">
-  <div id="rapport-content"></div>
-  <div class="no-print" style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
-    <button class="btn-gold" onclick="exportPDF()">📄 EXPORTER EN PDF</button>
-    <button class="btn-outline" onclick="nav('home')">← RETOUR ACCUEIL</button>
-  </div>
-</div>
-
-<!-- BOTTOM NAV -->
-
-<div class="bottom-nav" id="bottom-nav">
-  <div class="nav-item active" id="nav-home" onclick="nav('home')"><span>🏠</span>Accueil</div>
-  <div class="nav-item" id="nav-new" onclick="newInspection()"><span>➕</span>Nouveau</div>
-  <div class="nav-item" id="nav-settings" onclick="nav('settings')"><span>⚙</span>Réglages</div>
-</div>
-
-<!-- Hidden file input -->
-
-<input type="file" id="file-input" accept="image/*" multiple style="display:none" onchange="onFileChange(event)">
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-
-// ──────────────────────────────────────────────
-// DATA
-// ──────────────────────────────────────────────
-const ZONES = [
-{ id:‘reception’,   name:‘Réception’,   emoji:‘📦’, desc:‘Réception des aliments’ },
-{ id:‘entreposage’, name:‘Entreposage’, emoji:‘🗄️’, desc:‘Entreposage et réfrigération’ },
-{ id:‘preparation’, name:‘Préparation’, emoji:‘🔪’, desc:‘Préparation alimentaire’ },
-{ id:‘cuisson’,     name:‘Cuisson’,     emoji:‘🍳’, desc:‘Cuisson et service’ },
-{ id:‘nettoyage’,   name:‘Nettoyage’,   emoji:‘🧹’, desc:‘Nettoyage et assainissement’ },
-{ id:‘personnel’,   name:‘Personnel’,   emoji:‘👷’, desc:‘Personnel et hygiène’ }
-];
-
-let S = {
-inspections: [],
-current: null,
-photos: {},      // zoneId -> [{dataUrl, analysis}]
-activeZone: 0,
-fileZone: null
-};
-
-// ──────────────────────────────────────────────
-// INIT
-// ──────────────────────────────────────────────
-function init() {
-try { S.inspections = JSON.parse(ls(‘vi_inspections’) || ‘[]’); } catch(e){ S.inspections=[]; }
-
-const today = new Date().toISOString().split(‘T’)[0];
-document.getElementById(‘n-date’).value = today;
-
-const aud = ls(‘vi_auditor’);
-const cmp = ls(‘vi_company’);
-const key = ls(‘vi_key’);
-
-if (aud) { document.getElementById(‘n-auditeur’).value = aud; document.getElementById(‘inp-auditeur’).value = aud; }
-if (cmp) document.getElementById(‘inp-company’).value = cmp;
-if (key) document.getElementById(‘inp-apikey’).value = ‘••••••••••••••••’;
-
-if (!key) { nav(‘settings’); toast(‘⚙ Configurez votre clé API pour commencer’,‘err’); }
-else renderList();
-}
-
-function ls(k) { try { return localStorage.getItem(k)||’’; } catch(e){ return ‘’; } }
-function lsSet(k,v) { try { localStorage.setItem(k,v); } catch(e){} }
-function lsRemove(k) { try { localStorage.removeItem(k); } catch(e){} }
-
-// ──────────────────────────────────────────────
-// NAVIGATION
-// ──────────────────────────────────────────────
-function nav(name) {
-document.querySelectorAll(’.screen’).forEach(s => s.classList.remove(‘active’));
-document.getElementById(‘screen-’+name).classList.add(‘active’);
-
-document.querySelectorAll(’.nav-item’).forEach(i => i.classList.remove(‘active’));
-if (name===‘home’) document.getElementById(‘nav-home’).classList.add(‘active’);
-if (name===‘settings’) document.getElementById(‘nav-settings’).classList.add(‘active’);
-
-document.getElementById(‘bottom-nav’).style.display = name===‘analyse’ ? ‘none’ : ‘flex’;
-if (name===‘home’) renderList();
-window.scrollTo(0,0);
-}
-
-// ──────────────────────────────────────────────
-// HOME
-// ──────────────────────────────────────────────
-function renderList() {
-const el = document.getElementById(‘list-inspections’);
-if (!S.inspections.length) {
-el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div>Aucune inspection pour l'instant.<br><span style="color:#555">Créez votre première inspection !</span></div>`;
-return;
-}
-el.innerHTML = […S.inspections].reverse().map(i => {
-const sc = i.globalScore||0;
-const cls = sc<50?‘s-rouge’:sc<70?‘s-jaune’:‘s-vert’;
-const bc  = sc<50?’#EF5350’:sc<70?’#FFA726’:’#66BB6A’;
-return `<div class="insp-card" style="border-left-color:${bc}" onclick="viewInspection('${i.id}')"> <div class="score-dot ${cls}"><div class="dot-num">${sc}</div><div class="dot-pct">%</div></div> <div class="insp-info"> <h3>${i.restaurant}</h3> <p>${i.date} · ${i.type}</p> <p style="color:${bc};font-weight:700;font-size:12px">${scoreLabel(sc)}</p> </div> <div style="margin-left:auto;color:#444;font-size:20px">›</div> </div>`;
-}).join(’’);
-}
-
-function viewInspection(id) {
-const insp = S.inspections.find(i=>i.id===id);
-if (!insp) return;
-S.current = insp;
-renderRapport(insp);
-nav(‘rapport’);
-}
-
-function scoreLabel(s) { return s<50?‘🔴 NON-CONFORME’:s<70?‘🟡 AMÉLIORATION REQUISE’:‘🟢 CONFORME’; }
-function scoreColor(s) { return s<50?’#EF5350’:s<70?’#FFA726’:’#66BB6A’; }
-
-// ──────────────────────────────────────────────
-// NEW INSPECTION
-// ──────────────────────────────────────────────
-function newInspection() {
-if (!ls(‘vi_key’)) { toast(‘⚙ Configurez votre clé API d'abord’,‘err’); nav(‘settings’); return; }
-S.photos = {};
-S.activeZone = 0;
-ZONES.forEach(z => S.photos[z.id]=[]);
-document.getElementById(‘n-date’).value = new Date().toISOString().split(‘T’)[0];
-document.getElementById(‘n-auditeur’).value = ls(‘vi_auditor’);
-document.getElementById(‘n-resto’).value = ‘’;
-document.getElementById(‘n-adresse’).value = ‘’;
-document.getElementById(‘n-permis’).value = ‘’;
-nav(‘nouvelle’);
-}
-
-function goZones() {
-const nom = document.getElementById(‘n-resto’).value.trim();
-if (!nom) { toast(‘⚠ Entrez le nom de l'établissement’,‘err’); return; }
-S.current = {
-id: Date.now().toString(),
-restaurant: nom,
-adresse: document.getElementById(‘n-adresse’).value.trim(),
-permis: document.getElementById(‘n-permis’).value.trim(),
-auditeur: document.getElementById(‘n-auditeur’).value.trim()||‘Auditeur’,
-date: document.getElementById(‘n-date’).value,
-type: document.getElementById(‘n-type’).value,
-zones: {}, globalScore: 0
-};
-renderZoneNav();
-renderZoneBody(0);
-nav(‘zones’);
-}
-
-// ──────────────────────────────────────────────
-// ZONES
-// ──────────────────────────────────────────────
-function renderZoneNav() {
-document.getElementById(‘zone-nav’).innerHTML = ZONES.map((z,i) => {
-const photos = S.photos[z.id]||[];
-const done = photos.length>0 && photos.every(p=>p.analysis);
-return `<div class="z-pill ${i===S.activeZone?'active':''} ${done?'done':''}" onclick="switchZone(${i})"> ${z.emoji} ${z.name}${photos.length?' ('+photos.length+')':''} </div>`;
-}).join(’’);
-}
-
-function renderZoneBody(zi) {
-S.activeZone = zi;
-const z = ZONES[zi];
-const photos = S.photos[z.id]||[];
-const el = document.getElementById(‘zone-content’);
-
-el.innerHTML = `<div class="card" style="animation:fadeUp 0.2s ease"> <div style="margin-bottom:14px"> <div style="font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:20px;color:#D4A017;letter-spacing:2px">${z.emoji} ${z.desc.toUpperCase()}</div> <div style="font-size:13px;color:#666;margin-top:3px">1 à 4 photos de cette zone</div> </div> ${photos.length<4?`<div class="upload-zone" onclick="triggerFile('${z.id}')">
-<div class="upload-icon">📸</div>
-<div class="upload-txt">Appuyez pour <strong>ajouter une photo</strong></div>
-</div>`:''} ${photos.length>0?`<div class="photos-grid">
-${photos.map((p,i)=>`<div class="photo-item"> <img src="${p.dataUrl}" alt="Photo ${i+1}"> <div class="photo-status ${p.analysis?'st-ok':'st-wait'}">${p.analysis?'✓ Analysée':'⏳ En attente'}</div> <button class="btn-rm" onclick="removePhoto('${z.id}',${i})">✕</button> </div>`).join(’’)}
-</div>`:''} ${!photos.length?`<div style="text-align:center;color:#444;font-size:13px;padding:8px 0">
-Aucune photo — <span style="color:#555">vous pouvez passer à la prochaine zone.</span>
-</div>`:''} <div style="display:flex;gap:10px;margin-top:10px"> ${zi>0?`<button class="btn-outline" style="flex:1" onclick="switchZone(${zi-1})">← Préc.</button>`:'<div style="flex:1"></div>'} ${zi<ZONES.length-1?`<button class="btn-gold" style="flex:1" onclick="switchZone(${zi+1})">Suiv. →</button>`:’’}
-</div>
-
-  </div>`;
-}
-
-function switchZone(i) {
-S.activeZone = i;
-renderZoneNav();
-renderZoneBody(i);
-}
-
-function triggerFile(zoneId) {
-S.fileZone = zoneId;
-const fi = document.getElementById(‘file-input’);
-fi.value = ‘’;
-fi.click();
-}
-
-function onFileChange(e) {
-const files = Array.from(e.target.files);
-const zid = S.fileZone;
-if (!files.length||!zid) return;
-const cur = S.photos[zid].length;
-const rem = 4 - cur;
-files.slice(0,rem).forEach(f => {
-const r = new FileReader();
-r.onload = ev => {
-S.photos[zid].push({ dataUrl:ev.target.result, analysis:null });
-renderZoneNav();
-renderZoneBody(S.activeZone);
-};
-r.readAsDataURL(f);
-});
-}
-
-function removePhoto(zid, i) {
-S.photos[zid].splice(i,1);
-renderZoneNav();
-renderZoneBody(S.activeZone);
-}
-
-// ──────────────────────────────────────────────
-// ANALYSIS
-// ──────────────────────────────────────────────
-async function startAnalysis() {
-const total = ZONES.reduce((s,z)=>s+(S.photos[z.id]?.length||0),0);
-if (!total) { toast(‘⚠ Ajoutez au moins une photo’,‘err’); return; }
-
-nav(‘analyse’);
-const log   = document.getElementById(‘a-log’);
-const stat  = document.getElementById(‘a-status’);
-const bar   = document.getElementById(‘a-bar’);
-log.innerHTML = ‘’;
-
-const queue = [];
-ZONES.forEach(z => { (S.photos[z.id]||[]).forEach((p,i) => queue.push({z,p,i})); });
-
-let done = 0;
-for (const item of queue) {
-stat.textContent = `Analyse ${item.z.emoji} ${item.z.desc} — Photo ${item.i+1}...`;
-const li = document.createElement(‘div’);
-li.className = ‘log-item’;
-li.textContent = `⏳ ${item.z.emoji} ${item.z.name} #${item.i+1}...`;
-log.appendChild(li);
-log.scrollTop = log.scrollHeight;
-
-```
-try {
-  item.p.analysis = await callClaude(item.p.dataUrl, item.z);
-  li.textContent = `✅ ${item.z.emoji} ${item.z.name} #${item.i+1} — ${item.p.analysis.score}%`;
-  li.style.color = '#66BB6A';
-} catch(err) {
-  console.error(err);
-  item.p.analysis = { score:50, nonConformites:[], conformites:['Analyse non disponible'], commentaire:'Erreur API: '+err.message };
-  li.textContent = `⚠ ${item.z.emoji} ${item.z.name} #${item.i+1} — Erreur`;
-  li.style.color = '#FFA726';
-}
-done++;
-bar.style.width = (done/queue.length*100)+'%';
 ```
 
-}
-
-// Zone summaries
-ZONES.forEach(z => {
-const photos = S.photos[z.id]||[];
-const analyses = photos.map(p=>p.analysis).filter(Boolean);
-const zScore = analyses.length ? Math.round(analyses.reduce((s,a)=>s+(a.score||0),0)/analyses.length) : null;
-S.current.zones[z.id] = {
-name:z.name, emoji:z.emoji, desc:z.desc,
-score: zScore,
-nonConformites: analyses.flatMap(a=>a.nonConformites||[]),
-conformites:    analyses.flatMap(a=>a.conformites||[])
-};
-});
-
-const allScores = queue.map(i=>i.p.analysis?.score||0);
-S.current.globalScore = allScores.length ? Math.round(allScores.reduce((s,v)=>s+v,0)/allScores.length) : 0;
-S.current.photos = JSON.parse(JSON.stringify(S.photos)); // deep copy
-
-S.inspections.push(S.current);
-lsSet(‘vi_inspections’, JSON.stringify(S.inspections));
-
-stat.textContent = ‘Analyse terminée ! Génération du rapport…’;
-bar.style.width = ‘100%’;
-await sleep(900);
-renderRapport(S.current);
-nav(‘rapport’);
-}
-
-async function callClaude(dataUrl, zone) {
-const key = ls(‘vi_key’);
-if (!key) throw new Error(‘Clé API manquante’);
-
-const b64  = dataUrl.split(’,’)[1];
-const mime = dataUrl.split(’;’)[0].split(’:’)[1];
-
-const res = await fetch(‘https://api.anthropic.com/v1/messages’, {
-method:‘POST’,
-headers:{
-‘Content-Type’:‘application/json’,
-‘x-api-key’: key,
-‘anthropic-version’:‘2023-06-01’,
-‘anthropic-dangerous-direct-browser-access’:‘true’
-},
-body: JSON.stringify({
-model:‘claude-opus-4-5’,
-max_tokens:1500,
-messages:[{
-role:‘user’,
-content:[
-{ type:‘image’, source:{ type:‘base64’, media_type:mime||‘image/jpeg’, data:b64 } },
-{ type:‘text’, text:`Tu es un auditeur MAPAQ/HACCP certifié au Québec. Analyse cette photo de la zone “${zone.desc}” selon la réglementation MAPAQ (Loi sur les produits alimentaires, Guide 5M).
-
-Réponds UNIQUEMENT en JSON valide, sans texte avant ou après, sans balises markdown:
-{
-“score”: 85,
-“nonConformites”: [
-{ “description”: “Non-conformité factuelle observée”, “risque”: “CRITIQUE”, “action”: “Action corrective spécifique”, “delai”: “24h” }
-],
-“conformites”: [“Point conforme 1”, “Point conforme 2”],
-“commentaire”: “Commentaire professionnel de l’auditeur”
-}
-
-Niveaux de risque: CRITIQUE (danger immédiat santé), MAJEUR (risque élevé), MINEUR (amélioration recommandée).
-Délais: “24h”, “72h”, “7 jours”, “30 jours”.
-Score 0-100 selon conformité MAPAQ. Si image peu claire, score=70 et noter dans commentaire.` }
-]
-}]
-})
-});
-
-if (!res.ok) {
-const e = await res.json().catch(()=>({error:{message:’Erreur HTTP ’+res.status}}));
-throw new Error(e.error?.message||’HTTP ’+res.status);
-}
-
-const d = await res.json();
-const txt = d.content[0].text.trim().replace(/`json\n?/g,'').replace(/`\n?/g,’’).trim();
-return JSON.parse(txt);
-}
-
-// ──────────────────────────────────────────────
-// RAPPORT
-// ──────────────────────────────────────────────
-function renderRapport(insp) {
-const sc = insp.globalScore||0;
-const scCol = scoreColor(sc);
-const scLbl = scoreLabel(sc);
-const cmp = ls(‘vi_company’)||‘Verdict Inspection AI’;
-
-// Collect all NCs sorted CRITIQUE > MAJEUR > MINEUR
-const order = {CRITIQUE:0,MAJEUR:1,MINEUR:2};
-const allNCs = [];
-Object.values(insp.zones||{}).forEach(z => {
-(z.nonConformites||[]).forEach(nc => allNCs.push({…nc, zoneName:z.name, zoneEmoji:z.emoji}));
-});
-allNCs.sort((a,b)=>(order[a.risque]??2)-(order[b.risque]??2));
-
-const el = document.getElementById(‘rapport-content’);
-el.innerHTML = `
-
-  <!-- 1. COUVERTURE -->
-
-  <div class="rp-cover">
-    <div class="rp-logo">${cmp.toUpperCase()}</div>
-    <div style="font-size:11px;color:#666;letter-spacing:2px;text-transform:uppercase;margin:5px 0 16px">Rapport d'inspection MAPAQ / HACCP</div>
-    <div style="border-top:1px solid #222;border-bottom:1px solid #222;padding:14px 0;margin:14px 0">
-      <div class="info-row"><span class="info-lbl">🏪 Établissement</span><span class="info-val">${insp.restaurant}</span></div>
-      ${insp.adresse?`<div class="info-row"><span class="info-lbl">📍 Adresse</span><span class="info-val" style="font-size:13px">${insp.adresse}</span></div>`:''}
-      ${insp.permis?`<div class="info-row"><span class="info-lbl">📋 Permis</span><span class="info-val">${insp.permis}</span></div>`:''}
-      <div class="info-row"><span class="info-lbl">📅 Date</span><span class="info-val">${insp.date}</span></div>
-      <div class="info-row"><span class="info-lbl">👤 Auditeur</span><span class="info-val">${insp.auditeur}</span></div>
-      <div class="info-row" style="border:none"><span class="info-lbl">📝 Type</span><span class="info-val">${insp.type}</span></div>
-    </div>
-    <div class="rp-score" style="color:${scCol}">${sc}%</div>
-    <div class="rp-score-lbl" style="color:${scCol}">${scLbl}</div>
-    <div style="margin-top:16px;font-size:11px;color:#444;letter-spacing:1px">GÉNÉRÉ PAR CLAUDE AI · VERDICT INSPECTION AI</div>
   </div>
+  <div class="footer-band">
+    <span>info@verdictinspection-ai.com • 819-525-4555</span>
+    <span class="footer-brand">VERDICT INSPECTION AI</span>
+    <span>Page 2 / 4</span>
+  </div>
+</div>
 
-  <!-- 2. TABLEAU DE BORD -->
+<!-- PAGE 3 — PLAN D'ACTIONS -->
 
-  <div style="margin-bottom:22px">
-    <div class="sec-hdr"><div class="sec-num">2</div><h2>TABLEAU DE BORD DES ZONES</h2></div>
-    <div class="zone-grid">
-      ${ZONES.map(z => {
-        const zd = insp.zones?.[z.id];
-        const zs = zd?.score;
-        if (zs==null) return `<div class="z-card" style="background:#141414;border:1px dashed #222;color:#444">
-          <div class="z-card-name">${z.emoji} ${z.name}</div>
-          <div class="z-card-score">—</div>
-          <div class="z-card-nc">Non inspecté</div>
-        </div>`;
-        const zc = scoreColor(zs);
-        const zbg = zs<50?'rgba(198,40,40,.13)':zs<70?'rgba(230,81,0,.13)':'rgba(27,94,32,.18)';
-        const nc = zd?.nonConformites?.length||0;
-        return `<div class="z-card" style="background:${zbg};border:1px solid ${zc}25">
-          <div class="z-card-name" style="color:${zc}">${z.emoji} ${z.name}</div>
-          <div class="z-card-score" style="color:${zc}">${zs}%</div>
-          <div class="z-card-nc">${nc>0?nc+' NC':'✓ Conforme'}</div>
-        </div>`;
-      }).join('')}
+<div class="page" id="p3">
+  <div class="entete">
+    <div>
+      <div class="entete-logo">VERDICT INSPECTION AI</div>
+      <div class="entete-sub">Auditeur en hygiène et salubrité • MAPAQ / HACCP</div>
+    </div>
+    <div class="entete-meta">
+      <div class="entete-no">RAPPORT Nº <span class="sync-no">____</span></div>
+      <div class="entete-info sync-etab">____</div>
     </div>
   </div>
+  <div class="band-or">Plan d'actions correctives</div>
 
-  <!-- 3. DOSSIER PHOTOS -->
-
-  <div style="margin-bottom:22px">
-    <div class="sec-hdr"><div class="sec-num">3</div><h2>DOSSIER PHOTOS ANNOTÉES</h2></div>
-    ${ZONES.map(z => {
-      const photos = insp.photos?.[z.id]||[];
-      if (!photos.length) return '';
-      return photos.map((p,pi) => {
-        if (!p.dataUrl) return '';
-        const a = p.analysis;
-        const ps = a?.score||0;
-        const pc = scoreColor(ps);
-        const pBg = ps<50?'#8B0000':ps<70?'#7F2700':'#1B5E20';
-        const nc = a?.nonConformites?.length||0;
-        const conf = a?.conformites?.slice(0,3)||[];
-        return `<div class="photo-blk">
-          <div class="photo-banner" style="background:${pBg};color:white">
-            <strong>${z.emoji} ${z.desc} — Photo ${pi+1}</strong>
-            <span class="pb-score">${ps}% · ${nc} NC</span>
-          </div>
-          <img src="${p.dataUrl}" alt="">
-          <div class="photo-blk-info">
-            ${a?.nonConformites?.length?`<div style="margin-bottom:8px">${a.nonConformites.map(nc=>`
-              <div class="nc-row">
-                <span class="nc-risk ${nc.risque==='CRITIQUE'?'risk-c':nc.risque==='MAJEUR'?'risk-m':'risk-mi'}">⚠ ${nc.risque}</span>
-                <span style="color:#CCC">${nc.description}</span>
-              </div>`).join('')}</div>`:''}
-            ${conf.length?`<div style="margin-bottom:8px">${conf.map(c=>`
-              <div class="conf-row"><span class="conf-chk">✓</span><span>${c}</span></div>`).join('')}</div>`:''}
-            ${a?.commentaire?`<div style="font-size:13px;color:#666;font-style:italic;padding-top:8px;border-top:1px solid #1A1A1A">"${a.commentaire}"</div>`:''}
-          </div>
-          <div style="background:${pBg};height:4px"></div>
-        </div>`;
-      }).join('');
-    }).join('')}
+  <div class="body">
+    <table class="action-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Priorité</th>
+          <th>Non-conformité</th>
+          <th>Action corrective</th>
+          <th>Délai</th>
+        </tr>
+      </thead>
+      <tbody id="action-tbody">
+        <tr>
+          <td>NC-01</td>
+          <td><span class="prio immed">IMMÉDIAT</span></td>
+          <td><input type="text" placeholder="NC..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Action..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Délai" style="width:60px;border:none;outline:none;font-size:11px;background:transparent;"></td>
+        </tr>
+        <tr>
+          <td>NC-02</td>
+          <td><span class="prio u24">URGENT 24h</span></td>
+          <td><input type="text" placeholder="NC..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Action..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Délai" style="width:60px;border:none;outline:none;font-size:11px;background:transparent;"></td>
+        </tr>
+        <tr>
+          <td>NC-03</td>
+          <td><span class="prio u48">URGENT 48h</span></td>
+          <td><input type="text" placeholder="NC..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Action..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Délai" style="width:60px;border:none;outline:none;font-size:11px;background:transparent;"></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+  <div class="footer-band">
+    <span>info@verdictinspection-ai.com • 819-525-4555</span>
+    <span class="footer-brand">VERDICT INSPECTION AI</span>
+    <span>Page 3 / 4</span>
+  </div>
+</div>
 
-  <!-- 4. PLAN D'ACTION CORRECTIF -->
+<!-- PAGE 4 — SIGNATURES -->
 
-  <div style="margin-bottom:22px">
-    <div class="sec-hdr"><div class="sec-num">4</div><h2>PLAN D'ACTION CORRECTIF</h2></div>
-    ${!allNCs.length
-      ? `<div class="card" style="text-align:center;padding:28px">
-          <div style="font-size:38px;margin-bottom:10px">✅</div>
-          <div style="font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:20px;color:#66BB6A;letter-spacing:2px">AUCUNE NON-CONFORMITÉ</div>
-          <div style="color:#555;font-size:13px;margin-top:6px">L'établissement est en conformité totale.</div>
-        </div>`
-      : `<div style="font-size:13px;color:#666;margin-bottom:12px">
-          ${allNCs.filter(n=>n.risque==='CRITIQUE').length} CRITIQUE &nbsp;·&nbsp;
-          ${allNCs.filter(n=>n.risque==='MAJEUR').length} MAJEUR &nbsp;·&nbsp;
-          ${allNCs.filter(n=>n.risque==='MINEUR').length} MINEUR
+<div class="page" id="p4">
+  <div class="entete">
+    <div>
+      <div class="entete-logo">VERDICT INSPECTION AI</div>
+      <div class="entete-sub">Auditeur en hygiène et salubrité • MAPAQ / HACCP</div>
+    </div>
+    <div class="entete-meta">
+      <div class="entete-no">RAPPORT Nº <span class="sync-no">____</span></div>
+      <div class="entete-info sync-etab">____</div>
+    </div>
+  </div>
+  <div class="band-or">Signatures et attestation</div>
+
+  <div class="body">
+    <div class="sig-row">
+      <div class="sig-box">
+        <div class="sig-box-header">Auditeur — Verdict Inspection AI</div>
+        <div class="sig-box-body">
+          <div style="position:relative;">
+            <canvas id="sig1" width="300" height="90" style="width:100%;height:90px;border:2px solid #D4A017;border-radius:6px;background:#fff;touch-action:none;cursor:crosshair;display:block;"></canvas>
+            <div id="hint1" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ccc;font-size:10px;font-style:italic;pointer-events:none;">✍ Signez ici</div>
+          </div>
+          <button class="btn-clear" onclick="clearSig('sig1','hint1')">✕ Effacer</button>
+          <div class="sig-info"><strong>Jacques Perrier</strong><br>Auditeur MAPAQ / HACCP<br>📞 819-525-4555</div>
         </div>
-        ${allNCs.map((nc,i)=>`<div class="nc-card ${nc.risque==='CRITIQUE'?'nc-c':nc.risque==='MAJEUR'?'nc-m':'nc-mi'}">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
-            <span class="nc-badge ${nc.risque==='CRITIQUE'?'b-c':nc.risque==='MAJEUR'?'b-m':'b-mi'}">${nc.risque}</span>
-            <span style="font-size:12px;color:#555">${nc.zoneEmoji} ${nc.zoneName}</span>
+      </div>
+      <div class="sig-box">
+        <div class="sig-box-header">Responsable de l'établissement</div>
+        <div class="sig-box-body">
+          <div style="position:relative;">
+            <canvas id="sig2" width="300" height="90" style="width:100%;height:90px;border:2px solid #1A1A1A;border-radius:6px;background:#fff;touch-action:none;cursor:crosshair;display:block;"></canvas>
+            <div id="hint2" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ccc;font-size:10px;font-style:italic;pointer-events:none;">✍ Signez ici</div>
           </div>
-          <div class="nc-desc">${i+1}. ${nc.description}</div>
-          <div class="nc-act">↳ ${nc.action}</div>
-          <div class="nc-delai">⏱ Délai: ${nc.delai}</div>
-        </div>`).join('')}`
-    }
+          <button class="btn-clear2" onclick="clearSig('sig2','hint2')">✕ Effacer</button>
+          <div class="sig-info"><strong><input type="text" id="f-sig-nom" placeholder="Prénom Nom" style="border:none;border-bottom:1px dashed #ccc;outline:none;font-size:10px;font-weight:700;color:#1A1A1A;background:transparent;width:130px;"></strong><br>
+          <input type="text" id="f-sig-titre" placeholder="Titre / Poste" style="border:none;border-bottom:1px dashed #ccc;outline:none;font-size:10px;color:#555;background:transparent;width:130px;margin-top:2px;"></div>
+        </div>
+      </div>
+    </div>
+
+```
+<div class="legal">
+  <strong style="color:#D4A017;">AVIS LÉGAL :</strong> Ce rapport a été produit à l'aide d'outils d'intelligence artificielle par Verdict Inspection AI. Il ne constitue pas un avis officiel du MAPAQ ni un document réglementaire. Les constats reflètent l'état des lieux au moment de la visite. Ce document est confidentiel et destiné exclusivement à l'établissement visité.
+</div>
+```
+
   </div>
 
-  <!-- 5. SIGNATURES -->
+  <div class="footer-band">
+    <span>info@verdictinspection-ai.com • 819-525-4555</span>
+    <span class="footer-brand">VERDICT INSPECTION AI</span>
+    <span>Page 4 / 4</span>
+  </div>
+</div>
 
-  <div style="margin-bottom:22px">
-    <div class="sec-hdr"><div class="sec-num">5</div><h2>SIGNATURES</h2></div>
-    <div class="sig-box">
-      <div class="sig-lbl">Signature de l'auditeur</div>
-      <div class="sig-line">${insp.auditeur}</div>
-    </div>
-    <div class="sig-box">
-      <div class="sig-lbl">Signature du responsable de l'établissement</div>
-      <div class="sig-line">________________________</div>
-    </div>
-    <div style="text-align:center;margin-top:18px;font-size:11px;color:#444;line-height:2">
-      Rapport généré par Claude AI (Anthropic) via Verdict Inspection AI<br>
-      <span style="color:#888">info@verdictinspection-ai.com</span> &nbsp;·&nbsp; <span style="color:#D4A017">verdictinspection-ai.com</span>
-    </div>
-  </div>`;
-}
+</div><!-- fin #rapport -->
 
-// ──────────────────────────────────────────────
-// PDF
-// ──────────────────────────────────────────────
-function exportPDF() {
-toast(‘📄 Ouverture de l'impression PDF…’,‘ok’);
-setTimeout(()=>window.print(), 500);
-}
+<!-- BOUTON TÉLÉCHARGER FLOTTANT -->
 
-// ──────────────────────────────────────────────
-// SETTINGS
-// ──────────────────────────────────────────────
-function saveApiKey() {
-const k = document.getElementById(‘inp-apikey’).value.trim();
-if (!k||k.includes(’•’)) { toast(‘⚠ Entrez votre clé API’,‘err’); return; }
-if (!k.startsWith(‘sk-ant-’)) { toast(‘⚠ La clé doit commencer par sk-ant-’,‘err’); return; }
-lsSet(‘vi_key’, k);
-document.getElementById(‘inp-apikey’).value = ‘••••••••••••••••’;
-toast(‘✅ Clé API sauvegardée !’,‘ok’);
-}
+<button id="btn-dl" onclick="telecharger()">💾 Télécharger</button>
 
-function saveSettings() {
-const a = document.getElementById(‘inp-auditeur’).value.trim();
-const c = document.getElementById(‘inp-company’).value.trim();
-if (a) { lsSet(‘vi_auditor’,a); document.getElementById(‘n-auditeur’).value=a; }
-if (c) lsSet(‘vi_company’,c);
-toast(‘✅ Paramètres sauvegardés !’,‘ok’);
-}
+<script>
+(function(){
 
-function clearAll() {
-if (!confirm(‘Effacer TOUTES les inspections et données ?’)) return;
-lsRemove(‘vi_inspections’);
-S.inspections = [];
-toast(‘🗑 Données effacées’,‘ok’);
-nav(‘home’);
-}
+  // ── NOUVEAU RAPPORT ──
+  window.nouveauRapport = function(){
+    var d = new Date();
+    var no = 'VIA-' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') + '-' + String(Math.floor(Math.random()*900)+100);
+    document.getElementById('no-rapport').textContent = no;
+    document.querySelectorAll('.sync-no').forEach(function(el){ el.textContent = no; });
+    var dateStr = d.toLocaleDateString('fr-CA',{year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('date-entete').textContent = dateStr;
+    document.getElementById('f-date').value = d.toISOString().split('T')[0];
+    document.getElementById('accueil').style.display = 'none';
+    document.getElementById('rapport').style.display = 'block';
+    document.getElementById('btn-dl').style.display = 'flex';
+    window.scrollTo(0,0);
+  };
 
-// ──────────────────────────────────────────────
-// UTILS
-// ──────────────────────────────────────────────
-function toast(msg, type=‘ok’) {
-const t = document.getElementById(‘toast’);
-t.textContent = msg;
+  // ── SYNC CHAMPS ──
+  window.majDate = function(){
+    var d = new Date(document.getElementById('f-date').value + 'T12:00:00');
+    var s = d.toLocaleDateString('fr-CA',{year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('date-entete').textContent = s;
+  };
 
-t.className = ’toast ’ + type;
-t.classList.add(‘show’);
-setTimeout(() => t.classList.remove(‘show’), 3200);
-}
+  document.addEventListener('input', function(e){
+    if(e.target.id === 'f-etab'){
+      document.querySelectorAll('.sync-etab').forEach(function(el){ el.textContent = e.target.value || '____'; });
+    }
+  });
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+  window.majScore = function(){
+    var s = parseInt(document.getElementById('f-score').value) || 0;
+    document.getElementById('score-display').textContent = s + '%';
+    var vEl = document.getElementById('verdict-display');
+    if(s < 50){
+      document.getElementById('score-display').style.color = '#C62828';
+      vEl.style.background = '#C62828'; vEl.style.color = '#fff'; vEl.textContent = '🔴 ÉCHEC';
+    } else if(s < 70){
+      document.getElementById('score-display').style.color = '#F57F17';
+      vEl.style.background = '#FFF176'; vEl.style.color = '#1A1A1A'; vEl.textContent = '🟡 À AMÉLIORER';
+    } else {
+      document.getElementById('score-display').style.color = '#2E7D32';
+      vEl.style.background = '#66BB6A'; vEl.style.color = '#fff'; vEl.textContent = '🟢 CONFORME';
+    }
+  };
 
-// ——— START ———
-window.addEventListener(‘DOMContentLoaded’, function() {
-try { init(); } catch(e) { console.error(‘Init error:’, e); }
-});
+  // ── PHOTO ──
+  window.chargerPhoto = function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var img = document.getElementById('photo-img');
+      img.src = ev.target.result;
+      img.style.display = 'block';
+      document.getElementById('photo-placeholder').style.display = 'none';
+      document.getElementById('photo-svg').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // ── SIGNATURES ──
+  function initCanvas(id, hintId){
+    var canvas = document.getElementById(id);
+    var hint   = document.getElementById(hintId);
+    var ctx    = canvas.getContext('2d');
+    var drawing = false, signed = false;
+    function getPos(e){
+      var r = canvas.getBoundingClientRect();
+      var sx = canvas.width/r.width, sy = canvas.height/r.height;
+      var src = e.touches ? e.touches[0] : e;
+      return {x:(src.clientX-r.left)*sx, y:(src.clientY-r.top)*sy};
+    }
+    function start(e){ e.preventDefault(); drawing=true; if(!signed){hint.style.display='none';signed=true;} ctx.beginPath(); var p=getPos(e); ctx.moveTo(p.x,p.y); ctx.strokeStyle='#1A1A1A'; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round'; }
+    function move(e){ e.preventDefault(); if(!drawing)return; var p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); }
+    function stop(e){ e.preventDefault(); drawing=false; }
+    canvas.addEventListener('touchstart',start,{passive:false});
+    canvas.addEventListener('touchmove',move,{passive:false});
+    canvas.addEventListener('touchend',stop,{passive:false});
+    canvas.addEventListener('mousedown',start);
+    canvas.addEventListener('mousemove',move);
+    canvas.addEventListener('mouseup',stop);
+  }
+
+  window.clearSig = function(id,hintId){
+    var c=document.getElementById(id);
+    c.getContext('2d').clearRect(0,0,c.width,c.height);
+    document.getElementById(hintId).style.display='block';
+  };
+
+  initCanvas('sig1','hint1');
+  initCanvas('sig2','hint2');
+
+  // ── TÉLÉCHARGER ──
+  window.telecharger = function(){
+    var s1 = document.getElementById('sig1').toDataURL('image/png');
+    var s2 = document.getElementById('sig2').toDataURL('image/png');
+    var html = document.documentElement.outerHTML;
+    html = html.replace(/<canvas id="sig1"[^>]*><\/canvas>/,'<img src="'+s1+'" style="width:100%;height:90px;border:2px solid #D4A017;border-radius:6px;display:block;">');
+    html = html.replace(/<canvas id="sig2"[^>]*><\/canvas>/,'<img src="'+s2+'" style="width:100%;height:90px;border:2px solid #1A1A1A;border-radius:6px;display:block;">');
+    var etab = document.getElementById('f-etab').value || 'rapport';
+    var blob = new Blob([html],{type:'text/html'});
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href=url; a.download='Rapport_MAPAQ_'+etab.replace(/\s+/g,'_')+'.html'; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+})();
 </script>
 
 </body>
