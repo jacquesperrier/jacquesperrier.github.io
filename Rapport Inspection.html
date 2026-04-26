@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Verdict Inspection">
+<title>Verdict Inspection AI — Rapport MAPAQ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Source+Sans+3:wght@400;600&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+  body{font-family:'Source Sans 3','Segoe UI',Arial,sans-serif;background:#1A1A1A;color:#1A1A1A;}
+
+/* ── ÉCRAN ACCUEIL APP ── */
+#accueil{
+min-height:100vh;
+background:#1A1A1A;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+padding:40px 24px;
+gap:32px;
+}
+.app-logo{
+font-family:‘Montserrat’,sans-serif;
+font-size:28px;
+font-weight:900;
+letter-spacing:4px;
+color:#D4A017;
+text-align:center;
+line-height:1.2;
+}
+.app-logo span{
+display:block;
+font-size:11px;
+color:#fff;
+letter-spacing:2px;
+font-weight:600;
+margin-top:6px;
+text-transform:uppercase;
+}
+.app-divider{width:60px;height:3px;background:#D4A017;border-radius:2px;}
+.btn-nouveau{
+background:#D4A017;
+color:#1A1A1A;
+font-family:‘Montserrat’,sans-serif;
+font-size:16px;
+font-weight:900;
+letter-spacing:2px;
+text-transform:uppercase;
+padding:18px 40px;
+border-radius:50px;
+border:none;
+cursor:pointer;
+width:100%;
+max-width:320px;
+box-shadow:0 4px 20px rgba(212,160,23,0.4);
+}
+.app-footer{font-size:10px;color:#555;letter-spacing:1px;text-align:center;}
+
+/* ── RAPPORT ── */
+#rapport{display:none;}
+.page{width:100%;max-width:820px;margin:0 auto;background:#fff;position:relative;page-break-after:always;}
+
+.entete{background:#1A1A1A;border-bottom:3px solid #D4A017;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+.entete-logo{font-family:‘Montserrat’,sans-serif;font-size:16px;font-weight:900;letter-spacing:3px;color:#D4A017;}
+.entete-sub{font-size:8px;color:#fff;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.entete-meta{text-align:right;}
+.entete-no{font-size:12px;font-weight:700;color:#D4A017;}
+.entete-info{font-size:10px;color:#ccc;}
+
+.hero{background:#1A1A1A;padding:24px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.hero-title{font-family:‘Montserrat’,sans-serif;font-size:20px;font-weight:900;color:#fff;line-height:1.2;}
+.hero-title span{color:#D4A017;}
+.hero-sub{font-size:11px;color:#D4A017;margin-top:8px;font-weight:600;}
+.score-box{background:#fff;border-radius:10px;width:95px;height:95px;min-width:95px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid #D4A017;flex-shrink:0;}
+.score-pct{font-family:‘Montserrat’,sans-serif;font-size:26px;font-weight:900;color:#1A1A1A;line-height:1;}
+.score-lbl{font-size:8px;font-weight:700;color:#666;margin-top:2px;text-transform:uppercase;letter-spacing:1px;}
+.score-verdict{font-size:9px;font-weight:900;padding:2px 8px;border-radius:20px;margin-top:4px;}
+
+.body{padding:16px 20px 80px;}
+
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.field{background:#f9f5ec;border-left:3px solid #D4A017;padding:10px 12px;border-radius:0 6px 6px 0;}
+.field-label{font-size:8px;font-weight:700;letter-spacing:1.5px;color:#D4A017;text-transform:uppercase;margin-bottom:3px;}
+.field input, .field select{width:100%;border:none;background:transparent;font-size:13px;font-weight:600;color:#1A1A1A;font-family:‘Source Sans 3’,sans-serif;outline:none;}
+
+.sep{height:2px;background:linear-gradient(to right,#D4A017,transparent);margin:14px 0;}
+.section-title{font-family:‘Montserrat’,sans-serif;font-size:11px;font-weight:900;color:#8B1A1A;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:’’;flex:1;height:2px;background:linear-gradient(to right,#D4A017,transparent);}
+
+.nc-pills{display:flex;gap:8px;margin-bottom:16px;}
+.nc-pill{flex:1;border-radius:8px;padding:10px 6px;text-align:center;color:#fff;}
+.nc-pill.crit{background:#FF7043;}
+.nc-pill.maj{background:#FFA726;color:#1A1A1A;}
+.nc-pill.min{background:#9E9E9E;}
+.nc-pill.conf{background:#66BB6A;}
+.nc-pill input{background:transparent;border:none;outline:none;font-family:‘Montserrat’,sans-serif;font-size:24px;font-weight:900;width:100%;text-align:center;color:inherit;}
+.nc-pill-lbl{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+.band-or{background:#8B6914;padding:8px 20px;color:#fff;font-family:‘Montserrat’,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.band-or::before{content:’’;width:3px;height:14px;background:#fff;border-radius:2px;flex-shrink:0;}
+
+/* Zone photo */
+.photo-card{border:1px solid #ddd;border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.photo-header{background:#8B1A1A;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;}
+.photo-zone-name{font-family:‘Montserrat’,sans-serif;font-size:11px;font-weight:800;color:#fff;letter-spacing:1px;text-transform:uppercase;}
+.photo-zone-score{font-family:‘Montserrat’,sans-serif;font-size:14px;font-weight:900;color:#f0c070;}
+.photo-wrapper{position:relative;background:#222;min-height:160px;display:flex;align-items:center;justify-content:center;}
+.photo-wrapper img{width:100%;height:auto;opacity:0.87;display:block;}
+.photo-wrapper svg{position:absolute;top:0;left:0;width:100%;height:100%;}
+.photo-placeholder{color:#555;font-size:13px;text-align:center;padding:40px 20px;}
+.photo-footer{background:#1A1A1A;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;}
+.photo-nc-count{font-size:10px;color:#f0c070;font-weight:700;}
+.photo-conf-count{font-size:10px;color:#66BB6A;font-weight:700;}
+
+.nc-detail{padding:12px 16px;background:#fafafa;}
+.nc-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed #e0e0e0;}
+.nc-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.nc-code{font-family:‘Montserrat’,sans-serif;font-size:11px;font-weight:900;color:#D4A017;min-width:48px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#fff;}
+.badge.crit{background:#FF7043;}
+.badge.maj{background:#FFA726;color:#1A1A1A;}
+.badge.conf{background:#66BB6A;}
+.nc-desc{font-size:11px;color:#1A1A1A;line-height:1.5;margin-top:2px;}
+.nc-action{font-size:10px;color:#8B1A1A;font-style:italic;margin-top:3px;}
+
+/* Plan actions */
+.action-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;}
+.action-table th{background:#f5edd6;color:#D4A017;padding:8px 10px;text-align:left;font-family:‘Montserrat’,sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid #D4A017;}
+.action-table td{padding:8px 10px;border-bottom:1px solid #eee;vertical-align:top;}
+.action-table tr:nth-child(even) td{background:#fafafa;}
+.prio{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:800;color:#fff;white-space:nowrap;}
+.prio.immed{background:#8B1A1A;}
+.prio.u24{background:#E65100;}
+.prio.u48{background:#BF360C;}
+.prio.plan{background:#546E7A;}
+
+/* Signatures */
+.sig-row{display:flex;gap:16px;margin-bottom:16px;}
+.sig-box{flex:1;border:1px solid #ddd;border-radius:8px;overflow:hidden;}
+.sig-box-header{background:#8B1A1A;padding:7px 14px;color:#fff;font-family:‘Montserrat’,sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+.sig-box-body{padding:12px 14px;background:#fafafa;}
+.sig-info{font-size:10px;color:#555;line-height:1.7;margin-top:8px;}
+.sig-info strong{color:#1A1A1A;}
+.btn-clear{font-size:9px;padding:3px 10px;border:1px solid #D4A017;border-radius:20px;background:#fff;color:#D4A017;font-weight:700;cursor:pointer;margin-top:6px;display:inline-block;}
+.btn-clear2{font-size:9px;padding:3px 10px;border:1px solid #1A1A1A;border-radius:20px;background:#fff;color:#1A1A1A;font-weight:700;cursor:pointer;margin-top:6px;display:inline-block;}
+
+.legal{padding:10px 14px;background:#f5f5f5;border-left:3px solid #D4A017;border-radius:0 6px 6px 0;font-size:9px;color:#666;line-height:1.6;margin-bottom:16px;}
+
+.footer-band{background:#1A1A1A;padding:7px 20px;display:flex;justify-content:space-between;align-items:center;}
+.footer-band span{color:#aaa;font-size:8px;}
+.footer-brand{color:#D4A017 !important;font-weight:700 !important;font-size:9px !important;letter-spacing:1px !important;}
+
+/* Bouton flottant télécharger */
+#btn-dl{position:fixed;bottom:20px;right:16px;background:#D4A017;color:#1A1A1A;font-family:‘Montserrat’,sans-serif;font-size:12px;font-weight:900;padding:12px 20px;border-radius:50px;box-shadow:0 4px 20px rgba(0,0,0,0.35);cursor:pointer;display:none;align-items:center;gap:6px;z-index:9999;letter-spacing:1px;text-transform:uppercase;border:none;}
+
+@media print{
+#accueil,#btn-dl,.btn-clear,.btn-clear2{display:none !important;}
+#rapport{display:block !important;}
+body{background:#fff;}
+.page{box-shadow:none;margin:0;}
+}
+</style>
+
+</head>
+<body>
+
+<!-- ══════════════════════════════ -->
+
+<!--  ÉCRAN D'ACCUEIL APP           -->
+
+<!-- ══════════════════════════════ -->
+
+<div id="accueil">
+  <div class="app-logo">
+    VERDICT<br>INSPECTION AI
+    <span>Auditeur en hygiène et salubrité</span>
+  </div>
+  <div class="app-divider"></div>
+  <button class="btn-nouveau" onclick="nouveauRapport()">
+    ＋ Nouveau rapport
+  </button>
+  <div class="app-footer">MAPAQ / HACCP • Jacques Perrier<br>info@verdictinspection-ai.com</div>
+</div>
+
+<!-- ══════════════════════════════ -->
+
+<!--  RAPPORT COMPLET               -->
+
+<!-- ══════════════════════════════ -->
+
+<div id="rapport">
+
+<!-- PAGE 1 — COUVERTURE -->
+
+<div class="page" id="p1">
+  <div class="entete">
+    <div>
+      <div class="entete-logo">VERDICT INSPECTION AI</div>
+      <div class="entete-sub">Auditeur en hygiène et salubrité • MAPAQ / HACCP</div>
+    </div>
+    <div class="entete-meta">
+      <div class="entete-no">RAPPORT Nº <span id="no-rapport">____</span></div>
+      <div class="entete-info" id="date-entete">____</div>
+      <div class="entete-info">Inspecteur : Jacques Perrier</div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div style="flex:1;min-width:0;">
+      <div class="hero-title">RAPPORT D'INSPECTION<br><span>SALUBRITÉ ALIMENTAIRE</span></div>
+      <div class="hero-sub">Norme : Règlement sur les aliments — MAPAQ / HACCP</div>
+    </div>
+    <div class="score-box">
+      <div class="score-pct" id="score-display">—</div>
+      <div class="score-lbl">Score global</div>
+      <div class="score-verdict" id="verdict-display" style="background:#eee;color:#666;">—</div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="field-grid">
+      <div class="field">
+        <div class="field-label">Établissement</div>
+        <input type="text" id="f-etab" placeholder="Nom de l'établissement">
+      </div>
+      <div class="field">
+        <div class="field-label">No permis MAPAQ</div>
+        <input type="text" id="f-permis" placeholder="XXXX-XXXX">
+      </div>
+      <div class="field" style="grid-column:1/-1;">
+        <div class="field-label">Adresse</div>
+        <input type="text" id="f-adresse" placeholder="Adresse complète, Ville, QC">
+      </div>
+      <div class="field">
+        <div class="field-label">Responsable présent</div>
+        <input type="text" id="f-resp" placeholder="Prénom Nom, titre">
+      </div>
+      <div class="field">
+        <div class="field-label">Date d'inspection</div>
+        <input type="date" id="f-date" onchange="majDate()">
+      </div>
+      <div class="field">
+        <div class="field-label">Score global (%)</div>
+        <input type="number" id="f-score" min="0" max="100" placeholder="ex: 72" onchange="majScore()">
+      </div>
+      <div class="field">
+        <div class="field-label">Type d'inspection</div>
+        <select id="f-type">
+          <option>Complète</option>
+          <option>Partielle</option>
+          <option>Suivi</option>
+          <option>Surprise</option>
+        </select>
+      </div>
+    </div>
+
+```
+<div class="sep"></div>
+<div class="section-title">Résumé des constatations</div>
+<div class="nc-pills">
+  <div class="nc-pill crit">
+    <input type="number" id="n-crit" value="0" min="0">
+    <div class="nc-pill-lbl">Critique</div>
+  </div>
+  <div class="nc-pill maj">
+    <input type="number" id="n-maj" value="0" min="0">
+    <div class="nc-pill-lbl">Majeur</div>
+  </div>
+  <div class="nc-pill min">
+    <input type="number" id="n-min" value="0" min="0">
+    <div class="nc-pill-lbl">Mineur</div>
+  </div>
+  <div class="nc-pill conf">
+    <input type="number" id="n-conf" value="0" min="0">
+    <div class="nc-pill-lbl">Conforme</div>
+  </div>
+</div>
+```
+
+  </div>
+  <div class="footer-band">
+    <span>info@verdictinspection-ai.com • 819-525-4555</span>
+    <span class="footer-brand">VERDICT INSPECTION AI</span>
+    <span>Page 1 / 4</span>
+  </div>
+</div>
+
+<!-- PAGE 2 — PHOTO ANNOTÉE -->
+
+<div class="page" id="p2">
+  <div class="entete">
+    <div>
+      <div class="entete-logo">VERDICT INSPECTION AI</div>
+      <div class="entete-sub">Auditeur en hygiène et salubrité • MAPAQ / HACCP</div>
+    </div>
+    <div class="entete-meta">
+      <div class="entete-no">RAPPORT Nº <span class="sync-no">____</span></div>
+      <div class="entete-info sync-etab">____</div>
+    </div>
+  </div>
+  <div class="band-or">Fiche photo annotée</div>
+
+  <div class="body">
+    <div class="photo-card">
+      <div class="photo-header">
+        <span class="photo-zone-name"><input type="text" id="f-zone" placeholder="Zone inspectée" style="background:transparent;border:none;outline:none;color:#fff;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;width:200px;"></span>
+        <span class="photo-zone-score"><input type="text" id="f-zone-score" placeholder="__%" style="background:transparent;border:none;outline:none;color:#f0c070;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;width:60px;text-align:right;"></span>
+      </div>
+
+```
+  <!-- Zone upload photo -->
+  <div class="photo-wrapper" id="photo-wrapper" onclick="document.getElementById('photo-input').click()">
+    <div class="photo-placeholder" id="photo-placeholder">
+      📷 Appuyez pour ajouter une photo
+    </div>
+    <img id="photo-img" src="" alt="" style="display:none;">
+    <svg id="photo-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%;display:none;"></svg>
+    <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none;" onchange="chargerPhoto(event)">
+  </div>
+
+  <div class="photo-footer">
+    <span class="photo-nc-count">⚠ <input type="number" id="f-nc-count" value="0" min="0" style="width:30px;background:transparent;border:none;outline:none;color:#f0c070;font-weight:700;font-size:10px;"> NC</span>
+    <span style="font-size:12px;color:#66BB6A;letter-spacing:3px;">✓ ✓ ✓</span>
+    <span class="photo-conf-count">✔ <input type="number" id="f-conf-count" value="0" min="0" style="width:30px;background:transparent;border:none;outline:none;color:#66BB6A;font-weight:700;font-size:10px;"> conformes</span>
+  </div>
+
+  <div class="nc-detail" id="nc-liste">
+    <!-- NC 1 -->
+    <div class="nc-item">
+      <div style="min-width:56px;">
+        <div class="nc-code">NC-01</div>
+        <select class="badge-select" style="font-size:9px;border:1px solid #eee;border-radius:20px;padding:1px 4px;background:#fff;margin-top:2px;" onchange="majBadge(this)">
+          <option value="crit">Critique</option>
+          <option value="maj">Majeur</option>
+          <option value="conf">Mineur</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <input type="text" placeholder="Description de la non-conformité..." class="nc-desc" style="width:100%;border:none;border-bottom:1px dashed #ddd;outline:none;font-size:11px;color:#1A1A1A;padding:2px 0;background:transparent;">
+        <input type="text" placeholder="→ Action corrective..." class="nc-action" style="width:100%;border:none;outline:none;font-size:10px;color:#8B1A1A;font-style:italic;padding:2px 0;background:transparent;margin-top:4px;">
+      </div>
+    </div>
+    <!-- NC 2 -->
+    <div class="nc-item">
+      <div style="min-width:56px;">
+        <div class="nc-code">NC-02</div>
+        <select class="badge-select" style="font-size:9px;border:1px solid #eee;border-radius:20px;padding:1px 4px;background:#fff;margin-top:2px;" onchange="majBadge(this)">
+          <option value="crit">Critique</option>
+          <option value="maj">Majeur</option>
+          <option value="conf">Mineur</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <input type="text" placeholder="Description de la non-conformité..." class="nc-desc" style="width:100%;border:none;border-bottom:1px dashed #ddd;outline:none;font-size:11px;color:#1A1A1A;padding:2px 0;background:transparent;">
+        <input type="text" placeholder="→ Action corrective..." class="nc-action" style="width:100%;border:none;outline:none;font-size:10px;color:#8B1A1A;font-style:italic;padding:2px 0;background:transparent;margin-top:4px;">
+      </div>
+    </div>
+    <!-- NC 3 -->
+    <div class="nc-item">
+      <div style="min-width:56px;">
+        <div class="nc-code">NC-03</div>
+        <select class="badge-select" style="font-size:9px;border:1px solid #eee;border-radius:20px;padding:1px 4px;background:#fff;margin-top:2px;" onchange="majBadge(this)">
+          <option value="crit">Critique</option>
+          <option value="maj">Majeur</option>
+          <option value="conf">Mineur</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <input type="text" placeholder="Description de la non-conformité..." class="nc-desc" style="width:100%;border:none;border-bottom:1px dashed #ddd;outline:none;font-size:11px;color:#1A1A1A;padding:2px 0;background:transparent;">
+        <input type="text" placeholder="→ Action corrective..." class="nc-action" style="width:100%;border:none;outline:none;font-size:10px;color:#8B1A1A;font-style:italic;padding:2px 0;background:transparent;margin-top:4px;">
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+  <div class="footer-band">
+    <span>info@verdictinspection-ai.com • 819-525-4555</span>
+    <span class="footer-brand">VERDICT INSPECTION AI</span>
+    <span>Page 2 / 4</span>
+  </div>
+</div>
+
+<!-- PAGE 3 — PLAN D'ACTIONS -->
+
+<div class="page" id="p3">
+  <div class="entete">
+    <div>
+      <div class="entete-logo">VERDICT INSPECTION AI</div>
+      <div class="entete-sub">Auditeur en hygiène et salubrité • MAPAQ / HACCP</div>
+    </div>
+    <div class="entete-meta">
+      <div class="entete-no">RAPPORT Nº <span class="sync-no">____</span></div>
+      <div class="entete-info sync-etab">____</div>
+    </div>
+  </div>
+  <div class="band-or">Plan d'actions correctives</div>
+
+  <div class="body">
+    <table class="action-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Priorité</th>
+          <th>Non-conformité</th>
+          <th>Action corrective</th>
+          <th>Délai</th>
+        </tr>
+      </thead>
+      <tbody id="action-tbody">
+        <tr>
+          <td>NC-01</td>
+          <td><span class="prio immed">IMMÉDIAT</span></td>
+          <td><input type="text" placeholder="NC..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Action..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Délai" style="width:60px;border:none;outline:none;font-size:11px;background:transparent;"></td>
+        </tr>
+        <tr>
+          <td>NC-02</td>
+          <td><span class="prio u24">URGENT 24h</span></td>
+          <td><input type="text" placeholder="NC..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Action..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Délai" style="width:60px;border:none;outline:none;font-size:11px;background:transparent;"></td>
+        </tr>
+        <tr>
+          <td>NC-03</td>
+          <td><span class="prio u48">URGENT 48h</span></td>
+          <td><input type="text" placeholder="NC..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Action..." style="width:100%;border:none;outline:none;font-size:11px;background:transparent;"></td>
+          <td><input type="text" placeholder="Délai" style="width:60px;border:none;outline:none;font-size:11px;background:transparent;"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="footer-band">
+    <span>info@verdictinspection-ai.com • 819-525-4555</span>
+    <span class="footer-brand">VERDICT INSPECTION AI</span>
+    <span>Page 3 / 4</span>
+  </div>
+</div>
+
+<!-- PAGE 4 — SIGNATURES -->
+
+<div class="page" id="p4">
+  <div class="entete">
+    <div>
+      <div class="entete-logo">VERDICT INSPECTION AI</div>
+      <div class="entete-sub">Auditeur en hygiène et salubrité • MAPAQ / HACCP</div>
+    </div>
+    <div class="entete-meta">
+      <div class="entete-no">RAPPORT Nº <span class="sync-no">____</span></div>
+      <div class="entete-info sync-etab">____</div>
+    </div>
+  </div>
+  <div class="band-or">Signatures et attestation</div>
+
+  <div class="body">
+    <div class="sig-row">
+      <div class="sig-box">
+        <div class="sig-box-header">Auditeur — Verdict Inspection AI</div>
+        <div class="sig-box-body">
+          <div style="position:relative;">
+            <canvas id="sig1" width="300" height="90" style="width:100%;height:90px;border:2px solid #D4A017;border-radius:6px;background:#fff;touch-action:none;cursor:crosshair;display:block;"></canvas>
+            <div id="hint1" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ccc;font-size:10px;font-style:italic;pointer-events:none;">✍ Signez ici</div>
+          </div>
+          <button class="btn-clear" onclick="clearSig('sig1','hint1')">✕ Effacer</button>
+          <div class="sig-info"><strong>Jacques Perrier</strong><br>Auditeur MAPAQ / HACCP<br>📞 819-525-4555</div>
+        </div>
+      </div>
+      <div class="sig-box">
+        <div class="sig-box-header">Responsable de l'établissement</div>
+        <div class="sig-box-body">
+          <div style="position:relative;">
+            <canvas id="sig2" width="300" height="90" style="width:100%;height:90px;border:2px solid #1A1A1A;border-radius:6px;background:#fff;touch-action:none;cursor:crosshair;display:block;"></canvas>
+            <div id="hint2" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ccc;font-size:10px;font-style:italic;pointer-events:none;">✍ Signez ici</div>
+          </div>
+          <button class="btn-clear2" onclick="clearSig('sig2','hint2')">✕ Effacer</button>
+          <div class="sig-info"><strong><input type="text" id="f-sig-nom" placeholder="Prénom Nom" style="border:none;border-bottom:1px dashed #ccc;outline:none;font-size:10px;font-weight:700;color:#1A1A1A;background:transparent;width:130px;"></strong><br>
+          <input type="text" id="f-sig-titre" placeholder="Titre / Poste" style="border:none;border-bottom:1px dashed #ccc;outline:none;font-size:10px;color:#555;background:transparent;width:130px;margin-top:2px;"></div>
+        </div>
+      </div>
+    </div>
+
+```
+<div class="legal">
+  <strong style="color:#D4A017;">AVIS LÉGAL :</strong> Ce rapport a été produit à l'aide d'outils d'intelligence artificielle par Verdict Inspection AI. Il ne constitue pas un avis officiel du MAPAQ ni un document réglementaire. Les constats reflètent l'état des lieux au moment de la visite. Ce document est confidentiel et destiné exclusivement à l'établissement visité.
+</div>
+```
+
+  </div>
+
+  <div class="footer-band">
+    <span>info@verdictinspection-ai.com • 819-525-4555</span>
+    <span class="footer-brand">VERDICT INSPECTION AI</span>
+    <span>Page 4 / 4</span>
+  </div>
+</div>
+
+</div><!-- fin #rapport -->
+
+<!-- BOUTON TÉLÉCHARGER FLOTTANT -->
+
+<button id="btn-dl" onclick="telecharger()">💾 Télécharger</button>
+
+<script>
+(function(){
+
+  // ── NOUVEAU RAPPORT ──
+  window.nouveauRapport = function(){
+    var d = new Date();
+    var no = 'VIA-' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') + '-' + String(Math.floor(Math.random()*900)+100);
+    document.getElementById('no-rapport').textContent = no;
+    document.querySelectorAll('.sync-no').forEach(function(el){ el.textContent = no; });
+    var dateStr = d.toLocaleDateString('fr-CA',{year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('date-entete').textContent = dateStr;
+    document.getElementById('f-date').value = d.toISOString().split('T')[0];
+    document.getElementById('accueil').style.display = 'none';
+    document.getElementById('rapport').style.display = 'block';
+    document.getElementById('btn-dl').style.display = 'flex';
+    window.scrollTo(0,0);
+  };
+
+  // ── SYNC CHAMPS ──
+  window.majDate = function(){
+    var d = new Date(document.getElementById('f-date').value + 'T12:00:00');
+    var s = d.toLocaleDateString('fr-CA',{year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('date-entete').textContent = s;
+  };
+
+  document.addEventListener('input', function(e){
+    if(e.target.id === 'f-etab'){
+      document.querySelectorAll('.sync-etab').forEach(function(el){ el.textContent = e.target.value || '____'; });
+    }
+  });
+
+  window.majScore = function(){
+    var s = parseInt(document.getElementById('f-score').value) || 0;
+    document.getElementById('score-display').textContent = s + '%';
+    var vEl = document.getElementById('verdict-display');
+    if(s < 50){
+      document.getElementById('score-display').style.color = '#C62828';
+      vEl.style.background = '#C62828'; vEl.style.color = '#fff'; vEl.textContent = '🔴 ÉCHEC';
+    } else if(s < 70){
+      document.getElementById('score-display').style.color = '#F57F17';
+      vEl.style.background = '#FFF176'; vEl.style.color = '#1A1A1A'; vEl.textContent = '🟡 À AMÉLIORER';
+    } else {
+      document.getElementById('score-display').style.color = '#2E7D32';
+      vEl.style.background = '#66BB6A'; vEl.style.color = '#fff'; vEl.textContent = '🟢 CONFORME';
+    }
+  };
+
+  // ── PHOTO ──
+  window.chargerPhoto = function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var img = document.getElementById('photo-img');
+      img.src = ev.target.result;
+      img.style.display = 'block';
+      document.getElementById('photo-placeholder').style.display = 'none';
+      document.getElementById('photo-svg').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // ── SIGNATURES ──
+  function initCanvas(id, hintId){
+    var canvas = document.getElementById(id);
+    var hint   = document.getElementById(hintId);
+    var ctx    = canvas.getContext('2d');
+    var drawing = false, signed = false;
+    function getPos(e){
+      var r = canvas.getBoundingClientRect();
+      var sx = canvas.width/r.width, sy = canvas.height/r.height;
+      var src = e.touches ? e.touches[0] : e;
+      return {x:(src.clientX-r.left)*sx, y:(src.clientY-r.top)*sy};
+    }
+    function start(e){ e.preventDefault(); drawing=true; if(!signed){hint.style.display='none';signed=true;} ctx.beginPath(); var p=getPos(e); ctx.moveTo(p.x,p.y); ctx.strokeStyle='#1A1A1A'; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round'; }
+    function move(e){ e.preventDefault(); if(!drawing)return; var p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); }
+    function stop(e){ e.preventDefault(); drawing=false; }
+    canvas.addEventListener('touchstart',start,{passive:false});
+    canvas.addEventListener('touchmove',move,{passive:false});
+    canvas.addEventListener('touchend',stop,{passive:false});
+    canvas.addEventListener('mousedown',start);
+    canvas.addEventListener('mousemove',move);
+    canvas.addEventListener('mouseup',stop);
+  }
+
+  window.clearSig = function(id,hintId){
+    var c=document.getElementById(id);
+    c.getContext('2d').clearRect(0,0,c.width,c.height);
+    document.getElementById(hintId).style.display='block';
+  };
+
+  initCanvas('sig1','hint1');
+  initCanvas('sig2','hint2');
+
+  // ── TÉLÉCHARGER ──
+  window.telecharger = function(){
+    var s1 = document.getElementById('sig1').toDataURL('image/png');
+    var s2 = document.getElementById('sig2').toDataURL('image/png');
+    var html = document.documentElement.outerHTML;
+    html = html.replace(/<canvas id="sig1"[^>]*><\/canvas>/,'<img src="'+s1+'" style="width:100%;height:90px;border:2px solid #D4A017;border-radius:6px;display:block;">');
+    html = html.replace(/<canvas id="sig2"[^>]*><\/canvas>/,'<img src="'+s2+'" style="width:100%;height:90px;border:2px solid #1A1A1A;border-radius:6px;display:block;">');
+    var etab = document.getElementById('f-etab').value || 'rapport';
+    var blob = new Blob([html],{type:'text/html'});
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href=url; a.download='Rapport_MAPAQ_'+etab.replace(/\s+/g,'_')+'.html'; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+})();
+</script>
+
+</body>
+</html>
