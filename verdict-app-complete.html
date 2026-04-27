@@ -461,7 +461,7 @@ letter-spacing:1.5px; margin-bottom:8px;
   <div class="home-logo">VERDICT<br>INSPECTION AI</div>
   <div class="home-sub">Auditeur en hygiène et salubrité</div>
   <div class="home-line"></div>
-  <button class="btn-start" onclick="goTo('s-form')">+ Nouveau rapport</button>
+  <button class="btn-start" id="btnStart">+ Nouveau rapport</button>
   <div class="home-footer">MAPAQ / HACCP • Jacques Perrier<br>info@verdictinspection-ai.com</div>
 </div>
 
@@ -472,7 +472,7 @@ letter-spacing:1.5px; margin-bottom:8px;
 <div class="screen" id="s-form">
   <div class="top-bar">
     <div><h1>Verdict Inspection AI</h1><p>Nouveau rapport</p></div>
-    <button onclick="goTo('s-home')" style="background:transparent;border:none;color:#666;font-size:20px;cursor:pointer">×</button>
+    <button id="btnClose" style="background:transparent;border:none;color:#666;font-size:20px;cursor:pointer">×</button>
   </div>
 
   <div class="form-body">
@@ -609,6 +609,14 @@ function goTo(id) {
 
 // ══ INIT DATE ════════════════════════════════════════════════════
 document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+
+// Boutons navigation — event listeners plutôt que onclick inline
+document.getElementById('btnStart').addEventListener('click', function() {
+  goTo('s-form');
+});
+document.getElementById('btnClose').addEventListener('click', function() {
+  goTo('s-home');
+});
 
 // ══ PHOTOS ═══════════════════════════════════════════════════════
 function handlePhotos(input) {
@@ -837,7 +845,7 @@ function buildReport() {
   const dateFormatted = new Date(f.date+'T12:00:00').toLocaleDateString('fr-CA',{year:'numeric',month:'long',day:'numeric'});
 
   let html = `
-  <!-- HERO -->
+  
   <div class="rpt-hero">
     <div>
       <h2>RAPPORT D'INSPECTION<br><span>SALUBRITÉ ALIMENTAIRE</span></h2>
@@ -850,7 +858,7 @@ function buildReport() {
     </div>
   </div>
 
-  <!-- INFOS -->
+  
   <div class="rpt-infos">
     <div class="rpt-bloc"><label>Établissement</label><span>${f.etab}</span></div>
     <div class="rpt-bloc"><label>No Permis MAPAQ</label><span>${f.permis}</span></div>
@@ -861,7 +869,7 @@ function buildReport() {
     <div class="rpt-bloc"><label>Type</label><span>${f.type}</span></div>
   </div>
 
-  <!-- RÉSUMÉ -->
+  
   <div class="rpt-sec">Résumé</div>
   <div class="rpt-badges">
     <div class="rpt-badge" style="background:var(--critique)"><span class="bn">${nbC}</span><span class="bl">Critique</span></div>
@@ -870,7 +878,7 @@ function buildReport() {
     <div class="rpt-badge" style="background:var(--conforme)"><span class="bn">0</span><span class="bl">Conforme</span></div>
   </div>
 
-  <!-- SCORE PAR ZONE -->
+  
   <div class="rpt-sec">Score par zone</div>
   <table class="rpt-table">
     <thead><tr><th>Zone</th><th>Obtenu</th><th>/ Max</th><th>Résultat</th></tr></thead>
@@ -888,7 +896,7 @@ function buildReport() {
     </tbody>
   </table>
 
-  <!-- PHOTOS ANNOTÉES -->
+  
   <div class="rpt-sec">Photos annotées par zone</div>
   ${r.photos.map((pz, pi) => {
     const photo = state.photos[pz.photoIndex !== undefined ? pz.photoIndex : pi];
@@ -910,7 +918,7 @@ function buildReport() {
     </div>`;
   }).join('<div style="height:8px"></div>')}
 
-  <!-- FICHES NC -->
+  
   <div class="rpt-sec">Fiches de non-conformités</div>
   ${allNCs.map(nc => `
   <div class="rpt-fiche">
@@ -927,7 +935,7 @@ function buildReport() {
     </div>
   </div>`).join('')}
 
-  <!-- PLAN D'ACTIONS -->
+  
   <div class="rpt-sec">Plan d'actions prioritaires</div>
   <table class="rpt-plan">
     <thead><tr><th>Réf.</th><th>Priorité</th><th>Action corrective</th><th>Délai</th></tr></thead>
@@ -941,7 +949,7 @@ function buildReport() {
     </tbody>
   </table>
 
-  <!-- SIGNATURES -->
+  
   <div class="rpt-sec">Signatures</div>
   <div class="sig-wrap">
     <div class="sig-steps-bar">
@@ -1028,7 +1036,7 @@ function buildReport() {
     </div>
   </div>
 
-  <!-- FOOTER PRINT -->
+  
   <div style="text-align:center;font-size:8px;color:#999;padding:10px 14px;border-top:1px solid var(--gris-bord);margin:0 14px">
     Verdict Inspection AI &nbsp;|&nbsp; info@verdictinspection-ai.com &nbsp;|&nbsp; Nº ${viaNo} &nbsp;|&nbsp; ${dateFormatted}
   </div>
@@ -1123,6 +1131,14 @@ function newReport() {
   document.getElementById('f-responsable').value = '';
   document.getElementById('f-contexte').value = '';
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+
+// Boutons navigation — event listeners plutôt que onclick inline
+document.getElementById('btnStart').addEventListener('click', function() {
+  goTo('s-form');
+});
+document.getElementById('btnClose').addEventListener('click', function() {
+  goTo('s-home');
+});
   document.getElementById('photosPreview').innerHTML = '';
   document.getElementById('btnAnalyze').disabled = true;
   // Reset loading steps
