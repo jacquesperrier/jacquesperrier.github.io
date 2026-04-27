@@ -10,6 +10,7 @@
 
 :root {
 –noir: #1A1A1A;
+color-scheme: dark;
 –or: #D4A017;
 –or-clair: #F5EFE0;
 –or-dim: rgba(212,160,23,0.12);
@@ -30,8 +31,8 @@
 - { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
 body {
-background: var(–fond);
-color: var(–blanc);
+background: #0F0F0F;
+color: #FFFFFF;
 font-family: ‘DM Sans’, sans-serif;
 min-height: 100vh;
 overflow-x: hidden;
@@ -70,17 +71,18 @@ letter-spacing: 0.5px;
 
 /* ══ SCREEN 1 : ACCUEIL ══ */
 #s-home {
-background: radial-gradient(ellipse at 50% 30%, #2A1F00 0%, var(–fond) 60%);
+background: radial-gradient(ellipse at 50% 30%, #2A1F00 0%, #0F0F0F 60%);
 align-items: center;
 justify-content: center;
 text-align: center;
 padding: 40px 24px;
+min-height: 100vh;
 }
 .home-logo {
 font-family: ‘Playfair Display’, serif;
 font-size: 38px;
 font-weight: 900;
-color: var(–or);
+color: #D4A017;
 line-height: 1.05;
 margin-bottom: 8px;
 }
@@ -88,20 +90,20 @@ margin-bottom: 8px;
 font-size: 11px;
 text-transform: uppercase;
 letter-spacing: 2px;
-color: var(–gris-lbl);
+color: #8A7A5A;
 margin-bottom: 10px;
 }
 .home-line {
 width: 60px;
 height: 2px;
-background: var(–or);
+background: #D4A017;
 margin: 0 auto 32px;
 }
 .btn-start {
 width: 100%;
 max-width: 320px;
-background: var(–or);
-color: var(–noir);
+background: #D4A017;
+color: #1A1A1A;
 border: none;
 padding: 18px 24px;
 border-radius: 14px;
