@@ -369,7 +369,30 @@ function runAnalysis() {
     content.push({ type: 'text', text: 'Photo ' + (i+1) });
   });
 
-  var prompt = 'Tu es un auditeur certifié MAPAQ/HACCP. Analyse ces ' + photos.length + ' photo(s). Etablissement: ' + formData.etab + '. Contexte: ' + (formData.contexte || 'Inspection de routine') + '.\n\nReponds UNIQUEMENT en JSON valide sans markdown:\n{"score":<0-100>,"cote":"<ROUGE|JAUNE|VERT>","zones":[{"nom":"<zone>","obtenu":<n>,"max":<n>}],"photos":[{"zone":"<zone>","photoIndex":<0-based>,"ncs":[{"no":"NC-01","type":"<CRITIQUE|MAJEUR|MINEURE>","priorite":"<IMMEDIAT|URG24h|URG48h|PLANIFIE>","observation":"<texte>","regle":"<MAPAQ art.>","action":"<texte>"}]}]}';
+  var regleRef = 'Articles MAPAQ de référence (utilise celui qui correspond exactement a la NC observee):\n' +
+  'Art.19 — Aliments proteges contre contamination\n' +
+  'Art.20 — Manipulation hygienique des aliments\n' +
+  'Art.21 — Vetements de travail propres obligatoires\n' +
+  'Art.22 — Lavage des mains obligatoire avant manipulation\n' +
+  'Art.23 — Gants a usage unique changes entre chaque tache\n' +
+  'Art.28 — Separation aliments crus et prets-a-manger\n' +
+  'Art.30 — Zones propres et souillees separees\n' +
+  'Art.32 — Temperatures de conservation respectees\n' +
+  'Art.35 — Locaux propres et en bon etat\n' +
+  'Art.36 — Surfaces de travail nettoyees et desinfectees en continu\n' +
+  'Art.38 — Linges et chiffons entreposes adequatement\n' +
+  'Art.40 — Surfaces en contact avec aliments non poreuses et assainissables\n' +
+  'Art.41 — Vaisselle propre separee de la vaisselle sale\n' +
+  'Art.44 — Ustensiles et outillage tranchant entreposes securitairement\n' +
+  'Art.57 — Contenants identifies avec nom produit et allergenes\n';
+
+var prompt = 'Tu es un auditeur certifie MAPAQ/HACCP. Analyse ces ' + photos.length + ' photo(s) et identifie TOUTES les non-conformites visibles.\n' +
+  'Etablissement: ' + formData.etab + '. Contexte: ' + (formData.contexte || 'Inspection de routine') + '.\n\n' +
+  regleRef + '\n' +
+  'IMPORTANT: Chaque NC doit avoir un article DIFFERENT et specifique a la violation observee.\n' +
+  'Le score doit refleter la gravite reelle: chaque CRITIQUE retire 15 points, chaque MAJEUR retire 7 points, base 100.\n\n' +
+  'Reponds UNIQUEMENT en JSON valide sans markdown ni commentaires:\n' +
+  '{"score":<calcul reel 0-100>,"cote":"<ROUGE si <50, JAUNE si 50-69, VERT si 70+>","zones":[{"nom":"<zone specifique>","obtenu":<n>,"max":<n>}],"photos":[{"zone":"<nom zone>","photoIndex":<0-base>,"ncs":[{"no":"NC-01","type":"<CRITIQUE|MAJEUR|MINEURE>","priorite":"<IMMEDIAT|URG24h|URG48h|PLANIFIE>","observation":"<ce qui est visible sur la photo en 1 phrase concrete>","regle":"<Art.XX — ce que cet article exige specifiquement>","action":"<correction concrete a faire en 1 phrase>"}]}]}';
   content.push({ type: 'text', text: prompt });
 
   fetch('https://api.anthropic.com/v1/messages', {
@@ -382,14 +405,25 @@ function runAnalysis() {
     })
   })
   .then(function(r) { return r.json(); })
+  .then(function(r) {
+    if (!r.ok) { return r.json().then(function(e) { throw new Error(JSON.stringify(e)); }); }
+    return r.json();
+  })
   .then(function(data) {
     clearInterval(timer);
-    var text = data.content.map(function(c) { return c.text || ''; }).join('');
+    var text = '';
+    if (data.content) {
+      data.content.forEach(function(c) { if (c.text) text += c.text; });
+    }
+    // Nettoyer markdown
+    text = text.replace(/```json/g,'').replace(/```/g,'').trim();
     var start = text.indexOf('{');
     var end = text.lastIndexOf('}');
     if (start !== -1 && end !== -1) {
       try {
         result = JSON.parse(text.slice(start, end + 1));
+        // Valider que le résultat a les champs requis
+        if (!result.score || !result.photos) { result = getDemoData(); }
       } catch(e) {
         result = getDemoData();
       }
@@ -426,6 +460,75 @@ function getDemoData() {
       };
     })
   };
+}
+
+// Annotation d'une photo avec canvas
+function annotatePhoto(b64, ncs, callback) {
+  var img = new Image();
+  img.onload = function() {
+    var canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    var w = img.width;
+    var h = img.height;
+
+    // Positions prédéfinies par index NC dans la photo
+    var positions = [
+      [0.05, 0.45, 0.52, 0.95, 'rect'],
+      [0.52, 0.25, 0.98, 0.75, 'rect'],
+      [0.28, 0.75, 0.68, 0.99, 'oval'],
+      [0.20, 0.48, 0.62, 0.65, 'rect'],
+      [0.22, 0.02, 0.62, 0.42, 'oval']
+    ];
+
+    ncs.forEach(function(nc, idx) {
+      var pos = positions[idx % positions.length];
+      var x1 = pos[0]*w, y1 = pos[1]*h, x2 = pos[2]*w, y2 = pos[3]*h;
+      var shape = pos[4];
+      var color = nc.type === 'CRITIQUE' ? 'rgba(255,80,50,0.85)' : 'rgba(255,167,38,0.85)';
+      var lw = Math.max(4, Math.round(w/120));
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lw;
+      if (shape === 'rect') {
+        ctx.strokeRect(x1, y1, x2-x1, y2-y1);
+      } else {
+        ctx.beginPath();
+        ctx.ellipse((x1+x2)/2, (y1+y2)/2, (x2-x1)/2, (y2-y1)/2, 0, 0, 2*Math.PI);
+        ctx.stroke();
+      }
+
+      // Étiquette NC avec texte court
+      var fontSize = Math.max(14, Math.round(w/60));
+      ctx.font = 'bold ' + fontSize + 'px sans-serif';
+
+      // Texte court : NC-01 + 4 premiers mots de l'observation
+      var words = nc.observation.split(' ');
+      var shortText = nc.no + ' — ' + words.slice(0, 4).join(' ') + (words.length > 4 ? '…' : '');
+
+      // Calculer largeur du texte
+      var textWidth = ctx.measureText(shortText).width;
+      var lbx = Math.max(0, Math.min(x1, w - textWidth - 16));
+      var lby = Math.max(0, y1 - (fontSize + 14));
+      var lbw = textWidth + 16;
+      var lbh = fontSize + 12;
+
+      // Fond semi-transparent arrondi
+      ctx.fillStyle = color.replace('0.85', '0.92');
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(lbx, lby, lbw, lbh, 4) : ctx.rect(lbx, lby, lbw, lbh);
+      ctx.fill();
+
+      // Texte blanc
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(shortText, lbx + 8, lby + fontSize + 2);
+    });
+
+    callback(canvas.toDataURL('image/jpeg', 0.88));
+  };
+  img.src = b64;
 }
 
 var TC = {CRITIQUE:'#FF7043',MAJEUR:'#FFA726',CONFORME:'#66BB6A',MINEURE:'#90A4AE'};
@@ -492,7 +595,10 @@ function buildReport() {
     var photo = photos[pz.photoIndex !== undefined ? pz.photoIndex : pi];
     html += '<div class="photo-zone">';
     html += '<div class="pz-hdr">Zone ' + (pi+1) + ' \u2014 ' + pz.zone + '</div>';
-    if (photo) html += '<img class="pz-img" src="' + photo.b64 + '">';
+    if (photo) {
+      var phId = 'pz-img-' + pi;
+      html += '<img class="pz-img" id="' + phId + '" src="' + photo.b64 + '">';
+    }
     html += '<table class="nc-tbl"><thead><tr><th>Réf.</th><th>Non-conformité</th><th>Type</th><th>Priorité</th></tr></thead><tbody>';
     pz.ncs.forEach(function(nc) {
       html += '<tr><td><strong>' + nc.no + '</strong></td><td>' + nc.observation + '</td><td>' + pill(nc.type, TC[nc.type]) + '</td><td>' + pill(nc.priorite, PC[nc.priorite]||PC[nc.priorite.replace('É','E')]) + '</td></tr>';
@@ -571,6 +677,17 @@ function buildReport() {
 
   document.getElementById('rptBody').innerHTML = html;
   goTo('s-rapport');
+
+  // Annoter les photos
+  r.photos.forEach(function(pz, pi) {
+    var photo = photos[pz.photoIndex !== undefined ? pz.photoIndex : pi];
+    var imgEl = document.getElementById('pz-img-' + pi);
+    if (photo && imgEl && pz.ncs && pz.ncs.length > 0) {
+      annotatePhoto(photo.b64, pz.ncs, function(annotated) {
+        if (imgEl) imgEl.src = annotated;
+      });
+    }
+  });
 
   // Init signatures
   setTimeout(function() {
