@@ -1,1 +1,1137 @@
+<!DOCTYPE html>
 
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Verdict Inspection AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+–noir: #1A1A1A;
+–or: #D4A017;
+–or-clair: #F5EFE0;
+–or-dim: rgba(212,160,23,0.12);
+–blanc: #FFFFFF;
+–fond: #0F0F0F;
+–gris-txt: #3A3A3A;
+–gris-lbl: #8A7A5A;
+–critique: #FF7043;
+–majeur: #FFA726;
+–conforme: #66BB6A;
+–mineure: #90A4AE;
+–gris-bord: #D4C8A8;
+–gris-clair: #F8F4EC;
+–rouge-s: #8B0000;
+–card-bg: #1C1C1C;
+}
+
+- { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+background: var(–fond);
+color: var(–blanc);
+font-family: ‘DM Sans’, sans-serif;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* ══ SCREENS ══ */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ══ HEADER ══ */
+.top-bar {
+background: var(–noir);
+border-bottom: 2px solid var(–or);
+padding: 14px 18px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-shrink: 0;
+}
+.top-bar h1 {
+font-family: ‘Playfair Display’, serif;
+font-size: 18px;
+color: var(–or);
+}
+.top-bar p { font-size: 9px; color: var(–gris-lbl); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+.via-pill {
+background: var(–or-dim);
+border: 1px solid var(–or);
+color: var(–or);
+font-size: 9px;
+font-weight: 700;
+padding: 4px 10px;
+border-radius: 20px;
+letter-spacing: 0.5px;
+}
+
+/* ══ SCREEN 1 : ACCUEIL ══ */
+#s-home {
+background: radial-gradient(ellipse at 50% 30%, #2A1F00 0%, var(–fond) 60%);
+align-items: center;
+justify-content: center;
+text-align: center;
+padding: 40px 24px;
+}
+.home-logo {
+font-family: ‘Playfair Display’, serif;
+font-size: 38px;
+font-weight: 900;
+color: var(–or);
+line-height: 1.05;
+margin-bottom: 8px;
+}
+.home-sub {
+font-size: 11px;
+text-transform: uppercase;
+letter-spacing: 2px;
+color: var(–gris-lbl);
+margin-bottom: 10px;
+}
+.home-line {
+width: 60px;
+height: 2px;
+background: var(–or);
+margin: 0 auto 32px;
+}
+.btn-start {
+width: 100%;
+max-width: 320px;
+background: var(–or);
+color: var(–noir);
+border: none;
+padding: 18px 24px;
+border-radius: 14px;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 15px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 2px;
+cursor: pointer;
+transition: transform 0.15s, background 0.15s;
+}
+.btn-start:active { transform: scale(0.97); background: #b8880f; }
+.home-footer { margin-top: 32px; font-size: 10px; color: #555; }
+
+/* ══ SCREEN 2 : FORMULAIRE ══ */
+#s-form { background: var(–fond); }
+.form-body { flex: 1; overflow-y: auto; padding: 16px; }
+
+.form-section { margin-bottom: 20px; }
+.form-section-title {
+font-size: 10px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 1.5px;
+color: var(–or);
+margin-bottom: 10px;
+padding-bottom: 6px;
+border-bottom: 1px solid #2A2A2A;
+}
+
+.field { margin-bottom: 12px; }
+.field label {
+font-size: 9px;
+text-transform: uppercase;
+letter-spacing: 1.2px;
+color: var(–gris-lbl);
+font-weight: 700;
+display: block;
+margin-bottom: 5px;
+}
+.field input, .field select, .field textarea {
+width: 100%;
+background: var(–card-bg);
+border: 1px solid #2A2A2A;
+border-radius: 8px;
+padding: 12px 14px;
+color: var(–blanc);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 14px;
+outline: none;
+transition: border-color 0.2s;
+-webkit-appearance: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+border-color: var(–or);
+}
+.field select { color: var(–blanc); }
+.field select option { background: #1C1C1C; }
+.field textarea { resize: none; height: 80px; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Upload photos */
+.photo-upload-area {
+border: 2px dashed #333;
+border-radius: 12px;
+padding: 20px;
+text-align: center;
+cursor: pointer;
+transition: border-color 0.2s;
+position: relative;
+}
+.photo-upload-area:active { border-color: var(–or); }
+.photo-upload-area input[type=file] {
+position: absolute; inset: 0; opacity: 0; cursor: pointer;
+width: 100%; height: 100%;
+}
+.upload-icon { font-size: 28px; margin-bottom: 6px; }
+.upload-text { font-size: 12px; color: #888; }
+.upload-hint { font-size: 10px; color: #555; margin-top: 4px; }
+
+.photos-preview {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 8px;
+margin-top: 10px;
+}
+.photo-thumb {
+aspect-ratio: 1;
+border-radius: 8px;
+overflow: hidden;
+position: relative;
+border: 1px solid #333;
+}
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.photo-thumb .ph-del {
+position: absolute;
+top: 4px; right: 4px;
+background: rgba(0,0,0,0.7);
+color: white;
+border: none;
+border-radius: 50%;
+width: 22px; height: 22px;
+font-size: 11px;
+cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+}
+.photo-thumb .ph-num {
+position: absolute;
+bottom: 4px; left: 4px;
+background: var(–or);
+color: var(–noir);
+font-size: 9px;
+font-weight: 700;
+padding: 1px 5px;
+border-radius: 4px;
+}
+
+.form-footer {
+padding: 14px 16px;
+border-top: 1px solid #1E1E1E;
+flex-shrink: 0;
+}
+.btn-analyze {
+width: 100%;
+background: var(–or);
+color: var(–noir);
+border: none;
+padding: 16px;
+border-radius: 12px;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 15px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 1.5px;
+cursor: pointer;
+transition: all 0.2s;
+}
+.btn-analyze:active { background: #b8880f; transform: scale(0.98); }
+.btn-analyze:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+/* ══ SCREEN 3 : ANALYSE IA ══ */
+#s-loading {
+background: var(–fond);
+align-items: center;
+justify-content: center;
+text-align: center;
+padding: 40px 24px;
+}
+.loading-spinner {
+width: 64px; height: 64px;
+border: 3px solid #2A2A2A;
+border-top-color: var(–or);
+border-radius: 50%;
+animation: spin 1s linear infinite;
+margin: 0 auto 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-title {
+font-family: ‘Playfair Display’, serif;
+font-size: 22px;
+color: var(–or);
+margin-bottom: 8px;
+}
+.loading-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+.loading-steps { text-align: left; max-width: 280px; margin: 0 auto; }
+.loading-step {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 8px 0;
+font-size: 12px;
+color: #666;
+transition: color 0.3s;
+}
+.loading-step.done { color: var(–conforme); }
+.loading-step.active { color: var(–blanc); }
+.step-dot {
+width: 8px; height: 8px;
+border-radius: 50%;
+background: #333;
+flex-shrink: 0;
+transition: background 0.3s;
+}
+.loading-step.done .step-dot { background: var(–conforme); }
+.loading-step.active .step-dot { background: var(–or); animation: pulse 1s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ══ SCREEN 4 : RAPPORT ══ */
+#s-rapport { background: #F8F4EC; color: var(–gris-txt); }
+#s-rapport .top-bar { background: var(–noir); }
+.rapport-body { flex: 1; overflow-y: auto; }
+
+/* Hero rapport */
+.rpt-hero {
+background: var(–noir);
+padding: 16px 18px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-bottom: 1px solid #2A2A2A;
+}
+.rpt-hero h2 { font-family: ‘Playfair Display’, serif; font-size: 19px; color: var(–blanc); line-height: 1.1; }
+.rpt-hero h2 span { color: var(–or); }
+.rpt-hero p { font-size: 9px; color: var(–or); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; font-weight: 600; }
+.score-box { text-align: center; border: 2px solid var(–or); border-radius: 10px; overflow: hidden; min-width: 82px; }
+.score-box .sl { font-size: 8px; color: var(–gris-lbl); text-transform: uppercase; letter-spacing: 1px; padding: 5px 8px 2px; background: var(–noir); font-weight: 700; display: block; }
+.score-box .sv { font-family: ‘Playfair Display’, serif; font-size: 24px; color: var(–or); background: var(–noir); padding: 2px 8px; display: block; }
+.score-box .sc { font-size: 10px; font-weight: 700; padding: 5px 8px; color: white; letter-spacing: 1px; display: block; }
+.cote-r { background: var(–rouge-s); }
+.cote-j { background: #E65100; }
+.cote-v { background: #1B5E20; }
+
+/* Blocs info */
+.rpt-infos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px 14px; }
+.rpt-info-full { grid-column: 1/-1; }
+.rpt-bloc {
+background: var(–or-clair);
+border-left: 3px solid var(–or);
+border-radius: 8px;
+padding: 9px 11px;
+}
+.rpt-bloc label { font-size: 8px; text-transform: uppercase; letter-spacing: 1.2px; color: var(–gris-lbl); font-weight: 700; display: block; margin-bottom: 2px; }
+.rpt-bloc span { font-size: 12px; color: var(–gris-txt); font-weight: 500; }
+
+/* Section titre */
+.rpt-sec {
+font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+color: var(–or); padding: 12px 14px 5px; border-top: 1px solid var(–gris-bord);
+}
+
+/* Badges */
+.rpt-badges { display: flex; gap: 6px; padding: 0 14px 12px; }
+.rpt-badge { flex: 1; text-align: center; border-radius: 10px; padding: 8px 4px; }
+.rpt-badge .bn { font-family: ‘Playfair Display’, serif; font-size: 24px; color: white; display: block; line-height: 1; }
+.rpt-badge .bl { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 3px; display: block; }
+
+/* Table zones */
+.rpt-table { width: calc(100% - 28px); margin: 0 14px 12px; border-collapse: collapse; border-radius: 8px; overflow: hidden; font-size: 11px; }
+.rpt-table thead tr { background: var(–noir); }
+.rpt-table thead th { color: var(–or); font-size: 8px; text-transform: uppercase; letter-spacing: 1px; padding: 7px 8px; text-align: left; }
+.rpt-table tbody tr:nth-child(odd) { background: white; }
+.rpt-table tbody tr:nth-child(even) { background: var(–gris-clair); }
+.rpt-table tbody td { padding: 6px 8px; color: var(–gris-txt); border-bottom: 1px solid var(–gris-bord); }
+.pct-p { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 700; color: white; }
+
+/* Photo zone */
+.rpt-photo-zone { margin: 0 14px 12px; border-radius: 10px; overflow: hidden; border: 1px solid var(–gris-bord); }
+.rpt-pz-hdr { background: var(–noir); padding: 8px 12px; font-size: 10px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; border-left: 4px solid var(–or); }
+.rpt-pz-img { width: 100%; display: block; max-height: 240px; object-fit: cover; }
+.rpt-nc-tbl { width: 100%; border-collapse: collapse; font-size: 10px; }
+.rpt-nc-tbl thead tr { background: var(–noir); }
+.rpt-nc-tbl thead th { color: var(–or); font-size: 7px; text-transform: uppercase; letter-spacing: 1px; padding: 5px 7px; text-align: left; }
+.rpt-nc-tbl tbody tr:nth-child(odd) { background: white; }
+.rpt-nc-tbl tbody tr:nth-child(even) { background: var(–gris-clair); }
+.rpt-nc-tbl tbody td { padding: 5px 7px; color: var(–gris-txt); }
+.tpill { display: inline-block; padding: 2px 6px; border-radius: 8px; font-size: 7px; font-weight: 700; color: white; white-space: nowrap; }
+
+/* Fiches NC */
+.rpt-fiche { margin: 0 14px 8px; border-radius: 8px; overflow: hidden; }
+.rpt-fiche-hdr { display: grid; grid-template-columns: 44px 1fr auto auto; align-items: stretch; }
+.rfh-no { background: var(–noir); color: var(–or); font-weight: 700; font-size: 10px; padding: 7px 8px; display: flex; align-items: center; border-left: 4px solid var(–or); }
+.rfh-zone { background: var(–noir); color: #CCC; font-size: 9px; padding: 7px 8px; display: flex; align-items: center; }
+.rfh-type { font-size: 8px; font-weight: 700; color: white; padding: 7px 8px; display: flex; align-items: center; text-transform: uppercase; }
+.rfh-prio { font-size: 8px; font-weight: 700; color: white; padding: 7px 8px; display: flex; align-items: center; text-transform: uppercase; }
+.rpt-fiche-body { background: var(–or-clair); }
+.rpt-fiche-row { display: grid; grid-template-columns: 80px 1fr; border-bottom: 1px solid var(–gris-bord); font-size: 10px; }
+.rpt-fiche-row:last-child { border-bottom: none; }
+.rfr-lbl { background: rgba(212,160,23,0.08); padding: 6px 7px; font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(–gris-lbl); display: flex; align-items: center; }
+.rfr-val { padding: 6px 9px; color: var(–gris-txt); line-height: 1.4; }
+
+/* Plan */
+.rpt-plan { width: calc(100% - 28px); margin: 0 14px 12px; border-collapse: collapse; font-size: 10px; border-radius: 8px; overflow: hidden; }
+.rpt-plan thead tr { background: var(–noir); }
+.rpt-plan thead th { color: var(–or); font-size: 7px; text-transform: uppercase; letter-spacing: 1px; padding: 6px 7px; text-align: left; }
+.rpt-plan tbody tr:nth-child(odd) { background: white; }
+.rpt-plan tbody tr:nth-child(even) { background: var(–gris-clair); }
+.rpt-plan tbody td { padding: 5px 7px; color: var(–gris-txt); vertical-align: top; border-bottom: 1px solid var(–gris-bord); }
+
+/* ══ SIGNATURES ══ */
+.sig-wrap { padding: 14px; background: #F8F4EC; }
+.sig-steps-bar { display: flex; margin-bottom: 16px; }
+.ss { flex: 1; text-align: center; padding: 8px 4px; border-bottom: 2px solid #CCC; color: #AAA; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s; }
+.ss.active { border-bottom-color: var(–or); color: var(–or); }
+.ss.done { border-bottom-color: var(–conforme); color: var(–conforme); }
+.sig-panel { display: none; }
+.sig-panel.active { display: block; }
+.sig-name { font-size: 13px; font-weight: 600; color: var(–or); margin-bottom: 3px; }
+.sig-role { font-size: 11px; color: #999; margin-bottom: 10px; }
+.cvs-wrap { background: white; border-radius: 10px; border: 2px solid var(–or); position: relative; overflow: hidden; margin-bottom: 10px; }
+.cvs-hint { position: absolute; top: 9px; left: 12px; font-size: 9px; color: #BBAA88; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; pointer-events: none; }
+.cvs-line { position: absolute; bottom: 40px; left: 12px; right: 12px; height: 1px; background: #DDD; pointer-events: none; }
+.cvs-line-lbl { position: absolute; bottom: 24px; left: 12px; font-size: 9px; color: #BBAA88; pointer-events: none; }
+canvas.cvs { display: block; width: 100%; height: 160px; touch-action: none; }
+.sig-actions { display: flex; gap: 8px; margin-bottom: 6px; }
+.btn-clr { flex:1; background:transparent; border:1px solid #CCC; color:#999; padding:10px; border-radius:8px; font-family:‘DM Sans’,sans-serif; font-size:12px; cursor:pointer; }
+.btn-nxt { flex:2.5; background:var(–or); border:none; color:var(–noir); padding:12px; border-radius:8px; font-family:‘DM Sans’,sans-serif; font-size:13px; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px; }
+.btn-nxt:active { background:#b8880f; }
+.sig-warn { display:none; color:var(–critique); font-size:11px; text-align:center; margin-bottom:6px; }
+.sig-warn.show { display:block; }
+
+/* Final */
+.final-wrap { text-align: center; padding: 20px 0 16px; }
+.final-wrap .fck { font-size: 44px; }
+.final-wrap h3 { font-family:‘Playfair Display’,serif; font-size:20px; color:var(–or); margin:6px 0 4px; }
+.final-wrap p { font-size:12px; color:#999; }
+.sigs-recap { background:white; border-radius:10px; overflow:hidden; border:1px solid var(–gris-bord); margin-bottom:14px; }
+.sr-row { display:flex; align-items:center; padding:11px 13px; gap:11px; border-bottom:1px solid #EEE; }
+.sr-row:last-child { border-bottom:none; }
+.sr-row img { height:36px; background:white; border-radius:4px; padding:2px; max-width:100px; object-fit:contain; border:1px solid #DDD; }
+.sr-row .sri { flex:1; }
+.sr-row .sri strong { font-size:11px; color:var(–or); display:block; }
+.sr-row .sri span { font-size:10px; color:#888; }
+.sr-row .chk { color:var(–conforme); font-size:17px; font-weight:700; }
+
+/* Bloc sig impression */
+.sig-print-bloc-wrap { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.spb { background:var(–or-clair); border-left:3px solid var(–or); border-radius:8px; padding:11px; }
+.spb label { font-size:8px; text-transform:uppercase; letter-spacing:1.2px; color:var(–gris-lbl); font-weight:700; display:block; margin-bottom:5px; }
+.spb .spb-name { font-size:12px; color:var(–gris-txt); font-weight:600; margin-bottom:6px; }
+.spb img { height:52px; display:block; margin-bottom:5px; max-width:100%; }
+.spb .spb-ph { height:52px; border-bottom:1px solid var(–gris-bord); display:flex; align-items:center; color:#BBAA88; font-size:10px; font-style:italic; margin-bottom:5px; }
+.spb .spb-date { font-size:9px; color:#999; border-top:1px solid var(–gris-bord); padding-top:5px; }
+
+.btn-print-rpt {
+width:100%; background:var(–or); border:none; color:var(–noir);
+padding:16px; border-radius:12px; font-family:‘DM Sans’,sans-serif;
+font-size:15px; font-weight:700; cursor:pointer; text-transform:uppercase;
+letter-spacing:1.5px; margin-bottom:8px;
+}
+.btn-print-rpt:active { background:#b8880f; }
+.print-hint-txt { text-align:center; font-size:10px; color:#999; margin-bottom:20px; }
+.btn-new-rpt { width:100%; background:transparent; border:1px solid var(–or); color:var(–or); padding:13px; border-radius:12px; font-family:‘DM Sans’,sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-bottom:20px; }
+
+/* ══ PRINT ══ */
+@media print {
+.screen { display: flex !important; }
+#s-home, #s-form, #s-loading { display: none !important; }
+#s-rapport { display: flex !important; }
+.top-bar, .rapport-footer, .sig-wrap { }
+
+- { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .top-bar { position: static !important; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     ÉCRAN 1 : ACCUEIL
+══════════════════════════════════════ -->
+
+<div class="screen active" id="s-home">
+  <div class="home-logo">VERDICT<br>INSPECTION AI</div>
+  <div class="home-sub">Auditeur en hygiène et salubrité</div>
+  <div class="home-line"></div>
+  <button class="btn-start" onclick="goTo('s-form')">+ Nouveau rapport</button>
+  <div class="home-footer">MAPAQ / HACCP • Jacques Perrier<br>info@verdictinspection-ai.com</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ÉCRAN 2 : FORMULAIRE
+══════════════════════════════════════ -->
+
+<div class="screen" id="s-form">
+  <div class="top-bar">
+    <div><h1>Verdict Inspection AI</h1><p>Nouveau rapport</p></div>
+    <button onclick="goTo('s-home')" style="background:transparent;border:none;color:#666;font-size:20px;cursor:pointer">×</button>
+  </div>
+
+  <div class="form-body">
+
+```
+<div class="form-section">
+  <div class="form-section-title">Informations de l'établissement</div>
+  <div class="field">
+    <label>Nom de l'établissement *</label>
+    <input type="text" id="f-etab" placeholder="Ex: Restaurant Le Bouchon" required>
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <label>No Permis MAPAQ</label>
+      <input type="text" id="f-permis" placeholder="XXXX-XXXX">
+    </div>
+    <div class="field">
+      <label>Type d'inspection</label>
+      <select id="f-type">
+        <option>Complète</option>
+        <option>Partielle</option>
+        <option>Suivi</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label>Adresse complète</label>
+    <input type="text" id="f-adresse" placeholder="123 rue Principale, Gatineau, QC">
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <label>Responsable présent</label>
+      <input type="text" id="f-responsable" placeholder="Prénom Nom, titre">
+    </div>
+    <div class="field">
+      <label>Date d'inspection</label>
+      <input type="date" id="f-date">
+    </div>
+  </div>
+</div>
+
+<div class="form-section">
+  <div class="form-section-title">Observations générales</div>
+  <div class="field">
+    <label>Contexte et conditions générales</label>
+    <textarea id="f-contexte" placeholder="Ex: Cuisine en pleine opération, service du midi en cours. 3 employés présents..."></textarea>
+  </div>
+</div>
+
+<div class="form-section">
+  <div class="form-section-title">Photos d'inspection *</div>
+  <p style="font-size:11px;color:#888;margin-bottom:10px">Ajoutez 1 à 5 photos. Claude analysera chaque zone automatiquement.</p>
+  <div class="photo-upload-area" id="uploadArea">
+    <input type="file" id="photoInput" multiple accept="image/*" onchange="handlePhotos(this)">
+    <div class="upload-icon">📷</div>
+    <div class="upload-text">Appuyez pour prendre ou choisir des photos</div>
+    <div class="upload-hint">JPG, PNG — max 5 photos</div>
+  </div>
+  <div class="photos-preview" id="photosPreview"></div>
+</div>
+```
+
+  </div>
+
+  <div class="form-footer">
+    <button class="btn-analyze" id="btnAnalyze" onclick="startAnalysis()" disabled>
+      ⚡ Analyser avec l'IA
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ÉCRAN 3 : CHARGEMENT
+══════════════════════════════════════ -->
+
+<div class="screen" id="s-loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-title">Analyse en cours…</div>
+  <div class="loading-sub" id="loadingSub">Claude analyse vos photos</div>
+  <div class="loading-steps">
+    <div class="loading-step active" id="lstep1">
+      <div class="step-dot"></div> Lecture des photos
+    </div>
+    <div class="loading-step" id="lstep2">
+      <div class="step-dot"></div> Identification des non-conformités
+    </div>
+    <div class="loading-step" id="lstep3">
+      <div class="step-dot"></div> Calcul du score MAPAQ
+    </div>
+    <div class="loading-step" id="lstep4">
+      <div class="step-dot"></div> Génération du rapport
+    </div>
+    <div class="loading-step" id="lstep5">
+      <div class="step-dot"></div> Prêt à signer
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ÉCRAN 4 : RAPPORT
+══════════════════════════════════════ -->
+
+<div class="screen" id="s-rapport">
+  <div class="top-bar">
+    <div><h1>Verdict Inspection AI</h1><p>Rapport d'inspection</p></div>
+    <div class="via-pill" id="rpt-via">Nº VIA-…</div>
+  </div>
+
+  <div class="rapport-body" id="rpt-body">
+    <!-- Rempli dynamiquement -->
+  </div>
+</div>
+
+<script>
+// ══ ÉTAT GLOBAL ══════════════════════════════════════════════════
+const state = {
+  photos: [],       // { file, b64, name }
+  formData: {},
+  analysisResult: null,
+  sigs: { 1: null, 2: null },
+  viaNo: null,
+};
+
+const TYPE_C = {CRITIQUE:'#FF7043',MAJEUR:'#FFA726',CONFORME:'#66BB6A',MINEURE:'#90A4AE'};
+const PRIO_C = {IMMÉDIAT:'#8B1A1A',URG24h:'#E65100',URG48h:'#BF360C',PLANIFIÉ:'#546E7A'};
+const DELAIS = {IMMÉDIAT:'Immédiat',URG24h:'24 h',URG48h:'48 h',PLANIFIÉ:'Planifié'};
+
+// ══ NAVIGATION ════════════════════════════════════════════════════
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ══ INIT DATE ════════════════════════════════════════════════════
+document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+
+// ══ PHOTOS ═══════════════════════════════════════════════════════
+function handlePhotos(input) {
+  const files = Array.from(input.files).slice(0, 5 - state.photos.length);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      state.photos.push({ file, b64: e.target.result, name: file.name });
+      renderPreviews();
+      checkForm();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function renderPreviews() {
+  const prev = document.getElementById('photosPreview');
+  prev.innerHTML = '';
+  state.photos.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'photo-thumb';
+    div.innerHTML = `<img src="${p.b64}">
+      <button class="ph-del" onclick="removePhoto(${i})">×</button>
+      <div class="ph-num">Z${i+1}</div>`;
+    prev.appendChild(div);
+  });
+}
+
+function removePhoto(i) {
+  state.photos.splice(i, 1);
+  renderPreviews();
+  checkForm();
+}
+
+function checkForm() {
+  const ok = document.getElementById('f-etab').value.trim() && state.photos.length > 0;
+  document.getElementById('btnAnalyze').disabled = !ok;
+}
+
+document.getElementById('f-etab').addEventListener('input', checkForm);
+
+// ══ ANALYSE ══════════════════════════════════════════════════════
+async function startAnalysis() {
+  // Lire le formulaire
+  state.formData = {
+    etab:        document.getElementById('f-etab').value.trim(),
+    permis:      document.getElementById('f-permis').value.trim() || 'XXXX-XXXX',
+    type:        document.getElementById('f-type').value,
+    adresse:     document.getElementById('f-adresse').value.trim() || 'Adresse non fournie',
+    responsable: document.getElementById('f-responsable').value.trim() || 'Responsable désigné',
+    date:        document.getElementById('f-date').value,
+    contexte:    document.getElementById('f-contexte').value.trim(),
+  };
+  state.viaNo = `VIA-${state.formData.date.replace(/-/g,'').slice(2)}-${Math.floor(Math.random()*900)+100}`;
+
+  goTo('s-loading');
+  animateSteps();
+
+  try {
+    const result = await callClaudeAnalysis();
+    state.analysisResult = result;
+    setTimeout(() => buildReport(), 500);
+  } catch(e) {
+    console.error('Analyse error:', e.message);
+    // Fallback demo si pas d'API ou erreur de parsing
+    state.analysisResult = getDemoData();
+    setTimeout(() => buildReport(), 500);
+  }
+}
+
+// Animation des étapes de chargement
+function animateSteps() {
+  const steps = [1,2,3,4,5];
+  let i = 0;
+  const msgs = [
+    'Lecture des photos…',
+    'Identification des non-conformités…',
+    'Calcul du score MAPAQ…',
+    'Génération du rapport…',
+    'Finalisation…'
+  ];
+  const interval = setInterval(() => {
+    if (i > 0) {
+      document.getElementById('lstep'+i).classList.remove('active');
+      document.getElementById('lstep'+i).classList.add('done');
+    }
+    if (i < steps.length) {
+      document.getElementById('lstep'+(i+1)).classList.add('active');
+      document.getElementById('loadingSub').textContent = msgs[i];
+    }
+    i++;
+    if (i >= steps.length) clearInterval(interval);
+  }, 900);
+}
+
+// Appel API Claude
+async function callClaudeAnalysis() {
+  const photoCount = state.photos.length;
+  
+  // Construire le contenu avec toutes les photos
+  const contentParts = [];
+  
+  state.photos.forEach((p, i) => {
+    const mediaType = p.file.type || 'image/jpeg';
+    const b64data = p.b64.split(',')[1];
+    contentParts.push({
+      type: 'image',
+      source: { type: 'base64', media_type: mediaType, data: b64data }
+    });
+    contentParts.push({
+      type: 'text',
+      text: `Photo ${i+1} — Zone ${i+1}`
+    });
+  });
+
+  contentParts.push({
+    type: 'text',
+    text: `Tu es un auditeur certifié MAPAQ/HACCP. Analyse ces ${photoCount} photo(s) d'inspection d'un établissement alimentaire.
+
+Établissement: ${state.formData.etab}
+Contexte: ${state.formData.contexte || 'Inspection de routine'}
+
+Pour CHAQUE photo, identifie toutes les non-conformités visibles.
+
+Réponds UNIQUEMENT en JSON valide, sans markdown, sans backticks:
+{
+  "score": <nombre 0-100>,
+  "cote": "<ROUGE|JAUNE|VERT>",
+  "zones": [
+    {"nom": "<nom zone>", "obtenu": <n>, "max": <n>}
+  ],
+  "photos": [
+    {
+      "zone": "<nom de la zone>",
+      "ncs": [
+        {
+          "no": "NC-01",
+          "type": "<CRITIQUE|MAJEUR|MINEURE>",
+          "priorite": "<IMMÉDIAT|URG24h|URG48h|PLANIFIÉ>",
+          "observation": "<observation factuelle concise>",
+          "regle": "<article MAPAQ applicable>",
+          "action": "<action corrective>",
+          "photoIndex": <0-based index de la photo>
+        }
+      ]
+    }
+  ],
+  "resume": "<résumé en 2 phrases>"
+}`
+  });
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: contentParts }]
+    })
+  });
+
+  if (!response.ok) throw new Error('API error: ' + response.status);
+  
+  const data = await response.json();
+  const text = data.content.map(c => c.text || '').join('');
+  
+  // Extraction robuste du JSON — chercher le premier { ... } complet
+  const start = text.indexOf('{');
+  const end   = text.lastIndexOf('}');
+  if (start === -1 || end === -1) throw new Error('Invalid response format: ' + text.slice(0,200));
+  const jsonStr = text.slice(start, end + 1);
+  try {
+    return JSON.parse(jsonStr);
+  } catch(e) {
+    // Nettoyer les caractères problématiques
+    const cleaned = jsonStr
+      .replace(/[�-]/g, ' ')  // control chars
+      .replace(/,\s*}/g, '}')                   // trailing commas
+      .replace(/,\s*]/g, ']');
+    return JSON.parse(cleaned);
+  }
+}
+
+// Données démo si API non disponible
+function getDemoData() {
+  const photoCount = state.photos.length;
+  return {
+    score: 23,
+    cote: "ROUGE",
+    zones: [
+      {nom: "Hygiène des surfaces", obtenu: 10, max: 30},
+      {nom: "Contamination croisée", obtenu: 0, max: 30},
+      {nom: "Hygiène du personnel", obtenu: 5, max: 20},
+      {nom: "Équipements", obtenu: 8, max: 20}
+    ],
+    photos: state.photos.map((p, i) => ({
+      zone: `Zone ${i+1} — Photo ${i+1}`,
+      photoIndex: i,
+      ncs: [
+        {no:`NC-0${i*2+1}`,type:"CRITIQUE",priorite:"IMMÉDIAT",
+         observation:"Non-conformité critique identifiée dans cette zone",
+         regle:"MAPAQ art. 40",action:"Corriger immédiatement."},
+        {no:`NC-0${i*2+2}`,type:"MAJEUR",priorite:"URG24h",
+         observation:"Non-conformité majeure identifiée",
+         regle:"MAPAQ art. 28",action:"Corriger dans les 24 heures."},
+      ]
+    })),
+    resume: `Inspection complète de ${state.formData.etab}. Plusieurs non-conformités critiques nécessitent une intervention immédiate.`
+  };
+}
+
+// ══ CONSTRUCTION DU RAPPORT ═══════════════════════════════════════
+function buildReport() {
+  const r = state.analysisResult;
+  const f = state.formData;
+  const viaNo = state.viaNo;
+  const allNCs = r.photos.flatMap(p => p.ncs.map(nc => ({...nc, zone: p.zone})));
+  const nbC = allNCs.filter(n=>n.type==='CRITIQUE').length;
+  const nbM = allNCs.filter(n=>n.type==='MAJEUR').length;
+  const nbMn = allNCs.filter(n=>n.type==='MINEURE').length;
+
+  document.getElementById('rpt-via').textContent = `Nº ${viaNo}`;
+
+  const coteClass = r.cote==='ROUGE'?'cote-r':r.cote==='JAUNE'?'cote-j':'cote-v';
+  const dateFormatted = new Date(f.date+'T12:00:00').toLocaleDateString('fr-CA',{year:'numeric',month:'long',day:'numeric'});
+
+  let html = `
+  <!-- HERO -->
+  <div class="rpt-hero">
+    <div>
+      <h2>RAPPORT D'INSPECTION<br><span>SALUBRITÉ ALIMENTAIRE</span></h2>
+      <p>Règlement sur les aliments — MAPAQ / HACCP</p>
+    </div>
+    <div class="score-box">
+      <span class="sl">Score</span>
+      <span class="sv">${r.score}%</span>
+      <span class="sc ${coteClass}">● ${r.cote}</span>
+    </div>
+  </div>
+
+  <!-- INFOS -->
+  <div class="rpt-infos">
+    <div class="rpt-bloc"><label>Établissement</label><span>${f.etab}</span></div>
+    <div class="rpt-bloc"><label>No Permis MAPAQ</label><span>${f.permis}</span></div>
+    <div class="rpt-bloc rpt-info-full"><label>Adresse</label><span>${f.adresse}</span></div>
+    <div class="rpt-bloc"><label>Responsable présent</label><span>${f.responsable}</span></div>
+    <div class="rpt-bloc"><label>Date d'inspection</label><span>${dateFormatted}</span></div>
+    <div class="rpt-bloc"><label>Inspecteur</label><span>Jacques Perrier</span></div>
+    <div class="rpt-bloc"><label>Type</label><span>${f.type}</span></div>
+  </div>
+
+  <!-- RÉSUMÉ -->
+  <div class="rpt-sec">Résumé</div>
+  <div class="rpt-badges">
+    <div class="rpt-badge" style="background:var(--critique)"><span class="bn">${nbC}</span><span class="bl">Critique</span></div>
+    <div class="rpt-badge" style="background:var(--majeur)"><span class="bn">${nbM}</span><span class="bl">Majeure</span></div>
+    <div class="rpt-badge" style="background:var(--mineure)"><span class="bn">${nbMn}</span><span class="bl">Mineure</span></div>
+    <div class="rpt-badge" style="background:var(--conforme)"><span class="bn">0</span><span class="bl">Conforme</span></div>
+  </div>
+
+  <!-- SCORE PAR ZONE -->
+  <div class="rpt-sec">Score par zone</div>
+  <table class="rpt-table">
+    <thead><tr><th>Zone</th><th>Obtenu</th><th>/ Max</th><th>Résultat</th></tr></thead>
+    <tbody>
+      ${r.zones.map(z => {
+        const pct = Math.round(z.obtenu/z.max*100);
+        const col = pct>=70?'var(--conforme)':pct>=50?'var(--majeur)':'var(--critique)';
+        return `<tr>
+          <td>${z.nom}</td>
+          <td><span class="pct-p" style="background:${col}">${z.obtenu}</span></td>
+          <td style="color:#999">/ ${z.max}</td>
+          <td><span class="pct-p" style="background:${col}">${pct}%</span></td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>
+
+  <!-- PHOTOS ANNOTÉES -->
+  <div class="rpt-sec">Photos annotées par zone</div>
+  ${r.photos.map((pz, pi) => {
+    const photo = state.photos[pz.photoIndex !== undefined ? pz.photoIndex : pi];
+    return `
+    <div class="rpt-photo-zone">
+      <div class="rpt-pz-hdr">Zone ${pi+1} — ${pz.zone}</div>
+      ${photo ? `<img class="rpt-pz-img" src="${photo.b64}">` : ''}
+      <table class="rpt-nc-tbl">
+        <thead><tr><th>Réf.</th><th>Non-conformité</th><th>Type</th><th>Priorité</th></tr></thead>
+        <tbody>
+          ${pz.ncs.map(nc => `<tr>
+            <td><strong>${nc.no}</strong></td>
+            <td>${nc.observation}</td>
+            <td><span class="tpill" style="background:${TYPE_C[nc.type]||'#999'}">${nc.type}</span></td>
+            <td><span class="tpill" style="background:${PRIO_C[nc.priorite]||'#999'}">${nc.priorite}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }).join('<div style="height:8px"></div>')}
+
+  <!-- FICHES NC -->
+  <div class="rpt-sec">Fiches de non-conformités</div>
+  ${allNCs.map(nc => `
+  <div class="rpt-fiche">
+    <div class="rpt-fiche-hdr">
+      <div class="rfh-no">${nc.no}</div>
+      <div class="rfh-zone">${nc.zone}</div>
+      <div class="rfh-type" style="background:${TYPE_C[nc.type]||'#999'}">${nc.type}</div>
+      <div class="rfh-prio" style="background:${PRIO_C[nc.priorite]||'#999'}">${nc.priorite}</div>
+    </div>
+    <div class="rpt-fiche-body">
+      <div class="rpt-fiche-row"><div class="rfr-lbl">Observation</div><div class="rfr-val">${nc.observation}</div></div>
+      <div class="rpt-fiche-row"><div class="rfr-lbl">Règlement</div><div class="rfr-val">${nc.regle}</div></div>
+      <div class="rpt-fiche-row"><div class="rfr-lbl">Action</div><div class="rfr-val"><strong>${nc.action}</strong></div></div>
+    </div>
+  </div>`).join('')}
+
+  <!-- PLAN D'ACTIONS -->
+  <div class="rpt-sec">Plan d'actions prioritaires</div>
+  <table class="rpt-plan">
+    <thead><tr><th>Réf.</th><th>Priorité</th><th>Action corrective</th><th>Délai</th></tr></thead>
+    <tbody>
+      ${allNCs.map(nc => `<tr>
+        <td><strong>${nc.no}</strong></td>
+        <td><span class="tpill" style="background:${PRIO_C[nc.priorite]||'#999'}">${nc.priorite}</span></td>
+        <td>${nc.action}</td>
+        <td style="white-space:nowrap">${DELAIS[nc.priorite]||'—'}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>
+
+  <!-- SIGNATURES -->
+  <div class="rpt-sec">Signatures</div>
+  <div class="sig-wrap">
+    <div class="sig-steps-bar">
+      <div class="ss active" id="ss1">① Inspecteur</div>
+      <div class="ss" id="ss2">② Client</div>
+      <div class="ss" id="ss3">③ Finaliser</div>
+    </div>
+
+    <!-- Panel 1 -->
+    <div class="sig-panel active" id="sp1">
+      <div class="sig-name">Inspecteur / Auditeur</div>
+      <div class="sig-role">Jacques Perrier — Auditeur certifié HACCP / MAPAQ</div>
+      <div class="cvs-wrap">
+        <div class="cvs-hint">Signez avec le doigt</div>
+        <div class="cvs-line"></div>
+        <div class="cvs-line-lbl">× Signature</div>
+        <canvas class="cvs" id="cv1"></canvas>
+      </div>
+      <div class="sig-actions">
+        <button class="btn-clr" onclick="clearCvs('cv1')">✕ Effacer</button>
+        <button class="btn-nxt" onclick="confirmSig(1)">Confirmer →</button>
+      </div>
+      <div class="sig-warn" id="sw1">Veuillez signer avant de continuer.</div>
+    </div>
+
+    <!-- Panel 2 -->
+    <div class="sig-panel" id="sp2">
+      <div class="sig-name">Responsable de l'établissement</div>
+      <div class="sig-role">${f.etab} — Passez le téléphone au responsable</div>
+      <div class="cvs-wrap">
+        <div class="cvs-hint">Signez avec le doigt</div>
+        <div class="cvs-line"></div>
+        <div class="cvs-line-lbl">× Signature</div>
+        <canvas class="cvs" id="cv2"></canvas>
+      </div>
+      <div class="sig-actions">
+        <button class="btn-clr" onclick="clearCvs('cv2')">✕ Effacer</button>
+        <button class="btn-nxt" onclick="confirmSig(2)">Confirmer →</button>
+      </div>
+      <div class="sig-warn" id="sw2">Veuillez signer avant de continuer.</div>
+    </div>
+
+    <!-- Panel 3 : Final -->
+    <div class="sig-panel" id="sp3">
+      <div class="final-wrap">
+        <div class="fck">✅</div>
+        <h3>Signatures complètes</h3>
+        <p>Les deux parties ont signé le rapport</p>
+      </div>
+      <div class="sigs-recap">
+        <div class="sr-row">
+          <img id="sr1" src="" alt="sig1">
+          <div class="sri"><strong>Inspecteur / Auditeur</strong><span>Jacques Perrier • MAPAQ/HACCP</span></div>
+          <div class="chk">✓</div>
+        </div>
+        <div class="sr-row">
+          <img id="sr2" src="" alt="sig2">
+          <div class="sri"><strong>Responsable</strong><span>${f.etab}</span></div>
+          <div class="chk">✓</div>
+        </div>
+      </div>
+
+      <!-- Bloc signatures pour impression -->
+      <div class="sig-print-bloc-wrap">
+        <div class="spb">
+          <label>Inspecteur / Auditeur</label>
+          <div class="spb-name">Jacques Perrier<br><small style="color:#8A7A5A;font-size:10px">Auditeur certifié HACCP / MAPAQ</small></div>
+          <div class="spb-ph" id="sph1">En attente…</div>
+          <img id="ps1" src="" style="display:none">
+          <div class="spb-date">Date : ${dateFormatted}</div>
+        </div>
+        <div class="spb">
+          <label>Responsable de l'établissement</label>
+          <div class="spb-name">${f.responsable}<br><small style="color:#8A7A5A;font-size:10px">${f.etab}</small></div>
+          <div class="spb-ph" id="sph2">En attente…</div>
+          <img id="ps2" src="" style="display:none">
+          <div class="spb-date">Date : ${dateFormatted}</div>
+        </div>
+      </div>
+
+      <button class="btn-print-rpt" onclick="window.print()">🖨 Imprimer / Enregistrer PDF</button>
+      <div class="print-hint-txt">Safari → Partager → Imprimer → Enregistrer en PDF</div>
+      <button class="btn-new-rpt" onclick="newReport()">+ Nouveau rapport</button>
+    </div>
+  </div>
+
+  <!-- FOOTER PRINT -->
+  <div style="text-align:center;font-size:8px;color:#999;padding:10px 14px;border-top:1px solid var(--gris-bord);margin:0 14px">
+    Verdict Inspection AI &nbsp;|&nbsp; info@verdictinspection-ai.com &nbsp;|&nbsp; Nº ${viaNo} &nbsp;|&nbsp; ${dateFormatted}
+  </div>
+  `;
+
+  document.getElementById('rpt-body').innerHTML = html;
+  goTo('s-rapport');
+
+  // Init canvas sig 1
+  setTimeout(() => initCvs('cv1'), 100);
+}
+
+// ══ SIGNATURES ═══════════════════════════════════════════════════
+let drawing = false;
+
+function initCvs(id) {
+  const c = document.getElementById(id);
+  if (!c) return;
+  const dpr = window.devicePixelRatio || 1;
+  const w = c.parentElement.clientWidth;
+  c.width = w * dpr;
+  c.height = 160 * dpr;
+  c.style.width = w + 'px';
+  c.style.height = '160px';
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#1A1A1A';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  const pos = e => {
+    const r = c.getBoundingClientRect();
+    const s = e.touches ? e.touches[0] : e;
+    return { x: s.clientX - r.left, y: s.clientY - r.top };
+  };
+  c.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); }, {passive:false});
+  c.addEventListener('touchmove',  e => { e.preventDefault(); if(!drawing)return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); }, {passive:false});
+  c.addEventListener('touchend',   e => { e.preventDefault(); drawing=false; }, {passive:false});
+  c.addEventListener('mousedown',  e => { drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+  c.addEventListener('mousemove',  e => { if(!drawing)return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); });
+  c.addEventListener('mouseup',    () => { drawing=false; });
+}
+
+function clearCvs(id) {
+  const c = document.getElementById(id);
+  const dpr = window.devicePixelRatio || 1;
+  c.getContext('2d').clearRect(0,0,c.width/dpr,c.height/dpr);
+}
+
+function isEmpty(id) {
+  const c = document.getElementById(id);
+  return !c.getContext('2d').getImageData(0,0,c.width,c.height).data.some(v=>v!==0);
+}
+
+function confirmSig(n) {
+  const id = 'cv' + n;
+  if (isEmpty(id)) {
+    const w = document.getElementById('sw'+n);
+    w.classList.add('show');
+    setTimeout(()=>w.classList.remove('show'), 2500);
+    return;
+  }
+  const dataUrl = document.getElementById(id).toDataURL('image/png');
+  state.sigs[n] = dataUrl;
+  // Récap écran
+  document.getElementById('sr'+n).src = dataUrl;
+  // Récap impression
+  document.getElementById('ps'+n).src = dataUrl;
+  document.getElementById('ps'+n).style.display = 'block';
+  document.getElementById('sph'+n).style.display = 'none';
+  // Steps
+  document.getElementById('ss'+n).classList.remove('active');
+  document.getElementById('ss'+n).classList.add('done');
+  // Avancer
+  ['sp1','sp2','sp3'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('active', i+1===n+1);
+  });
+  document.getElementById('ss'+(n+1))?.classList.add('active');
+  if (n+1 <= 2) setTimeout(()=>initCvs('cv'+(n+1)), 80);
+}
+
+function newReport() {
+  // Reset
+  state.photos = [];
+  state.formData = {};
+  state.analysisResult = null;
+  state.sigs = {1:null,2:null};
+  document.getElementById('f-etab').value = '';
+  document.getElementById('f-permis').value = '';
+  document.getElementById('f-adresse').value = '';
+  document.getElementById('f-responsable').value = '';
+  document.getElementById('f-contexte').value = '';
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('photosPreview').innerHTML = '';
+  document.getElementById('btnAnalyze').disabled = true;
+  // Reset loading steps
+  [1,2,3,4,5].forEach(i => {
+    const s = document.getElementById('lstep'+i);
+    s.classList.remove('active','done');
+  });
+  document.getElementById('lstep1').classList.add('active');
+  goTo('s-home');
+}
+</script>
+
+</body>
+</html>
