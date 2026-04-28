@@ -395,7 +395,7 @@ var prompt = 'Tu es un auditeur certifie MAPAQ/HACCP. Analyse ces ' + photos.len
   'Etablissement: ' + formData.etab + '. Contexte: ' + (formData.contexte || 'Inspection de routine') + '.\n\n' +
   regleRef + '\n' +
   'IMPORTANT: Chaque NC doit avoir un article DIFFERENT et specifique a la violation observee.\n' +
-  'Le score doit refleter la gravite reelle: chaque CRITIQUE retire 15 points, chaque MAJEUR retire 7 points, base 100.\n\n' +
+  'Le score est une MOYENNE PONDEREE par zone (points obtenus / points max x 100). Chaque NC reduit les points de la zone. Le score final = somme des points obtenus / somme des points max. Ne jamais donner 0%: meme un etablissement avec plusieurs NC a des points conformes.\n\n' +
   'Reponds UNIQUEMENT en JSON valide sans markdown ni commentaires:\n' +
   '{"score":<calcul reel 0-100>,"cote":"<ROUGE si <50, JAUNE si 50-69, VERT si 70+>","zones":[{"nom":"<zone specifique>","obtenu":<n>,"max":<n>}],"photos":[{"zone":"<nom zone>","photoIndex":<0-base>,"ncs":[{"no":"NC-01","type":"<CRITIQUE|MAJEUR|MINEURE>","priorite":"<IMMEDIAT|URG24h|URG48h|PLANIFIE>","observation":"<ce qui est visible sur la photo en 1 phrase concrete>","regle":"<Art.XX — ce que cet article exige specifiquement>","action":"<correction concrete a faire en 1 phrase>"}]}]}';
   content.push({ type: 'text', text: prompt });
@@ -446,13 +446,13 @@ var prompt = 'Tu es un auditeur certifie MAPAQ/HACCP. Analyse ces ' + photos.len
 
 function getDemoData() {
   return {
-    score: 0,
+    score: 28,
     cote: "ROUGE",
     zones: [
-      {nom: "Zone de cuisson", obtenu: 5, max: 30},
-      {nom: "Hygiene du personnel", obtenu: 0, max: 25},
-      {nom: "Preparation viandes", obtenu: 2, max: 25},
-      {nom: "Equipements et surfaces", obtenu: 3, max: 20}
+      {nom: "Zone de cuisson", obtenu: 8, max: 30},
+      {nom: "Hygiene du personnel", obtenu: 5, max: 25},
+      {nom: "Preparation viandes", obtenu: 6, max: 25},
+      {nom: "Equipements et surfaces", obtenu: 9, max: 20}
     ],
     photos: [
       {
