@@ -706,9 +706,9 @@ function buildReport() {
   html += '<div class="spb"><label>Inspecteur / Auditeur</label><div class="spb-name">Jacques Perrier<br><small style="color:#8A7A5A;font-size:10px">Auditeur certifié HACCP / MAPAQ</small></div><div class="spb-ph" id="sph1">En attente...</div><img class="sig-img" id="ps1"><div class="spb-date">Date : ' + dateStr + '</div></div>';
   html += '<div class="spb"><label>Responsable de l\'établissement</label><div class="spb-name">' + f.resp + '<br><small style="color:#8A7A5A;font-size:10px">' + f.etab + '</small></div><div class="spb-ph" id="sph2">En attente...</div><img class="sig-img" id="ps2"><div class="spb-date">Date : ' + dateStr + '</div></div>';
   html += '</div>';
-  html += '<button class="btn-print" id="btnPrint">\ud83d\udda8 Imprimer / Enregistrer PDF</button>';
+  html += '<button class="btn-print" onclick="setTimeout(function(){window.print();},100)">\ud83d\udda8 Imprimer / Enregistrer PDF</button>';
   html += '<div class="print-hint">Safari \u2192 Partager \u2192 Imprimer \u2192 Enregistrer en PDF</div>';
-  html += '<button class="btn-new" id="btnNew">+ Nouveau rapport</button>';
+  html += '<button class="btn-new" onclick="resetApp()">+ Nouveau rapport</button>';
   html += '</div>';
   html += '</div>';
 
