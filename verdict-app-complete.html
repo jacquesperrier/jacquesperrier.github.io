@@ -451,24 +451,74 @@ var prompt = 'Tu es un auditeur certifie MAPAQ/HACCP. Analyse ces ' + photos.len
 
 function getDemoData() {
   return {
-    score: 28,
-    cote: 'ROUGE',
+    score: 5,
+    cote: "ROUGE",
     zones: [
-      {nom: 'Hygiène des surfaces', obtenu: 10, max: 30},
-      {nom: 'Contamination croisée', obtenu: 0, max: 30},
-      {nom: 'Hygiène du personnel', obtenu: 5, max: 20},
-      {nom: 'Équipements', obtenu: 8, max: 20}
+      {nom: "Hygiene des locaux", obtenu: 0, max: 30},
+      {nom: "Lutte contre nuisibles", obtenu: 0, max: 25},
+      {nom: "Laverie et vaisselle", obtenu: 3, max: 25},
+      {nom: "Equipements", obtenu: 2, max: 20}
     ],
-    photos: photos.map(function(p, i) {
-      return {
-        zone: 'Zone ' + (i+1),
-        photoIndex: i,
+    photos: [
+      {
+        zone: "Zone 1 — Cuisine",
+        photoIndex: 0,
         ncs: [
-          {no:'NC-0'+(i*2+1),type:'CRITIQUE',priorite:'IMMEDIAT',observation:'Non-conformité critique identifiée',regle:'MAPAQ art. 40',action:'Corriger immédiatement.'},
-          {no:'NC-0'+(i*2+2),type:'MAJEUR',priorite:'URG24h',observation:'Non-conformité majeure identifiée',regle:'MAPAQ art. 28',action:'Corriger dans les 24 heures.'}
+          {no:"NC-01", type:"CRITIQUE", priorite:"IMMEDIAT",
+           observation:"Taches et moisissures sur murs et plafond - locaux en etat de malproprete chronique",
+           regle:"Art.35 - Les locaux doivent etre maintenus propres et exempts de souillures",
+           action:"Nettoyage et desinfection complets des murs et plafond. Corriger la source d humidite."},
+          {no:"NC-02", type:"CRITIQUE", priorite:"IMMEDIAT",
+           observation:"Debris alimentaires et dechets sur le plancher de la zone de preparation",
+           regle:"Art.36 - Les surfaces et le plancher doivent etre nettoyes en continu pendant les operations",
+           action:"Nettoyage immediat du plancher. Protocole de nettoyage continu obligatoire."},
+          {no:"NC-03", type:"MAJEUR", priorite:"URG24h",
+           observation:"Chiffons et linges souilles poses sur les equipements et comptoirs de preparation",
+           regle:"Art.38 - Les linges de nettoyage doivent etre entreposes separement et laves regulierement",
+           action:"Retirer tous les chiffons souilles. Utiliser des essuie-tout a usage unique."}
         ]
-      };
-    })
+      },
+      {
+        zone: "Zone 2 — Plancher",
+        photoIndex: 1,
+        ncs: [
+          {no:"NC-04", type:"CRITIQUE", priorite:"IMMEDIAT",
+           observation:"Cafards actifs visibles sur le plancher - infestation confirmee constituant un danger sanitaire grave",
+           regle:"Art.47 - Protection obligatoire contre toute infestation de nuisibles avec mesures correctives immediates",
+           action:"Fermeture immediate recommandee. Contacter un exterminateur certifie avant reouverture."},
+          {no:"NC-05", type:"CRITIQUE", priorite:"IMMEDIAT",
+           observation:"Dechets alimentaires et liquides repandus au sol favorisant la proliferation des nuisibles",
+           regle:"Art.35 - Les locaux doivent etre exempts de dechets susceptibles d attirer les nuisibles",
+           action:"Nettoyage immediat complet du plancher. Vider et nettoyer tous les contenants de dechets."},
+          {no:"NC-06", type:"CRITIQUE", priorite:"IMMEDIAT",
+           observation:"Cartons d emballage souilles poses sur le plancher contamine a proximite des aliments",
+           regle:"Art.19 - Les aliments et materiaux en contact doivent etre proteges contre toute contamination",
+           action:"Retirer et jeter immediatement tous les cartons contamines. Ne jamais stocker au sol."},
+          {no:"NC-07", type:"MAJEUR", priorite:"URG24h",
+           observation:"Conteneur a dechets ouvert et debordant a proximite des aliments",
+           regle:"Art.30 - Les zones de dechets doivent etre separees des zones alimentaires et maintenues fermees",
+           action:"Vider et fermer le conteneur hermetiquement. Augmenter la frequence de collecte."}
+        ]
+      },
+      {
+        zone: "Zone 3 — Laverie",
+        photoIndex: 2,
+        ncs: [
+          {no:"NC-08", type:"CRITIQUE", priorite:"IMMEDIAT",
+           observation:"Aliment (soupe avec legumes) entrepose directement dans l evier de lavage de vaisselle",
+           regle:"Art.30 - Les zones propres et souillees doivent etre strictement separees pour eviter la contamination croisee",
+           action:"Retirer l aliment immediatement. Aucun aliment ne doit se trouver dans la zone de lavage."},
+          {no:"NC-09", type:"MAJEUR", priorite:"URG24h",
+           observation:"Assiettes sales empilees sans protection a cote des aliments - absence de separation vaisselle propre et sale",
+           regle:"Art.41 - La vaisselle propre doit etre separee de la vaisselle sale et protegee contre recontamination",
+           action:"Separer immediatement la vaisselle. Creer des zones distinctes lavage et rangement propre."},
+          {no:"NC-10", type:"MAJEUR", priorite:"URG24h",
+           observation:"Taches noires de moisissures sur les murs de la laverie - accumulation chronique de souillures",
+           regle:"Art.35 - Les locaux incluant la laverie doivent etre propres et exempts de moisissures en tout temps",
+           action:"Nettoyage et traitement antifongique des murs. Ameliorer la ventilation pour reduire l humidite."}
+        ]
+      }
+    ]
   };
 }
 
