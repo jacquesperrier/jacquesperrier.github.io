@@ -1,1 +1,834 @@
+<!DOCTYPE html>
 
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verdict Inspection AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --noir:#0A0A0A;--gris:#141414;--grisCl:#1E1E1E;--grsMd:#2A2A2A;
+  --or:#D4A017;--orVif:#FFD700;
+  --blanc:#FFFFFF;--grisTxt:#AAAAAA;
+  --vert:#2D6A4F;--rouge:#C62828;--bleu:#1565C0;
+  --m1:#1565C0;--m2:#6A1F6A;--m3:#1B5E20;--m4:#E65100;--m5:#880E4F;
+}
+html{scroll-behavior:smooth}
+body{background:var(--noir);color:var(--blanc);font-family:'Inter',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ══ TOGGLE BUTTON ══ */
+#modeToggle{
+position:fixed;top:14px;right:14px;z-index:9999;
+display:flex;align-items:center;gap:8px;
+padding:8px 14px;border-radius:20px;border:none;cursor:pointer;
+font-family:‘Inter’,sans-serif;font-size:11px;font-weight:700;
+letter-spacing:1px;text-transform:uppercase;
+transition:all 0.3s;box-shadow:0 4px 20px rgba(0,0,0,0.5);
+}
+body.mode-client #modeToggle{
+background:#1E1E1E;color:#666;border:1px solid #333;
+}
+body.mode-interne #modeToggle{
+background:var(–or);color:var(–noir);border:1px solid var(–orVif);
+}
+#modeToggle .lock-icon{font-size:14px;}
+
+/* ══ MODE BADGE (top of page) ══ */
+#modeBanner{
+position:fixed;top:0;left:0;right:0;z-index:9998;
+height:4px;transition:background 0.3s;
+}
+body.mode-client #modeBanner{background:var(–or);}
+body.mode-interne #modeBanner{background:var(–bleu);}
+
+/* Sections visibility */
+.internal-only{display:none;}
+body.mode-interne .internal-only{display:block;}
+body.mode-interne .client-only{display:none;}
+body.mode-client .client-only{display:block;}
+
+/* ══ HERO ══ */
+.hero{
+min-height:100vh;display:flex;flex-direction:column;
+align-items:center;justify-content:center;
+background:radial-gradient(ellipse at 50% 40%,#1a1200 0%,var(–noir) 70%);
+border-bottom:3px solid var(–or);
+padding:60px 24px 80px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{
+content:’’;position:absolute;inset:0;
+background:repeating-linear-gradient(0deg,transparent,transparent 49px,rgba(212,160,23,0.04) 50px),
+repeating-linear-gradient(90deg,transparent,transparent 49px,rgba(212,160,23,0.04) 50px);
+pointer-events:none;
+}
+.hero-badge{
+display:inline-flex;align-items:center;gap:8px;
+padding:6px 18px;border:1px solid var(–or);border-radius:20px;
+font-size:11px;letter-spacing:3px;color:var(–or);
+text-transform:uppercase;margin-bottom:28px;
+}
+.hero-shield{
+width:90px;height:90px;background:var(–grisCl);border:3px solid var(–or);
+border-radius:16px;display:flex;align-items:center;justify-content:center;
+font-size:42px;margin:0 auto 24px;
+box-shadow:0 0 40px rgba(212,160,23,0.25);
+}
+.hero-title{
+font-family:‘Bebas Neue’,sans-serif;
+font-size:clamp(52px,10vw,100px);letter-spacing:6px;
+color:var(–or);line-height:0.95;margin-bottom:12px;
+}
+.hero-sub{
+font-family:‘Bebas Neue’,sans-serif;
+font-size:clamp(18px,4vw,30px);letter-spacing:4px;
+color:var(–blanc);margin-bottom:18px;
+}
+.hero-divider{width:80px;height:3px;background:var(–or);margin:0 auto 24px;}
+.hero-tagline{
+font-size:16px;color:var(–grisTxt);font-style:italic;
+font-family:‘Playfair Display’,serif;margin-bottom:36px;line-height:1.6;
+max-width:560px;
+}
+
+/* Client hero extras */
+.hero-problem{
+background:#1A0A00;border:1px solid #3D1F00;border-radius:12px;
+padding:20px 24px;margin-bottom:32px;max-width:580px;
+font-size:14px;color:#E8C97A;line-height:1.7;text-align:left;
+}
+.hero-problem strong{color:var(–orVif);display:block;margin-bottom:8px;font-size:15px;}
+
+/* Interne hero meta */
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;margin-bottom:40px;}
+.hero-meta-item{font-size:13px;color:var(–grisTxt);display:flex;align-items:center;gap:6px;}
+.hero-meta-item strong{color:var(–or);}
+
+.hero-nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.nav-pill{
+padding:8px 20px;border:1px solid #333;border-radius:20px;
+font-size:12px;color:var(–grisTxt);cursor:pointer;
+text-decoration:none;transition:all 0.2s;letter-spacing:1px;
+}
+.nav-pill:hover{border-color:var(–or);color:var(–or);}
+
+/* ══ SECTIONS ══ */
+.section{padding:72px 24px;max-width:1100px;margin:0 auto;}
+.section-wrap{border-bottom:1px solid #1E1E1E;}
+.section-header{text-align:center;margin-bottom:46px;}
+.section-label{font-size:11px;letter-spacing:4px;color:var(–or);text-transform:uppercase;margin-bottom:10px;display:block;}
+.section-title{font-family:‘Bebas Neue’,sans-serif;font-size:clamp(30px,6vw,54px);letter-spacing:3px;color:var(–blanc);line-height:1.1;margin-bottom:12px;}
+.section-title span{color:var(–or);}
+.section-desc{font-size:15px;color:var(–grisTxt);line-height:1.7;max-width:600px;margin:0 auto;}
+
+/* ══ CARDS ══ */
+.grid-3{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:18px;}
+.card{
+background:var(–grisCl);border:1px solid #2A2A2A;border-radius:14px;
+padding:26px;transition:all 0.25s;position:relative;overflow:hidden;
+}
+.card:hover{border-color:var(–or);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.5);}
+.card::before{content:’’;position:absolute;top:0;left:0;right:0;height:3px;background:var(–card-accent,var(–or));}
+.card-icon{font-size:30px;margin-bottom:12px;}
+.card-title{font-size:15px;font-weight:700;color:var(–blanc);margin-bottom:7px;}
+.card-desc{font-size:13px;color:var(–grisTxt);line-height:1.65;}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.tag{font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:10px;font-weight:600;text-transform:uppercase;background:rgba(212,160,23,0.12);color:var(–or);border:1px solid rgba(212,160,23,0.25);}
+.tag.blue{background:rgba(21,101,192,0.15);color:#90CAF9;border-color:rgba(21,101,192,0.3);}
+.tag.green{background:rgba(45,106,79,0.15);color:#A5D6A7;border-color:rgba(45,106,79,0.3);}
+.tag.purple{background:rgba(106,31,106,0.15);color:#CE93D8;border-color:rgba(106,31,106,0.3);}
+.tag.orange{background:rgba(230,81,0,0.15);color:#FFCC80;border-color:rgba(230,81,0,0.3);}
+
+/* ══ AVANT/APRÈS (client) ══ */
+.avantapres{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:14px;overflow:hidden;border:1px solid #2A2A2A;}
+.aa-col{padding:0;}
+.aa-header{padding:14px 20px;font-family:‘Bebas Neue’,sans-serif;font-size:16px;letter-spacing:2px;text-align:center;}
+.aa-rouge .aa-header{background:var(–rouge);color:var(–blanc);}
+.aa-vert  .aa-header{background:var(–vert); color:var(–blanc);}
+.aa-row{
+display:flex;align-items:flex-start;gap:10px;
+padding:12px 18px;border-bottom:1px solid #1A1A1A;font-size:13px;line-height:1.5;
+}
+.aa-row:last-child{border-bottom:none;}
+.aa-rouge .aa-row{color:#FFCDD2;background:var(–grisCl);}
+.aa-vert  .aa-row{color:#C8E6C9;background:#0D1F0D;}
+.aa-icon{flex-shrink:0;margin-top:1px;}
+@media(max-width:540px){.avantapres{grid-template-columns:1fr;}}
+
+/* ══ 5M rows ══ */
+.m-row{display:flex;align-items:stretch;gap:0;margin-bottom:10px;border-radius:12px;overflow:hidden;}
+.m-key{width:64px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;font-family:‘Bebas Neue’,sans-serif;font-size:22px;color:var(–blanc);letter-spacing:1px;}
+.m-body{flex:1;background:var(–grisCl);padding:16px 18px;border-top:1px solid #2A2A2A;border-right:1px solid #2A2A2A;border-bottom:1px solid #2A2A2A;border-radius:0 12px 12px 0;}
+.m-title{font-size:14px;font-weight:700;color:var(–blanc);margin-bottom:4px;}
+.m-desc{font-size:12px;color:var(–grisTxt);line-height:1.55;}
+
+/* ══ STATS BAR ══ */
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:#2A2A2A;border-radius:14px;overflow:hidden;margin:36px 0;}
+.stat-item{background:var(–grisCl);padding:24px 16px;text-align:center;}
+.stat-num{font-family:‘Bebas Neue’,sans-serif;font-size:40px;color:var(–or);line-height:1;margin-bottom:4px;}
+.stat-label{font-size:11px;color:var(–grisTxt);line-height:1.4;}
+
+/* ══ PRICING ══ */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;}
+.plan{background:var(–grisCl);border:1px solid #333;border-radius:14px;padding:28px;text-align:center;position:relative;overflow:hidden;}
+.plan.featured{border-color:var(–or);box-shadow:0 0 30px rgba(212,160,23,0.15);}
+.plan-badge{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(–or);color:var(–noir);font-size:10px;font-weight:800;padding:4px 16px;border-radius:0 0 8px 8px;letter-spacing:1px;}
+.plan-name{font-family:‘Bebas Neue’,sans-serif;font-size:24px;letter-spacing:3px;color:var(–blanc);margin:16px 0 4px;}
+.plan-price{font-family:‘Bebas Neue’,sans-serif;font-size:54px;color:var(–or);line-height:1;}
+.plan-period{font-size:13px;color:var(–grisTxt);margin-bottom:20px;}
+.plan-features{text-align:left;list-style:none;margin-bottom:20px;}
+.plan-features li{font-size:13px;color:#CCC;padding:7px 0;border-bottom:1px solid #2A2A2A;display:flex;align-items:center;gap:8px;}
+.plan-features li::before{content:‘✓’;color:var(–or);font-weight:700;flex-shrink:0;}
+
+/* ══ TECH STACK ══ */
+.tech-grid{display:flex;flex-wrap:wrap;gap:10px;}
+.tech-chip{padding:8px 16px;background:var(–grsMd);border:1px solid #333;border-radius:8px;font-size:12px;font-weight:600;color:#CCC;display:flex;align-items:center;gap:6px;}
+
+/* ══ FILES TABLE ══ */
+.files-table{width:100%;border-collapse:collapse;}
+.files-table th{text-align:left;font-size:11px;letter-spacing:2px;color:var(–or);text-transform:uppercase;padding:12px 16px;border-bottom:1px solid #2A2A2A;}
+.files-table td{padding:13px 16px;font-size:13px;color:#CCC;border-bottom:1px solid #1A1A1A;vertical-align:middle;}
+.files-table tr:hover td{background:var(–grisCl);}
+.file-type{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;}
+.ft-pptx{background:#1A237E;color:#90CAF9;}
+.ft-html{background:#1B5E20;color:#A5D6A7;}
+.ft-pdf{background:#7F1D1D;color:#FFCDD2;}
+.ft-doc{background:#2A2A2A;color:#B3C5FF;}
+
+/* ══ CONTACT BAR ══ */
+.contact-bar{background:linear-gradient(135deg,#12100A,#1A1400);border:1px solid var(–or);border-radius:16px;padding:32px;display:flex;flex-wrap:wrap;align-items:center;gap:24px;justify-content:space-between;}
+.contact-info{display:flex;flex-direction:column;gap:12px;}
+.contact-line{display:flex;align-items:center;gap:12px;font-size:14px;color:#CCC;}
+.contact-line span{font-size:18px;}
+.cta-btn{padding:14px 32px;background:var(–or);color:var(–noir);border:none;border-radius:10px;font-family:‘Bebas Neue’,sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.2s;}
+.cta-btn:hover{background:var(–orVif);transform:translateY(-2px);}
+
+/* ══ TESTIMONIAL STYLE (client) ══ */
+.quote-box{
+background:var(–grisCl);border-left:4px solid var(–or);
+border-radius:0 12px 12px 0;padding:22px 24px;margin-bottom:16px;
+}
+.quote-text{font-size:15px;color:#E0E0E0;line-height:1.7;font-style:italic;font-family:‘Playfair Display’,serif;margin-bottom:10px;}
+.quote-author{font-size:12px;color:var(–or);font-weight:700;letter-spacing:1px;}
+
+/* ══ FOOTER ══ */
+footer{background:var(–gris);border-top:3px solid var(–or);padding:36px 24px;text-align:center;}
+.footer-logo{font-family:‘Bebas Neue’,sans-serif;font-size:30px;letter-spacing:5px;color:var(–or);margin-bottom:8px;}
+.footer-sub{font-size:12px;color:var(–grisTxt);margin-bottom:16px;}
+.footer-copy{font-size:11px;color:#555;}
+
+@media(max-width:600px){
+.hero-title{font-size:52px;}
+.grid-2{grid-template-columns:1fr;}
+.contact-bar{flex-direction:column;}
+.stats-bar{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+
+</head>
+<body class="mode-client">
+
+<!-- ══ MODE BANNER ══ -->
+
+<div id="modeBanner"></div>
+
+<!-- ══ TOGGLE BUTTON ══ -->
+
+<button id="modeToggle" onclick="toggleMode()">
+  <span class="lock-icon" id="lockIcon">🔒</span>
+  <span id="modeLabel">MODE INTERNE</span>
+</button>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- HERO                                         -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<section class="hero" id="top">
+  <div class="hero-badge">🇨🇦 &nbsp; Gatineau–Ottawa · Montréal · Québec</div>
+  <div class="hero-shield">🛡️</div>
+  <div class="hero-title">VERDICT</div>
+  <div class="hero-sub">INSPECTION AI</div>
+  <div class="hero-divider"></div>
+  <div class="hero-tagline">
+    « La conformité MAPAQ, simplifiée par l'intelligence artificielle. »
+  </div>
+
+  <!-- CLIENT : accroche problème -->
+
+  <div class="client-only">
+    <div class="hero-problem">
+      <strong>⚠️ Saviez-vous que...</strong>
+      80 % des infractions MAPAQ sont évitables avec les bons outils. Une seule fermeture forcée peut coûter <strong>10 000 $ à 50 000 $</strong> en pertes directes. Pourtant, la plupart des restaurants gèrent encore leur conformité avec du papier.
+    </div>
+    <nav class="hero-nav">
+      <a href="#probleme" class="nav-pill">Le problème</a>
+      <a href="#solution" class="nav-pill">La solution</a>
+      <a href="#modules" class="nav-pill">5 Modules</a>
+      <a href="#avantapres" class="nav-pill">Avant / Après</a>
+      <a href="#tarifs" class="nav-pill">Tarifs</a>
+      <a href="#contact" class="nav-pill">Nous contacter</a>
+    </nav>
+  </div>
+
+  <!-- INTERNE : meta données -->
+
+  <div class="internal-only">
+    <div class="hero-meta">
+      <div class="hero-meta-item">📅 <span>Fondé en <strong>2024</strong></span></div>
+      <div class="hero-meta-item">👤 <span><strong>Jacques Perrier</strong></span></div>
+      <div class="hero-meta-item">🎓 <span><strong>20+ ans</strong> audit alimentaire</span></div>
+      <div class="hero-meta-item">📍 <span><strong>Gatineau–Ottawa</strong></span></div>
+      <div class="hero-meta-item">💻 <span><strong>verdictinspection-ai.com</strong></span></div>
+    </div>
+    <nav class="hero-nav">
+      <a href="#plateforme" class="nav-pill">Plateforme</a>
+      <a href="#modules" class="nav-pill">Modules</a>
+      <a href="#marketing" class="nav-pill">Marketing</a>
+      <a href="#technique" class="nav-pill">Technique</a>
+      <a href="#formation" class="nav-pill">Formation</a>
+      <a href="#livrables" class="nav-pill">Livrables</a>
+      <a href="#tarifs" class="nav-pill">Tarifs</a>
+      <a href="#contact" class="nav-pill">Contact</a>
+    </nav>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- STATS BAR                                    -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div style="max-width:1100px;margin:0 auto;padding:0 24px;">
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Modules opérationnels</div></div>
+    <div class="stat-item"><div class="stat-num client-only" style="display:block">< 60</div><div class="stat-num internal-only">20+</div><div class="stat-label client-only">secondes pour un rapport MAPAQ</div><div class="stat-label internal-only">livrables créés</div></div>
+    <div class="stat-item"><div class="stat-num">80%</div><div class="stat-label">infractions MAPAQ évitables</div></div>
+    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">conforme MAPAQ/HACCP</div></div>
+    <div class="stat-item"><div class="stat-num">1er</div><div class="stat-label">Bundle IA+IoT au Canada</div></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- [CLIENT] LE PROBLÈME                         -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap client-only" id="probleme">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label">01 — La réalité terrain</span>
+    <div class="section-title">LE <span>PROBLÈME</span></div>
+    <p class="section-desc">Chaque semaine, des restaurateurs québécois reçoivent des infractions MAPAQ qui auraient pu être évitées.</p>
+  </div>
+  <div class="grid-3">
+    <div class="card" style="--card-accent:var(--rouge)">
+      <div class="card-icon">📋</div>
+      <div class="card-title">Registres papier non fiables</div>
+      <div class="card-desc">Les registres papier sont souvent remplis à la fin de la semaine, perdus ou illisibles lors d'une inspection surprise. L'inspecteur MAPAQ le sait.</div>
+    </div>
+    <div class="card" style="--card-accent:#E65100">
+      <div class="card-icon">⏱️</div>
+      <div class="card-title">Inspections internes chronophages</div>
+      <div class="card-desc">Une inspection manuelle prend 3 à 6 heures. Pendant ce temps, vous n'êtes pas en cuisine, pas avec vos clients, pas en train de gérer votre équipe.</div>
+    </div>
+    <div class="card" style="--card-accent:#880E4F">
+      <div class="card-icon">💸</div>
+      <div class="card-title">Fermetures coûteuses</div>
+      <div class="card-desc">Une fermeture forcée MAPAQ coûte entre 10 000 $ et 50 000 $ en pertes directes — sans compter la réputation. Et ça arrive plus souvent qu'on le pense.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- [CLIENT] LA SOLUTION                         -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap client-only" style="background:#0D0D0D;" id="solution">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label">02 — Notre réponse</span>
+    <div class="section-title">LA <span>SOLUTION</span></div>
+    <p class="section-desc">Verdict Inspection AI remplace vos registres papier par une plateforme mobile intelligente — conçue spécifiquement pour les normes québécoises MAPAQ/HACCP.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card" style="--card-accent:var(--or)">
+      <div class="card-icon">📸</div>
+      <div class="card-title">Analyse photo par IA</div>
+      <div class="card-desc">Prenez une photo de n'importe quelle zone de votre cuisine. Notre IA identifie instantanément les non-conformités, les classe par niveau de risque et génère un plan d'action.</div>
+      <div class="card-tags"><span class="tag">iPhone & iPad</span><span class="tag">Résultat en 60 sec</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--bleu)">
+      <div class="card-icon">📄</div>
+      <div class="card-title">Rapport MAPAQ automatique</div>
+      <div class="card-desc">Un rapport PDF professionnel — avec cote de conformité, photos annotées et plan d'actions priorisé — généré automatiquement, prêt à imprimer ou envoyer.</div>
+      <div class="card-tags"><span class="tag blue">Format MAPAQ officiel</span><span class="tag blue">Signature électronique</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--vert)">
+      <div class="card-icon">🌡️</div>
+      <div class="card-title">Suivi HACCP en temps réel</div>
+      <div class="card-desc">Températures, nettoyage, réception des livraisons — tout centralisé. Alertes automatiques si un seuil est dépassé. Plus besoin de chercher dans des classeurs.</div>
+      <div class="card-tags"><span class="tag green">Capteurs IoT</span><span class="tag green">Alertes automatiques</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--m5)">
+      <div class="card-icon">🎓</div>
+      <div class="card-title">Formation de votre équipe</div>
+      <div class="card-desc">Module ACADÉMIE intégré : quiz de 20 questions sur les 5M, résultat immédiat, rapport envoyé automatiquement au gestionnaire. Vos employés se forment sur leur téléphone.</div>
+      <div class="card-tags"><span class="tag purple">Quiz interactif</span><span class="tag purple">Rapport auto par courriel</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- [INTERNE] PLATEFORME TECHNIQUE               -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap internal-only" id="plateforme">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label">01 — Produit principal</span>
+    <div class="section-title">LA <span>PLATEFORME</span></div>
+    <p class="section-desc">Application web progressive (PWA) hébergée sur GitHub Pages et SiteGround. Accessible depuis iPhone, iPad ou ordinateur.</p>
+  </div>
+  <div class="grid-3">
+    <div class="card" style="--card-accent:var(--bleu)">
+      <div class="card-icon">📱</div>
+      <div class="card-title">Application PWA</div>
+      <div class="card-desc">Single-file HTML/CSS/JS. Auth PIN sécurisée. Design noir & or. Fonctionne hors-ligne. Déployée sur <strong>verdictinspection-ai.com</strong> et GitHub Pages.</div>
+      <div class="card-tags"><span class="tag blue">HTML</span><span class="tag blue">GitHub Pages</span><span class="tag blue">SiteGround</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--vert)">
+      <div class="card-icon">📊</div>
+      <div class="card-title">Backend Google Sheets</div>
+      <div class="card-desc">6 onglets synchronisés via Google Apps Script. ID: <code style="font-size:11px;color:var(--or)">15cdB_Py-ENo954Y...</code>. Températures, Nettoyage, Réception, Formation, Heures Rég., Heures Pourboire.</div>
+      <div class="card-tags"><span class="tag green">Google Sheets</span><span class="tag green">Apps Script</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--or)">
+      <div class="card-icon">📸</div>
+      <div class="card-title">Analyse photo IA</div>
+      <div class="card-desc">Canvas-based image compression. API Anthropic Claude (claude-sonnet-4-6). Rapport PDF via ReportLab + Pillow (Python). Gabarit v3 FINAL verrouillé.</div>
+      <div class="card-tags"><span class="tag">Claude API</span><span class="tag">ReportLab</span><span class="tag">Python</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--m4)">
+      <div class="card-icon">🌡️</div>
+      <div class="card-title">Capteurs IoT Température</div>
+      <div class="card-desc">Alertes automatiques si dépassement de seuil. Historique 90 jours. Sync avec rapport MAPAQ. Premier bundle IoT+IA alimentaire canadien.</div>
+      <div class="card-tags"><span class="tag orange">IoT</span><span class="tag orange">Alertes temps réel</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--m2)">
+      <div class="card-icon">🔊</div>
+      <div class="card-title">Webinaire IA + TTS</div>
+      <div class="card-desc">webinaire_v3.html sur GitHub Pages. Narration ElevenLabs (voix ID: 4FLkNETtL5THnClfpjpb, Creator Plan). Montage CapCut.</div>
+      <div class="card-tags"><span class="tag purple">ElevenLabs</span><span class="tag purple">CapCut</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--rouge)">
+      <div class="card-icon">🔒</div>
+      <div class="card-title">Protection IP</div>
+      <div class="card-desc">4 revendications brevet format OPIC. Conformité Loi 25. Plan migration Claude Team/Enterprise (~30 USD/mois/user) dès premier client actif pour DPA automatique.</div>
+      <div class="card-tags"><span class="tag red">OPIC</span><span class="tag red">Loi 25</span><span class="tag red">4 brevets</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- 5 MODULES (partagé, contenu adapté)          -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap" style="background:#0D0D0D;" id="modules">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label">— Architecture produit</span>
+    <div class="section-title">LES <span>5 MODULES</span></div>
+    <p class="section-desc client-only">Cinq outils intégrés qui couvrent toutes vos obligations MAPAQ/HACCP — accessibles depuis votre iPhone ou iPad.</p>
+    <p class="section-desc internal-only">Cinq piliers opérationnels couvrant l'ensemble des obligations MAPAQ/HACCP d'un établissement alimentaire.</p>
+  </div>
+
+  <div class="m-row"><div class="m-key" style="background:var(--or);color:var(--noir)">PUNCH</div><div class="m-body"><div class="m-title">Gestion des heures & pourboires</div><div class="m-desc client-only">Fini les feuilles de temps papier. Chaque employé pointe à l'entrée et à la sortie. Calcul automatique des heures régulières, supplémentaires et des pourboires (règle 8 % Québec).</div><div class="m-desc internal-only">Horodateur par PIN sécurisé. Calcul automatique des heures régulières, supplémentaires et pourboires (règle 8 % Québec). Feuilles de temps numériques exportables.</div></div></div>
+
+  <div class="m-row"><div class="m-key" style="background:var(--bleu)">SÉC.</div><div class="m-body"><div class="m-title">Surveillance températures 24/7</div><div class="m-desc client-only">Vos frigos et congélateurs sont surveillés en continu. Alerte immédiate sur votre téléphone si un appareil dépasse le seuil MAPAQ (4 °C / -18 °C). Plus jamais de pertes d'inventaire silencieuses.</div><div class="m-desc internal-only">Registre numérique des appareils réfrigérés et congélateurs. Alertes IA si dépassement de seuil. Historique 90 jours. Sync avec rapport MAPAQ.</div></div></div>
+
+  <div class="m-row"><div class="m-key" style="background:var(--vert)">HYG.</div><div class="m-body"><div class="m-title">Nettoyage & désinfection</div><div class="m-desc client-only">Checklists de nettoyage personnalisées par zone, avec preuve photo. Votre équipe sait exactement quoi faire et quand. Vous avez la preuve documentée en cas d'inspection.</div><div class="m-desc internal-only">Checklists de tâches avec preuve photo. Fréquences configurables (4h, journalier, hebdomadaire). Signalement des non-conformités en temps réel.</div></div></div>
+
+  <div class="m-row"><div class="m-key" style="background:var(--m4)">CTRL</div><div class="m-body"><div class="m-title">Réception des livraisons</div><div class="m-desc client-only">À chaque livraison (Sysco, GFS, etc.), votre employé valide les températures, les dates et l'état des emballages sur l'app. Une livraison non conforme est refusée et documentée automatiquement.</div><div class="m-desc internal-only">Validation des livraisons à l'arrivée (Sysco, GFS, etc.). Vérification températures, dates, état des emballages. Refus documenté automatiquement.</div></div></div>
+
+  <div class="m-row"><div class="m-key" style="background:var(--m5)">ACAD.</div><div class="m-body"><div class="m-title">Formation & certification des employés</div><div class="m-desc client-only">Quiz interactif sur les 5M de l'hygiène alimentaire. 20 questions, résultat immédiat, rapport envoyé automatiquement au gestionnaire. Vos employés se forment en 1 heure sur leur téléphone — où qu'ils soient.</div><div class="m-desc internal-only">Quiz interactif 20 questions (Les 5M). Score immédiat après chaque réponse. Résultat + détail des 20 réponses envoyé automatiquement au responsable par courriel (Formspree). Accessible sur iPhone/iPad.</div></div></div>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- [CLIENT] AVANT / APRÈS                       -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap client-only" id="avantapres">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label">— La transformation</span>
+    <div class="section-title">AVANT <span>VS APRÈS</span></div>
+    <p class="section-desc">Ce que vivent vos concurrents qui ont fait le virage numérique.</p>
+  </div>
+
+  <div class="avantapres">
+    <div class="aa-col aa-rouge">
+      <div class="aa-header">❌ SANS VERDICT</div>
+      <div class="aa-row"><span class="aa-icon">📋</span><span>Registres papier remplis à la fin de la semaine</span></div>
+      <div class="aa-row"><span class="aa-icon">⏱️</span><span>Inspection interne : 4 à 6 heures</span></div>
+      <div class="aa-row"><span class="aa-icon">😰</span><span>Panique lors d'une inspection MAPAQ surprise</span></div>
+      <div class="aa-row"><span class="aa-icon">❄️</span><span>Perte d'inventaire congelé détectée trop tard</span></div>
+      <div class="aa-row"><span class="aa-icon">📚</span><span>Formation employés : longue, coûteuse, non documentée</span></div>
+      <div class="aa-row"><span class="aa-icon">💸</span><span>Risque de fermeture et d'amendes MAPAQ</span></div>
+    </div>
+    <div class="aa-col aa-vert">
+      <div class="aa-header">✅ AVEC VERDICT</div>
+      <div class="aa-row"><span class="aa-icon">📱</span><span>Données enregistrées en temps réel sur téléphone</span></div>
+      <div class="aa-row"><span class="aa-icon">⚡</span><span>Rapport MAPAQ complet généré en moins de 60 secondes</span></div>
+      <div class="aa-row"><span class="aa-icon">😌</span><span>Dossier complet accessible en 1 tap, en tout temps</span></div>
+      <div class="aa-row"><span class="aa-icon">🔔</span><span>Alerte immédiate sur votre téléphone dès un dépassement</span></div>
+      <div class="aa-row"><span class="aa-icon">🎓</span><span>Formation 1 heure sur mobile, rapport auto au gestionnaire</span></div>
+      <div class="aa-row"><span class="aa-icon">🛡️</span><span>Conformité prouvée, risques réduits, tranquillité d'esprit</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- [INTERNE] MARKETING                          -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap internal-only" id="marketing">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label">03 — Prospection & ventes</span>
+    <div class="section-title">MARKETING &amp; <span>COLLATERAUX</span></div>
+    <p class="section-desc">Infrastructure complète de mise en marché ciblant les restaurateurs, épiciers et établissements alimentaires sous juridiction MAPAQ.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card" style="--card-accent:var(--m2)">
+      <div class="card-icon">📧</div>
+      <div class="card-title">Séquences Smartlead.ai</div>
+      <div class="card-desc">Cold outreach bilingue (FR/EN) pour 4 segments. Listes CRM générées depuis données MAPAQ condamnations — Gatineau, Montréal, Laval, Rive-Sud.</div>
+      <div class="card-tags"><span class="tag purple">Smartlead.ai</span><span class="tag">FR + EN</span><span class="tag">4 segments</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--m2)">
+      <div class="card-icon">📮</div>
+      <div class="card-title">Prospection terrain</div>
+      <div class="card-desc">Cartes postales print-ready (PDF 300 DPI, JPEG 6×4 po, marges 3mm). QR code OVOU intégré. Pour visites infructueuses.</div>
+      <div class="card-tags"><span class="tag purple">Print 300 DPI</span><span class="tag">QR OVOU</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--m2)">
+      <div class="card-icon">🎯</div>
+      <div class="card-title">Pitch decks & One-pagers</div>
+      <div class="card-desc">Pitch deck clients (11 slides), volet formation (11 slides). One-pager teaser sans prix + one-pager discussion avec prix. Lettres partenariat ARQ, RQRA, Restaurants Canada.</div>
+      <div class="card-tags"><span class="tag purple">PPTX</span><span class="tag">PDF</span><span class="tag">Bilingue</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--m2)">
+      <div class="card-icon">📱</div>
+      <div class="card-title">LinkedIn & Google Ads</div>
+      <div class="card-desc">56 contacts LinkedIn extraits. Séquence de publication hebdomadaire. Campagne Google Ads construite. Constant Contact (Jennifer Westfallen). Outreach Dr. Charlebois + Rythme FM 97.1.</div>
+      <div class="card-tags"><span class="tag purple">LinkedIn</span><span class="tag">Google Ads</span><span class="tag">Constant Contact</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- [INTERNE] TECHNIQUE                          -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap internal-only" style="background:#0D0D0D;" id="technique">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label">04 — Stack technique</span>
+    <div class="section-title">INFRASTRUCTURE <span>TECHNIQUE</span></div>
+  </div>
+  <div class="grid-2" style="margin-bottom:28px;">
+    <div class="card" style="--card-accent:var(--m4)">
+      <div class="card-icon">🌐</div>
+      <div class="card-title">Hébergement & DNS</div>
+      <div class="card-desc"><strong>verdictinspection-ai.com</strong> (SiteGround, DNS confirmé). <strong>jacquesperrier.github.io</strong> (GitHub Pages). SSL Let's Encrypt.</div>
+      <div class="card-tags"><span class="tag orange">SiteGround</span><span class="tag orange">GitHub Pages</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--m4)">
+      <div class="card-icon">🤖</div>
+      <div class="card-title">Intégration IA</div>
+      <div class="card-desc">API Anthropic Claude (claude-sonnet-4-6). Prototype assistant React (noir/or). Outreach Anthropic partner envoyé. Migration Team/Enterprise planifiée.</div>
+      <div class="card-tags"><span class="tag orange">Anthropic API</span><span class="tag orange">Claude Sonnet</span></div>
+    </div>
+  </div>
+  <div style="margin-bottom:14px;font-size:12px;color:var(--grisTxt);font-weight:600;letter-spacing:2px;text-transform:uppercase;">Stack technologique</div>
+  <div class="tech-grid">
+    <div class="tech-chip"><span>🐍</span> Python + ReportLab</div>
+    <div class="tech-chip"><span>🌐</span> HTML/CSS/JS</div>
+    <div class="tech-chip"><span>⚛️</span> React</div>
+    <div class="tech-chip"><span>📊</span> Google Apps Script</div>
+    <div class="tech-chip"><span>🤖</span> Anthropic Claude API</div>
+    <div class="tech-chip"><span>🔊</span> ElevenLabs TTS</div>
+    <div class="tech-chip"><span>📧</span> Formspree</div>
+    <div class="tech-chip"><span>🎨</span> CapCut</div>
+    <div class="tech-chip"><span>☁️</span> GitHub Pages</div>
+    <div class="tech-chip"><span>🖥️</span> SiteGround</div>
+    <div class="tech-chip"><span>📋</span> Smartlead.ai</div>
+    <div class="tech-chip"><span>📮</span> Constant Contact</div>
+  </div>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- [INTERNE] FORMATION                          -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap internal-only" id="formation">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label">05 — Module ACADÉMIE</span>
+    <div class="section-title">VOLET <span>FORMATION</span></div>
+  </div>
+  <div class="grid-2">
+    <div class="card" style="--card-accent:var(--vert)">
+      <div class="card-icon">📋</div>
+      <div class="card-title">Formation 5M — PPTX 30 slides</div>
+      <div class="card-desc">5 modules thématiques (M1–M5). Chaque slide : 5 points clés + Piège fréquent + Règle d'or. Récapitulatif visuel + 20 slides quiz avec barre de progression.</div>
+      <div class="card-tags"><span class="tag green">PPTX 30 slides</span><span class="tag green">1 heure</span></div>
+    </div>
+    <div class="card" style="--card-accent:var(--vert)">
+      <div class="card-icon">✅</div>
+      <div class="card-title">Quiz HTML interactif</div>
+      <div class="card-desc">20 questions sans réponses visibles. Feedback immédiat (✅/❌ + explication). Score final. Courriel automatique au responsable avec score + détail complet des 20 réponses (Formspree ID: xpzygkqr).</div>
+      <div class="card-tags"><span class="tag green">HTML mobile</span><span class="tag green">Formspree</span><span class="tag green">70% passage</span></div>
+    </div>
+  </div>
+  <div style="margin-top:24px;padding:16px 20px;background:#1A1208;border:1px solid rgba(212,160,23,0.3);border-radius:10px;font-size:12.5px;color:#C8A84B;">
+    ⚠️ Formation de sensibilisation interne basée sur les 5M du MAPAQ. Ne remplace pas la formation officielle MAPAQ homologuée.
+  </div>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- [INTERNE] LIVRABLES                          -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap internal-only" style="background:#0D0D0D;" id="livrables">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label">06 — Inventaire complet</span>
+    <div class="section-title">TOUS LES <span>LIVRABLES</span></div>
+  </div>
+  <table class="files-table">
+    <thead><tr><th>Fichier / Document</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>Verdict_Pitch_Clients_FR.pptx</td><td><span class="file-type ft-pptx">PPTX</span></td><td>Pitch deck clients restaurateurs, 11 slides, noir & or</td></tr>
+      <tr><td>Verdict_Formation_FR.pptx</td><td><span class="file-type ft-pptx">PPTX</span></td><td>Présentation volet formation gestionnaires + ACADÉMIE, 11 slides</td></tr>
+      <tr><td>Verdict_Formation_5M.pptx</td><td><span class="file-type ft-pptx">PPTX</span></td><td>Formation hygiène 5M, 30 slides, 1 heure + quiz intégré</td></tr>
+      <tr><td>verdict_quiz_5M.html</td><td><span class="file-type ft-html">HTML</span></td><td>Quiz interactif 20 questions, feedback immédiat, courriel auto complet</td></tr>
+      <tr><td>Verdict-inspection.html</td><td><span class="file-type ft-html">HTML</span></td><td>App principale PWA — 5 modules (jacquesperrier.github.io)</td></tr>
+      <tr><td>webinaire_v3.html</td><td><span class="file-type ft-html">HTML</span></td><td>Webinaire interactif avec narration ElevenLabs (GitHub Pages)</td></tr>
+      <tr><td>Rapport_MAPAQ_v3.py</td><td><span class="file-type ft-doc">PY</span></td><td>Générateur rapport PDF MAPAQ (ReportLab + Pillow), gabarit v3 final</td></tr>
+      <tr><td>Rapport_MAPAQ_Demo.pdf</td><td><span class="file-type ft-pdf">PDF</span></td><td>Rapport démonstration — score 15% ROUGE avec recommandation fermeture</td></tr>
+      <tr><td>One-pager_teaser.pdf</td><td><span class="file-type ft-pdf">PDF</span></td><td>Une page sans prix — premier contact prospect</td></tr>
+      <tr><td>One-pager_discussion.pdf</td><td><span class="file-type ft-pdf">PDF</span></td><td>Une page avec prix — réunion de vente</td></tr>
+      <tr><td>Carte_postale_visite.pdf</td><td><span class="file-type ft-pdf">PDF</span></td><td>Carte terrain 6×4 po, 300 DPI, QR OVOU, visite infructueuse</td></tr>
+      <tr><td>Lettre_ARQ_Partenariat.docx</td><td><span class="file-type ft-doc">DOCX</span></td><td>Lettre de partenariat — Association Restauration Québec</td></tr>
+      <tr><td>Lettre_RQRA_Partenariat.docx</td><td><span class="file-type ft-doc">DOCX</span></td><td>Lettre partenariat — Regroupement des restaurateurs QC</td></tr>
+      <tr><td>Smartlead_Sequences_FR_EN.txt</td><td><span class="file-type ft-doc">TXT</span></td><td>4 séquences cold email bilingues (4 segments de marché)</td></tr>
+      <tr><td>SOP_Onboarding_Client.docx</td><td><span class="file-type ft-doc">DOCX</span></td><td>Procédure d'intégration client Day 0–14</td></tr>
+      <tr><td>Revendications_Brevet_OPIC.docx</td><td><span class="file-type ft-doc">DOCX</span></td><td>4 revendications brevet format OPIC pour fonctionnalités IA</td></tr>
+      <tr><td>verdict_portfolio.html</td><td><span class="file-type ft-html">HTML</span></td><td>Ce portfolio — vue double mode client/interne</td></tr>
+    </tbody>
+  </table>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- TARIFS (partagé)                             -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap" id="tarifs">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label">— Offre commerciale</span>
+    <div class="section-title">NOS <span>FORFAITS</span></div>
+    <p class="section-desc">Trois niveaux d'abonnement mensuel. 14 jours d'essai gratuit — aucune carte de crédit requise.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="plan">
+      <div class="plan-name">ESSENTIEL</div>
+      <div class="plan-price">99<span style="font-size:22px">$</span></div>
+      <div class="plan-period">/ mois</div>
+      <ul class="plan-features">
+        <li>Module PUNCH (heures & pourboires)</li>
+        <li>Module SÉCURITÉ (températures)</li>
+        <li>Rapports PDF MAPAQ</li>
+        <li>Tableau de bord conformité</li>
+        <li>Support courriel</li>
+      </ul>
+    </div>
+    <div class="plan featured">
+      <div class="plan-badge">⭐ POPULAIRE</div>
+      <div class="plan-name">COMPLET</div>
+      <div class="plan-price">149<span style="font-size:22px">$</span></div>
+      <div class="plan-period">/ mois</div>
+      <ul class="plan-features">
+        <li>Tout Essentiel +</li>
+        <li>Analyse photos IA (Claude)</li>
+        <li>6 modules HACCP complets</li>
+        <li>Module ACADÉMIE (formation)</li>
+        <li>Support prioritaire</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <div class="plan-name">ENTREPRISE</div>
+      <div class="plan-price">249<span style="font-size:22px">$</span></div>
+      <div class="plan-period">/ mois</div>
+      <ul class="plan-features">
+        <li>Tout Complet +</li>
+        <li>Multi-établissements</li>
+        <li>Formation gestionnaire incluse</li>
+        <li>Gestionnaire de compte dédié</li>
+        <li>Intégration IoT capteurs</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:24px;padding:18px 22px;background:#1A1208;border:1px solid rgba(212,160,23,0.3);border-radius:12px;font-size:13px;color:#C8A84B;line-height:1.7;text-align:center;">
+    🎁 <strong>14 jours d'essai gratuit</strong> — Aucune carte de crédit requise · Annulation en tout temps
+  </div>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- CONTACT (partagé, contenu adapté)            -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<div class="section-wrap" style="background:#0D0D0D;" id="contact">
+<section class="section">
+  <div class="section-header">
+    <span class="section-label client-only">— Prenons contact</span>
+    <span class="section-label internal-only">08 — Fondateur</span>
+    <div class="section-title client-only">PRÊT À <span>COMMENCER?</span></div>
+    <div class="section-title internal-only">JACQUES <span>PERRIER</span></div>
+    <p class="section-desc client-only">Essai gratuit de 14 jours, sans engagement. On vous configure tout en moins d'une heure.</p>
+    <p class="section-desc internal-only">Fondateur, auditeur certifié, développeur et représentant commercial — tout en un.</p>
+  </div>
+
+  <!-- Expertise cards (interne seulement) -->
+
+  <div class="grid-2 internal-only" style="margin-bottom:28px;">
+    <div class="card">
+      <div class="card-icon">🎓</div>
+      <div class="card-title">Expertise alimentaire</div>
+      <div class="card-desc">20+ ans en audit alimentaire. Expérience chez Costco, IGA, Walmart, Ecolab, NSF International. Auditeur MAPAQ/HACCP certifié.</div>
+      <div class="card-tags"><span class="tag">MAPAQ</span><span class="tag">HACCP</span><span class="tag">NSF</span><span class="tag">Ecolab</span></div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚙️</div>
+      <div class="card-title">Développeur & fondateur solo</div>
+      <div class="card-desc">Développe, vend et opère Verdict Inspection AI simultanément. Bilingue FR/EN. Région Gatineau-Ottawa. Travaille principalement sur iPhone/iPad.</div>
+      <div class="card-tags"><span class="tag blue">Bilingue FR/EN</span><span class="tag blue">Mobile-first</span></div>
+    </div>
+  </div>
+
+  <div class="contact-bar">
+    <div class="contact-info">
+      <div class="contact-line"><span>📧</span><strong>info@verdictinspection-ai.com</strong></div>
+      <div class="contact-line"><span>🌐</span>verdictinspection-ai.com</div>
+      <div class="contact-line client-only"><span>📍</span>Gatineau–Ottawa · Montréal · Québec</div>
+      <div class="contact-line internal-only"><span>💻</span>jacquesperrier.github.io</div>
+      <div class="contact-line internal-only"><span>📍</span>Gatineau–Ottawa (Hull) · Bilingue FR/EN</div>
+    </div>
+    <a href="mailto:info@verdictinspection-ai.com" class="cta-btn">
+      <span class="client-only">ESSAI GRATUIT →</span>
+      <span class="internal-only">NOUS CONTACTER →</span>
+    </a>
+  </div>
+</section>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+
+<!-- FOOTER                                       -->
+
+<!-- ════════════════════════════════════════════ -->
+
+<footer>
+  <div class="footer-logo">VERDICT INSPECTION AI</div>
+  <div class="footer-sub">La conformité, c'est notre verdict.</div>
+  <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;">
+    <span class="tag">MAPAQ</span><span class="tag">HACCP</span>
+    <span class="tag blue">IA</span><span class="tag green">IoT</span>
+    <span class="tag purple">Québec</span><span class="tag orange">Mobile-first</span>
+  </div>
+  <div style="font-size:11px;color:#555;">© 2025–2026 Verdict Inspection AI — Jacques Perrier — Gatineau, Québec, Canada</div>
+</footer>
+
+<script>
+// ══ MODE TOGGLE ══
+let isClient = true;
+
+function toggleMode() {
+  isClient = !isClient;
+  applyMode();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function applyMode() {
+  const body = document.body;
+  const label = document.getElementById('modeLabel');
+  const icon  = document.getElementById('lockIcon');
+
+  if (isClient) {
+    body.className = 'mode-client';
+    label.textContent = 'MODE INTERNE';
+    icon.textContent  = '🔒';
+  } else {
+    body.className = 'mode-interne';
+    label.textContent = 'MODE CLIENT';
+    icon.textContent  = '🔓';
+  }
+
+  // Fix inline display:block overrides in stats bar
+  document.querySelectorAll('.stat-num.client-only').forEach(el => {
+    el.style.display = isClient ? 'block' : 'none';
+  });
+  document.querySelectorAll('.stat-num.internal-only').forEach(el => {
+    el.style.display = isClient ? 'none' : 'block';
+  });
+  document.querySelectorAll('.stat-label.client-only').forEach(el => {
+    el.style.display = isClient ? 'block' : 'none';
+  });
+  document.querySelectorAll('.stat-label.internal-only').forEach(el => {
+    el.style.display = isClient ? 'none' : 'block';
+  });
+}
+
+// Init
+applyMode();
+</script>
+
+</body>
+</html>
