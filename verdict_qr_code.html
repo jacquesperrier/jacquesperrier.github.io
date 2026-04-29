@@ -1,1 +1,212 @@
+<!DOCTYPE html>
 
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code — Verdict Inspection AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#0A0A0A;color:#fff;
+  font-family:'Inter',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:32px 20px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Gold grid background */
+body::before{
+content:’’;position:fixed;inset:0;
+background:repeating-linear-gradient(0deg,transparent,transparent 49px,rgba(212,160,23,0.05) 50px),
+repeating-linear-gradient(90deg,transparent,transparent 49px,rgba(212,160,23,0.05) 50px);
+pointer-events:none;z-index:0;
+}
+
+.container{position:relative;z-index:1;text-align:center;max-width:420px;width:100%;}
+
+.logo-badge{
+width:64px;height:64px;background:#1E1E1E;
+border:2px solid #D4A017;border-radius:12px;
+display:flex;align-items:center;justify-content:center;
+font-size:30px;margin:0 auto 20px;
+box-shadow:0 0 30px rgba(212,160,23,0.2);
+}
+.brand{
+font-family:‘Bebas Neue’,sans-serif;
+font-size:36px;letter-spacing:5px;color:#D4A017;
+margin-bottom:4px;
+}
+.brand-sub{
+font-size:12px;letter-spacing:3px;color:#666;
+text-transform:uppercase;margin-bottom:32px;
+}
+
+/* QR Card */
+.qr-card{
+background:#141414;
+border:2px solid #D4A017;
+border-radius:20px;
+padding:32px 28px;
+margin-bottom:24px;
+box-shadow:0 0 60px rgba(212,160,23,0.1);
+position:relative;overflow:hidden;
+}
+.qr-card::before{
+content:’’;position:absolute;top:0;left:0;right:0;height:3px;
+background:linear-gradient(90deg,transparent,#D4A017,#FFD700,#D4A017,transparent);
+}
+
+.qr-label{
+font-size:11px;letter-spacing:3px;color:#D4A017;
+text-transform:uppercase;margin-bottom:20px;font-weight:700;
+}
+
+.qr-wrap{
+background:#fff;border-radius:12px;
+padding:16px;display:inline-block;
+margin-bottom:20px;
+box-shadow:0 4px 20px rgba(0,0,0,0.5);
+}
+.qr-wrap img{
+width:200px;height:200px;display:block;
+}
+
+.qr-url{
+font-size:12px;color:#888;
+word-break:break-all;line-height:1.5;
+background:#1E1E1E;padding:10px 14px;
+border-radius:8px;border:1px solid #2A2A2A;
+}
+.qr-url strong{color:#D4A017;}
+
+/* Instructions */
+.instructions{
+background:#141414;border:1px solid #2A2A2A;
+border-radius:14px;padding:20px;margin-bottom:24px;
+text-align:left;
+}
+.inst-title{
+font-size:12px;letter-spacing:2px;color:#D4A017;
+text-transform:uppercase;font-weight:700;margin-bottom:14px;
+}
+.inst-row{
+display:flex;gap:12px;align-items:flex-start;
+padding:8px 0;border-bottom:1px solid #1E1E1E;
+font-size:13px;color:#CCC;line-height:1.5;
+}
+.inst-row:last-child{border-bottom:none;}
+.inst-num{
+width:22px;height:22px;border-radius:50%;
+background:#D4A017;color:#0A0A0A;
+font-size:11px;font-weight:800;
+display:flex;align-items:center;justify-content:center;
+flex-shrink:0;margin-top:1px;
+}
+
+/* Buttons */
+.btn-row{display:flex;flex-direction:column;gap:10px;}
+.btn{
+width:100%;padding:14px;border-radius:12px;
+font-family:‘Bebas Neue’,sans-serif;
+font-size:18px;letter-spacing:2px;
+cursor:pointer;border:none;text-decoration:none;
+display:flex;align-items:center;justify-content:center;gap:8px;
+transition:all 0.2s;
+}
+.btn-primary{background:#D4A017;color:#0A0A0A;}
+.btn-primary:hover{background:#FFD700;}
+.btn-secondary{background:#1E1E1E;color:#D4A017;border:1.5px solid #D4A017;}
+.btn-secondary:hover{background:#2A2A2A;}
+
+.footer-note{
+margin-top:24px;font-size:11px;color:#444;line-height:1.6;
+}
+</style>
+
+</head>
+<body>
+<div class="container">
+
+  <div class="logo-badge">🛡️</div>
+  <div class="brand">VERDICT</div>
+  <div class="brand-sub">Inspection AI — QR Code Portfolio</div>
+
+  <div class="qr-card">
+    <div class="qr-label">📲 Scannez pour voir le portfolio</div>
+    <div class="qr-wrap">
+      <img id="qrImg"
+        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fjacquesperrier.github.io%2Fverdict_portfolio.html&color=0A0A0A&bgcolor=FFFFFF&margin=2"
+        alt="QR Code Verdict Inspection AI"
+        onerror="this.src='https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=https%3A%2F%2Fjacquesperrier.github.io%2Fverdict_portfolio.html&choe=UTF-8'"
+      >
+    </div>
+    <div class="qr-url">
+      <strong>jacquesperrier.github.io</strong>/verdict_portfolio.html
+    </div>
+  </div>
+
+  <div class="instructions">
+    <div class="inst-title">Comment utiliser ce QR</div>
+    <div class="inst-row">
+      <div class="inst-num">1</div>
+      <div>Imprime cette page et glisse-la dans ton kit terrain ou colle le QR sur ta carte postale de visite</div>
+    </div>
+    <div class="inst-row">
+      <div class="inst-num">2</div>
+      <div>Le client scanne avec son iPhone → tombe directement sur ton portfolio en <strong style="color:#D4A017">mode CLIENT</strong></div>
+    </div>
+    <div class="inst-row">
+      <div class="inst-num">3</div>
+      <div>Pour passer en mode interne, appuie sur le bouton 🔒 en haut à droite du portfolio</div>
+    </div>
+    <div class="inst-row">
+      <div class="inst-num">4</div>
+      <div>Sauvegarde cette page en PDF depuis Safari pour avoir le QR en haute qualité</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <a class="btn btn-primary" href="https://jacquesperrier.github.io/verdict_portfolio.html" target="_blank">
+      🌐 OUVRIR LE PORTFOLIO
+    </a>
+    <button class="btn btn-secondary" onclick="downloadQR()">
+      ⬇️ TÉLÉCHARGER LE QR CODE
+    </button>
+  </div>
+
+  <div class="footer-note">
+    🛡️ Verdict Inspection AI — verdictinspection-ai.com<br>
+    info@verdictinspection-ai.com · Gatineau–Ottawa · Québec
+  </div>
+
+</div>
+
+<script>
+function downloadQR() {
+  const img = document.getElementById('qrImg');
+  const canvas = document.createElement('canvas');
+  canvas.width = 300; canvas.height = 300;
+  const ctx = canvas.getContext('2d');
+  const tempImg = new Image();
+  tempImg.crossOrigin = 'anonymous';
+  tempImg.onload = function() {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0,0,300,300);
+    ctx.drawImage(tempImg, 50, 50, 200, 200);
+    const link = document.createElement('a');
+    link.download = 'QR_Verdict_Portfolio.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+  tempImg.onerror = function() {
+    alert('Appuie longuement sur le QR code → "Enregistrer l\'image" pour le sauvegarder.');
+  };
+  tempImg.src = img.src;
+}
+</script>
+
+</body>
+</html>
