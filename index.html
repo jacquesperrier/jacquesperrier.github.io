@@ -406,10 +406,8 @@ var prompt = 'Tu es un auditeur certifie MAPAQ/HACCP. Analyse ces ' + photos.len
       messages: [{ role: 'user', content: content }]
     })
   })
-  .then(function(r) { return r.json(); })
-  .then(function(r) {
-    if (!r.ok) { return r.json().then(function(e) { throw new Error(JSON.stringify(e)); }); }
-    return r.json();
+  .then(function(response) {
+    return response.json();
   })
   .then(function(data) {
     clearInterval(timer);
@@ -711,11 +709,17 @@ function buildReport() {
   document.getElementById('rptBody').innerHTML = html;
   goTo('s-rapport');
 
-  // Annoter les photos
+  // Annoter les photos avec canvas JS
   r.photos.forEach(function(pz, pi) {
     var photo = photos[pz.photoIndex !== undefined ? pz.photoIndex : pi];
     var imgEl = document.getElementById('pz-img-' + pi);
-    // Photos deja annotees via Python - pas de re-annotation JS
+    if (photo && imgEl && pz.ncs && pz.ncs.length > 0) {
+      (function(el, pidx) {
+        annotatePhoto(photo.b64, pz.ncs, function(annotated) {
+          if (el) el.src = annotated;
+        }, pidx);
+      })(imgEl, pz.photoIndex !== undefined ? pz.photoIndex : pi);
+    }
   });
 
   // Init signatures
