@@ -40,7 +40,6 @@ body { font-family:'DM Sans',sans-serif; background:#0F0F0F; color:#fff; min-hei
 .upload-text { font-size:12px; color:#888; }
 .upload-hint { font-size:10px; color:#555; margin-top:4px; }
 
-/* ── GRILLE PHOTOS AVEC SÉLECTEUR DE ZONE ── */
 .photos-list { display:flex; flex-direction:column; gap:10px; }
 .photo-item { background:#1C1C1C; border:1px solid #2A2A2A; border-radius:10px; overflow:hidden; }
 .photo-item-header { display:flex; align-items:center; gap:8px; padding:8px 10px; background:#222; }
@@ -245,7 +244,6 @@ var result = null;
 var sigs = {1:null,2:null};
 var drawing = false;
 
-// ── ZONES DISPONIBLES ──
 var ZONES_DISPONIBLES = [
   'Cuisine et preparation',
   'Zone de cuisson',
@@ -259,7 +257,6 @@ var ZONES_DISPONIBLES = [
   'Autre zone'
 ];
 
-// Articles MAPAQ complets
 var MAPAQ = {
   19: 'Art.19 - Les aliments doivent etre proteges contre toute source de contamination',
   20: 'Art.20 - La manipulation des aliments doit se faire de facon hygienique',
@@ -278,7 +275,6 @@ var MAPAQ = {
   57: 'Art.57 - Les contenants doivent etre identifies avec le nom du produit et les allergenes'
 };
 
-// Banque NC par zone
 var NC_BANK_CUISINE = [
   { type:'CRITIQUE', priorite:'IMMEDIAT', obs:'Accumulation importante de debris alimentaires et residus graisseux sur les surfaces de travail en contact direct avec les aliments', art:36, action:'Nettoyer et desinfecter immediatement toutes les surfaces avant de reprendre les operations.' },
   { type:'CRITIQUE', priorite:'IMMEDIAT', obs:'Planche a decouper en bois profondement entaillee et tachee - surface poreuse impossible a assainir adequatement', art:40, action:'Retirer et remplacer immediatement par une planche en polyethylene homologuee pour usage alimentaire.' },
@@ -355,8 +351,7 @@ document.getElementById('photoInput').addEventListener('change', function() {
   files.forEach(function(file) {
     var reader = new FileReader();
     reader.onload = function(e) {
-      // Zone par defaut: la premiere zone non encore assignee
-      var defaultZone = ZONES_DISPONIBLES[Math.min(photos.length, ZONES_DISPONIBLES.length-1)];
+      var defaultZone = ZONES_DISPONIBLES[0]; // Toujours la première zone par défaut
       photos.push({ b64: e.target.result, type: file.type||'image/jpeg', name: file.name, zone: defaultZone });
       loaded++;
       if (loaded === files.length) { renderPhotos(); checkForm(); }
@@ -373,7 +368,6 @@ function renderPhotos() {
     var item = document.createElement('div');
     item.className = 'photo-item';
 
-    // Header avec numero, select zone, bouton supprimer
     var header = document.createElement('div');
     header.className = 'photo-item-header';
 
@@ -394,7 +388,6 @@ function renderPhotos() {
     sel.addEventListener('change', function() {
       var idx = parseInt(this.getAttribute('data-i'));
       photos[idx].zone = this.value;
-      // Mettre a jour le tag visible sur la photo
       var tag = document.getElementById('zone-tag-' + idx);
       if (tag) tag.textContent = this.value;
     });
@@ -413,7 +406,6 @@ function renderPhotos() {
     header.appendChild(sel);
     header.appendChild(del);
 
-    // Image avec tag zone en overlay
     var imgWrap = document.createElement('div');
     imgWrap.className = 'photo-item-img';
 
@@ -473,8 +465,9 @@ function generateAnalysis() {
   var allUsedNC = [];
   var globalUsed = [];
 
+  // ── ÉTAPE 1 : Générer les NC par photo en respectant la zone choisie ──
   photos.forEach(function(photo, i) {
-    var zoneName = photo.zone || ZONES_DISPONIBLES[i % ZONES_DISPONIBLES.length];
+    var zoneName = photo.zone; // TOUJOURS la zone sélectionnée par l'inspecteur
     var bank = getNCBankForZone(zoneName);
     var nbNC = 2 + Math.floor(Math.random() * 2);
     var ncs = [];
@@ -499,10 +492,10 @@ function generateAnalysis() {
       }
     });
 
-    // Fallback si banque trop courte
     if (ncs.length === 0) {
+      var num = allUsedNC.length + 1;
       ncs.push({
-        no: 'NC-' + (allUsedNC.length + 1 < 10 ? '0'+(allUsedNC.length+1) : allUsedNC.length+1),
+        no: 'NC-' + (num < 10 ? '0'+num : num),
         type: 'MAJEUR', priorite: 'URG24h',
         observation: 'Non-conformite observee en zone: ' + zoneName,
         regle: MAPAQ[35],
@@ -514,6 +507,7 @@ function generateAnalysis() {
     photoList.push({ zone: zoneName, photoIndex: i, ncs: ncs });
   });
 
+  // ── ÉTAPE 2 : Score global ──
   var nbC = allUsedNC.filter(function(n){ return n.type==='CRITIQUE'; }).length;
   var nbM = allUsedNC.filter(function(n){ return n.type==='MAJEUR'; }).length;
   var nbMn = allUsedNC.filter(function(n){ return n.type==='MINEURE'; }).length;
@@ -521,17 +515,29 @@ function generateAnalysis() {
   var score = Math.max(25, Math.min(85, 100 - penalite));
   var cote = score < 50 ? 'ROUGE' : score < 70 ? 'JAUNE' : 'VERT';
 
-  var zoneScores = [
-    { nom:'Hygiene surfaces et equipements', obtenu:Math.max(5,30-nbC*8), max:30 },
-    { nom:'Salubrite des locaux', obtenu:Math.max(5,25-nbM*5), max:25 },
-    { nom:'Hygiene du personnel', obtenu:Math.max(5,25-Math.floor(nbC/2)*6), max:25 },
-    { nom:'Gestion temperatures', obtenu:Math.max(5,20-nbMn*3), max:20 }
-  ];
+  // ── ÉTAPE 3 : Score par zone — basé sur les VRAIES zones des photos ──
+  var zoneMap = {};
+  photoList.forEach(function(pz) {
+    var z = pz.zone;
+    if (!zoneMap[z]) zoneMap[z] = { ncs: [] };
+    pz.ncs.forEach(function(nc) { zoneMap[z].ncs.push(nc); });
+  });
+
+  var zoneScores = [];
+  Object.keys(zoneMap).forEach(function(zoneName) {
+    var ncs = zoneMap[zoneName].ncs;
+    var zNbC = ncs.filter(function(n){ return n.type==='CRITIQUE'; }).length;
+    var zNbM = ncs.filter(function(n){ return n.type==='MAJEUR'; }).length;
+    var zNbMn = ncs.filter(function(n){ return n.type==='MINEURE'; }).length;
+    var maxPts = 25;
+    var perdu = zNbC*10 + zNbM*5 + zNbMn*2;
+    var obtenu = Math.max(2, maxPts - perdu);
+    zoneScores.push({ nom: zoneName, obtenu: obtenu, max: maxPts });
+  });
 
   return { score:score, cote:cote, zones:zoneScores, photos:photoList };
 }
 
-// Positions annotations
 var ANNOT_POS = [
   [[0.05,0.10,0.55,0.55,'rect'],[0.45,0.45,0.95,0.90,'oval'],[0.05,0.55,0.45,0.90,'rect']],
   [[0.10,0.50,0.60,0.95,'rect'],[0.55,0.05,0.95,0.45,'rect'],[0.05,0.05,0.45,0.45,'oval']],
@@ -621,6 +627,7 @@ function buildReport() {
   html += '<div class="badge" style="background:#66BB6A"><span class="bn">0</span><span class="bl">Conforme</span></div>';
   html += '</div>';
 
+  // ── TABLEAU SCORE PAR ZONE — VRAIES ZONES ──
   html += '<div class="sec-title">Score par zone</div>';
   html += '<table class="zone-tbl"><thead><tr><th>Zone</th><th>Obtenu</th><th>/ Max</th><th>%</th></tr></thead><tbody>';
   r.zones.forEach(function(z) {
@@ -630,10 +637,11 @@ function buildReport() {
   });
   html += '</tbody></table>';
 
+  // ── PHOTOS PAR ZONE ──
   html += '<div class="sec-title">Photos annotees par zone</div>';
   r.photos.forEach(function(pz, pi) {
     var photo = photos[pz.photoIndex !== undefined ? pz.photoIndex : pi];
-    html += '<div class="photo-zone"><div class="pz-hdr">Zone '+(pi+1)+' &#8212; '+pz.zone+'</div>';
+    html += '<div class="photo-zone"><div class="pz-hdr">Photo '+(pi+1)+' &#8212; '+pz.zone+'</div>';
     if (photo) html += '<img class="pz-img" id="pz-img-'+pi+'" src="'+photo.b64+'">';
     html += '<table class="nc-tbl"><thead><tr><th>Ref.</th><th>Non-conformite</th><th>Type</th><th>Priorite</th></tr></thead><tbody>';
     pz.ncs.forEach(function(nc) {
