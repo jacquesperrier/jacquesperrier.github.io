@@ -1,0 +1,425 @@
+import { useState } from “react”;
+
+const C = {
+noir: “#0A0A0A”, blanc: “#FFFFFF”, or: “#D4A017”,
+bordeaux: “#8B1A1A”, gris: “#888888”, grisCl: “#F7F7F5”,
+grisMed: “#555555”, orange: “#C84B0A”, slate: “#4A6274”,
+};
+const ACCENT = { bordeaux: C.bordeaux, orange: C.orange, slate: C.slate };
+
+const DATA = {
+fr: {
+lang:“FR”, flag:“🇫🇷”, switchLabel:“🇬🇧 EN”,
+slides:[
+{type:“title”},
+{type:“index”, note:“8 situations couvertes”,
+situations:[[“1”,“Condamnation MAPAQ”,“bordeaux”],[“2”,“Faux avis Google”,“bordeaux”],[“3”,“Ex-employé malveillant”,“bordeaux”],[“4”,“Extorsion Google”,“bordeaux”],[“5”,“Intoxication alimentaire”,“orange”],[“6”,“Faux inspecteur MAPAQ”,“orange”],[“7”,“Plainte CNESST”,“slate”],[“8”,“Couverture médias négative”,“slate”]]},
+{type:“steps4”, sitNum:“SITUATION 1”, title:“Condamnation MAPAQ”, subtitle:“Protocole en 4 étapes”,
+steps:[{n:1,title:“Rapport express 24h”,text:“Rapport Verdict complet + plan d’actions correctrices signé. Preuve formelle remise à l’inspecteur.”},{n:2,title:“Contrer les faux avis”,text:“Analyse forensique + signalement Google Business Profile. Retrait 3–14 jours.”},{n:3,title:“Réponses publiques”,text:“Gabarits personnalisés — jamais agressifs, toujours orientés solutions.”},{n:4,title:“Contre-offensive”,text:“SMS clients fidèles + QR code Google Reviews + script pour le personnel.”}],
+reponse:“Notre établissement a complété un audit complet avec plan d’actions correctrices signé et documenté. Voici le rapport Verdict. Nous sommes entièrement disponibles pour collaborer.”},
+{type:“actions”, sitNum:“SITUATION 2”, title:“Faux avis Google”, subtitle:“Comment identifier et agir”,
+intro:“Signes d’un faux avis : compte récent, zéro historique, rafale coordonnée le même soir, langage générique sans détail spécifique. Ne jamais ignorer un faux avis.”,
+actions:[“Identifier le profil — date création, historique d’avis, localisation”,“Signaler à Google Business — mentionner explicitement la manipulation”,“Répondre publiquement dans les 24h — calme, professionnel, orienté solution”,“Mobiliser vos clients satisfaits — QR code caisse + message SMS fidèles”],
+reponse:“Merci pour votre commentaire. Nous n’avons pas de trace de votre visite dans nos registres. Nous vous invitons à nous contacter directement au +1 (873) 822-1455.”},
+{type:“scenarios”, sitNum:“SITUATION 3”, title:“Ex-employé malveillant”, subtitle:“3 scénarios possibles”,
+intro:“Un ex-employé congédié connaît vos zones faibles. Il peut publier sur Facebook, TikTok ou Google pour nuire en quelques heures.”,
+scenarios:[{title:“POST FACEBOOK”,text:“Accusations sanitaires avec photos pendant l’emploi.\n\nAction : signalement violation confidentialité + réponse calme + rapport Verdict.”},{title:“VIDÉO TIKTOK”,text:“Vidéo filmée en cuisine avec commentaires négatifs.\n\nAction : signalement propriété privée + documentation horodatée + témoignages.”},{title:“AVIS COORDONNÉS”,text:“Réseau mobilisé pour avis 1 étoile en rafale.\n\nAction : analyse forensique + signalement manipulation + réponse individuelle.”}],
+reponse:“Nous prenons toutes les allégations au sérieux. Notre établissement maintient des standards stricts, documentés et vérifiables. Nous invitons quiconque à nous contacter directement.”},
+{type:“actions”, sitNum:“SITUATION 4”, title:“Extorsion Google”, subtitle:“Paiement pour retrait d’avis — acte criminel”,
+alert:{icon:“⚠”,text:“Le fraudeur poste un avis 1 étoile, puis exige de l’argent pour le retirer. C’est de l’EXTORSION — art. 346 Code criminel. NE JAMAIS PAYER.”,type:“orange”},
+actions:[“Conserver toutes les preuves : messages, courriel, numéro du fraudeur”,“Signaler l’avis à Google — mentionner explicitement le mot extorsion”,“Déposer une plainte à la police — art. 346 Code criminel canadien”,“Signaler au Centre antifraude du Canada : 1-888-495-8501”,“Répondre publiquement — calme, jamais mentionner la demande d’argent”],
+reponse:“Merci pour votre commentaire. Nous n’avons aucune trace de votre visite. Nous vous invitons à communiquer directement avec notre direction. [Ne jamais mentionner la demande d’argent]”},
+{type:“actions”, sitNum:“SITUATION 5”, title:“Intoxication alimentaire”, subtitle:“Client qui affirme avoir été malade — réelle ou non”,
+intro:“Ne jamais admettre publiquement. Votre rapport Verdict est votre bouclier. Agir proactivement avec le MAPAQ.”,
+actions:[“Sortir immédiatement le rapport Verdict comme preuve de conformité”,“Contacter proactivement le MAPAQ régional — ne pas attendre leur appel”,“Documenter tout : date, heure, allégation, nom du client si possible”,“Ne jamais admettre publiquement — même pour sembler empathique”],
+alert:{icon:“⚠”,text:“Ne jamais admettre publiquement une intoxication.”,type:“orange”},
+reponse:“Nous prenons cette situation très au sérieux. Notre établissement opère en conformité documentée complète. Nous collaborons proactivement avec les autorités compétentes.”},
+{type:“actions”, sitNum:“SITUATION 6”, title:“Faux inspecteur MAPAQ”, subtitle:“Arnaque documentée au Québec”,
+intro:“Un individu se présente comme inspecteur MAPAQ et demande un accès, des documents ou un paiement. Vérifier avant tout.”,
+actions:[“Demander immédiatement la carte officielle MAPAQ avec photo”,“Appeler le bureau régional MAPAQ pour confirmer : 1-888-222-6272”,“Refuser tout accès et tout paiement jusqu’à vérification complète”,“Si refus de montrer sa carte — appeler la police immédiatement”],
+alert:{icon:“📞”,text:“MAPAQ — Vérification : 1-888-222-6272 · Tout vrai inspecteur comprendra votre démarche.”,type:“slate”},
+reponse:“Je dois vérifier votre identité avant de vous accorder l’accès. Pouvez-vous me présenter votre carte officielle MAPAQ ? Je contacte immédiatement le bureau régional pour confirmer.”},
+{type:“actions”, sitNum:“SITUATION 7”, title:“Plainte CNESST”, subtitle:“Ex-employé — plainte rendue publique”,
+intro:“Ne jamais commenter publiquement une plainte en cours. Votre dossier RH documenté est votre meilleure défense.”,
+actions:[“Ne jamais commenter publiquement une plainte en cours — aucune exception”,“Documenter immédiatement toutes vos pratiques RH et formations”,“Répondre uniquement via les canaux officiels CNESST”,“Protéger votre réputation en ligne — surveiller les mentions”],
+alert:{icon:“⚖”,text:“Répondre uniquement via les canaux officiels CNESST. Jamais sur les réseaux sociaux.”,type:“slate”},
+reponse:“Nous ne commentons pas les plaintes en cours. Notre dossier de pratiques RH est complet et documenté. Nous répondrons uniquement via les canaux officiels appropriés.”},
+{type:“actions”, sitNum:“SITUATION 8”, title:“Couverture médias négative”, subtitle:“Journaliste ou influenceur sans vous avoir contacté”,
+intro:“Ne jamais refuser de commenter — le silence est interprété comme une admission. Préparer une déclaration courte et factuelle.”,
+actions:[“Demander immédiatement le droit de réponse — délai légal à respecter”,“Préparer une déclaration officielle courte, factuelle, sans émotion”,“Fournir votre rapport Verdict comme preuve de conformité”,“Ne jamais refuser de commenter — proposer toujours une déclaration”],
+alert:{icon:“📋”,text:“Déclaration officielle disponible en moins de 2h. Rapport Verdict prêt sur demande.”,type:“green”},
+reponse:“Nous demandons formellement le droit de réponse. Notre établissement opère en conformité documentée complète et nous sommes heureux de fournir notre rapport Verdict sur demande.”},
+{type:“checklist”, label:“CHECKLIST DE DÉMARRAGE”, title:“Prêt à démarrer”,
+items:[“Télécharger l’app terrain (QR code)”,“Configurer votre profil établissement”,“Activer le module SÉCURITÉ”,“Faire une première inspection test”,“Former votre équipe — module ACADÉMIE”,“Activer les capteurs CONTRÔLE (si inclus)”,“Sauvegarder le numéro hotline Jacques Perrier”,“Afficher le QR code Google Reviews à la caisse”,“Revendiquer et vérifier votre fiche Google”,“Conserver ce kit accessible en cas de crise”]},
+{type:“cta”, superText:“VERDICT INSPECTION AI — À VOTRE SERVICE”, crisisLabel:“EN CAS DE CRISE”,
+crisisSteps:[“1. Appliquer le gabarit de réponse de ce kit”,“2. Documenter immédiatement avec Verdict”,“3. Appeler Jacques Perrier : +1 (873) 822-1455”]},
+]
+},
+en: {
+lang:“EN”, flag:“🇬🇧”, switchLabel:“🇫🇷 FR”,
+slides:[
+{type:“title”},
+{type:“index”, note:“8 crisis situations covered”,
+situations:[[“1”,“MAPAQ Conviction”,“bordeaux”],[“2”,“Fake Google Reviews”,“bordeaux”],[“3”,“Malicious Ex-Employee”,“bordeaux”],[“4”,“Google Extortion Scam”,“bordeaux”],[“5”,“Reported Food Poisoning”,“orange”],[“6”,“Fake MAPAQ Inspector”,“orange”],[“7”,“CNESST Complaint”,“slate”],[“8”,“Negative Media Coverage”,“slate”]]},
+{type:“steps4”, sitNum:“SITUATION 1”, title:“MAPAQ Conviction”, subtitle:“4-Step Protocol”,
+steps:[{n:1,title:“Express Report 24h”,text:“Complete Verdict report + signed corrective action plan. Formal evidence delivered to the inspector.”},{n:2,title:“Counter Fake Reviews”,text:“Forensic analysis + Google Business Profile reporting. 3–14 day removal.”},{n:3,title:“Public Responses”,text:“Custom templates — never aggressive, always solution-oriented.”},{n:4,title:“Positive Counter-Push”,text:“Loyal client SMS + Google Reviews QR code + staff script.”}],
+reponse:“Our establishment has completed a full Verdict audit with a signed and documented corrective action plan. Here is the formal report. We are fully available to collaborate.”},
+{type:“actions”, sitNum:“SITUATION 2”, title:“Fake Google Reviews”, subtitle:“How to identify and respond”,
+intro:“Signs of a fake review: new account, zero history, coordinated burst the same evening, generic language with no specific details. Never ignore a fake review.”,
+actions:[“Identify the profile — account creation date, review history, location”,“Report to Google Business — explicitly mention coordinated manipulation”,“Respond publicly within 24h — calm, professional, solution-oriented”,“Mobilize satisfied clients — checkout QR code + loyal client SMS”],
+reponse:“Thank you for your comment. We have no record of your visit in our logs. We invite you to contact us directly at +1 (873) 822-1455.”},
+{type:“scenarios”, sitNum:“SITUATION 3”, title:“Malicious Ex-Employee”, subtitle:“3 possible scenarios”,
+intro:“A dismissed ex-employee knows your weak spots. They can post on Facebook, TikTok or Google to damage your reputation within hours.”,
+scenarios:[{title:“FACEBOOK POST”,text:“Sanitation accusations with photos from employment.\n\nAction: report confidentiality breach + calm response + Verdict report as counter-evidence.”},{title:“TIKTOK VIDEO”,text:“Video filmed in kitchen with negative commentary.\n\nAction: report private property violation + timestamped documentation + positive testimonials.”},{title:“COORDINATED REVIEWS”,text:“Network mobilized for a 1-star review burst.\n\nAction: forensic analysis + coordinated manipulation report + individual responses.”}],
+reponse:“We take all allegations seriously. Our establishment maintains strict, documented and verifiable standards. We invite anyone to contact us directly.”},
+{type:“actions”, sitNum:“SITUATION 4”, title:“Google Extortion Scam”, subtitle:“Pay-to-Remove Review — criminal act”,
+alert:{icon:“⚠”,text:“The fraudster posts a 1-star review, then demands money for removal. This is EXTORTION — s. 346 Criminal Code of Canada. NEVER PAY.”,type:“orange”},
+actions:[“Preserve all evidence: messages, email, fraudster’s phone number”,“Report the review to Google — explicitly use the word extortion”,“File a police report — s. 346 Criminal Code of Canada”,“Report to Canadian Anti-Fraud Centre: 1-888-495-8501”,“Respond publicly — calm, professional, never mention the money demand”],
+reponse:“Thank you for your comment. We have no record of your visit. Please contact our management directly. [Never mention the money demand publicly]”},
+{type:“actions”, sitNum:“SITUATION 5”, title:“Reported Food Poisoning”, subtitle:“Client claims to have been sick — real or not”,
+intro:“Never publicly admit fault. Your Verdict report is your shield. Act proactively with the health authority.”,
+actions:[“Immediately produce your Verdict report as full compliance evidence”,“Proactively contact your regional health authority — don’t wait for their call”,“Document everything: date, time, allegation, client name if possible”,“Never publicly admit fault — even to seem empathetic”],
+alert:{icon:“⚠”,text:“Never publicly admit food poisoning — not even in an empathetic tone.”,type:“orange”},
+reponse:“We take this situation very seriously. Our establishment operates in full documented compliance. We are proactively cooperating with the competent authorities.”},
+{type:“actions”, sitNum:“SITUATION 6”, title:“Fake MAPAQ Inspector”, subtitle:“Documented scam in Quebec”,
+intro:“An individual poses as a MAPAQ inspector demanding access, documents or payment. Verify before anything else.”,
+actions:[“Immediately ask for the official MAPAQ photo ID card”,“Call the regional MAPAQ office to confirm: 1-888-222-6272”,“Refuse all access and any payment until fully verified”,“If they refuse to show ID — call the police immediately”],
+alert:{icon:“📞”,text:“MAPAQ Verification: 1-888-222-6272 · Any real inspector will understand your process.”,type:“slate”},
+reponse:“I need to verify your identity before granting access. Can you show me your official MAPAQ ID card? I am contacting the regional office right now to confirm.”},
+{type:“actions”, sitNum:“SITUATION 7”, title:“CNESST Complaint”, subtitle:“Ex-employee — public workplace complaint”,
+intro:“Never publicly comment on an ongoing complaint. Your documented HR file is your best defense.”,
+actions:[“Never publicly comment on an ongoing complaint — no exceptions”,“Immediately document all your HR practices and training records”,“Respond only through official CNESST channels”,“Protect your online reputation — monitor all mentions”],
+alert:{icon:“⚖”,text:“Respond only through official CNESST channels. Never on social media.”,type:“slate”},
+reponse:“We do not comment on ongoing complaints. Our HR practices file is complete and documented. We will respond only through the appropriate official channels.”},
+{type:“actions”, sitNum:“SITUATION 8”, title:“Negative Media Coverage”, subtitle:“Journalist or influencer without contacting you”,
+intro:“Never refuse to comment — silence is interpreted as an admission. Prepare a short, factual statement.”,
+actions:[“Immediately request right of reply — respect the legal timeframe”,“Prepare a short, factual, emotion-free official statement”,“Provide your Verdict report as compliance evidence”,“Never refuse to comment — always offer a prepared statement”],
+alert:{icon:“📋”,text:“Official statement available in under 2 hours. Verdict report ready on request.”,type:“green”},
+reponse:“We formally request right of reply. Our establishment operates in full documented compliance and we are happy to provide our Verdict report upon request.”},
+{type:“checklist”, label:“GETTING STARTED CHECKLIST”, title:“Ready to Start”,
+items:[“Download the field app (QR code)”,“Set up your establishment profile”,“Activate the SECURITY module”,“Run a first test inspection”,“Train your team — ACADEMY module”,“Activate CONTROL sensors (if included)”,“Save Jacques Perrier’s hotline number”,“Post Google Reviews QR code at checkout”,“Claim and verify your Google listing”,“Keep this kit accessible in case of crisis”]},
+{type:“cta”, superText:“VERDICT INSPECTION AI — AT YOUR SERVICE”, crisisLabel:“IN CASE OF CRISIS”,
+crisisSteps:[“1. Apply the response template from this kit”,“2. Document immediately with Verdict”,“3. Call Jacques Perrier: +1 (873) 822-1455”]},
+]
+}
+};
+
+// ─── SUB-COMPONENTS ───────────────────────────────────────────────
+
+function AlertBox({alert}) {
+const colors = {
+orange:{bg:”#FFF3E8”,border:C.orange,text:C.orange},
+slate:{bg:”#EEF2F7”,border:C.slate,text:C.slate},
+green:{bg:”#F0FFF0”,border:”#2E7D32”,text:”#2E7D32”},
+};
+const s = colors[alert.type] || colors.orange;
+return (
+<div style={{display:“flex”,alignItems:“flex-start”,gap:10,padding:“10px 16px”,borderLeft:`5px solid ${s.border}`,background:s.bg,flexShrink:0}}>
+<span style={{fontSize:18,flexShrink:0}}>{alert.icon}</span>
+<span style={{fontSize:13,fontWeight:700,color:s.text,lineHeight:1.4}}>{alert.text}</span>
+</div>
+);
+}
+
+function ReponseBand({text, lang}) {
+const label = lang === “fr” ? “💬  RÉPONSE IMMÉDIATE” : “💬  IMMEDIATE RESPONSE”;
+const q = lang === “fr” ? [`« `,` »`] : [`"`,`"`];
+return (
+<div style={{background:”#111”,borderTop:`3px solid ${C.bordeaux}`,padding:“10px 24px”,flexShrink:0}}>
+<div style={{fontSize:10,fontWeight:700,color:C.or,letterSpacing:3,marginBottom:5}}>{label}</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:15,fontStyle:“italic”,color:”#EEE”,lineHeight:1.45}}>
+{q[0]}{text}{q[1]}
+</div>
+</div>
+);
+}
+
+function SlideHeader({title, lang, switchLang, page, total}) {
+const ld = DATA[lang];
+return (
+<div style={{background:C.noir,display:“flex”,alignItems:“center”,padding:“0 20px”,height:50,flexShrink:0,position:“relative”}}>
+<div style={{position:“absolute”,bottom:0,left:0,right:0,height:3,background:C.or}}/>
+<div style={{fontFamily:“Georgia,serif”,fontSize:16,fontWeight:700,color:C.or,flex:1}}>{title}</div>
+<div style={{display:“flex”,alignItems:“center”,gap:12}}>
+<button onClick={switchLang} style={{background:“rgba(212,160,23,0.12)”,border:“1px solid rgba(212,160,23,0.4)”,color:C.or,fontSize:11,fontWeight:700,letterSpacing:2,padding:“4px 10px”,cursor:“pointer”}}>
+{ld.switchLabel}
+</button>
+<span style={{fontSize:12,color:”#DDD”,fontWeight:700}}>{ld.flag} {ld.lang}</span>
+<span style={{fontSize:11,color:C.gris}}>{page} / {total}</span>
+</div>
+</div>
+);
+}
+
+function SlideFooter() {
+return (
+<div style={{background:C.noir,height:32,display:“flex”,alignItems:“center”,padding:“0 20px”,flexShrink:0,position:“relative”}}>
+<div style={{position:“absolute”,top:0,left:0,right:0,height:3,background:C.or}}/>
+<span style={{fontSize:11,color:C.gris}}>Verdict Inspection AI · verdict360ai.com · +1 (873) 822-1455</span>
+</div>
+);
+}
+
+// ─── SLIDE RENDERERS ─────────────────────────────────────────────
+
+function TitleSlide({lang, switchLang}) {
+const ld = DATA[lang];
+return (
+<div style={{flex:1,background:C.noir,display:“flex”,flexDirection:“column”,alignItems:“center”,justifyContent:“center”,textAlign:“center”,padding:“0 32px”,position:“relative”}}>
+<div style={{position:“absolute”,top:0,left:0,right:0,height:6,background:C.bordeaux}}/>
+<div style={{position:“absolute”,bottom:0,left:0,right:0,height:6,background:C.or}}/>
+<button onClick={switchLang} style={{position:“absolute”,top:16,right:16,background:“rgba(212,160,23,0.12)”,border:“1px solid rgba(212,160,23,0.4)”,color:C.or,fontSize:11,fontWeight:700,letterSpacing:2,padding:“5px 12px”,cursor:“pointer”}}>
+{ld.switchLabel}
+</button>
+<div style={{border:`1.5px solid ${C.or}`,color:C.or,fontSize:11,fontWeight:700,letterSpacing:4,padding:“6px 20px”,marginBottom:24}}>
+{ld.flag}  {lang===“fr”?“KIT D’ACCUEIL · CANADA”:“WELCOME KIT · CANADA”}
+</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(52px,9vw,96px)”,fontWeight:700,color:C.blanc,lineHeight:0.9,letterSpacing:-2}}>VERDICT</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(52px,9vw,96px)”,fontWeight:700,fontStyle:“italic”,color:C.or,lineHeight:0.9,letterSpacing:-2,marginBottom:20}}>CRISE</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(13px,2vw,18px)”,fontStyle:“italic”,color:”#BBB”,marginBottom:16}}>Votre réputation. Protégée. · Your Reputation. Protected.</div>
+<div style={{width:80,height:3,background:C.or,marginBottom:18}}/>
+<div style={{fontSize:“clamp(11px,1.4vw,14px)”,color:”#999”,lineHeight:1.7}}>
+<strong style={{color:”#CCC”}}>Jacques Perrier</strong><br/>
+Auditeur en hygiène et salubrité alimentaire · Expert MAPAQ et HACCP<br/>
+<span style={{color:”#7799BB”}}>info@verdict360ai.com · verdict360ai.com</span><br/>
++1 (873) 822-1455 · Gatineau · Ottawa · Montréal · Canada
+</div>
+</div>
+);
+}
+
+function IndexSlide({slide, lang, switchLang, page, total}) {
+return (
+<>
+<SlideHeader title="VERDICT CRISE" lang={lang} switchLang={switchLang} page={page} total={total}/>
+<div style={{flex:1,padding:“16px 24px”,display:“flex”,flexDirection:“column”,gap:12,overflow:“hidden”}}>
+<div style={{fontSize:13,fontFamily:“Georgia,serif”,fontStyle:“italic”,color:C.gris}}>{slide.note}</div>
+<div style={{display:“grid”,gridTemplateColumns:“repeat(2,1fr)”,gap:8,flex:1}}>
+{slide.situations.map(([num,title,color])=>(
+<div key={num} style={{background:”#F9F6EE”,border:“1px solid #E8E0D0”,borderLeft:`5px solid ${ACCENT[color]}`,padding:“10px 14px”,display:“flex”,alignItems:“center”,gap:10}}>
+<span style={{fontFamily:“Georgia,serif”,fontSize:22,fontWeight:700,color:C.or,width:28,flexShrink:0}}>{num}</span>
+<span style={{fontSize:14,fontWeight:700,color:C.noir}}>{title}</span>
+</div>
+))}
+</div>
+</div>
+<SlideFooter/>
+</>
+);
+}
+
+function Steps4Slide({slide, lang, switchLang, page, total}) {
+return (
+<>
+<SlideHeader title="VERDICT CRISE" lang={lang} switchLang={switchLang} page={page} total={total}/>
+<div style={{flex:1,padding:“14px 24px”,display:“flex”,flexDirection:“column”,gap:10,overflow:“hidden”}}>
+<div style={{fontSize:11,fontWeight:700,color:C.or,letterSpacing:4}}>{slide.sitNum}</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(24px,4vw,40px)”,fontWeight:700,color:C.noir,lineHeight:1.05}}>{slide.title}</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(13px,1.8vw,18px)”,fontStyle:“italic”,color:C.bordeaux}}>{slide.subtitle}</div>
+<div style={{display:“grid”,gridTemplateColumns:“repeat(4,1fr)”,gap:10,flex:1}}>
+{slide.steps.map(step=>(
+<div key={step.n} style={{background:”#F7F7F5”,border:“1px solid #E0E0E0”,borderTop:`4px solid ${C.or}`,padding:“12px 14px”,display:“flex”,flexDirection:“column”,gap:8}}>
+<div style={{width:36,height:36,background:C.or,color:C.noir,fontFamily:“Georgia,serif”,fontSize:20,fontWeight:700,display:“flex”,alignItems:“center”,justifyContent:“center”}}>{step.n}</div>
+<div style={{fontSize:13,fontWeight:700,color:C.noir}}>{step.title}</div>
+<div style={{fontSize:12,color:C.grisMed,lineHeight:1.45,flex:1}}>{step.text}</div>
+</div>
+))}
+</div>
+</div>
+<ReponseBand text={slide.reponse} lang={lang}/>
+<SlideFooter/>
+</>
+);
+}
+
+function ActionsSlide({slide, lang, switchLang, page, total}) {
+const hasAlertFirst = slide.alert && !slide.intro;
+return (
+<>
+<SlideHeader title="VERDICT CRISE" lang={lang} switchLang={switchLang} page={page} total={total}/>
+<div style={{flex:1,padding:“14px 24px”,display:“flex”,flexDirection:“column”,gap:10,overflow:“hidden”}}>
+<div style={{fontSize:11,fontWeight:700,color:C.or,letterSpacing:4}}>{slide.sitNum}</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(24px,4vw,40px)”,fontWeight:700,color:C.noir,lineHeight:1.05}}>{slide.title}</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(13px,1.8vw,18px)”,fontStyle:“italic”,color:C.bordeaux}}>{slide.subtitle}</div>
+{hasAlertFirst && <AlertBox alert={slide.alert}/>}
+{slide.intro && <div style={{fontSize:14,color:C.grisMed,lineHeight:1.5}}>{slide.intro}</div>}
+<div style={{display:“flex”,flexDirection:“column”,gap:8,flex:1,justifyContent:“center”}}>
+{slide.actions.map((txt,i)=>(
+<div key={i} style={{display:“flex”,alignItems:“flex-start”,gap:12}}>
+<div style={{width:26,height:26,background:C.bordeaux,borderRadius:“50%”,color:C.blanc,fontFamily:“Georgia,serif”,fontSize:14,fontWeight:700,display:“flex”,alignItems:“center”,justifyContent:“center”,flexShrink:0,marginTop:1}}>{i+1}</div>
+<div style={{fontSize:14,color:C.grisMed,lineHeight:1.45}}>{txt}</div>
+</div>
+))}
+</div>
+{!hasAlertFirst && slide.alert && <AlertBox alert={slide.alert}/>}
+</div>
+<ReponseBand text={slide.reponse} lang={lang}/>
+<SlideFooter/>
+</>
+);
+}
+
+function ScenariosSlide({slide, lang, switchLang, page, total}) {
+return (
+<>
+<SlideHeader title="VERDICT CRISE" lang={lang} switchLang={switchLang} page={page} total={total}/>
+<div style={{flex:1,padding:“14px 24px”,display:“flex”,flexDirection:“column”,gap:10,overflow:“hidden”}}>
+<div style={{fontSize:11,fontWeight:700,color:C.or,letterSpacing:4}}>{slide.sitNum}</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(24px,4vw,40px)”,fontWeight:700,color:C.noir,lineHeight:1.05}}>{slide.title}</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(13px,1.8vw,18px)”,fontStyle:“italic”,color:C.bordeaux}}>{slide.subtitle}</div>
+<div style={{fontSize:14,color:C.grisMed,lineHeight:1.5}}>{slide.intro}</div>
+<div style={{display:“grid”,gridTemplateColumns:“repeat(3,1fr)”,gap:10,flex:1}}>
+{slide.scenarios.map((sc,i)=>(
+<div key={i} style={{background:”#F7F7F5”,border:“1px solid #E0E0E0”,borderLeft:`5px solid ${C.bordeaux}`,padding:“12px 14px”,display:“flex”,flexDirection:“column”,gap:8}}>
+<div style={{fontSize:11,fontWeight:700,color:C.bordeaux,letterSpacing:1.5}}>{sc.title}</div>
+<div style={{fontSize:13,color:C.grisMed,lineHeight:1.5,whiteSpace:“pre-line”,flex:1}}>{sc.text}</div>
+</div>
+))}
+</div>
+</div>
+<ReponseBand text={slide.reponse} lang={lang}/>
+<SlideFooter/>
+</>
+);
+}
+
+function ChecklistSlide({slide, lang, switchLang, page, total}) {
+return (
+<>
+<SlideHeader title="VERDICT INSPECTION AI" lang={lang} switchLang={switchLang} page={page} total={total}/>
+<div style={{flex:1,padding:“14px 24px”,display:“flex”,flexDirection:“column”,gap:12,overflow:“hidden”}}>
+<div style={{fontSize:11,fontWeight:700,color:C.or,letterSpacing:4}}>{slide.label}</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(28px,4.5vw,44px)”,fontWeight:700,color:C.noir}}>{slide.title}</div>
+<div style={{display:“grid”,gridTemplateColumns:“repeat(2,1fr)”,gap:8,flex:1}}>
+{slide.items.map((item,i)=>(
+<div key={i} style={{background:i%2===0?”#F9F6EE”:”#FFF”,border:“1px solid #E8E0D0”,borderLeft:`5px solid ${C.or}`,padding:“10px 14px”,display:“flex”,alignItems:“center”,gap:10}}>
+<span style={{fontSize:18,color:C.or,flexShrink:0}}>☐</span>
+<span style={{fontSize:13,fontWeight:700,color:C.noir}}>{item}</span>
+</div>
+))}
+</div>
+</div>
+<SlideFooter/>
+</>
+);
+}
+
+function CTASlide({slide, lang, switchLang}) {
+const ld = DATA[lang];
+return (
+<div style={{flex:1,background:C.noir,display:“flex”,flexDirection:“column”,alignItems:“center”,justifyContent:“center”,textAlign:“center”,padding:“0 32px”,position:“relative”,gap:16}}>
+<div style={{position:“absolute”,top:0,left:0,right:0,height:6,background:C.bordeaux}}/>
+<button onClick={switchLang} style={{position:“absolute”,top:16,right:16,background:“rgba(212,160,23,0.12)”,border:“1px solid rgba(212,160,23,0.4)”,color:C.or,fontSize:11,fontWeight:700,letterSpacing:2,padding:“5px 12px”,cursor:“pointer”}}>
+{ld.switchLabel}
+</button>
+<div style={{fontSize:12,fontWeight:700,color:C.or,letterSpacing:3}}>{slide.superText}</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(32px,6vw,60px)”,fontWeight:700,color:C.blanc,lineHeight:1}}>Jacques Perrier</div>
+<div style={{fontSize:13,color:”#AAAAAA”}}>Auditeur en hygiène et salubrité alimentaire · Expert des normes MAPAQ et HACCP</div>
+<div style={{width:80,height:3,background:C.or}}/>
+<div style={{display:“flex”,gap:12,flexWrap:“wrap”,justifyContent:“center”}}>
+{[“✉  info@verdict360ai.com”,“🌐  verdict360ai.com”,“📞  +1 (873) 822-1455”].map(c=>(
+<div key={c} style={{border:`1.5px solid rgba(212,160,23,0.5)`,background:“rgba(255,255,255,0.04)”,padding:“10px 18px”,fontSize:13,color:C.or}}>{c}</div>
+))}
+</div>
+<div style={{fontSize:12,color:”#555”}}>Gatineau · Ottawa · Montréal · Toronto · Vancouver · Canada</div>
+<div style={{border:`1.5px solid ${C.or}`,borderLeft:`5px solid ${C.bordeaux}`,background:“rgba(255,255,255,0.04)”,padding:“14px 24px”,textAlign:“left”,width:“100%”,maxWidth:600}}>
+<div style={{fontSize:10,fontWeight:700,color:C.or,letterSpacing:3,marginBottom:10}}>{slide.crisisLabel}</div>
+{slide.crisisSteps.map((step,i)=>(
+<div key={i} style={{fontSize:14,color:i===2?C.or:”#CCCCCC”,fontWeight:i===2?700:400,marginBottom:4}}>{step}</div>
+))}
+</div>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(18px,3vw,28px)”,fontWeight:700,color:C.or}}>verdict360ai.com</div>
+<div style={{position:“absolute”,bottom:0,left:0,right:0,height:4,background:C.or}}/>
+</div>
+);
+}
+
+// ─── LANG SELECTOR ───────────────────────────────────────────────
+
+function LangSelector({onSelect}) {
+return (
+<div style={{width:“100%”,height:“100%”,background:C.noir,display:“flex”,flexDirection:“column”,alignItems:“center”,justifyContent:“center”,gap:0,position:“relative”}}>
+<div style={{position:“absolute”,top:0,left:0,right:0,height:6,background:C.bordeaux}}/>
+<div style={{position:“absolute”,bottom:0,left:0,right:0,height:6,background:C.or}}/>
+<div style={{fontFamily:“Georgia,serif”,fontSize:“clamp(32px,6vw,60px)”,fontWeight:700,color:C.blanc,lineHeight:1}}>VERDICT <span style={{color:C.or,fontStyle:“italic”}}>CRISE</span></div>
+<div style={{fontFamily:“Georgia,serif”,fontStyle:“italic”,fontSize:“clamp(12px,1.6vw,16px)”,color:”#AAAAAA”,marginTop:8,marginBottom:36}}>Kit d’accueil · Welcome Kit · Canada</div>
+<div style={{fontSize:11,fontWeight:700,color:C.gris,letterSpacing:4,marginBottom:20}}>CHOISISSEZ VOTRE LANGUE · CHOOSE YOUR LANGUAGE</div>
+<div style={{display:“flex”,gap:16,alignItems:“center”}}>
+{[[“fr”,“🇫🇷”,“FRANÇAIS”,“Kit en français”],[“en”,“🇬🇧”,“ENGLISH”,“Kit in English”]].map(([code,flag,label,sub],i)=>(
+<>
+{i===1 && <div style={{width:1,height:100,background:“rgba(255,255,255,0.08)”}}/>}
+<button key={code} onClick={()=>onSelect(code)}
+style={{display:“flex”,flexDirection:“column”,alignItems:“center”,justifyContent:“center”,width:150,height:110,border:“1.5px solid rgba(212,160,23,0.3)”,background:“rgba(255,255,255,0.03)”,cursor:“pointer”,gap:6,transition:“all 0.2s”}}
+onMouseEnter={e=>{e.currentTarget.style.borderColor=C.or;e.currentTarget.style.background=“rgba(212,160,23,0.08)”}}
+onMouseLeave={e=>{e.currentTarget.style.borderColor=“rgba(212,160,23,0.3)”;e.currentTarget.style.background=“rgba(255,255,255,0.03)”}}>
+<span style={{fontSize:32}}>{flag}</span>
+<span style={{fontFamily:“Georgia,serif”,fontSize:20,fontWeight:700,color:C.blanc,letterSpacing:2}}>{label}</span>
+<span style={{fontSize:10,fontWeight:700,color:C.gris,letterSpacing:3}}>{sub}</span>
+</button>
+</>
+))}
+</div>
+</div>
+);
+}
+
+// ─── MAIN APP ─────────────────────────────────────────────────────
+
+export default function App() {
+const [lang, setLang] = useState(null);
+const [idx, setIdx] = useState(0);
+
+const startKit = (l) => { setLang(l); setIdx(0); };
+const switchLang = () => { setLang(l => l===“fr”?“en”:“fr”); setIdx(0); };
+const nav = (d) => { const ld = DATA[lang]; setIdx(i => Math.max(0, Math.min(ld.slides.length-1, i+d))); };
+
+if (!lang) return (
+<div style={{width:“100vw”,height:“100vh”,overflow:“hidden”}}>
+<LangSelector onSelect={startKit}/>
+</div>
+);
+
+const ld = DATA[lang];
+const slide = ld.slides[idx];
+const total = ld.slides.length;
+const progress = ((idx+1)/total*100)+”%”;
+
+const renderSlide = () => {
+const props = {slide, lang, switchLang, page:idx+1, total};
+if (slide.type===“title”) return <TitleSlide lang={lang} switchLang={switchLang}/>;
+if (slide.type===“index”) return <IndexSlide {…props}/>;
+if (slide.type===“steps4”) return <Steps4Slide {…props}/>;
+if (slide.type===“actions”) return <ActionsSlide {…props}/>;
+if (slide.type===“scenarios”) return <ScenariosSlide {…props}/>;
+if (slide.type===“checklist”) return <ChecklistSlide {…props}/>;
+if (slide.type===“cta”) return <CTASlide slide={slide} lang={lang} switchLang={switchLang}/>;
+return null;
+};
+
+return (
+<div style={{width:“100vw”,height:“100vh”,overflow:“hidden”,display:“flex”,flexDirection:“column”,background:C.blanc}}>
+{/* Progress bar */}
+<div style={{position:“fixed”,top:0,left:0,height:3,background:C.or,width:progress,zIndex:200,transition:“width 0.3s”}}/>
+
+```
+  {/* Slide */}
+  <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+    {renderSlide()}
+  </div>
+
+  {/* Nav */}
+  <div style={{position:"fixed",bottom:16,left:"50%",transform:"translateX(-50%)",display:"flex",alignItems:"center",gap:10,background:"rgba(10,10,10,0.9)",padding:"7px 16px",zIndex:100,backdropFilter:"blur(8px)"}}>
+    <button onClick={()=>nav(-1)} disabled={idx===0} style={{background:"none",border:`1.5px solid rgba(212,160,23,${idx===0?0.15:0.4})`,color:idx===0?"#333":C.or,width:34,height:34,fontSize:16,cursor:idx===0?"default":"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>←</button>
+    <div style={{display:"flex",gap:5}}>
+      {ld.slides.map((_,i)=>(
+        <div key={i} onClick={()=>setIdx(i)} style={{width:6,height:6,borderRadius:"50%",background:i===idx?C.or:"rgba(212,160,23,0.25)",cursor:"pointer",transform:i===idx?"scale(1.4)":"scale(1)",transition:"all 0.2s"}}/>
+      ))}
+    </div>
+    <span style={{fontSize:11,color:"#666",minWidth:46,textAlign:"center"}}>{idx+1} / {total}</span>
+    <button onClick={()=>nav(1)} disabled={idx===total-1} style={{background:"none",border:`1.5px solid rgba(212,160,23,${idx===total-1?0.15:0.4})`,color:idx===total-1?"#333":C.or,width:34,height:34,fontSize:16,cursor:idx===total-1?"default":"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>→</button>
+  </div>
+</div>
+```
+
+);
+}
