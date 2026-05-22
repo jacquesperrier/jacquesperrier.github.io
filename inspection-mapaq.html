@@ -320,39 +320,57 @@ function openCamera(){
 }
 
 function handlePhotos(input){
+  if(!input.files || !input.files.length) return;
   const files = Array.from(input.files);
-  if(!files.length) return;
   const remaining = 8 - state.photos.length;
   const toAdd = files.slice(0, remaining);
-  toAdd.forEach(file => {
+  let loaded = 0;
+  toAdd.forEach(function(file) {
     const reader = new FileReader();
-    reader.onload = e => {
-      state.photos.push({file, dataUrl: e.target.result, name: file.name});
-      renderPreviews();
+    reader.onloadend = function() {
+      if(reader.result) {
+        state.photos.push({file: file, dataUrl: reader.result, name: file.name});
+      }
+      loaded++;
+      if(loaded === toAdd.length) renderPreviews();
+    };
+    reader.onerror = function() {
+      loaded++;
+      console.warn('FileReader error for', file.name);
+      if(loaded === toAdd.length) renderPreviews();
     };
     reader.readAsDataURL(file);
   });
-  input.value = '';
+  try{ input.value = ''; } catch(e){}
   if(files.length > remaining) showToast('Maximum 8 photos atteint');
 }
 
 function renderPreviews(){
-  const grid = document.getElementById('photos-preview');
-  const zone = document.getElementById('photo-zone');
-  const count = document.getElementById('photo-count');
-  const btn = document.getElementById('btn-analyser');
+  try {
+    const grid = document.getElementById('photos-preview');
+    const zone = document.getElementById('photo-zone');
+    const count = document.getElementById('photo-count');
+    const btn = document.getElementById('btn-analyser');
+    if(!grid || !zone || !count || !btn) return;
 
-  grid.innerHTML = state.photos.map((p,i) => `
-    <div class="preview-item">
-      <img src="${p.dataUrl}" alt="Photo ${i+1}">
-      <button class="preview-remove" onclick="removePhoto(${i})">✕</button>
-      <div class="preview-badge">Photo ${i+1}</div>
-    </div>
-  `).join('');
+    var html = '';
+    for(var i=0; i<state.photos.length; i++){
+      var p = state.photos[i];
+      html += '<div class="preview-item">' +
+        '<img src="' + p.dataUrl + '" alt="Photo '+(i+1)+'" onerror="this.style.display='none'">' +
+        '<button class="preview-remove" onclick="removePhoto('+i+')">✕</button>' +
+        '<div class="preview-badge">Photo '+(i+1)+'</div>' +
+        '</div>';
+    }
+    grid.innerHTML = html;
 
-  count.textContent = state.photos.length ? `${state.photos.length} photo${state.photos.length>1?'s':''} sélectionnée${state.photos.length>1?'s':''}` : '';
-  zone.classList.toggle('has-photos', state.photos.length > 0);
-  btn.disabled = state.photos.length === 0 || !document.getElementById('f-etablissement').value.trim() || !document.getElementById('f-responsable').value.trim();
+    var n = state.photos.length;
+    count.textContent = n ? n + ' photo' + (n>1?'s':'') + ' sélectionnée' + (n>1?'s':'') : '';
+    zone.classList.toggle('has-photos', n > 0);
+    var etab = document.getElementById('f-etablissement');
+    var resp = document.getElementById('f-responsable');
+    btn.disabled = (n === 0 || !etab || !etab.value.trim() || !resp || !resp.value.trim());
+  } catch(e){ console.warn('renderPreviews error', e); }
 }
 
 function removePhoto(i){
@@ -712,9 +730,16 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
-// Set today's date
+// Set today's date — Safari iOS compatible
 window.addEventListener('load',()=>{
-  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  try {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth()+1).padStart(2,'0');
+    const d = String(now.getDate()).padStart(2,'0');
+    const df = document.getElementById('f-date');
+    if(df) df.value = y+'-'+m+'-'+d;
+  } catch(e){ console.warn('date init',e); }
 });
 </script>
 </body>
