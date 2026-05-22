@@ -1,1 +1,771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Inspection MAPAQ — Verdict 360 AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --noir:#1A1A1A; --or:#D4A017; --or-clair:#FFD700;
+  --crit:#FF7043; --crit-bg:#FFF3F0;
+  --maj:#FFA726;  --maj-bg:#FFF8F0;
+  --conf:#66BB6A;
+  --immed:#8B1A1A; --urg24:#E65100; --urg48:#BF360C; --planif:#546E7A;
+  --gris:#F2F2F2; --blanc:#FFFFFF; --texte:#2C2C2C;
+  --card-shadow: 0 2px 16px rgba(0,0,0,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{font-family:'Montserrat',sans-serif;background:var(--gris);color:var(--texte);min-height:100vh;}
 
+/* ── APP SHELL ── */
+.app-header{background:var(--noir);border-bottom:3px solid var(--or);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.app-logo{font-family:'Cormorant Garamond',serif;color:var(--or);font-size:20px;font-weight:700;letter-spacing:0.5px;line-height:1;}
+.app-logo span{display:block;font-size:9px;font-family:'Montserrat',sans-serif;color:#888;letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.app-step-indicator{display:flex;gap:6px;align-items:center;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:#444;transition:background .3s;}
+.step-dot.active{background:var(--or);}
+.step-dot.done{background:var(--conf);}
+
+.container{max-width:680px;margin:0 auto;padding:20px 16px 40px;}
+
+/* ── STEPS ── */
+.step{display:none;animation:fadeIn .35s ease;}
+.step.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── CARDS ── */
+.card{background:var(--blanc);border-radius:10px;box-shadow:var(--card-shadow);padding:20px;margin-bottom:16px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--noir);border-bottom:2px solid var(--or);padding-bottom:6px;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;}
+
+/* ── FORM FIELDS ── */
+.field{margin-bottom:14px;}
+.field label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;display:block;margin-bottom:4px;}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 12px;border:1.5px solid #DDD;border-radius:6px;
+  font-family:'Montserrat',sans-serif;font-size:13px;color:var(--noir);
+  background:white;outline:none;transition:border .2s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--or);}
+.field textarea{resize:vertical;min-height:60px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ── PHOTO ZONE ── */
+.photo-zone{background:#FAFAFA;border:2px dashed #DDD;border-radius:10px;padding:20px;text-align:center;margin-bottom:16px;transition:border .2s;}
+.photo-zone.has-photos{border-color:var(--or);background:#FFFDF5;}
+.photo-zone-icon{font-size:36px;margin-bottom:8px;}
+.photo-zone-title{font-size:13px;font-weight:700;color:var(--noir);margin-bottom:4px;}
+.photo-zone-sub{font-size:11px;color:#999;margin-bottom:14px;}
+.photo-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-photo{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:24px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:.5px;}
+.btn-cam{background:var(--noir);color:var(--or);}
+.btn-cam:active{background:#333;}
+.btn-upload{background:white;color:var(--noir);border:1.5px solid #DDD;}
+.btn-upload:active{background:#F5F5F5;}
+input[type=file]{display:none;}
+
+/* ── PHOTO PREVIEWS ── */
+.photos-preview{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px;}
+.preview-item{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:4/3;background:#EEE;}
+.preview-item img{width:100%;height:100%;object-fit:cover;display:block;}
+.preview-remove{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.65);color:white;border:none;font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.preview-badge{position:absolute;bottom:5px;left:5px;background:rgba(0,0,0,.6);color:white;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;font-family:'Montserrat',sans-serif;}
+.photo-count{font-size:11px;color:var(--or);font-weight:700;margin-top:10px;text-align:center;}
+
+/* ── BOUTONS PRINCIPAUX ── */
+.btn-primary{width:100%;padding:14px;background:var(--noir);color:var(--or);border:none;border-radius:8px;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn-primary:active{background:#333;}
+.btn-primary:disabled{background:#AAA;color:#DDD;cursor:not-allowed;}
+.btn-secondary{width:100%;padding:12px;background:white;color:var(--noir);border:1.5px solid #DDD;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:10px;}
+.btn-secondary:active{background:#F5F5F5;}
+.btn-or{background:var(--or);color:var(--noir);}
+
+/* ── LOADING ── */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,26,.92);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+.loading-overlay.active{display:flex;}
+.loading-spinner{width:52px;height:52px;border:3px solid rgba(212,160,23,.2);border-top-color:var(--or);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{color:var(--or);font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;letter-spacing:1px;}
+.loading-sub{color:#888;font-size:11px;font-family:'Montserrat',sans-serif;letter-spacing:1px;text-transform:uppercase;text-align:center;max-width:260px;}
+.loading-progress{width:200px;height:3px;background:rgba(212,160,23,.2);border-radius:2px;overflow:hidden;}
+.loading-bar{height:100%;background:var(--or);border-radius:2px;animation:progress 8s ease-in-out forwards;}
+@keyframes progress{0%{width:0%;}60%{width:75%;}90%{width:90%;}100%{width:95%;}}
+
+/* ── RÉSULTATS ── */
+.result-header{background:var(--noir);border-radius:10px;padding:18px 20px;margin-bottom:16px;border-left:4px solid var(--crit);}
+.result-statut{color:var(--crit);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.result-titre{color:var(--or);font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;}
+.result-score{color:#888;font-size:11px;margin-top:4px;}
+
+.recap-bar{display:flex;border-radius:8px;overflow:hidden;border:1px solid #DDD;margin-bottom:16px;}
+.recap-item{flex:1;padding:12px 8px;text-align:center;}
+.r-nb{font-size:26px;font-weight:700;font-family:'Cormorant Garamond',serif;}
+.r-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.r-crit{background:var(--crit-bg);color:var(--crit);border-right:1px solid #EEE;}
+.r-maj{background:var(--maj-bg);color:var(--maj);border-right:1px solid #EEE;}
+.r-min{background:#F5F7F8;color:#546E7A;border-right:1px solid #EEE;}
+.r-tot{background:#F0F0F0;color:var(--noir);}
+
+/* ── INFRACTION CARDS ── */
+.nc-card{border-radius:8px;margin-bottom:10px;overflow:hidden;border:1px solid #EEE;}
+.nc-header{display:flex;align-items:center;gap:7px;padding:8px 12px;flex-wrap:wrap;cursor:pointer;user-select:none;}
+.nc-header:active{opacity:.8;}
+.badge{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.b-id{background:var(--noir);color:var(--or);font-family:'Cormorant Garamond',serif;font-size:11px;}
+.b-crit{background:var(--crit);color:white;}
+.b-maj{background:var(--maj);color:white;}
+.b-min{background:#90A4AE;color:white;}
+.b-immed{background:var(--immed);color:white;}
+.b-urg24{background:var(--urg24);color:white;}
+.b-urg48{background:var(--urg48);color:white;}
+.b-planif{background:var(--planif);color:white;}
+.b-cat{background:none;border:1px solid #CCC;color:#555;}
+.b-photo{margin-left:auto;font-size:9px;color:#999;font-style:italic;}
+.nc-body{padding:10px 12px 12px;background:#FAFAFA;border-top:1px solid #EEE;display:none;}
+.nc-body.open{display:block;}
+.nc-el{font-size:12px;font-weight:600;color:var(--noir);margin-bottom:5px;line-height:1.5;}
+.nc-ref{font-size:10.5px;color:var(--immed);font-weight:600;margin-bottom:5px;display:flex;gap:4px;}
+.nc-ref::before{content:"⚖";flex-shrink:0;}
+.nc-action{font-size:11px;color:#444;line-height:1.6;display:flex;gap:5px;}
+.nc-action::before{content:"→";color:var(--or);font-weight:700;flex-shrink:0;}
+.h-crit{background:var(--crit-bg);}
+.h-maj{background:var(--maj-bg);}
+.h-min{background:#F5F7F8;}
+.chevron{margin-left:auto;font-size:12px;color:#999;transition:transform .2s;}
+.chevron.open{transform:rotate(180deg);}
+
+/* ── SIGNATURES ── */
+.sig-wrap{margin-bottom:14px;}
+.sig-wrap label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;display:block;margin-bottom:6px;}
+canvas.sig-canvas{border:1.5px solid #DDD;border-radius:6px;background:white;display:block;width:100%;height:80px;cursor:crosshair;touch-action:none;}
+canvas.sig-canvas:focus-within{border-color:var(--or);}
+.btn-effacer{font-size:10px;color:var(--crit);background:none;border:none;cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 0;display:block;}
+
+/* ── NOTES GÉNÉRALES ── */
+.notes-box{background:#FAFAFA;border-left:3px solid var(--or);padding:12px 14px;border-radius:0 6px 6px 0;font-size:12px;color:#444;line-height:1.6;margin-bottom:16px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--noir);color:var(--or);padding:10px 20px;border-radius:24px;font-size:12px;font-weight:600;font-family:'Montserrat',sans-serif;border:1px solid var(--or);opacity:0;transition:all .3s;z-index:1000;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── RESPONSIVE ── */
+@media print{
+  .app-header,.btn-primary,.btn-secondary,.btn-effacer,.step-controls{display:none!important;}
+  .step{display:block!important;}
+  body{background:white;}
+  .card{box-shadow:none;border:1px solid #EEE;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="app-logo">Verdict 360 AI<span>Inspection MAPAQ</span></div>
+  <div class="app-step-indicator">
+    <div class="step-dot active" id="dot-1"></div>
+    <div class="step-dot" id="dot-2"></div>
+    <div class="step-dot" id="dot-3"></div>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Analyse en cours…</div>
+  <div class="loading-sub" id="loading-msg">L'IA analyse vos photos selon les normes MAPAQ et HACCP</div>
+  <div class="loading-progress"><div class="loading-bar" id="loading-bar"></div></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<div class="container">
+
+<!-- ══ ÉTAPE 1 : SAISIE ══ -->
+<div class="step active" id="step-1">
+
+  <div class="card">
+    <div class="card-title">📋 Identification</div>
+    <div class="field"><label>Nom de l'établissement *</label><input type="text" id="f-etablissement" placeholder="ex : Restaurant Le Cachet"></div>
+    <div class="field"><label>Adresse</label><input type="text" id="f-adresse" placeholder="ex : 123 rue Principale, Gatineau"></div>
+    <div class="field-row">
+      <div class="field"><label>Responsable *</label><input type="text" id="f-responsable" placeholder="Nom complet"></div>
+      <div class="field"><label>Téléphone</label><input type="tel" id="f-tel" placeholder="(819) 000-0000"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Type d'établissement</label>
+        <select id="f-type">
+          <option>Cuisine commerciale</option>
+          <option>Restaurant</option>
+          <option>Traiteur</option>
+          <option>Épicerie / Dépanneur</option>
+          <option>Boulangerie / Pâtisserie</option>
+          <option>Cafétéria institutionnelle</option>
+          <option>Usine de transformation</option>
+          <option>Bar / Pub</option>
+        </select>
+      </div>
+      <div class="field"><label>Date d'inspection</label><input type="date" id="f-date"></div>
+    </div>
+    <div class="field"><label>Notes préliminaires</label><textarea id="f-notes" placeholder="Contexte de l'inspection, observations initiales…"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📷 Photos à analyser</div>
+    <div class="photo-zone" id="photo-zone">
+      <div class="photo-zone-icon">📸</div>
+      <div class="photo-zone-title">Ajouter des photos</div>
+      <div class="photo-zone-sub">Prenez jusqu'à 8 photos des zones à inspecter</div>
+      <div class="photo-btns">
+        <button class="btn-photo btn-cam" onclick="document.getElementById('input-camera').click()">📷 Caméra</button>
+        <button class="btn-photo btn-upload" onclick="document.getElementById('input-galerie').click()">🖼 Galerie</button>
+      </div>
+      <input type="file" id="input-camera" accept="image/*" capture="environment" style="display:none" onchange="handlePhotos(event)">
+      <input type="file" id="input-galerie" accept="image/*" multiple style="display:none" onchange="handlePhotos(event)">
+    </div>
+    <div class="photos-preview" id="photos-preview"></div>
+    <div class="photo-count" id="photo-count"></div>
+  </div>
+
+  <button class="btn-primary" id="btn-analyser" onclick="lancerAnalyse()" disabled>
+    <span>🔍</span> Analyser les photos
+  </button>
+  <p style="text-align:center;font-size:10px;color:#AAA;margin-top:8px;">L'IA MAPAQ analysera chaque photo selon les normes HACCP et le Règlement sur les aliments du Québec</p>
+
+</div>
+
+<!-- ══ ÉTAPE 2 : RÉSULTATS ══ -->
+<div class="step" id="step-2">
+
+  <div class="result-header" id="result-header">
+    <div class="result-statut" id="result-statut">⚠ NON CONFORME</div>
+    <div class="result-titre" id="result-etablissement">—</div>
+    <div class="result-score" id="result-score">Score IA : —</div>
+  </div>
+
+  <div class="recap-bar" id="recap-bar">
+    <div class="recap-item r-crit"><div class="r-nb" id="nb-crit">—</div><div class="r-lbl">Critiques</div></div>
+    <div class="recap-item r-maj"><div class="r-nb" id="nb-maj">—</div><div class="r-lbl">Majeures</div></div>
+    <div class="recap-item r-min"><div class="r-nb" id="nb-min">—</div><div class="r-lbl">Mineures</div></div>
+    <div class="recap-item r-tot"><div class="r-nb" id="nb-tot">—</div><div class="r-lbl">Total NC</div></div>
+  </div>
+
+  <div class="notes-box" id="notes-gen"></div>
+
+  <div id="nc-list"></div>
+
+  <button class="btn-primary btn-or" onclick="allerSignatures()">
+    <span>✍️</span> Procéder aux signatures
+  </button>
+  <button class="btn-secondary" onclick="retourEtape1()">← Modifier / Nouvelles photos</button>
+
+</div>
+
+<!-- ══ ÉTAPE 3 : SIGNATURES & PDF ══ -->
+<div class="step" id="step-3">
+
+  <div class="card">
+    <div class="card-title">✍️ Signatures</div>
+
+    <div class="sig-wrap">
+      <label>Signature du responsable de l'établissement</label>
+      <canvas class="sig-canvas" id="canvas-client"></canvas>
+      <button class="btn-effacer" onclick="effacer('canvas-client')">✕ Effacer</button>
+      <div style="margin-top:8px;">
+        <div class="field"><label>Nom du signataire client</label><input type="text" id="sig-nom-client" placeholder="Nom complet"></div>
+        <div class="field"><label>Titre</label><input type="text" id="sig-titre-client" placeholder="ex : Propriétaire, Gérant"></div>
+      </div>
+    </div>
+
+    <div class="sig-wrap" style="margin-top:8px;">
+      <label>Signature de l'auditeur — Verdict 360 AI</label>
+      <canvas class="sig-canvas" id="canvas-auditeur"></canvas>
+      <button class="btn-effacer" onclick="effacer('canvas-auditeur')">✕ Effacer</button>
+      <div style="margin-top:6px;font-size:11px;color:#555;line-height:1.8;">
+        <strong style="color:var(--noir);">Jacques Perrier</strong><br>
+        Auditeur en hygiène et salubrité alimentaire<br>
+        Expert des normes MAPAQ et HACCP
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📄 Générer le rapport</div>
+    <div class="field"><label>Réinspection prévue</label><input type="text" id="f-reinspection" placeholder="ex : 5 juin 2026"></div>
+    <div class="field"><label>Courriel du client (pour envoi)</label><input type="email" id="f-email-client" placeholder="client@email.com"></div>
+  </div>
+
+  <button class="btn-primary" onclick="genererRapportPDF()">
+    <span>📥</span> Générer & Télécharger le rapport PDF
+  </button>
+  <button class="btn-secondary" onclick="goStep(2)">← Retour aux résultats</button>
+
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ══ STATE ══
+const state = {
+  photos: [],       // {file, dataUrl, name}
+  analyse: null,    // JSON résultat IA
+  ref: null,        // numéro de référence
+};
+
+// ══ PHOTOS ══
+function handlePhotos(
+  if(!input || !input.files || !input.files.length) return;
+  var files = [];
+  for(var i=0; i<input.files.length; i++) files.push(input.files[i]);
+  var remaining = 8 - state.photos.length;
+  var toAdd = files.slice(0, remaining);
+  if(files.length > remaining) showToast('Maximum 8 photos atteint');
+
+  // Use FileReader with base64 for API compatibility
+  var idx = 0;
+  function readNext(){
+    if(idx >= toAdd.length){ renderPreviews(); return; }
+    var file = toAdd[idx]; idx++;
+    try {
+      var reader = new FileReader();
+      reader.onload = function(e){
+        state.photos.push({file: file, dataUrl: e.target.result, name: file.name});
+        renderPreviews();
+        readNext();
+      };
+      reader.onerror = function(){
+        // Fallback: use object URL for display, re-read later for API
+        var objUrl = URL.createObjectURL(file);
+        state.photos.push({file: file, dataUrl: objUrl, name: file.name, isObjectUrl: true});
+        renderPreviews();
+        readNext();
+      };
+      reader.readAsDataURL(file);
+    } catch(e) {
+      console.warn('read error', e);
+      readNext();
+    }
+  }
+  readNext();
+  try{ input.value = ''; }catch(e){}
+}
+
+function renderPreviews(){
+  try {
+    const grid = document.getElementById('photos-preview');
+    const zone = document.getElementById('photo-zone');
+    const count = document.getElementById('photo-count');
+    const btn = document.getElementById('btn-analyser');
+    if(!grid || !zone || !count || !btn) return;
+
+    var html = '';
+    for(var i=0; i<state.photos.length; i++){
+      var p = state.photos[i];
+      html += '<div class="preview-item">' +
+        '<img src="' + p.dataUrl + '" alt="Photo '+(i+1)+'" onerror="this.style.display='none'">' +
+        '<button class="preview-remove" onclick="removePhoto('+i+')">✕</button>' +
+        '<div class="preview-badge">Photo '+(i+1)+'</div>' +
+        '</div>';
+    }
+    grid.innerHTML = html;
+
+    var n = state.photos.length;
+    count.textContent = n ? n + ' photo' + (n>1?'s':'') + ' sélectionnée' + (n>1?'s':'') : '';
+    zone.classList.toggle('has-photos', n > 0);
+    var etab = document.getElementById('f-etablissement');
+    var resp = document.getElementById('f-responsable');
+    btn.disabled = (n === 0 || !etab || !etab.value.trim() || !resp || !resp.value.trim());
+  } catch(e){ console.warn('renderPreviews error', e); }
+}
+
+function removePhoto(i){
+  state.photos.splice(i,1);
+  renderPreviews();
+}
+
+// Validate form fields for button enable
+['f-etablissement','f-responsable'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderPreviews);
+});
+
+// ══ ANALYSE IA ══
+async function lancerAnalyse(){ try {
+  const etablissement = document.getElementById('f-etablissement').value.trim();
+  const responsable = document.getElementById('f-responsable').value.trim();
+  if(!etablissement || !responsable){ showToast('Veuillez remplir les champs obligatoires'); return; }
+  if(!state.photos.length){ showToast('Ajoutez au moins une photo'); return; }
+
+  // Générer référence
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  state.ref = `MAPAQ-${now.getFullYear()}-${pad(now.getMonth()+1)}${pad(now.getDate())}-IA${pad(Math.floor(Math.random()*99)+1)}`;
+
+  showLoading(true, 'Envoi des photos à l'IA…');
+
+  // Build message content — handle both base64 and objectURL photos
+  updateLoadingMsg('Préparation des photos…');
+  async function buildContent(){
+    const content = [];
+    for(var i=0; i<state.photos.length; i++){
+      var p = state.photos[i];
+      var dataUrl = p.dataUrl;
+      // If objectURL, re-read as base64
+      if(p.isObjectUrl || dataUrl.startsWith('blob:')){
+        try {
+          dataUrl = await new Promise(function(resolve, reject){
+            var r = new FileReader();
+            r.onload = function(e){ resolve(e.target.result); };
+            r.onerror = reject;
+            r.readAsDataURL(p.file);
+          });
+        } catch(e){ console.warn('re-read failed', e); continue; }
+      }
+      var b64 = dataUrl.split(',')[1];
+      var mime = dataUrl.split(';')[0].split(':')[1] || 'image/jpeg';
+      content.push({type:'text', text:'Photo '+(i+1)+' :'});
+      content.push({type:'image', source:{type:'base64', media_type: mime, data: b64}});
+    }
+    content.push({type:'text', text:'Analyse ces '+state.photos.length+' photo(s) de cuisine commerciale et génère le rapport JSON d'inspection MAPAQ complet. Établissement : "'+etablissement+'". Responsable : "'+responsable+'".'});
+    return content;
+  }
+  const content = await buildContent();
+
+  const systemPrompt = `Tu es un inspecteur expert en salubrité alimentaire, certifié HACCP et spécialiste de la réglementation du MAPAQ (Québec).
+
+Analyse visuellement les photos fournies et identifie toute infraction ou risque pour la salubrité alimentaire.
+
+Instructions :
+1. Risques : contamination croisée, hygiène du personnel, équipements, entreposage/températures.
+2. Objectif et factuel. Ne présume pas hors cadre.
+3. Si incertain, réduis le score de confiance.
+4. Identifie la photo source pour chaque infraction.
+5. Délai : Critique→IMMÉDIAT | Majeure→URG_24H ou URG_48H | Mineure→PLANIFIÉ
+6. Cite l'article MAPAQ ou principe HACCP.
+
+Score confiance (0-100): 90-100=visible sans ambiguïté | 70-89=probable | 50-69=possible | <50=indicatif
+
+Réponds UNIQUEMENT en JSON valide, sans backticks, en FRANÇAIS :
+{
+  "inspection_conforme": false,
+  "score_confiance_ia": 91,
+  "notes_generales": "...",
+  "resume": {"total_infractions":0,"critiques":0,"majeures":0,"mineures":0},
+  "infractions_detectees": [
+    {
+      "id": "NC-001",
+      "photo_source": "Photo 1",
+      "element_fautif": "...",
+      "categorie_risque": "Contamination croisée|Hygiène personnelle|Équipement|Stockage",
+      "niveau_gravite": "Critique|Majeur|Mineur",
+      "delai_action": "IMMÉDIAT|URG_24H|URG_48H|PLANIFIÉ",
+      "reference_reglementaire": "MAPAQ art. XX · HACCP Principe X",
+      "score_confiance_item": 91,
+      "action_corrective_recommandee": "..."
+    }
+  ]
+}`;
+
+  try {
+    updateLoadingMsg('Analyse MAPAQ en cours…');
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type':'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        system: systemPrompt,
+        messages: [{role:'user', content}]
+      })
+    });
+    const data = await resp.json();
+    if(!data || !data.content || !data.content[0]) throw new Error('Réponse API invalide: ' + JSON.stringify(data));
+    let raw = data.content[0].text.trim();
+    raw = raw.replace(/^```json|^```|```$/gm,'').trim();
+    state.analyse = JSON.parse(raw);
+    showLoading(false);
+    afficherResultats();
+  } catch(err) {
+    showLoading(false);
+    const msg = err && err.message ? err.message : String(err);
+    showToast('Erreur: ' + msg.substring(0,60));
+    console.error('Analyse error:', err);
+  }
+  } catch(outerErr) {
+    showLoading(false);
+    showToast('Erreur inattendue — voir console');
+    console.error('Outer error:', outerErr);
+  }
+}
+
+// ══ AFFICHAGE RÉSULTATS ══
+function afficherResultats(){
+  const a = state.analyse;
+  const etablissement = document.getElementById('f-etablissement').value.trim();
+
+  document.getElementById('result-etablissement').textContent = etablissement;
+  document.getElementById('result-score').textContent = `Score confiance IA : ${a.score_confiance_ia}/100 · Réf. ${state.ref}`;
+  document.getElementById('result-statut').textContent = a.inspection_conforme ? '✅ CONFORME' : '⚠ NON CONFORME';
+  document.getElementById('result-header').style.borderLeftColor = a.inspection_conforme ? 'var(--conf)' : 'var(--crit)';
+
+  document.getElementById('notes-gen').textContent = a.notes_generales;
+  document.getElementById('nb-crit').textContent = a.resume.critiques;
+  document.getElementById('nb-maj').textContent = a.resume.majeures;
+  document.getElementById('nb-min').textContent = a.resume.mineures;
+  document.getElementById('nb-tot').textContent = a.resume.total_infractions;
+
+  // Render NC cards
+  const list = document.getElementById('nc-list');
+  list.innerHTML = '';
+  (a.infractions_detectees || []).forEach((nc, idx) => {
+    const grav = (nc.niveau_gravite||'').toLowerCase();
+    const hClass = grav.includes('crit') ? 'h-crit' : grav.includes('maj') ? 'h-maj' : 'h-min';
+    const bGrav = grav.includes('crit') ? 'b-crit' : grav.includes('maj') ? 'b-maj' : 'b-min';
+    const delai = nc.delai_action||'';
+    const bDelai = delai==='IMMÉDIAT'?'b-immed':delai==='URG_24H'?'b-urg24':delai==='URG_48H'?'b-urg48':'b-planif';
+    const delaiLabel = delai==='URG_24H'?'URG. 24H':delai==='URG_48H'?'URG. 48H':delai;
+
+    const card = document.createElement('div');
+    card.className = 'nc-card';
+    card.innerHTML = `
+      <div class="nc-header ${hClass}" onclick="toggleNC(this)">
+        <span class="badge b-id">${nc.id||'NC'}</span>
+        <span class="badge ${bGrav}">${nc.niveau_gravite||'—'}</span>
+        <span class="badge ${bDelai}">${delaiLabel}</span>
+        <span class="badge b-cat">${nc.categorie_risque||'—'}</span>
+        <span class="b-photo">📷 ${nc.photo_source||'—'}</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="nc-body">
+        <div class="nc-el">${nc.element_fautif||'—'}</div>
+        <div class="nc-ref">${nc.reference_reglementaire||'—'}</div>
+        <div class="nc-action">${nc.action_corrective_recommandee||'—'}</div>
+      </div>`;
+    list.appendChild(card);
+  });
+
+  goStep(2);
+}
+
+function toggleNC(header){
+  const body = header.nextElementSibling;
+  const chev = header.querySelector('.chevron');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+// ══ NAVIGATION ══
+function goStep(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById(`step-${n}`).classList.add('active');
+  document.querySelectorAll('.step-dot').forEach((d,i)=>{
+    d.classList.remove('active','done');
+    if(i+1 < n) d.classList.add('done');
+    if(i+1 === n) d.classList.add('active');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function retourEtape1(){ goStep(1); }
+function allerSignatures(){
+  initCanvas('canvas-client');
+  initCanvas('canvas-auditeur');
+  goStep(3);
+}
+
+// ══ SIGNATURES ══
+function initCanvas(id){
+  const c = document.getElementById(id); if(!c) return;
+  const ctx = c.getContext('2d');
+  const r = c.getBoundingClientRect();
+  c.width = r.width * window.devicePixelRatio;
+  c.height = r.height * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  ctx.strokeStyle='#1A1A1A'; ctx.lineWidth=1.5; ctx.lineCap='round';
+  let d = false;
+  const pos = e => { const r=c.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return{x:t.clientX-r.left,y:t.clientY-r.top}; };
+  // Remove old listeners by cloning
+  const nc = c.cloneNode(true);
+  c.parentNode.replaceChild(nc, c);
+  const ctx2 = nc.getContext('2d');
+  nc.width = r.width * window.devicePixelRatio;
+  nc.height = r.height * window.devicePixelRatio;
+  ctx2.scale(window.devicePixelRatio, window.devicePixelRatio);
+  ctx2.strokeStyle='#1A1A1A'; ctx2.lineWidth=1.5; ctx2.lineCap='round';
+  const pos2 = e => { const r=nc.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return{x:t.clientX-r.left,y:t.clientY-r.top}; };
+  nc.addEventListener('mousedown',e=>{d=true;const p=pos2(e);ctx2.beginPath();ctx2.moveTo(p.x,p.y);});
+  nc.addEventListener('mousemove',e=>{if(!d)return;const p=pos2(e);ctx2.lineTo(p.x,p.y);ctx2.stroke();});
+  nc.addEventListener('mouseup',()=>d=false);
+  nc.addEventListener('mouseleave',()=>d=false);
+  nc.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();d=true;const p=pos2(e);ctx2.beginPath();ctx2.moveTo(p.x,p.y);document.body.style.overflow='hidden';},{passive:false});
+  nc.addEventListener('touchmove',e=>{e.preventDefault();e.stopPropagation();if(!d)return;const p=pos2(e);ctx2.lineTo(p.x,p.y);ctx2.stroke();},{passive:false});
+  nc.addEventListener('touchend',e=>{e.preventDefault();d=false;document.body.style.overflow='';},{passive:false});
+  nc.addEventListener('touchcancel',()=>{d=false;document.body.style.overflow='';});
+}
+
+function effacer(id){
+  try {
+    const c=document.getElementById(id);
+    if(c) c.getContext('2d').clearRect(0,0,c.width,c.height);
+  } catch(e){ console.warn('effacer error',e); }
+}
+
+// ══ GÉNÉRATION RAPPORT PDF ══
+function genererRapportPDF(){
+  if(!state.analyse){ showToast('Aucune analyse disponible'); return; }
+  const a = state.analyse;
+  const etablissement = document.getElementById('f-etablissement').value||'—';
+  const adresse = document.getElementById('f-adresse').value||'—';
+  const responsable = document.getElementById('f-responsable').value||'—';
+  const tel = document.getElementById('f-tel').value||'—';
+  const type = document.getElementById('f-type').value||'—';
+  const dateVal = document.getElementById('f-date').value;
+  const dateAffichee = dateVal ? new Date(dateVal).toLocaleDateString('fr-CA',{day:'numeric',month:'long',year:'numeric'}) : new Date().toLocaleDateString('fr-CA',{day:'numeric',month:'long',year:'numeric'});
+  const notes = document.getElementById('f-notes').value||'';
+  const reinspection = document.getElementById('f-reinspection').value||'À déterminer';
+  const emailClient = document.getElementById('f-email-client').value||'—';
+  const nomClient = document.getElementById('sig-nom-client').value||'—';
+  const titreClient = document.getElementById('sig-titre-client').value||'—';
+
+  // Get signatures as data URLs
+  const sigClient = document.getElementById('canvas-client')?.toDataURL()||'';
+  const sigAuditeur = document.getElementById('canvas-auditeur')?.toDataURL()||'';
+
+  // Build NC rows HTML
+  const ncHTML = (a.infractions_detectees||[]).map(nc => {
+    const grav = (nc.niveau_gravite||'').toLowerCase();
+    const hClass = grav.includes('crit')?'h-crit':grav.includes('maj')?'h-maj':'h-min';
+    const bGrav = grav.includes('crit')?'b-crit':grav.includes('maj')?'b-maj':'b-min';
+    const delai = nc.delai_action||'';
+    const bDelai = delai==='IMMÉDIAT'?'b-immed':delai==='URG_24H'?'b-urg24':delai==='URG_48H'?'b-urg48':'b-planif';
+    const delaiLabel = delai==='URG_24H'?'URG. 24H':delai==='URG_48H'?'URG. 48H':delai;
+    return `<div style="border-radius:6px;margin-bottom:10px;overflow:hidden;border:1px solid #EEE;page-break-inside:avoid;">
+      <div style="display:flex;align-items:center;gap:7px;padding:8px 12px;flex-wrap:wrap;" class="${hClass}">
+        <span class="badge b-id">${nc.id}</span>
+        <span class="badge ${bGrav}">${nc.niveau_gravite}</span>
+        <span class="badge ${bDelai}">${delaiLabel}</span>
+        <span class="badge b-cat">${nc.categorie_risque}</span>
+        <span style="margin-left:auto;font-size:9px;color:#888;font-style:italic;">📷 ${nc.photo_source||'—'} · ${nc.score_confiance_item||'—'}/100</span>
+      </div>
+      <div style="padding:9px 12px 11px;background:#FAFAFA;border-top:1px solid #EEE;">
+        <div style="font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:5px;line-height:1.5;">${nc.element_fautif}</div>
+        <div style="font-size:10.5px;color:#8B1A1A;font-weight:600;margin-bottom:5px;">⚖ ${nc.reference_reglementaire||'—'}</div>
+        <div style="font-size:11px;color:#444;line-height:1.6;">→ ${nc.action_corrective_recommandee}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Photos HTML
+  const photosHTML = state.photos.slice(0,4).map((p,i) => `
+    <div style="border-radius:6px;overflow:hidden;border:1px solid #DDD;">
+      <div style="background:#1A1A1A;color:#D4A017;font-size:10px;font-weight:700;padding:6px 10px;text-transform:uppercase;letter-spacing:1px;">Photo ${i+1}</div>
+      <img src="${p.dataUrl}" style="width:100%;height:140px;object-fit:cover;display:block;opacity:0.9;">
+    </div>`).join('');
+
+  const reportHTML = `<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Montserrat',sans-serif;background:white;color:#2C2C2C;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:12px;}
+.badge{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:20px;white-space:nowrap;display:inline-block;}
+.b-id{background:#1A1A1A;color:#D4A017;font-family:'Cormorant Garamond',serif;font-size:11px;}
+.b-crit{background:#FF7043;color:white;}.b-maj{background:#FFA726;color:white;}.b-min{background:#90A4AE;color:white;}
+.b-immed{background:#8B1A1A;color:white;}.b-urg24{background:#E65100;color:white;}.b-urg48{background:#BF360C;color:white;}.b-planif{background:#546E7A;color:white;}
+.b-cat{border:1px solid #CCC;color:#555;}
+.h-crit{background:#FFF3F0;}.h-maj{background:#FFF8F0;}.h-min{background:#F5F7F8;}
+@media print{body{margin:0;}@page{margin:15mm;size:A4;}}
+</style></head><body>
+<div style="background:#1A1A1A;border-bottom:4px solid #D4A017;padding:22px 30px;display:flex;justify-content:space-between;align-items:center;">
+  <div style="font-family:'Cormorant Garamond',serif;color:#D4A017;font-size:22px;font-weight:700;">Verdict 360 AI<span style="display:block;font-size:10px;font-family:'Montserrat',sans-serif;color:#888;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Rapport d'inspection MAPAQ</span></div>
+  <div style="text-align:right;color:#CCC;font-size:10px;line-height:1.8;"><strong style="color:#D4A017;font-size:12px;display:block;">RAPPORT D'INSPECTION</strong>Réf. : ${state.ref}<br>${dateAffichee} · Score IA : ${a.score_confiance_ia}/100</div>
+</div>
+<div style="background:${a.inspection_conforme?'#66BB6A':'#FF7043'};color:white;text-align:center;padding:9px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">
+  ${a.inspection_conforme?'✅ CONFORME':'⚠ NON CONFORME — '+a.resume.critiques+' CRITIQUE(S) · '+a.resume.majeures+' MAJEURE(S) · '+a.resume.mineures+' MINEURE(S)'}
+</div>
+<div style="padding:20px 30px;">
+  <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;border-bottom:2px solid #D4A017;padding-bottom:5px;margin-bottom:12px;">Identification de l'établissement</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background:#F5F5F5;padding:14px;border-radius:6px;margin-bottom:16px;">
+    ${[['Établissement',etablissement],['Adresse',adresse],['Responsable',responsable],['Téléphone',tel],['Type',type],['Date',dateAffichee],['Auditeur','Jacques Perrier'],['Référentiel','MAPAQ / HACCP / Q-2, r.26.1'],['Réinspection',reinspection]].map(([l,v])=>`<div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:2px;">${l}</div><div style="font-size:12px;font-weight:600;">${v}</div></div>`).join('')}
+  </div>
+  <div style="display:flex;border-radius:6px;overflow:hidden;border:1px solid #DDD;margin-bottom:16px;">
+    <div style="flex:1;padding:10px;text-align:center;background:#FFF3F0;border-right:1px solid #EEE;"><div style="font-size:24px;font-weight:700;font-family:'Cormorant Garamond',serif;color:#FF7043;">${a.resume.critiques}</div><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#FF7043;">Critiques</div></div>
+    <div style="flex:1;padding:10px;text-align:center;background:#FFF8F0;border-right:1px solid #EEE;"><div style="font-size:24px;font-weight:700;font-family:'Cormorant Garamond',serif;color:#FFA726;">${a.resume.majeures}</div><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#FFA726;">Majeures</div></div>
+    <div style="flex:1;padding:10px;text-align:center;background:#F5F7F8;border-right:1px solid #EEE;"><div style="font-size:24px;font-weight:700;font-family:'Cormorant Garamond',serif;color:#546E7A;">${a.resume.mineures}</div><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#546E7A;">Mineures</div></div>
+    <div style="flex:1;padding:10px;text-align:center;background:#F0F0F0;"><div style="font-size:24px;font-weight:700;font-family:'Cormorant Garamond',serif;">${a.resume.total_infractions}</div><div style="font-size:9px;font-weight:700;text-transform:uppercase;">Total NC</div></div>
+  </div>
+  <div style="background:#FAFAFA;border-left:3px solid #D4A017;padding:10px 14px;border-radius:0 6px 6px 0;font-size:11.5px;color:#444;line-height:1.6;margin-bottom:16px;">${a.notes_generales}</div>
+  ${state.photos.length?`<div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;border-bottom:2px solid #D4A017;padding-bottom:5px;margin-bottom:12px;">Photos soumises</div><div style="display:grid;grid-template-columns:repeat(${Math.min(state.photos.length,4)},1fr);gap:10px;margin-bottom:16px;">${photosHTML}</div>`:''}
+  <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;border-bottom:2px solid #D4A017;padding-bottom:5px;margin-bottom:12px;">Infractions détectées</div>
+  ${ncHTML}
+  ${notes?`<div style="margin-top:12px;background:#FAFAFA;border-left:3px solid #D4A017;padding:10px 14px;font-size:11px;color:#444;line-height:1.6;"><strong>Notes préliminaires :</strong> ${notes}</div>`:''}
+  <div style="margin-top:20px;border-top:2px solid #D4A017;padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:24px;background:#F5F5F5;padding:16px;border-radius:6px;">
+    <div>
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:6px;">Signature du responsable</div>
+      ${sigClient?`<img src="${sigClient}" style="width:100%;height:60px;object-fit:contain;border:1px solid #DDD;background:white;border-radius:4px;">`:'<div style="height:60px;border:1px solid #DDD;background:white;border-radius:4px;"></div>'}
+      <div style="font-size:10px;color:#555;margin-top:5px;line-height:1.7;"><strong style="color:#1A1A1A;">${nomClient}</strong><br>${titreClient}<br>${dateAffichee}</div>
+    </div>
+    <div>
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:6px;">Signature de l'auditeur</div>
+      ${sigAuditeur?`<img src="${sigAuditeur}" style="width:100%;height:60px;object-fit:contain;border:1px solid #DDD;background:white;border-radius:4px;">`:'<div style="height:60px;border:1px solid #DDD;background:white;border-radius:4px;"></div>'}
+      <div style="font-size:10px;color:#555;margin-top:5px;line-height:1.7;"><strong style="color:#1A1A1A;">Jacques Perrier</strong><br>Auditeur en hygiène et salubrité alimentaire<br>Expert des normes MAPAQ et HACCP</div>
+    </div>
+  </div>
+</div>
+<div style="background:#1A1A1A;color:#888;text-align:center;padding:12px;font-size:9px;letter-spacing:1px;border-top:2px solid #D4A017;margin-top:0;">
+  <strong style="color:#D4A017;">Verdict 360 AI</strong> — verdict360ai.com — info@verdict360ai.com — +1 (873) 822-1455<br>
+  ${state.ref} · Ce rapport ne remplace pas une inspection officielle du MAPAQ.
+</div>
+<script>window.onload=()=>{window.print();}<\/script>
+</body></html>`;
+
+  const blob = new Blob([reportHTML], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a2 = document.createElement('a');
+  a2.href = url;
+  a2.download = `rapport-${etablissement.replace(/\s+/g,'-').toLowerCase()}-${state.ref}.html`;
+  a2.click();
+  URL.revokeObjectURL(url);
+  showToast('Rapport généré — ouvrez dans Safari pour PDF');
+}
+
+// ══ UTILS ══
+function showLoading(show, msg=''){
+  const el = document.getElementById('loading');
+  el.classList.toggle('active', show);
+  if(msg) document.getElementById('loading-msg').textContent = msg;
+  if(show){
+    // Reset progress bar animation
+    const bar = document.getElementById('loading-bar');
+    bar.style.animation='none';
+    bar.offsetHeight;
+    bar.style.animation='progress 12s ease-in-out forwards';
+  }
+}
+function updateLoadingMsg(msg){ document.getElementById('loading-msg').textContent = msg; }
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// Set today's date — Safari iOS compatible
+window.addEventListener('load',()=>{
+  try {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth()+1).padStart(2,'0');
+    const d = String(now.getDate()).padStart(2,'0');
+    const df = document.getElementById('f-date');
+    if(df) df.value = y+'-'+m+'-'+d;
+  } catch(e){ console.warn('date init',e); }
+});
+</script>
+</body>
+</html>
