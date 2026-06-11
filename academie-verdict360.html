@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="ACADÉMIE Verdict 360 AI — Formation en hygiène et salubrité alimentaire. Programmes Manipulateur d'aliments et Gestionnaire d'établissement, basés sur le Guide 5M du MAPAQ.">
+<title>ACADÉMIE — Verdict 360 AI</title>
+<style>
+:root{
+  --noir:#0A0A0A; --noir2:#1A1A1A; --or:#D4A017; --or2:#FFD700;
+  --vert:#1B5E20; --vertpale:#C8E6C9; --crit:#FF7043; --maj:#FFA726; --conf:#66BB6A;
+  --blanc:#FFFFFF; --gris:#8A8378; --fond:#F7F5F0; --carte:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;background:var(--fond);color:var(--noir);line-height:1.55;-webkit-text-size-adjust:100%}
+.serif{font-family:Georgia,'Times New Roman',serif}
+
+/* ===== EN-TÊTE ===== */
+header{background:var(--noir);border-bottom:3px solid var(--or);padding:18px 20px;position:sticky;top:0;z-index:50}
+.head-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.marque{color:var(--blanc);font-weight:700;font-size:15px;letter-spacing:.5px}
+.marque span{color:var(--or)}
+.badge-acad{background:var(--or);color:var(--noir);font-size:11px;font-weight:800;letter-spacing:1.5px;padding:4px 10px;border-radius:3px}
+
+/* ===== HÉROS ===== */
+.heros{background:var(--noir);color:var(--blanc);padding:44px 20px 50px;text-align:center}
+.heros-inner{max-width:680px;margin:0 auto}
+.heros .eyebrow{color:var(--or);font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px}
+.heros h1{font-family:Georgia,serif;font-size:clamp(30px,7vw,46px);font-weight:700;line-height:1.15;margin-bottom:14px}
+.heros h1 em{color:var(--or2);font-style:normal}
+.heros p{color:#CFC9BD;font-size:16px;max-width:520px;margin:0 auto 26px}
+.heros .pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.pill{border:1px solid var(--or);color:var(--or2);font-size:12px;font-weight:600;padding:6px 14px;border-radius:30px}
+
+/* ===== CHOIX PROGRAMME ===== */
+.choix{max-width:860px;margin:-28px auto 0;padding:0 16px;display:grid;grid-template-columns:1fr;gap:14px;position:relative;z-index:5}
+@media(min-width:640px){.choix{grid-template-columns:1fr 1fr}}
+.prog-card{background:var(--carte);border-radius:14px;padding:24px 22px;box-shadow:0 8px 28px rgba(10,10,10,.14);cursor:pointer;border:2px solid transparent;transition:border-color .2s, transform .15s}
+.prog-card:active{transform:scale(.985)}
+.prog-card.actif{border-color:var(--or)}
+.prog-card .ico{font-size:30px;margin-bottom:8px}
+.prog-card h2{font-family:Georgia,serif;font-size:21px;margin-bottom:6px}
+.prog-card p{font-size:14px;color:#555;margin-bottom:14px}
+.prog-card .meta{display:flex;gap:14px;font-size:12px;font-weight:700;color:var(--or);letter-spacing:.5px}
+.btn{display:inline-block;background:var(--noir);color:var(--or2);border:none;font-size:14px;font-weight:700;padding:12px 22px;border-radius:8px;cursor:pointer;letter-spacing:.5px;width:100%;text-align:center;margin-top:14px}
+.btn.or{background:var(--or);color:var(--noir)}
+.btn:active{opacity:.85}
+
+/* ===== SECTIONS PROGRAMME ===== */
+.programme{display:none;max-width:860px;margin:0 auto;padding:34px 16px 10px}
+.programme.visible{display:block}
+.prog-titre{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.prog-titre .num{background:var(--noir);color:var(--or2);font-weight:800;font-size:13px;letter-spacing:1px;padding:6px 12px;border-radius:4px}
+.prog-titre h2{font-family:Georgia,serif;font-size:24px}
+.prog-sous{color:#666;font-size:14px;margin-bottom:22px}
+
+/* Barre de progression */
+.progress-wrap{background:#E8E4DB;border-radius:30px;height:10px;margin-bottom:26px;overflow:hidden}
+.progress-bar{background:linear-gradient(90deg,var(--or),var(--or2));height:100%;width:0%;border-radius:30px;transition:width .4s}
+
+/* Leçons accordéon */
+.lecon{background:var(--carte);border-radius:12px;margin-bottom:12px;box-shadow:0 2px 10px rgba(10,10,10,.06);overflow:hidden}
+.lecon-head{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.lecon-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--noir);color:var(--or2);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center}
+.lecon.lue .lecon-num{background:var(--vert);color:var(--blanc)}
+.lecon-head h3{font-size:15px;font-weight:700;flex:1}
+.lecon-head .fleche{color:var(--or);font-size:18px;transition:transform .25s}
+.lecon.ouverte .fleche{transform:rotate(90deg)}
+.lecon-corps{display:none;padding:0 18px 18px 18px;font-size:14.5px;color:#333}
+.lecon.ouverte .lecon-corps{display:block}
+.lecon-corps h4{font-size:13px;color:var(--or);text-transform:uppercase;letter-spacing:1.2px;margin:16px 0 6px}
+.lecon-corps ul{list-style:none;margin:8px 0}
+.lecon-corps li{padding:7px 0 7px 26px;position:relative;border-bottom:1px solid #F0EDE6}
+.lecon-corps li:last-child{border-bottom:none}
+.lecon-corps li:before{content:"◆";color:var(--or);position:absolute;left:4px;font-size:10px;top:10px}
+.alerte{background:#FFF3E0;border-left:4px solid var(--maj);padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13.5px}
+.alerte.crit{background:#FBE9E7;border-left-color:var(--crit)}
+.alerte.ok{background:var(--vertpale);border-left-color:var(--vert)}
+.alerte b{display:block;margin-bottom:2px}
+.regle-or{background:var(--noir);color:var(--blanc);border-radius:10px;padding:14px 16px;margin:14px 0;font-size:14px}
+.regle-or b{color:var(--or2)}
+.btn-lu{background:var(--vertpale);color:var(--vert);border:none;font-weight:700;font-size:13px;padding:10px 16px;border-radius:8px;cursor:pointer;margin-top:14px;width:100%}
+.lecon.lue .btn-lu{background:var(--vert);color:var(--blanc)}
+
+/* Tableau températures */
+.t-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+.t-table th{background:var(--noir);color:var(--or2);padding:9px 8px;text-align:left;font-size:12px;letter-spacing:.5px}
+.t-table td{padding:9px 8px;border-bottom:1px solid #EEE9E0}
+.t-table tr:nth-child(even) td{background:#FAF8F3}
+
+/* ===== QUIZ ===== */
+.quiz-bloc{background:var(--noir);border-radius:16px;padding:26px 20px;margin:26px 0 40px;color:var(--blanc)}
+.quiz-bloc .eyebrow{color:var(--or);font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px}
+.quiz-bloc h3{font-family:Georgia,serif;font-size:22px;margin-bottom:6px}
+.quiz-bloc .quiz-intro{color:#CFC9BD;font-size:14px;margin-bottom:18px}
+.q-compteur{color:var(--or2);font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:10px}
+.q-question{font-size:16.5px;font-weight:700;margin-bottom:16px;line-height:1.4}
+.q-opt{display:block;width:100%;text-align:left;background:var(--noir2);color:var(--blanc);border:1.5px solid #3A3A3A;border-radius:10px;padding:13px 15px;font-size:14.5px;margin-bottom:10px;cursor:pointer}
+.q-opt:active{border-color:var(--or)}
+.q-opt.bonne{background:var(--vert);border-color:var(--conf);color:var(--blanc)}
+.q-opt.mauvaise{background:#5B1F12;border-color:var(--crit)}
+.q-explic{background:var(--noir2);border-left:4px solid var(--or);padding:12px 14px;border-radius:0 8px 8px 0;font-size:13.5px;color:#DDD6C9;margin:6px 0 14px;display:none}
+.q-suivant{display:none;background:var(--or);color:var(--noir);border:none;font-weight:800;font-size:14px;padding:13px 22px;border-radius:8px;cursor:pointer;width:100%;letter-spacing:.5px}
+
+/* Résultat */
+.q-resultat{display:none;text-align:center;padding:10px 0}
+.score-cercle{width:150px;height:150px;border-radius:50%;margin:14px auto 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:6px solid var(--or)}
+.score-cercle.reussi{border-color:var(--conf)}
+.score-cercle.echec{border-color:var(--crit)}
+.score-cercle .pct{font-size:38px;font-weight:800;color:var(--or2)}
+.score-cercle.reussi .pct{color:var(--conf)}
+.score-cercle.echec .pct{color:var(--crit)}
+.score-cercle .lab{font-size:11px;letter-spacing:2px;color:#CFC9BD;text-transform:uppercase}
+.q-verdict{font-family:Georgia,serif;font-size:22px;margin-bottom:8px}
+.q-msg{color:#CFC9BD;font-size:14px;max-width:420px;margin:0 auto 20px}
+
+/* ===== PIED ===== */
+footer{background:var(--noir);border-top:3px solid var(--or);color:#CFC9BD;padding:34px 20px;text-align:center;font-size:13px;margin-top:30px}
+footer .f-marque{color:var(--blanc);font-weight:700;font-size:16px;margin-bottom:6px}
+footer .f-marque span{color:var(--or)}
+footer .f-titre{color:var(--or2);font-size:13px;margin-bottom:14px}
+footer a{color:var(--or2);text-decoration:none}
+footer .f-note{font-size:11.5px;color:#8A8378;max-width:520px;margin:14px auto 0;line-height:1.6}
+@media print{header{position:static}.q-opt{border-color:#999}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <div class="marque">VERDICT <span>360</span> AI</div>
+    <div class="badge-acad">ACADÉMIE</div>
+  </div>
+</header>
+
+<section class="heros">
+  <div class="heros-inner">
+    <div class="eyebrow">Module Académie · Formation 5M</div>
+    <h1>Former votre équipe.<br><em>Protéger votre permis.</em></h1>
+    <p>Deux programmes de formation interne en hygiène et salubrité alimentaire, basés sur le Guide des bonnes pratiques (5M) du MAPAQ. Leçons courtes, quiz interactif, résultat immédiat.</p>
+    <div class="pills">
+      <div class="pill">📱 100% mobile</div>
+      <div class="pill">🇫🇷 En français</div>
+      <div class="pill">✅ Quiz noté</div>
+    </div>
+  </div>
+</section>
+
+<div class="choix">
+  <div class="prog-card" id="card-A" onclick="ouvrirProgramme('A')">
+    <div class="ico">🧤</div>
+    <h2>Manipulateur d'aliments</h2>
+    <p>Pour cuisiniers, serveurs, plongeurs et tout employé qui touche aux aliments. Les gestes essentiels du quotidien.</p>
+    <div class="meta"><span>6 LEÇONS</span><span>QUIZ 10 QUESTIONS</span><span>≈ 45 MIN</span></div>
+    <button class="btn or" type="button">Commencer la formation →</button>
+  </div>
+  <div class="prog-card" id="card-B" onclick="ouvrirProgramme('B')">
+    <div class="ico">📋</div>
+    <h2>Gestionnaire d'établissement</h2>
+    <p>Pour propriétaires, chefs et gérants. Vos obligations légales, le plan HACCP et la gestion d'une inspection MAPAQ.</p>
+    <div class="meta"><span>6 LEÇONS</span><span>QUIZ 10 QUESTIONS</span><span>≈ 60 MIN</span></div>
+    <button class="btn" type="button">Commencer la formation →</button>
+  </div>
+</div>
+
+<!-- ============ PROGRAMME A : MANIPULATEUR ============ -->
+<section class="programme" id="prog-A">
+  <div class="prog-titre"><div class="num">PROGRAMME A</div><h2>Manipulateur d'aliments</h2></div>
+  <p class="prog-sous">Lisez chaque leçon, marquez-la comme lue, puis passez le quiz final.</p>
+  <div class="progress-wrap"><div class="progress-bar" id="bar-A"></div></div>
+
+  <div class="lecon" data-prog="A">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">1</div><h3>Hygiène personnelle</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <h4>Le lavage des mains — votre outil n°1</h4>
+      <ul>
+        <li>Eau tiède + savon, frotter <b>20 secondes minimum</b> (paumes, dos, entre les doigts, ongles)</li>
+        <li>Se laver les mains : en arrivant au travail, après les toilettes, après avoir touché du cru, après le ménage, après avoir touché visage/cheveux/téléphone</li>
+        <li>Le gel antiseptique ne remplace JAMAIS le lavage à l'eau et au savon en cuisine</li>
+      </ul>
+      <h4>Les gants</h4>
+      <ul>
+        <li>Un gant sale est aussi dangereux qu'une main sale — changer de gants entre chaque tâche</li>
+        <li>Se laver les mains AVANT de mettre des gants et APRÈS les avoir retirés</li>
+      </ul>
+      <h4>Tenue et état de santé</h4>
+      <ul>
+        <li>Résille ou casquette : aucun cheveu libre. Ongles courts, sans vernis. Bijoux retirés</li>
+        <li>Coupure ou blessure : pansement étanche + gant par-dessus, obligatoire</li>
+        <li>Vomissements, diarrhée ou fièvre : <b>aviser le gestionnaire et ne pas manipuler d'aliments</b></li>
+      </ul>
+      <div class="regle-or"><b>Règle d'or :</b> en cas de doute, lavez-vous les mains. Personne ne s'est jamais fait reprocher de les laver trop souvent.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="lecon" data-prog="A">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">2</div><h3>Températures : la zone de danger</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <div class="alerte crit"><b>⚠️ ZONE DE DANGER : entre 4 °C et 60 °C</b>Dans cette plage, les bactéries doublent toutes les 20 à 30 minutes. Un aliment périssable ne doit jamais y rester plus de 2 heures au total.</div>
+      <h4>Températures à connaître par cœur</h4>
+      <table class="t-table">
+        <tr><th>Situation</th><th>Température</th></tr>
+        <tr><td>Réfrigérateur</td><td><b>4 °C ou moins</b></td></tr>
+        <tr><td>Congélateur</td><td><b>−18 °C ou moins</b></td></tr>
+        <tr><td>Maintien au chaud</td><td><b>60 °C ou plus</b></td></tr>
+        <tr><td>Volaille (cuisson interne)</td><td><b>74 °C</b> (82 °C volaille entière)</td></tr>
+        <tr><td>Viande hachée</td><td><b>71 °C</b></td></tr>
+        <tr><td>Réchauffage des restes</td><td><b>74 °C</b></td></tr>
+      </table>
+      <h4>Refroidissement sécuritaire</h4>
+      <ul>
+        <li>De 60 °C à 21 °C en 2 heures maximum, puis de 21 °C à 4 °C en 4 heures maximum</li>
+        <li>Diviser en petites portions, contenants peu profonds, bain de glace</li>
+        <li>Jamais de grosse marmite chaude directement au frigo</li>
+      </ul>
+      <div class="regle-or"><b>Réflexe pro :</b> le thermomètre est votre meilleur ami. On ne devine pas une température — on la mesure et on la note.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="lecon" data-prog="A">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">3</div><h3>Contamination croisée</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <p>La contamination croisée, c'est le transfert de bactéries d'un aliment (souvent cru) vers un autre, par les mains, les ustensiles ou les surfaces. C'est l'une des premières causes de toxi-infections alimentaires.</p>
+      <h4>Les bons réflexes</h4>
+      <ul>
+        <li>Planches et ustensiles séparés : cru et prêt-à-manger ne partagent jamais le même équipement sans lavage complet</li>
+        <li>Au frigo : le cru (viandes, volailles, poissons) toujours <b>EN DESSOUS</b> du prêt-à-manger, jamais au-dessus</li>
+        <li>Jamais le même linge pour les surfaces de cru et les surfaces de service</li>
+        <li>Laver, rincer et assainir la surface entre deux tâches différentes</li>
+      </ul>
+      <h4>Code couleur recommandé (planches)</h4>
+      <ul>
+        <li>Rouge : viandes crues · Jaune : volailles crues · Bleu : poissons · Vert : fruits et légumes · Blanc : prêt-à-manger</li>
+      </ul>
+      <div class="alerte"><b>Exemple vécu :</b> couper du poulet cru, puis trancher des tomates sur la même planche « juste essuyée » = risque direct de salmonelle dans une salade servie froide.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="lecon" data-prog="A">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">4</div><h3>Nettoyage et assainissement</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <p>Nettoyer enlève la saleté visible. Assainir détruit les bactéries invisibles. <b>Les deux sont obligatoires, dans cet ordre.</b></p>
+      <h4>Les 4 étapes — toujours dans l'ordre</h4>
+      <ul>
+        <li><b>1. Nettoyer</b> — eau chaude + détergent, enlever les résidus</li>
+        <li><b>2. Rincer</b> — eau propre, enlever le détergent</li>
+        <li><b>3. Assainir</b> — solution assainissante (ex. eau de Javel diluée selon les directives du fabricant)</li>
+        <li><b>4. Sécher à l'air libre</b> — pas de linge qui recontamine</li>
+      </ul>
+      <h4>Les linges et lavettes</h4>
+      <ul>
+        <li>Lavettes entreposées dans une solution assainissante entre les usages, changée régulièrement</li>
+        <li>Un linge qui traîne sec sur le comptoir = un nid à bactéries</li>
+      </ul>
+      <div class="alerte ok"><b>✅ Bon à savoir :</b> les surfaces en contact avec les aliments s'assainissent après chaque usage, au minimum toutes les 4 heures en usage continu.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="lecon" data-prog="A">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">5</div><h3>Réception et entreposage</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <h4>À la réception d'une livraison</h4>
+      <ul>
+        <li>Vérifier la température : réfrigéré à 4 °C ou moins, congelé à −18 °C (refuser si hors norme)</li>
+        <li>Inspecter : emballages intacts, pas de boîtes bombées, dates valides</li>
+        <li>Ranger les produits réfrigérés et congelés EN PREMIER, sans délai</li>
+      </ul>
+      <h4>Entreposage : la méthode PEPS</h4>
+      <ul>
+        <li><b>PEPS = Premier Entré, Premier Sorti</b> (FIFO en anglais) : les plus anciens produits devant, les nouveaux derrière</li>
+        <li>Tout contenant ouvert ou préparation maison : étiqueté avec le nom et la date</li>
+        <li>Rien directement sur le plancher — minimum 15 cm du sol</li>
+        <li>Produits chimiques TOUJOURS entreposés loin des aliments, jamais au-dessus</li>
+      </ul>
+      <div class="regle-or"><b>Règle d'or :</b> dans le doute sur la fraîcheur d'un produit — on le jette. Un plat refait coûte quelques dollars; une intoxication coûte votre réputation.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="lecon" data-prog="A">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">6</div><h3>Allergènes prioritaires</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <p>Au Canada, une réaction allergique grave peut survenir avec une trace infime. Pour la personne allergique, votre rigueur est une question de vie ou de mort.</p>
+      <h4>Les allergènes prioritaires au Canada</h4>
+      <ul>
+        <li>Arachides · Noix · Lait · Œufs · Poissons · Mollusques et crustacés · Blé (gluten) · Soya · Sésame · Moutarde · Sulfites</li>
+      </ul>
+      <h4>Les bons réflexes en service</h4>
+      <ul>
+        <li>Un client mentionne une allergie → aviser immédiatement le cuisinier ET le gestionnaire</li>
+        <li>Ne jamais deviner ni dire « il ne devrait pas y en avoir » : on vérifie la recette et les étiquettes</li>
+        <li>Préparer le plat avec des ustensiles, planches et surfaces fraîchement lavés et assainis</li>
+        <li>Retirer un ingrédient d'un plat déjà préparé ne suffit PAS — les traces restent</li>
+      </ul>
+      <div class="alerte crit"><b>⚠️ Attention :</b> la friteuse est un piège classique — une huile qui a frit des crevettes contamine tout ce qui y passe ensuite.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="quiz-bloc" id="quiz-A">
+    <div class="eyebrow">Évaluation finale</div>
+    <h3>Quiz — Manipulateur d'aliments</h3>
+    <p class="quiz-intro">10 questions. Seuil de réussite : 80 %. Une seule réponse par question.</p>
+    <div class="q-zone"></div>
+  </div>
+</section>
+
+<!-- ============ PROGRAMME B : GESTIONNAIRE ============ -->
+<section class="programme" id="prog-B">
+  <div class="prog-titre"><div class="num">PROGRAMME B</div><h2>Gestionnaire d'établissement</h2></div>
+  <p class="prog-sous">Lisez chaque leçon, marquez-la comme lue, puis passez le quiz final.</p>
+  <div class="progress-wrap"><div class="progress-bar" id="bar-B"></div></div>
+
+  <div class="lecon" data-prog="B">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">1</div><h3>Vos obligations légales (MAPAQ)</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <h4>Le cadre de base au Québec</h4>
+      <ul>
+        <li>Détenir un <b>permis MAPAQ valide</b> correspondant à vos activités (restauration, vente au détail, préparation)</li>
+        <li>Respecter la Loi sur les produits alimentaires (P-29) et ses règlements</li>
+        <li><b>Formation obligatoire en hygiène et salubrité :</b> en tout temps durant les heures d'exploitation, une personne titulaire de l'attestation reconnue (gestionnaire ou manipulateur, selon le ratio applicable) doit être présente</li>
+      </ul>
+      <h4>Le principe de responsabilité</h4>
+      <ul>
+        <li>L'exploitant est responsable de la salubrité de TOUT ce qui sort de sa cuisine — même si l'erreur vient d'un employé ou d'un fournisseur</li>
+        <li>Les amendes en cas d'infraction peuvent atteindre des milliers de dollars et les condamnations sont <b>publiées en ligne</b>, visibles par tous vos clients</li>
+      </ul>
+      <div class="alerte"><b>📌 Important :</b> ce programme est une formation interne de renforcement. L'attestation officielle de formation MAPAQ s'obtient auprès d'un organisme reconnu (ex. ITHQ). Verdict 360 AI peut vous guider dans cette démarche.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="lecon" data-prog="B">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">2</div><h3>Le Guide 5M : votre grille de gestion</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <p>Le MAPAQ structure les bonnes pratiques autour de 5 familles de risques — les « 5M ». C'est aussi la grille qu'utilise l'inspecteur. Gérez vos 5M, et vous gérez votre inspection.</p>
+      <table class="t-table">
+        <tr><th>M</th><th>Ce que ça couvre</th><th>Exemples de contrôles</th></tr>
+        <tr><td><b>Main-d'œuvre</b></td><td>Hygiène et formation du personnel</td><td>Lavage des mains, tenue, état de santé, attestations</td></tr>
+        <tr><td><b>Méthode</b></td><td>Façons de faire</td><td>Cuisson, refroidissement, PEPS, séparation cru/cuit</td></tr>
+        <tr><td><b>Matériel</b></td><td>Équipements et ustensiles</td><td>État, propreté, thermomètres calibrés, surfaces lisses</td></tr>
+        <tr><td><b>Matière première</b></td><td>Les aliments eux-mêmes</td><td>Fournisseurs approuvés, réception, dates, étiquetage</td></tr>
+        <tr><td><b>Milieu</b></td><td>Les lieux</td><td>Locaux, ventilation, vermine, déchets, sanitaires</td></tr>
+      </table>
+      <div class="regle-or"><b>Réflexe gestionnaire :</b> faites votre tournée quotidienne avec les 5M en tête. Cinq minutes par M, chaque matin = une inspection sans surprise.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="lecon" data-prog="B">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">3</div><h3>Le plan HACCP en pratique</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <p>HACCP (Analyse des dangers et points de contrôle critiques) est la méthode internationale de prévention. L'idée : identifier OÙ ça peut mal tourner, et verrouiller ces points.</p>
+      <h4>Les 7 principes, en langage clair</h4>
+      <ul>
+        <li><b>1.</b> Identifier les dangers (biologiques, chimiques, physiques) à chaque étape</li>
+        <li><b>2.</b> Déterminer les points de contrôle critiques (CCP) — ex. la cuisson, le refroidissement</li>
+        <li><b>3.</b> Fixer des limites mesurables (ex. volaille : 74 °C à cœur)</li>
+        <li><b>4.</b> Surveiller ces limites (qui mesure, quand, avec quoi)</li>
+        <li><b>5.</b> Prévoir les actions correctives (que fait-on si la limite n'est pas atteinte?)</li>
+        <li><b>6.</b> Vérifier que le système fonctionne (audits internes, revue des registres)</li>
+        <li><b>7.</b> Documenter — tout ce qui n'est pas écrit n'existe pas</li>
+      </ul>
+      <div class="alerte ok"><b>✅ Exemple concret :</b> CCP « refroidissement de la sauce » → limite : 60→21 °C en 2 h → surveillance : cuisinier note la température au registre → correction : si trop lent, on divise en bacs peu profonds ou on jette.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="lecon" data-prog="B">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">4</div><h3>Registres et traçabilité</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <p>Devant un inspecteur, votre meilleure défense est un registre tenu à jour. Il prouve votre bonne foi et votre rigueur — même si une non-conformité ponctuelle est constatée.</p>
+      <h4>Les registres essentiels</h4>
+      <ul>
+        <li><b>Températures</b> : frigos et congélateurs (2x/jour), cuissons et refroidissements critiques</li>
+        <li><b>Nettoyage</b> : plan de nettoyage par zone avec initiales et fréquences</li>
+        <li><b>Réception</b> : livraisons vérifiées, températures, produits refusés</li>
+        <li><b>Fournisseurs</b> : liste à jour avec coordonnées — essentielle en cas de rappel</li>
+        <li><b>Formation</b> : qui a suivi quoi, quand (attestations en dossier)</li>
+        <li><b>Lutte antiparasitaire</b> : rapports de l'exterminateur, observations</li>
+      </ul>
+      <div class="regle-or"><b>La règle des inspecteurs :</b> « Pas écrit = pas fait. » Un registre rempli après coup se détecte facilement et détruit votre crédibilité.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="lecon" data-prog="B">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">5</div><h3>L'inspection MAPAQ : avant, pendant, après</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <h4>Avant — la préparation continue</h4>
+      <ul>
+        <li>L'inspection arrive sans préavis : la seule stratégie gagnante est d'être prêt en tout temps</li>
+        <li>Inspections internes régulières avec la même grille que l'inspecteur (les 5M)</li>
+      </ul>
+      <h4>Pendant — les bons comportements</h4>
+      <ul>
+        <li>Accueillir avec professionnalisme, accompagner l'inspecteur, répondre honnêtement</li>
+        <li>Ne jamais contester sur place de façon agressive — noter, poser des questions, demander des précisions</li>
+        <li>Présenter vos registres sans qu'on vous les demande : c'est votre preuve de rigueur</li>
+      </ul>
+      <h4>Après — la gestion des non-conformités</h4>
+      <ul>
+        <li>Distinguer les NC <b>critiques</b> (risque immédiat pour la santé → correction immédiate) des NC <b>majeures/mineures</b> (correction planifiée et documentée)</li>
+        <li>Établir un plan d'actions daté avec responsable par item, et conserver les preuves de correction (photos, factures)</li>
+        <li>En cas de réinspection, démontrer les corrections AVANT qu'on vous les redemande</li>
+      </ul>
+      <div class="alerte crit"><b>⚠️ À retenir :</b> une condamnation MAPAQ est publiée en ligne et reste visible. La prévention coûte toujours moins cher que la réparation de réputation.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="lecon" data-prog="B">
+    <div class="lecon-head" onclick="basculerLecon(this)"><div class="lecon-num">6</div><h3>Gestion de crise et rappels</h3><div class="fleche">›</div></div>
+    <div class="lecon-corps">
+      <p>Plainte d'intoxication, rappel d'aliment, bris de chaîne de froid, condamnation publiée : la différence entre un incident et un désastre, c'est la rapidité et l'ordre de vos actions.</p>
+      <h4>Le protocole en 5 étapes</h4>
+      <ul>
+        <li><b>1. Isoler</b> — retirer immédiatement le produit ou la zone en cause, étiqueter « NE PAS UTILISER »</li>
+        <li><b>2. Documenter</b> — photos, lots, dates, fournisseur, quantités, clients potentiellement touchés</li>
+        <li><b>3. Tracer</b> — remonter au fournisseur grâce à vos registres de réception</li>
+        <li><b>4. Corriger</b> — action immédiate sur la cause (équipement, méthode, formation)</li>
+        <li><b>5. Communiquer</b> — un seul porte-parole, message factuel, jamais de déni</li>
+      </ul>
+      <h4>En cas de plainte d'un client</h4>
+      <ul>
+        <li>Écouter sans admettre de faute, recueillir les faits (date, plat, heure, symptômes)</li>
+        <li>Ne jamais offrir de compensation « pour acheter le silence » avant d'avoir établi les faits</li>
+        <li>Conserver un échantillon du produit suspect si encore disponible</li>
+      </ul>
+      <div class="regle-or"><b>Réflexe Verdict 360 :</b> un plan de crise écrit, connu de l'équipe et testé une fois par année. Quand la crise frappe, on exécute — on n'improvise pas.</div>
+      <button class="btn-lu" type="button" onclick="marquerLue(this)">✓ J'ai lu cette leçon</button>
+    </div>
+  </div>
+
+  <div class="quiz-bloc" id="quiz-B">
+    <div class="eyebrow">Évaluation finale</div>
+    <h3>Quiz — Gestionnaire d'établissement</h3>
+    <p class="quiz-intro">10 questions. Seuil de réussite : 80 %. Une seule réponse par question.</p>
+    <div class="q-zone"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-marque">VERDICT <span>360</span> AI</div>
+  <div class="f-titre">Jacques Perrier — Auditeur en hygiène et salubrité alimentaire<br>Expert des normes MAPAQ et HACCP</div>
+  <div><a href="https://verdict360ai.com">verdict360ai.com</a> · <a href="mailto:info@verdict360ai.com">info@verdict360ai.com</a> · +1 (873) 822-1455</div>
+  <p class="f-note">Module ACADÉMIE — formation interne de renforcement basée sur le Guide des bonnes pratiques d'hygiène et de salubrité (5M). Ce programme complète, sans la remplacer, la formation officielle reconnue par le MAPAQ. © 2026 Verdict 360 AI — Gatineau · Ottawa · Montréal · Québec.</p>
+</footer>
+
+<script>
+/* ====== DONNÉES QUIZ ====== */
+var QUIZ = {
+A: [
+ {q:"Combien de temps minimum doit durer un lavage de mains efficace?",o:["5 secondes","20 secondes","45 secondes","2 minutes"],b:1,e:"20 secondes minimum, avec savon, en frottant paumes, dos des mains, entre les doigts et sous les ongles."},
+ {q:"Quelle est la « zone de danger » des températures?",o:["0 °C à 10 °C","4 °C à 60 °C","10 °C à 40 °C","20 °C à 80 °C"],b:1,e:"Entre 4 °C et 60 °C, les bactéries se multiplient rapidement. Un aliment périssable n'y reste jamais plus de 2 heures."},
+ {q:"À quelle température interne doit être cuite la volaille (morceaux)?",o:["60 °C","63 °C","74 °C","85 °C"],b:2,e:"74 °C à cœur pour les morceaux de volaille (82 °C pour une volaille entière). On vérifie au thermomètre, jamais à l'œil."},
+ {q:"Au réfrigérateur, où place-t-on les viandes crues?",o:["Sur la tablette du haut","Au milieu, près des légumes","En dessous des aliments prêts-à-manger","N'importe où si elles sont emballées"],b:2,e:"Toujours en dessous : si un jus de viande crue coule, il ne doit jamais tomber sur un aliment prêt-à-manger."},
+ {q:"Que signifie PEPS en entreposage?",o:["Peser Et Placer Séparément","Premier Entré, Premier Sorti","Produits Emballés Puis Scellés","Placer En Position Sécuritaire"],b:1,e:"Premier Entré, Premier Sorti (FIFO) : on utilise d'abord les produits les plus anciens — les nouveaux vont derrière."},
+ {q:"Quel est le bon ordre pour rendre une surface sécuritaire?",o:["Assainir → nettoyer → rincer","Nettoyer → rincer → assainir → sécher à l'air","Rincer → assainir → essuyer avec un linge","Nettoyer → essuyer → assainir"],b:1,e:"Nettoyer (détergent), rincer, assainir, puis laisser sécher à l'air libre. Essuyer avec un linge recontamine la surface."},
+ {q:"Vous avez une coupure au doigt. Que faites-vous?",o:["Rien si elle ne saigne plus","Un diachylon ordinaire suffit","Pansement étanche + gant par-dessus","Je rentre chez moi automatiquement"],b:2,e:"Pansement étanche recouvert d'un gant, obligatoire. On avise aussi le responsable."},
+ {q:"Un client annonce une allergie aux arachides. Quel est le bon réflexe?",o:["Retirer les arachides du plat déjà préparé","Dire qu'il ne devrait pas y en avoir","Aviser cuisine et gestionnaire, vérifier la recette, préparer avec du matériel fraîchement assaini","Lui suggérer un autre restaurant"],b:2,e:"On ne devine jamais : on avise, on vérifie les ingrédients et on prépare le plat avec des surfaces et ustensiles fraîchement lavés et assainis. Retirer l'ingrédient ne suffit pas — les traces restent."},
+ {q:"Le refroidissement sécuritaire d'une sauce chaude, c'est :",o:["Directement au frigo dans la marmite","60→21 °C en 2 h max, puis 21→4 °C en 4 h max","La laisser sur le comptoir toute la nuit","Au congélateur en gros bloc"],b:1,e:"On divise en contenants peu profonds ou bain de glace : 60 à 21 °C en 2 heures max, puis 21 à 4 °C en 4 heures max."},
+ {q:"Vous avez des symptômes de gastro avant votre quart de travail. Que faites-vous?",o:["Je rentre et je porte des gants toute la journée","J'avise le gestionnaire et je ne manipule pas d'aliments","Je prends un médicament et je n'en parle pas","Je fais juste le service aux tables"],b:1,e:"Vomissements, diarrhée ou fièvre : on avise le gestionnaire et on ne manipule pas d'aliments. Les gants ne protègent pas contre ça."}
+],
+B: [
+ {q:"Au Québec, qui est légalement responsable de la salubrité des aliments servis?",o:["L'employé qui a fait l'erreur","Le fournisseur","L'exploitant de l'établissement","Le MAPAQ"],b:2,e:"L'exploitant est responsable de tout ce qui sort de sa cuisine, même si l'erreur vient d'un employé ou d'un fournisseur."},
+ {q:"Que représentent les « 5M » du guide MAPAQ?",o:["5 méthodes de cuisson","Main-d'œuvre, Méthode, Matériel, Matière première, Milieu","5 minutes de vérification quotidienne","Manger, Mesurer, Mélanger, Maintenir, Montrer"],b:1,e:"Les 5 familles de risques : Main-d'œuvre, Méthode, Matériel, Matière première et Milieu. C'est aussi la grille de l'inspecteur."},
+ {q:"Dans un plan HACCP, qu'est-ce qu'un CCP?",o:["Un certificat de conformité provincial","Un point de contrôle critique où le danger doit être maîtrisé","Un code de conduite du personnel","Un contrat avec un fournisseur"],b:1,e:"Un point de contrôle critique (ex. la cuisson, le refroidissement) : une étape où une limite mesurable doit absolument être respectée."},
+ {q:"Quelle phrase résume la philosophie des inspecteurs sur les registres?",o:["« L'important c'est l'intention »","« Pas écrit = pas fait »","« Un bon registre se remplit en fin de mois »","« La mémoire du chef suffit »"],b:1,e:"Pas écrit = pas fait. Un registre tenu en temps réel est votre meilleure preuve de bonne foi devant l'inspecteur."},
+ {q:"À quelle fréquence minimale note-t-on les températures des frigos?",o:["Une fois par semaine","Deux fois par jour","Une fois par mois","Seulement quand un frigo semble défectueux"],b:1,e:"Bonne pratique : deux fois par jour (ouverture et fermeture), avec initiales. Les capteurs connectés (module SÉCURITÉ) automatisent cette tâche."},
+ {q:"L'inspecteur MAPAQ arrive sans préavis. Quelle est la meilleure stratégie?",o:["Demander qu'il revienne plus tard","Être prêt en tout temps grâce aux inspections internes régulières","Fermer temporairement la cuisine","Appeler son avocat avant de le laisser entrer"],b:1,e:"L'inspection est sans préavis : la seule stratégie gagnante est la préparation continue avec des inspections internes basées sur les 5M."},
+ {q:"Une non-conformité CRITIQUE exige :",o:["Une correction immédiate","Une correction dans les 30 jours","Une simple note au registre","Rien si l'inspecteur ne revient pas"],b:0,e:"Une NC critique présente un risque immédiat pour la santé : correction immédiate, documentée avec preuves (photos, factures)."},
+ {q:"Un client appelle : il croit s'être intoxiqué chez vous hier. Première étape?",o:["Nier toute responsabilité","Offrir immédiatement un remboursement","Écouter et recueillir les faits sans admettre de faute","Raccrocher et attendre une lettre"],b:2,e:"On écoute, on recueille les faits (date, plat, symptômes) sans admettre de faute, puis on déclenche le protocole : isoler, documenter, tracer."},
+ {q:"Pourquoi la liste des fournisseurs à jour est-elle critique?",o:["Pour négocier les prix","Pour la traçabilité en cas de rappel d'aliment","Pour la déclaration de revenus","C'est seulement une exigence administrative"],b:1,e:"En cas de rappel, vous devez pouvoir remonter la chaîne en quelques minutes : lots, dates de réception, coordonnées du fournisseur."},
+ {q:"Une condamnation MAPAQ est :",o:["Confidentielle entre vous et le ministère","Publiée en ligne et visible par vos clients","Effacée après 30 jours","Sans conséquence si l'amende est payée"],b:1,e:"Les condamnations sont publiées en ligne et restent visibles. La prévention coûte toujours moins cher que la réparation de réputation."}
+]
+};
+
+/* ====== NAVIGATION PROGRAMMES ====== */
+function ouvrirProgramme(p){
+  document.getElementById('prog-A').className='programme'+(p==='A'?' visible':'');
+  document.getElementById('prog-B').className='programme'+(p==='B'?' visible':'');
+  document.getElementById('card-A').className='prog-card'+(p==='A'?' actif':'');
+  document.getElementById('card-B').className='prog-card'+(p==='B'?' actif':'');
+  if(!ETAT[p].quizDemarre){ demarrerQuiz(p); }
+  var cible=document.getElementById('prog-'+p);
+  setTimeout(function(){ cible.scrollIntoView({behavior:'smooth',block:'start'}); },60);
+}
+
+function basculerLecon(head){
+  var lecon=head.parentNode;
+  if(lecon.className.indexOf('ouverte')>-1){ lecon.className=lecon.className.replace(' ouverte',''); }
+  else{ lecon.className+=' ouverte'; }
+}
+
+function marquerLue(btn){
+  var lecon=btn.parentNode.parentNode;
+  if(lecon.className.indexOf('lue')===-1){ lecon.className+=' lue'; btn.innerHTML='✓ Leçon complétée'; }
+  majProgression(lecon.getAttribute('data-prog'));
+}
+
+function majProgression(p){
+  var lecons=document.querySelectorAll('.lecon[data-prog="'+p+'"]');
+  var lues=0;
+  for(var i=0;i<lecons.length;i++){ if(lecons[i].className.indexOf('lue')>-1) lues++; }
+  document.getElementById('bar-'+p).style.width=Math.round(lues/lecons.length*100)+'%';
+}
+
+/* ====== MOTEUR DE QUIZ ====== */
+var ETAT={A:{i:0,score:0,quizDemarre:false},B:{i:0,score:0,quizDemarre:false}};
+
+function demarrerQuiz(p){
+  ETAT[p]={i:0,score:0,quizDemarre:true};
+  afficherQuestion(p);
+}
+
+function afficherQuestion(p){
+  var zone=document.querySelector('#quiz-'+p+' .q-zone');
+  var e=ETAT[p], data=QUIZ[p];
+  if(e.i>=data.length){ afficherResultat(p); return; }
+  var q=data[e.i];
+  var html='<div class="q-compteur">QUESTION '+(e.i+1)+' / '+data.length+'</div>';
+  html+='<div class="q-question">'+q.q+'</div>';
+  for(var j=0;j<q.o.length;j++){
+    html+='<button type="button" class="q-opt" onclick="repondre(\''+p+'\','+j+',this)">'+q.o[j]+'</button>';
+  }
+  html+='<div class="q-explic"></div>';
+  html+='<button type="button" class="q-suivant" onclick="questionSuivante(\''+p+'\')">Question suivante →</button>';
+  zone.innerHTML=html;
+}
+
+function repondre(p,j,btn){
+  var e=ETAT[p], q=QUIZ[p][e.i];
+  var zone=document.querySelector('#quiz-'+p+' .q-zone');
+  var opts=zone.querySelectorAll('.q-opt');
+  for(var k=0;k<opts.length;k++){ opts[k].disabled=true; opts[k].onclick=null; }
+  if(j===q.b){ btn.className+=' bonne'; e.score++; }
+  else{ btn.className+=' mauvaise'; opts[q.b].className+=' bonne'; }
+  var ex=zone.querySelector('.q-explic');
+  ex.innerHTML='💡 '+q.e; ex.style.display='block';
+  var sv=zone.querySelector('.q-suivant');
+  if(e.i===QUIZ[p].length-1){ sv.innerHTML='Voir mon résultat →'; }
+  sv.style.display='block';
+}
+
+function questionSuivante(p){ ETAT[p].i++; afficherQuestion(p); }
+
+function afficherResultat(p){
+  var zone=document.querySelector('#quiz-'+p+' .q-zone');
+  var e=ETAT[p], total=QUIZ[p].length;
+  var pct=Math.round(e.score/total*100);
+  var reussi=pct>=80;
+  var classe=reussi?'reussi':(pct>=60?'':'echec');
+  var verdict=reussi?'Formation réussie! 🏆':(pct>=60?'Presque! Encore un effort 💪':'À reprendre 📖');
+  var nomProg=(p==='A')?'Manipulateur d\'aliments':'Gestionnaire d\'établissement';
+  var msg=reussi
+    ? 'Félicitations! Vous avez complété la formation interne « '+nomProg+' » de l\'ACADÉMIE Verdict 360 AI avec un score de '+e.score+'/'+total+'. Montrez ce résultat à votre gestionnaire pour qu\'il soit consigné au registre de formation.'
+    : 'Score : '+e.score+'/'+total+'. Le seuil de réussite est de 80 %. Relisez les leçons signalées par vos erreurs, puis reprenez le quiz — c\'est comme ça qu\'on apprend.';
+  var html='<div class="q-resultat" style="display:block">';
+  html+='<div class="score-cercle '+classe+'"><div class="pct">'+pct+'%</div><div class="lab">'+e.score+' / '+total+'</div></div>';
+  html+='<div class="q-verdict">'+verdict+'</div>';
+  html+='<p class="q-msg">'+msg+'</p>';
+  html+='<button type="button" class="q-suivant" style="display:block" onclick="demarrerQuiz(\''+p+'\')">↺ Reprendre le quiz</button>';
+  html+='</div>';
+  zone.innerHTML=html;
+}
+</script>
+</body>
+</html>
