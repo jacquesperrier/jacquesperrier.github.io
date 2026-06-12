@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>PUNCH · Verdict Inspection AI</title>
+<title>PUNCH · Verdict 360 AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -56,7 +56,16 @@
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
   textarea{width:100%;background:var(--noir-2);border:1px solid rgba(212,160,23,0.25);color:var(--texte);padding:14px;border-radius:2px;font-family:'Space Mono',monospace;font-size:14px;resize:vertical;min-height:80px;margin-bottom:12px;}
   textarea:focus{outline:none;border-color:var(--or);}
+  label{display:block;font-size:11px;letter-spacing:2px;color:var(--or);text-transform:uppercase;margin:14px 0 6px;}
+  select,input[type="date"],input[type="time"]{width:100%;background:var(--noir-2);border:1px solid rgba(212,160,23,0.25);color:var(--texte);padding:14px;border-radius:2px;font-family:'Space Mono',monospace;font-size:15px;-webkit-appearance:none;appearance:none;color-scheme:dark;}
+  select:focus,input:focus{outline:none;border-color:var(--or);}
+  select:disabled,input:disabled{opacity:0.35;}
+  .check-ligne{display:flex;align-items:center;gap:10px;margin:14px 0 4px;font-size:12px;color:var(--texte);cursor:pointer;}
+  .check-ligne input{width:20px;height:20px;accent-color:var(--or);}
   .btn-secondaire{background:transparent;border:1px solid var(--or);color:var(--or);padding:12px;width:100%;border-radius:2px;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+  .btn-correction{background:transparent;border:1px dashed rgba(212,160,23,0.5);color:var(--gris);padding:16px;width:100%;border-radius:2px;cursor:pointer;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-top:16px;display:none;}
+  .btn-correction.visible{display:block;}
+  .btn-correction:active{border-color:var(--or);color:var(--or);}
   .btn-principal{background:var(--or);border:none;color:var(--noir);padding:18px;width:100%;border-radius:2px;cursor:pointer;font-family:'Space Mono',monospace;font-size:13px;letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-top:8px;}
   .btn-principal:active{background:var(--or-clair);}
   .btn-principal:disabled{background:var(--gris);cursor:not-allowed;}
@@ -64,6 +73,7 @@
   .coche{width:80px;height:80px;border:2px solid var(--or);border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--or);}
   .recap{background:var(--noir-2);border-left:3px solid var(--or);padding:18px;margin:20px 0;text-align:left;font-size:12px;line-height:1.8;}
   .recap b{color:var(--or);letter-spacing:1px;}
+  .note-audit{background:var(--noir-2);border-left:2px solid var(--rouge);padding:12px;font-size:10px;letter-spacing:1px;color:var(--gris);text-transform:uppercase;margin-bottom:8px;line-height:1.6;}
   footer{position:fixed;bottom:0;left:0;right:0;background:var(--noir);border-top:1px solid rgba(212,160,23,0.2);padding:12px;text-align:center;font-size:9px;letter-spacing:2px;color:var(--gris);text-transform:uppercase;}
   footer b{color:var(--or);}
   .erreur-msg{color:var(--rouge);font-size:12px;text-align:center;margin-top:8px;min-height:16px;}
@@ -77,6 +87,8 @@
     <div class="horloge" id="horloge">--:--:--</div>
     <div class="date" id="date">—</div>
   </header>
+
+  <!-- ÉTAPE 1 · NIP -->
   <section class="etape actif" id="etape-nip">
     <div class="titre-etape">Identification</div>
     <div class="sous-titre">Entrez votre NIP employé</div>
@@ -89,6 +101,8 @@
     </div>
     <div class="erreur-msg" id="erreur-nip"></div>
   </section>
+
+  <!-- ÉTAPE 2 · TYPE -->
   <section class="etape" id="etape-type">
     <div class="titre-etape" id="salutation">Bonjour</div>
     <div class="sous-titre">Sélectionnez votre action</div>
@@ -96,7 +110,10 @@
       <button class="btn-punch" data-type="ENTREE"><span>Entrée</span><span class="icone">→</span></button>
       <button class="btn-punch sortie" data-type="SORTIE"><span>Sortie</span><span class="icone">←</span></button>
     </div>
+    <button class="btn-correction" id="btn-ouvrir-correction">🛠 Corriger un punch (admin)</button>
   </section>
+
+  <!-- ÉTAPE 3 · VÉRIFICATION -->
   <section class="etape" id="etape-verif">
     <div class="titre-etape">Vérification</div>
     <div class="sous-titre">GPS + Selfie obligatoires</div>
@@ -107,6 +124,51 @@
     <button class="btn-principal" id="btn-soumettre" disabled>Confirmer le Punch</button>
     <div class="erreur-msg" id="erreur-verif"></div>
   </section>
+
+  <!-- ÉTAPE CORRECTION (admin seulement) -->
+  <section class="etape" id="etape-correction">
+    <div class="titre-etape">Correction de punch</div>
+    <div class="sous-titre">Trace d'audit obligatoire</div>
+    <div class="note-audit">⚠ Le punch original n'est jamais effacé. Chaque correction est enregistrée avec la raison, l'auteur et l'horodatage.</div>
+
+    <label for="corr-employe">Employé concerné</label>
+    <select id="corr-employe"></select>
+
+    <label for="corr-date">Date du punch</label>
+    <input type="date" id="corr-date">
+
+    <label class="check-ligne"><input type="checkbox" id="corr-manquant"> Punch jamais enregistré (oubli complet)</label>
+
+    <label for="corr-heure-orig">Heure originale</label>
+    <input type="time" id="corr-heure-orig" step="60">
+
+    <label for="corr-heure-new">Heure corrigée</label>
+    <input type="time" id="corr-heure-new" step="60">
+
+    <label for="corr-type">Type de punch</label>
+    <select id="corr-type">
+      <option value="ENTREE">ENTRÉE</option>
+      <option value="SORTIE">SORTIE</option>
+    </select>
+
+    <label for="corr-raison">Raison de la correction</label>
+    <select id="corr-raison">
+      <option value="">— Choisir une raison —</option>
+      <option value="Oubli de punch">Oubli de punch</option>
+      <option value="Erreur de type (entrée/sortie)">Erreur de type (entrée/sortie)</option>
+      <option value="Problème technique">Problème technique</option>
+      <option value="Autre">Autre (commentaire obligatoire)</option>
+    </select>
+
+    <label for="corr-commentaire">Commentaire</label>
+    <textarea id="corr-commentaire" placeholder="Détails (obligatoire si « Autre »)…"></textarea>
+
+    <button class="btn-principal" id="btn-corriger">Enregistrer la correction</button>
+    <button class="btn-secondaire" id="btn-annuler-corr" style="margin-top:12px;">Annuler</button>
+    <div class="erreur-msg" id="erreur-corr"></div>
+  </section>
+
+  <!-- ÉTAPE FIN -->
   <section class="etape" id="etape-fin">
     <div class="confirme">
       <div class="coche">✓</div>
@@ -117,11 +179,13 @@
     </div>
   </section>
 </div>
-<footer><b>VERDICT INSPECTION AI</b> · info@verdictinspection-ai.com · 819-525-4555</footer>
+<footer><b>VERDICT 360 AI</b> · info@verdict360ai.com · +1 (873) 822-1455</footer>
 <script>
 const CONFIG = {
   APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyktxGxqOZxp0nxjJrj3IpR4QLXuj6Mlmbh5zddG7IvhcFiaQaHsCDq_gk5RB7uRZDtWQ/exec',
-  EMPLOYES: { '1234': 'Jacques Perrier', '5678': 'Employé Démo', '9999': 'Gestionnaire' }
+  EMPLOYES: { '1234': 'Jacques Perrier', '5678': 'Employé Démo', '9999': 'Gestionnaire' },
+  // NIP autorisés à corriger un punch (admins seulement)
+  ADMINS: ['1234', '9999']
 };
 function majHorloge(){
   const d = new Date();
@@ -143,11 +207,97 @@ document.getElementById('valider-nip').addEventListener('click',()=>{
   if(!nom){ document.getElementById('erreur-nip').textContent = '✕ NIP invalide'; etat.nip=''; nipDisplay.textContent=''; return; }
   etat.employe = nom;
   document.getElementById('salutation').textContent = 'Bonjour ' + nom.split(' ')[0];
+  // Bouton correction visible seulement pour les admins
+  document.getElementById('btn-ouvrir-correction').classList.toggle('visible', CONFIG.ADMINS.includes(etat.nip));
   afficher('etape-type');
 });
 document.querySelectorAll('.btn-punch').forEach(b=>{
   b.addEventListener('click',()=>{ etat.type = b.dataset.type; afficher('etape-verif'); demarrerVerifications(); });
 });
+
+/* ===== MODULE CORRECTION ===== */
+document.getElementById('btn-ouvrir-correction').addEventListener('click',()=>{
+  // Remplir la liste des employés
+  const sel = document.getElementById('corr-employe');
+  sel.innerHTML = '';
+  Object.values(CONFIG.EMPLOYES).forEach(nom=>{
+    const o = document.createElement('option'); o.value = nom; o.textContent = nom; sel.appendChild(o);
+  });
+  // Date du jour par défaut
+  document.getElementById('corr-date').value = new Date().toLocaleDateString('fr-CA', { timeZone:'America/Montreal' });
+  document.getElementById('erreur-corr').textContent = '';
+  afficher('etape-correction');
+});
+document.getElementById('corr-manquant').addEventListener('change',e=>{
+  const champ = document.getElementById('corr-heure-orig');
+  champ.disabled = e.target.checked;
+  if(e.target.checked) champ.value = '';
+});
+document.getElementById('btn-annuler-corr').addEventListener('click',()=>afficher('etape-type'));
+document.getElementById('btn-corriger').addEventListener('click',async()=>{
+  const erreur = document.getElementById('erreur-corr');
+  erreur.textContent = '';
+  const employe = document.getElementById('corr-employe').value;
+  const date = document.getElementById('corr-date').value;
+  const manquant = document.getElementById('corr-manquant').checked;
+  const heureOrig = document.getElementById('corr-heure-orig').value;
+  const heureNew = document.getElementById('corr-heure-new').value;
+  const type = document.getElementById('corr-type').value;
+  const raison = document.getElementById('corr-raison').value;
+  const commentaire = document.getElementById('corr-commentaire').value.trim();
+  // Validations obligatoires
+  if(!date){ erreur.textContent = '✕ Date du punch obligatoire'; return; }
+  if(!manquant && !heureOrig){ erreur.textContent = '✕ Heure originale obligatoire (ou cochez « punch manquant »)'; return; }
+  if(!heureNew){ erreur.textContent = '✕ Heure corrigée obligatoire'; return; }
+  if(!raison){ erreur.textContent = '✕ La raison est obligatoire'; return; }
+  if(raison === 'Autre' && !commentaire){ erreur.textContent = '✕ Commentaire obligatoire pour « Autre »'; return; }
+  const btn = document.getElementById('btn-corriger');
+  btn.disabled = true; btn.textContent = 'Envoi en cours…';
+  const payload = {
+    action: 'CORRECTION',
+    employe: employe,
+    type: type,
+    date_punch: date,
+    heure_originale: manquant ? 'AUCUNE (punch manquant)' : heureOrig,
+    heure_corrigee: heureNew,
+    raison: raison,
+    commentaire: commentaire,
+    corrige_par: etat.employe,
+    horodatage_correction: new Date().toLocaleString('fr-CA', { timeZone:'America/Montreal' })
+  };
+  let envoiReussi = false;
+  try{
+    await fetch(CONFIG.APPS_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify(payload)
+    });
+    envoiReussi = true;
+  }catch(e){ console.error('Erreur envoi correction:', e); }
+  btn.disabled = false; btn.textContent = 'Enregistrer la correction';
+  document.getElementById('titre-fin').textContent = 'Correction enregistrée';
+  document.getElementById('recap').innerHTML =
+    '<b>Statut :</b> CORRIGÉ<br>'+
+    '<b>Employé :</b> '+employe+'<br>'+
+    '<b>Type :</b> '+type+'<br>'+
+    '<b>Date :</b> '+date+'<br>'+
+    '<b>Heure originale :</b> '+(manquant ? 'AUCUNE (punch manquant)' : heureOrig)+'<br>'+
+    '<b>Heure corrigée :</b> '+heureNew+'<br>'+
+    '<b>Raison :</b> '+raison+'<br>'+
+    (commentaire ? '<b>Commentaire :</b> '+commentaire+'<br>' : '')+
+    '<b>Corrigé par :</b> '+etat.employe+'<br>'+
+    '<b>Enregistrement :</b> '+(envoiReussi ? '✓ Envoyé' : '⚠ Échec');
+  // Réinitialiser le formulaire de correction
+  document.getElementById('corr-heure-orig').value = '';
+  document.getElementById('corr-heure-new').value = '';
+  document.getElementById('corr-raison').value = '';
+  document.getElementById('corr-commentaire').value = '';
+  document.getElementById('corr-manquant').checked = false;
+  document.getElementById('corr-heure-orig').disabled = false;
+  afficher('etape-fin');
+});
+/* ===== FIN MODULE CORRECTION ===== */
+
 async function demarrerVerifications(){
   const statutGps = document.getElementById('statut-gps'),texteGps = document.getElementById('texte-gps');
   if(!navigator.geolocation){ statutGps.classList.add('erreur'); texteGps.textContent = 'GPS non disponible'; }
@@ -220,6 +370,8 @@ function reinitialiser(){
   document.getElementById('btn-photo').textContent = '📸 Capturer Selfie';
   document.getElementById('btn-soumettre').disabled = true;
   document.getElementById('btn-soumettre').textContent = 'Confirmer le Punch';
+  document.getElementById('btn-ouvrir-correction').classList.remove('visible');
+  document.getElementById('titre-fin').textContent = 'Punch enregistré';
   afficher('etape-nip');
 }
 </script>
