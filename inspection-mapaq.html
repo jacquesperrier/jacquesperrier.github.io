@@ -1,1 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Rapport d'inspection MAPAQ — Verdict 360 AI</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body { font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; background:#fff; color:#1a1a1a; line-height:1.5; }
 
+  /* ===== EN-TÊTE NOIR / OR BROSSÉ ===== */
+  .hero {
+    background:#1A1A1A !important;
+    color:#fff;
+    padding:28px 20px;
+    border-bottom:4px solid #9C7F3D;
+    text-align:center;
+  }
+  .hero .logo {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size:36px; font-weight:bold; letter-spacing:1px;
+    margin-bottom:4px;
+  }
+  .hero .logo span {
+    background: linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero .tagline { font-size:11px; letter-spacing:4px; color:#999; margin-bottom:18px; }
+  .hero h1 { font-size:20px; font-weight:700; margin-bottom:4px; }
+  .hero .ref { font-size:13px; color:#D4C28E; }
+
+  .body-content { max-width:680px; margin:0 auto; padding:20px; }
+
+  /* ===== IDENTIFICATION ===== */
+  .id-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px; }
+  .id-field { background:#F8F8F8; border-left:3px solid #9C7F3D; padding:10px 12px; border-radius:4px; }
+  .id-field label { display:block; font-size:11px; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+  .id-field input, .id-field .val { border:none; background:transparent; font-size:15px; font-weight:600; width:100%; color:#1a1a1a; }
+  .id-field input:focus { outline:1px solid #9C7F3D; }
+
+  /* ===== TABLEAU DE BORD / SCORE GLOBAL ===== */
+  .score-box {
+    background:#1A1A1A; color:#fff; border-radius:10px; padding:24px;
+    text-align:center; margin-bottom:24px; border:1px solid #9C7F3D;
+  }
+  .score-box .pct { font-size:48px; font-weight:800; }
+  .score-box .pct.rouge { color:#FF7043; }
+  .score-box .pct.jaune { color:#FFA726; }
+  .score-box .pct.vert  { color:#66BB6A; }
+  .score-box .label { font-size:13px; letter-spacing:3px; color:#999; margin-top:4px; }
+
+  .zone-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:16px; }
+  .zone-cell { background:#262626; border-radius:6px; padding:8px 4px; text-align:center; }
+  .zone-cell .zname { font-size:11px; color:#bbb; }
+  .zone-cell .zscore { font-size:18px; font-weight:700; }
+  .zone-cell .zscore.r { color:#FF7043; }
+  .zone-cell .zscore.j { color:#FFA726; }
+  .zone-cell .zscore.v { color:#66BB6A; }
+
+  /* ===== SECTION TITLES ===== */
+  .section-title {
+    font-size:16px; font-weight:700; color:#1A1A1A;
+    border-bottom:2px solid #9C7F3D; padding-bottom:6px; margin:28px 0 14px;
+  }
+
+  /* ===== PHOTOS ANNOTÉES ===== */
+  .photo-block { margin-bottom:24px; }
+  .photo-wrap { position:relative; width:100%; border-radius:8px; overflow:hidden; border:1px solid #ddd; }
+  .photo-wrap img { width:100%; height:auto; display:block; opacity:0.87; }
+  .marker {
+    position:absolute; width:26px; height:26px; border-radius:50%;
+    background:#1A1A1A; color:#fff; border:2px solid #9C7F3D;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; transform:translate(-50%,-50%);
+  }
+  .photo-caption { font-size:13px; color:#666; margin-top:6px; padding:0 4px; }
+  .photo-caption b { color:#1a1a1a; }
+
+  /* ===== BADGES NC ===== */
+  .nc-card { background:#F8F8F8; border-radius:8px; padding:12px 14px; margin-bottom:10px; border-left:4px solid #ccc; }
+  .nc-card.crit { border-left-color:#FF7043; }
+  .nc-card.maj  { border-left-color:#FFA726; }
+  .nc-card.conf { border-left-color:#66BB6A; }
+  .badge { display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:12px; color:#fff; margin-bottom:6px; }
+  .badge.crit { background:#FF7043; }
+  .badge.maj  { background:#FFA726; }
+  .badge.conf { background:#66BB6A; }
+  .nc-title { font-weight:700; font-size:14px; margin-bottom:3px; }
+  .nc-ref { font-size:12px; color:#888; }
+
+  /* ===== PLAN D'ACTIONS CORRECTIVES ===== */
+  .action-card { border-radius:8px; padding:12px 14px; margin-bottom:10px; }
+  .ab { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:12px; color:#fff; margin-bottom:6px; }
+  .a-imm { background:#FFF1EE; }
+  .ab-imm { background:#8B1A1A; }
+  .a-u24 { background:#FFF6EC; }
+  .ab-u24 { background:#E65100; }
+  .a-u48 { background:#FFF3E0; }
+  .ab-u48 { background:#BF360C; }
+  .a-pla { background:#F1F3F4; }
+  .ab-pla { background:#546E7A; }
+  .action-text { font-size:14px; font-weight:600; margin-bottom:3px; }
+  .action-ref { font-size:12px; color:#777; }
+
+  .thirty-box {
+    background:#1A1A1A; color:#F0E4C0; border-radius:8px; padding:14px;
+    text-align:center; font-weight:600; font-size:14px; margin:24px 0;
+    border:1px solid #9C7F3D;
+  }
+
+  /* ===== SIGNATURES ===== */
+  .sig-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px; }
+  .sig-box { border:1px solid #ddd; border-radius:8px; padding:14px; }
+  .sig-label { font-size:12px; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .sig-name { font-size:13px; line-height:1.6; margin-bottom:10px; }
+  canvas.sigpad { width:100%; height:120px; border:1px dashed #9C7F3D; border-radius:6px; background:#fff; touch-action:none; }
+  .clear-btn {
+    margin-top:6px; background:none; border:1px solid #9C7F3D; color:#9C7F3D;
+    font-size:12px; font-weight:600; padding:6px 14px; border-radius:6px; width:100%;
+  }
+  .sig-date { font-size:12px; color:#888; margin-top:8px; }
+
+  .legal {
+    font-size:11px; color:#999; border-top:1px solid #eee; margin-top:30px;
+    padding-top:14px; line-height:1.6;
+  }
+
+  @media print {
+    body { -webkit-print-color-adjust:exact; }
+    .clear-btn { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== EN-TÊTE / HERO (hors body-content) ===== -->
+<div class="hero">
+  <div class="logo"><span>V</span>erdict 360 AI</div>
+  <div class="tagline">INSPECTION AI · EXPERT</div>
+  <h1>Rapport d'inspection en hygiène et salubrité alimentaire</h1>
+  <div class="ref">Réf. MAPAQ-2026-XXXX-XXX</div>
+</div>
+
+<div class="body-content">
+
+  <!-- ===== IDENTIFICATION ===== -->
+  <div class="section-title">Identification de l'établissement</div>
+  <div class="id-grid">
+    <div class="id-field"><label>Établissement</label><input type="text" placeholder="Nom de l'établissement"></div>
+    <div class="id-field"><label>Adresse</label><input type="text" placeholder="Adresse complète"></div>
+    <div class="id-field"><label>Responsable sur place</label><input type="text" placeholder="Nom et titre"></div>
+    <div class="id-field"><label>Date d'inspection</label><input type="date"></div>
+  </div>
+
+  <!-- ===== TABLEAU DE BORD ===== -->
+  <div class="section-title">Tableau de bord — Cote globale</div>
+  <div class="score-box">
+    <div class="pct rouge">--%</div>
+    <div class="label">CONFORMITÉ GLOBALE</div>
+    <div class="zone-grid">
+      <div class="zone-cell"><div class="zname">ZONE A</div><div class="zscore r">--%</div></div>
+      <div class="zone-cell"><div class="zname">ZONE B</div><div class="zscore j">--%</div></div>
+      <div class="zone-cell"><div class="zname">ZONE C</div><div class="zscore r">--%</div></div>
+      <div class="zone-cell"><div class="zname">ZONE D</div><div class="zscore j">--%</div></div>
+      <div class="zone-cell"><div class="zname">ZONE E</div><div class="zscore v">--%</div></div>
+    </div>
+  </div>
+
+  <!-- ===== PHOTOS ANNOTÉES ===== -->
+  <div class="section-title">Photos analysées</div>
+
+  <div class="photo-block">
+    <div class="photo-wrap">
+      <img src="" alt="Photo Zone A">
+      <div class="marker" style="top:30%; left:40%;">1</div>
+      <div class="marker" style="top:65%; left:70%;">2</div>
+    </div>
+    <div class="photo-caption"><b>Zone A —</b> Description de l'emplacement et observations générales.</div>
+  </div>
+
+  <!-- ===== NON-CONFORMITÉS ===== -->
+  <div class="section-title">Non-conformités observées</div>
+
+  <div class="nc-card crit">
+    <span class="badge crit">CRITIQUE</span>
+    <div class="nc-title">NC-01 — Titre de la non-conformité</div>
+    <div class="nc-ref">Photo A · Art. XX du Règlement sur les aliments · Risque élevé</div>
+  </div>
+
+  <div class="nc-card maj">
+    <span class="badge maj">MAJEURE</span>
+    <div class="nc-title">NC-02 — Titre de la non-conformité</div>
+    <div class="nc-ref">Photo B · Art. XX du Règlement sur les aliments · Risque modéré</div>
+  </div>
+
+  <div class="nc-card conf">
+    <span class="badge conf">CONFORME</span>
+    <div class="nc-title">Élément conforme observé</div>
+    <div class="nc-ref">Photo C · Aucune action requise</div>
+  </div>
+
+  <!-- ===== PLAN D'ACTIONS CORRECTIVES ===== -->
+  <div class="section-title">Plan d'actions correctives</div>
+
+  <div class="action-card a-imm">
+    <span class="ab ab-imm">🔴 IMMÉDIAT</span>
+    <div class="action-text">NC-01 · Action corrective à entreprendre immédiatement</div>
+    <div class="action-ref">Art. XX · Responsable: ____ · Délai: immédiat</div>
+  </div>
+
+  <div class="action-card a-u24">
+    <span class="ab ab-u24">🟠 URGENT 24h</span>
+    <div class="action-text">NC-02 · Action corrective sous 24 heures</div>
+    <div class="action-ref">Art. XX · Responsable: ____ · Délai: 24h</div>
+  </div>
+
+  <div class="action-card a-u48">
+    <span class="ab ab-u48">🟤 URGENT 48h</span>
+    <div class="action-text">NC-03 · Action corrective sous 48 heures</div>
+    <div class="action-ref">Art. XX · Responsable: ____ · Délai: 48h</div>
+  </div>
+
+  <div class="section-title">📅 Planifié 7 jours</div>
+  <div class="action-card a-pla">
+    <span class="ab ab-pla">📅 PLANIFIÉ 7j</span>
+    <div class="action-text">Formation MAPAQ complète pour le personnel — Manipulateur d'aliments</div>
+    <div class="action-ref">Art. XX · Responsable: Direction · Délai: 7 jours</div>
+  </div>
+
+  <div class="thirty-box">⏱ Suivi de conformité requis dans les 15 jours — Réinspection recommandée</div>
+
+  <!-- ===== SIGNATURES (2 BLOCS) ===== -->
+  <div class="section-title">Signatures</div>
+  <div class="sig-grid">
+
+    <!-- Bloc 1 : Responsable client -->
+    <div class="sig-box">
+      <div class="sig-label">Signature — Responsable de l'établissement</div>
+      <div class="sig-name">
+        Nom: <input type="text" style="border:none;border-bottom:1px solid #ccc;width:100%;font-size:13px;"><br><br>
+        Titre: <input type="text" style="border:none;border-bottom:1px solid #ccc;width:100%;font-size:13px;">
+      </div>
+      <canvas class="sigpad" id="sigClient"></canvas>
+      <button class="clear-btn" onclick="clearSig('sigClient')">Effacer</button>
+      <div class="sig-date">Date: <input type="date" style="border:none;background:transparent;"></div>
+    </div>
+
+    <!-- Bloc 2 : Inspecteur -->
+    <div class="sig-box">
+      <div class="sig-label">Signature — Inspecteur</div>
+      <div class="sig-name">
+        Jacques Perrier<br>
+        Auditeur en hygiène et salubrité alimentaire<br>
+        Expert des normes MAPAQ et HACCP<br>
+        Verdict 360 AI
+      </div>
+      <canvas class="sigpad" id="sigInspecteur"></canvas>
+      <button class="clear-btn" onclick="clearSig('sigInspecteur')">Effacer</button>
+      <div class="sig-date">Date: <input type="date" style="border:none;background:transparent;"></div>
+    </div>
+
+  </div>
+
+  <div class="legal">
+    <strong>AVIS LÉGAL:</strong> Rapport produit à titre informatif par Verdict 360 AI sur la base d'une analyse visuelle des photos soumises. Ne constitue pas un rapport officiel MAPAQ. Toute inspection officielle doit être réalisée par un inspecteur accrédité du MAPAQ. © 2026 Verdict 360 AI — Tous droits réservés.
+  </div>
+
+</div>
+
+<script>
+  // ===== SIGNATURES TACTILES =====
+  function setupSig(id) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    function resize() {
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = canvas.offsetHeight * ratio;
+      ctx.scale(ratio, ratio);
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#1A1A1A';
+    }
+    resize();
+    let drawing = false;
+    function pos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const t = e.touches ? e.touches[0] : e;
+      return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+    }
+    function start(e) { drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); e.preventDefault(); }
+    function move(e) { if (!drawing) return; const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); }
+    function end() { drawing = false; }
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    canvas.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start, {passive:false});
+    canvas.addEventListener('touchmove', move, {passive:false});
+    canvas.addEventListener('touchend', end);
+  }
+  function clearSig(id) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  setupSig('sigClient');
+  setupSig('sigInspecteur');
+
+  // Bloquer le scroll pendant la signature (mobile)
+  document.querySelectorAll('.sigpad').forEach(c => {
+    c.addEventListener('touchstart', () => document.body.style.overflow = 'hidden');
+    c.addEventListener('touchend', () => document.body.style.overflow = 'auto');
+  });
+</script>
+
+</body>
+</html>
