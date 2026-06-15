@@ -94,8 +94,12 @@ body { font-family:'DM Sans',sans-serif; background:#0F0F0F; color:#fff; min-hei
 .pill { display:inline-block; padding:2px 7px; border-radius:10px; font-size:9px; font-weight:700; color:#fff; }
 
 .photo-zone { margin:0 14px 10px; border-radius:10px; overflow:hidden; border:1px solid #D4C8A8; }
-.pz-hdr { background:#1A1A1A; padding:8px 12px; font-size:10px; font-weight:700; color:#fff; text-transform:uppercase; border-left:4px solid #D4A017; }
+.pz-hdr { background:#1A1A1A; padding:8px 12px; font-size:10px; font-weight:700; color:#fff; text-transform:uppercase; border-left:4px solid #9C7F3D; }
 .pz-img { width:100%; display:block; max-height:260px; object-fit:cover; }
+.pz-legend { background:#F8F8F8; padding:8px 12px; font-size:11px; color:#444; }
+.pz-legend-item { display:flex; align-items:flex-start; gap:8px; margin-bottom:5px; line-height:1.4; }
+.pz-legend-item:last-child { margin-bottom:0; }
+.pz-num { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; border-radius:50%; background:#1A1A1A; color:#fff; border:2px solid #9C7F3D; font-size:10px; font-weight:700; flex-shrink:0; }
 .nc-tbl { width:100%; border-collapse:collapse; font-size:10px; }
 .nc-tbl thead tr { background:#1A1A1A; }
 .nc-tbl thead th { color:#D4A017; font-size:7px; text-transform:uppercase; padding:5px 7px; text-align:left; }
@@ -164,7 +168,7 @@ canvas { display:block; width:100%; height:160px; touch-action:none; }
 .rpt-footer { text-align:center; font-size:8px; color:#999; padding:10px 14px; border-top:1px solid #D4C8A8; margin:0 14px; }
 @media print {
 
-- { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   body { background:white !important; }
   #s-home,#s-form,#s-loading,.top-bar,.sig-btns,.btn-new,.print-hint { display:none !important; }
   #s-rapport { display:block !important; position:absolute; left:0; top:0; width:100%; }
@@ -539,11 +543,11 @@ function generateAnalysis() {
 }
 
 var ANNOT_POS = [
-  [[0.05,0.10,0.55,0.55,'rect'],[0.45,0.45,0.95,0.90,'oval'],[0.05,0.55,0.45,0.90,'rect']],
-  [[0.10,0.50,0.60,0.95,'rect'],[0.55,0.05,0.95,0.45,'rect'],[0.05,0.05,0.45,0.45,'oval']],
-  [[0.05,0.05,0.50,0.50,'oval'],[0.50,0.50,0.95,0.95,'rect'],[0.45,0.10,0.90,0.55,'oval']],
-  [[0.10,0.20,0.60,0.70,'rect'],[0.40,0.10,0.90,0.55,'oval'],[0.05,0.60,0.50,0.95,'rect']],
-  [[0.05,0.40,0.55,0.90,'rect'],[0.50,0.05,0.95,0.50,'oval'],[0.10,0.05,0.55,0.45,'rect']]
+  [[0.30,0.30],[0.70,0.65],[0.20,0.75]],
+  [[0.35,0.75],[0.78,0.55],[0.15,0.20]],
+  [[0.25,0.25],[0.72,0.70],[0.68,0.30]],
+  [[0.35,0.45],[0.65,0.30],[0.25,0.78]],
+  [[0.30,0.65],[0.72,0.25],[0.30,0.20]]
 ];
 
 function annotatePhoto(b64, ncs, photoIdx, callback) {
@@ -556,36 +560,40 @@ function annotatePhoto(b64, ncs, photoIdx, callback) {
     ctx.drawImage(img, 0, 0);
     var w = img.width, h = img.height;
     var pos = ANNOT_POS[photoIdx % ANNOT_POS.length];
+    var r = Math.max(16, Math.round(w/26));
     ncs.forEach(function(nc, idx) {
       var p = pos[idx % pos.length];
-      var color = nc.type==='CRITIQUE' ? 'rgba(255,80,50,0.92)' : nc.type==='MAJEUR' ? 'rgba(255,167,38,0.92)' : 'rgba(144,164,174,0.92)';
-      var lw = Math.max(4, Math.round(w/100));
-      ctx.strokeStyle = color; ctx.lineWidth = lw;
-      if (p[4]==='rect') {
-        ctx.strokeRect(p[0]*w, p[1]*h, (p[2]-p[0])*w, (p[3]-p[1])*h);
-      } else {
-        ctx.beginPath();
-        ctx.ellipse((p[0]+p[2])/2*w,(p[1]+p[3])/2*h,(p[2]-p[0])/2*w,(p[3]-p[1])/2*h,0,0,2*Math.PI);
-        ctx.stroke();
-      }
-      var fs = Math.max(13, Math.round(w/55));
+      var cx = p[0]*w, cy = p[1]*h;
+
+      // Cercle noir avec bordure or brosse
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, 2*Math.PI);
+      ctx.fillStyle = 'rgba(26,26,26,0.92)';
+      ctx.fill();
+      ctx.lineWidth = Math.max(2, Math.round(r/8));
+      ctx.strokeStyle = '#9C7F3D';
+      ctx.stroke();
+
+      // Numero
+      var fs = Math.round(r*1.05);
       ctx.font = 'bold '+fs+'px sans-serif';
-      var obs4 = nc.observation.split(' ').slice(0,4).join(' ')+'...';
-      var label = nc.no+' - '+obs4;
-      var tw = ctx.measureText(label).width;
-      var lbx = Math.max(0, Math.min(p[0]*w, w-tw-16));
-      var lby = Math.max(fs+14, p[1]*h-6);
-      ctx.fillStyle = color;
-      ctx.fillRect(lbx, lby-fs-8, tw+16, fs+10);
       ctx.fillStyle = '#fff';
-      ctx.fillText(label, lbx+8, lby);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(idx+1), cx, cy+1);
     });
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
     callback(canvas.toDataURL('image/jpeg', 0.88));
   };
   img.src = b64;
 }
 
-window.printReport = function() { setTimeout(function(){ window.print(); }, 300); };
+window.printReport = function() {
+  window.scrollTo(0,0);
+  if (document.activeElement) document.activeElement.blur();
+  window.print();
+};
 
 var TC = {CRITIQUE:'#FF7043',MAJEUR:'#FFA726',MINEURE:'#90A4AE'};
 var PC = {IMMEDIAT:'#8B1A1A',URG24h:'#E65100',URG48h:'#BF360C',PLANIFIE:'#546E7A'};
@@ -643,6 +651,13 @@ function buildReport() {
     var photo = photos[pz.photoIndex !== undefined ? pz.photoIndex : pi];
     html += '<div class="photo-zone"><div class="pz-hdr">Photo '+(pi+1)+' &#8212; '+pz.zone+'</div>';
     if (photo) html += '<img class="pz-img" id="pz-img-'+pi+'" src="'+photo.b64+'">';
+    if (pz.ncs && pz.ncs.length > 0) {
+      html += '<div class="pz-legend">';
+      pz.ncs.forEach(function(nc, idx) {
+        html += '<div class="pz-legend-item"><span class="pz-num">'+(idx+1)+'</span><span><strong>'+nc.no+'</strong> &#8212; '+nc.observation+'</span></div>';
+      });
+      html += '</div>';
+    }
     html += '<table class="nc-tbl"><thead><tr><th>Ref.</th><th>Non-conformite</th><th>Type</th><th>Priorite</th></tr></thead><tbody>';
     pz.ncs.forEach(function(nc) {
       html += '<tr><td><strong>'+nc.no+'</strong></td><td>'+nc.observation+'</td><td>'+pill(nc.type,TC[nc.type])+'</td><td>'+pill(nc.priorite,PC[nc.priorite]||'#999')+'</td></tr>';
