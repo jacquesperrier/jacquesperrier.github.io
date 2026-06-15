@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Académie Verdict 360 AI</title>
+<style>
+  :root {
+    --noir: #0A0A0A;
+    --or-base: #9C7F3D;
+    --or-clair: #B8954A;
+    --or-reflet: #D4C28E;
+    --or-highlight: #F0E4C0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--noir);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* ---------- LOGIN ---------- */
+  #loginScreen {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  .logo-text {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(110deg, var(--or-base) 0%, var(--or-clair) 35%, var(--or-highlight) 50%, var(--or-clair) 65%, var(--or-base) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+  .input-group {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    color: var(--or-reflet);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  input {
+    width: 100%;
+    padding: 14px 16px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--or-clair);
+  }
+  button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(110deg, var(--or-base) 0%, var(--or-clair) 35%, var(--or-highlight) 50%, var(--or-clair) 65%, var(--or-base) 100%);
+    border: none;
+    border-radius: 8px;
+    color: #0A0A0A;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  #errorMsg {
+    color: #FF7043;
+    font-size: 14px;
+    margin-top: 16px;
+    min-height: 20px;
+  }
+
+  /* ---------- ACADEMIE CONTENT ---------- */
+  #academieScreen {
+    display: none;
+    width: 100%;
+    max-width: 800px;
+  }
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #333;
+  }
+  .client-badge {
+    font-size: 13px;
+    color: var(--or-reflet);
+    background: #1a1a1a;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--or-base);
+  }
+  .logout-btn {
+    width: auto;
+    padding: 8px 16px;
+    font-size: 13px;
+    background: transparent;
+    border: 1px solid #444;
+    color: #aaa;
+    font-weight: 400;
+  }
+  .module-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .module-card h3 {
+    color: var(--or-reflet);
+    margin-bottom: 8px;
+    font-size: 18px;
+  }
+  .module-card p {
+    color: #ccc;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<!-- ÉCRAN LOGIN -->
+<div id="loginScreen">
+  <div class="logo-text">VERDICT 360 AI</div>
+  <div class="subtitle">Académie de formation — Accès sécurisé</div>
+
+  <div class="input-group">
+    <label for="accessCode">Code d'accès</label>
+    <input type="text" id="accessCode" placeholder="ENTRER VOTRE CODE" maxlength="20" autocomplete="off" autocapitalize="characters">
+  </div>
+
+  <button id="loginBtn" onclick="verifierCode()">Accéder à l'académie</button>
+  <div id="errorMsg"></div>
+</div>
+
+<!-- ÉCRAN ACADÉMIE -->
+<div id="academieScreen">
+  <div class="top-bar">
+    <div class="logo-text" style="font-size:20px; margin:0;">ACADÉMIE</div>
+    <div>
+      <span class="client-badge" id="clientBadge"></span>
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="module-card">
+    <h3>Module 1 — Introduction MAPAQ</h3>
+    <p>Contenu de formation à venir. Cette section sera remplie avec les modules de formation HACCP/MAPAQ.</p>
+  </div>
+
+  <div class="module-card">
+    <h3>Module 2 — Bonnes pratiques d'hygiène</h3>
+    <p>Contenu de formation à venir.</p>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = "https://zdijvkzjkyrxbmrlrsvl.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_Z3SbXuGcNTQpv5YhHUmw5Q_1eS8m75R";
+  const SESSION_DURATION_HOURS = 12;
+
+  // Vérifier si une session valide existe déjà au chargement
+  window.onload = function() {
+    const session = getSession();
+    if (session) {
+      afficherAcademie(session.client);
+    }
+  };
+
+  async function verifierCode() {
+    const codeInput = document.getElementById('accessCode');
+    const errorMsg = document.getElementById('errorMsg');
+    const btn = document.getElementById('loginBtn');
+    const code = codeInput.value.trim().toUpperCase();
+
+    if (!code) {
+      errorMsg.textContent = "Veuillez entrer un code d'accès.";
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Vérification...";
+    errorMsg.textContent = "";
+
+    try {
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/academie_access?code=eq.${encodeURIComponent(code)}&actif=eq.true&select=code,client_name`,
+        {
+          headers: {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur de connexion au serveur.");
+      }
+
+      const data = await response.json();
+
+      if (data.length === 0) {
+        errorMsg.textContent = "Code d'accès invalide ou inactif.";
+        btn.disabled = false;
+        btn.textContent = "Accéder à l'académie";
+        return;
+      }
+
+      const access = data[0];
+      saveSession(access.client_name);
+      afficherAcademie(access.client_name);
+
+    } catch (err) {
+      errorMsg.textContent = "Erreur de connexion. Vérifiez votre réseau et réessayez.";
+      btn.disabled = false;
+      btn.textContent = "Accéder à l'académie";
+    }
+  }
+
+  function saveSession(clientName) {
+    const expiry = Date.now() + (SESSION_DURATION_HOURS * 60 * 60 * 1000);
+    const session = { client: clientName, expiry: expiry };
+    document.cookie = `academie_session=${encodeURIComponent(JSON.stringify(session))}; max-age=${SESSION_DURATION_HOURS * 3600}; path=/; SameSite=Strict`;
+  }
+
+  function getSession() {
+    const cookies = document.cookie.split(';');
+    for (let c of cookies) {
+      const [key, value] = c.trim().split('=');
+      if (key === 'academie_session') {
+        try {
+          const session = JSON.parse(decodeURIComponent(value));
+          if (session.expiry > Date.now()) {
+            return session;
+          }
+        } catch (e) {}
+      }
+    }
+    return null;
+  }
+
+  function afficherAcademie(clientName) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('academieScreen').style.display = 'block';
+    document.getElementById('clientBadge').textContent = clientName;
+  }
+
+  function logout() {
+    document.cookie = "academie_session=; max-age=0; path=/";
+    document.getElementById('academieScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('accessCode').value = '';
+  }
+
+  // Permettre "Enter" pour soumettre
+  document.getElementById('accessCode').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') verifierCode();
+  });
+</script>
+
+</body>
+</html>
