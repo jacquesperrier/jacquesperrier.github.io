@@ -1,1 +1,650 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Punch — Verdict 360 AI</title>
+<style>
+:root {
+  --bordeaux: #8B1A1A;
+  --bordeaux-dark: #6B1212;
+  --or: #D4A017;
+  --noir: #1A1A1A;
+  --blanc: #FFFFFF;
+  --gris: #F4F4F4;
+  --gris-mid: #E0E0E0;
+  --vert: #2E7D32;
+  --vert-light: #E8F5E9;
+  --texte: #2A2A2A;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #F0EEEB; color: var(--texte); min-height: 100vh; }
 
+/* HEADER */
+header {
+  background: var(--bordeaux);
+  padding: 14px 18px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 3px solid var(--or);
+  position: sticky; top: 0; z-index: 100;
+}
+.logo-main { font-size: 15px; font-weight: 800; color: var(--blanc); }
+.logo-sub { font-size: 10px; color: var(--or); letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
+.header-clock { font-size: 20px; font-weight: 700; color: var(--or); font-variant-numeric: tabular-nums; text-align: right; }
+.header-date { font-size: 10px; color: rgba(255,255,255,0.65); text-align: right; }
+
+/* TABS */
+main { padding: 14px; max-width: 480px; margin: 0 auto; }
+.tabs { display: flex; gap: 0; background: var(--gris); border-radius: 10px; padding: 3px; margin-bottom: 14px; }
+.tab { flex: 1; padding: 9px 4px; border: none; background: transparent; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; color: #888; transition: all 0.15s; }
+.tab.active { background: var(--blanc); color: var(--bordeaux); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* CARD */
+.card { background: var(--blanc); border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--bordeaux); margin-bottom: 8px; }
+
+/* INPUT NOM */
+.emp-wrap { position: relative; }
+.emp-wrap input {
+  width: 100%; padding: 14px 16px; border: 2px solid var(--gris-mid);
+  border-radius: 10px; font-size: 16px; color: var(--noir);
+  background: var(--gris); outline: none; transition: border-color 0.2s;
+}
+.emp-wrap input:focus { border-color: var(--bordeaux); background: var(--blanc); }
+.emp-wrap input::placeholder { color: #AAA; }
+.suggestions { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--blanc); border: 1px solid var(--gris-mid); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); z-index: 50; overflow: hidden; display: none; }
+.suggestion-item { padding: 12px 16px; cursor: pointer; font-size: 15px; border-bottom: 1px solid var(--gris); }
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-item:active { background: var(--gris); }
+
+/* PREVIEW PHOTO */
+.photo-preview-wrap { margin-top: 12px; display: none; }
+.photo-preview-wrap.visible { display: block; }
+#photo-preview {
+  width: 100%; max-height: 180px; object-fit: cover;
+  border-radius: 10px; border: 2px solid var(--gris-mid);
+}
+.photo-retake {
+  margin-top: 6px; width: 100%; padding: 8px;
+  background: none; border: 1px solid var(--gris-mid); border-radius: 8px;
+  font-size: 13px; color: #666; cursor: pointer;
+}
+
+/* GEO STATUS */
+.geo-status {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 8px;
+  background: var(--gris); margin-top: 10px;
+  font-size: 13px; color: #666;
+}
+.geo-status.ok { background: var(--vert-light); color: var(--vert); }
+.geo-status.err { background: #FFEBEE; color: #C62828; }
+
+/* ACTIVE STATUS */
+.active-status {
+  background: var(--vert-light); border: 1px solid #A5D6A7;
+  border-radius: 10px; padding: 12px 16px; margin-top: 12px; display: none;
+  align-items: center; gap: 12px;
+}
+.active-status.visible { display: flex; }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--vert); flex-shrink: 0; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.status-text { font-size: 13px; color: var(--vert); font-weight: 600; }
+.status-since { font-size: 11px; color: #666; margin-top: 1px; }
+
+/* PUNCH BTN */
+.punch-btn {
+  width: 100%; padding: 18px; border: none; border-radius: 12px;
+  font-size: 17px; font-weight: 800; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: all 0.15s; margin-top: 12px;
+}
+.punch-btn-in { background: var(--bordeaux); color: var(--blanc); box-shadow: 0 4px 14px rgba(139,26,26,0.35); }
+.punch-btn-out { background: var(--noir); color: var(--or); box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+.punch-btn:active { transform: scale(0.97); }
+.btn-icon { font-size: 20px; }
+
+/* STATS */
+.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.stat-card { background: var(--blanc); border-radius: 10px; padding: 14px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.stat-number { font-size: 26px; font-weight: 800; color: var(--bordeaux); font-variant-numeric: tabular-nums; }
+.stat-label { font-size: 11px; color: #888; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* SEMAINE */
+.week-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.week-nav button { background: none; border: 1px solid var(--gris-mid); border-radius: 8px; padding: 6px 14px; font-size: 18px; cursor: pointer; color: var(--bordeaux); }
+.week-label { font-size: 13px; font-weight: 700; color: var(--noir); }
+.shift-list { list-style: none; }
+.shift-item { padding: 12px 0; border-bottom: 1px solid var(--gris); }
+.shift-item:last-child { border-bottom: none; }
+.shift-top { display: flex; align-items: center; gap: 10px; }
+.shift-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--bordeaux); color: var(--or); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; flex-shrink: 0; }
+.shift-info { flex: 1; }
+.shift-name { font-size: 14px; font-weight: 600; color: var(--noir); }
+.shift-times { font-size: 12px; color: #888; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.shift-duration { font-size: 14px; font-weight: 700; color: var(--bordeaux); }
+.shift-active { font-size: 12px; font-weight: 600; color: var(--vert); }
+
+/* PHOTO THUMB + GEO dans historique */
+.shift-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-left: 46px; }
+.shift-thumb { width: 48px; height: 36px; object-fit: cover; border-radius: 6px; border: 1px solid var(--gris-mid); cursor: pointer; }
+.shift-geo-link { font-size: 11px; color: #1565C0; text-decoration: none; display: flex; align-items: center; gap: 3px; }
+
+/* LIGHTBOX */
+.lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 999; align-items: center; justify-content: center; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 94vw; max-height: 90vh; border-radius: 10px; }
+.lightbox-close { position: absolute; top: 18px; right: 18px; color: var(--blanc); font-size: 28px; cursor: pointer; background: none; border: none; }
+
+/* EXPORT */
+.export-btn { width: 100%; padding: 14px; background: transparent; border: 2px solid var(--bordeaux); border-radius: 10px; color: var(--bordeaux); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; transition: all 0.15s; }
+.export-btn:active { background: var(--bordeaux); color: var(--blanc); }
+
+/* EMPTY */
+.empty-state { text-align: center; padding: 28px 16px; color: #BBB; font-size: 14px; }
+.empty-icon { font-size: 32px; margin-bottom: 8px; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--noir); color: var(--blanc); padding: 12px 22px; border-radius: 30px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.3); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 200; white-space: nowrap; border-left: 4px solid var(--or); }
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo-main">Verdict 360 AI</div>
+    <div class="logo-sub">Module Punch</div>
+  </div>
+  <div>
+    <div class="header-clock" id="clock">--:--:--</div>
+    <div class="header-date" id="date-display"></div>
+  </div>
+</header>
+
+<main>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('punch')">⏱ Punch</button>
+    <button class="tab" onclick="switchTab('semaine')">📋 Semaine</button>
+    <button class="tab" onclick="switchTab('export')">📤 Export</button>
+  </div>
+
+  <!-- TAB PUNCH -->
+  <div class="tab-content active" id="tab-punch">
+
+    <div class="section-label">Employé(e)</div>
+    <div class="card">
+      <div class="emp-wrap">
+        <input type="text" id="emp-name" placeholder="Nom de l'employé(e)..."
+               autocomplete="off" oninput="onNameInput()" onblur="hideSugg()">
+        <div class="suggestions" id="suggestions"></div>
+      </div>
+
+      <!-- PHOTO -->
+      <div style="margin-top:12px;">
+        <div class="section-label" style="margin-bottom:6px;">Photo de présence</div>
+        <input type="file" id="photo-input" accept="image/*" capture="user" style="display:none" onchange="onPhotoSelected()">
+        <button onclick="document.getElementById('photo-input').click()"
+          style="width:100%;padding:11px;background:var(--gris);border:2px dashed var(--gris-mid);border-radius:10px;font-size:14px;color:#888;cursor:pointer;">
+          📸 Prendre un selfie
+        </button>
+        <div class="photo-preview-wrap" id="photo-preview-wrap">
+          <img id="photo-preview" src="" alt="Selfie">
+          <button class="photo-retake" onclick="document.getElementById('photo-input').click()">🔄 Reprendre la photo</button>
+        </div>
+      </div>
+
+      <!-- GEO -->
+      <div class="geo-status" id="geo-status">
+        📍 Localisation — appuie sur Punch pour activer
+      </div>
+
+      <div class="active-status" id="active-status">
+        <div class="status-dot"></div>
+        <div>
+          <div class="status-text" id="status-name">En service</div>
+          <div class="status-since" id="status-since"></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="punch-btn punch-btn-in" id="punch-btn" onclick="doPunch()">
+      <span class="btn-icon" id="btn-icon">▶</span>
+      <span id="punch-btn-label">PUNCH IN</span>
+    </button>
+
+    <div class="stats-row" style="margin-top:14px;">
+      <div class="stat-card">
+        <div class="stat-number" id="stat-actifs">0</div>
+        <div class="stat-label">En service</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-shifts">0</div>
+        <div class="stat-label">Shifts aujourd'hui</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TAB SEMAINE -->
+  <div class="tab-content" id="tab-semaine">
+    <div class="week-nav">
+      <button onclick="changeWeek(-1)">‹</button>
+      <div class="week-label" id="week-label"></div>
+      <button onclick="changeWeek(1)">›</button>
+    </div>
+    <div class="card">
+      <ul class="shift-list" id="shift-list"></ul>
+    </div>
+  </div>
+
+  <!-- TAB EXPORT -->
+  <div class="tab-content" id="tab-export">
+    <div class="section-label">Rapport de semaine</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div id="export-week-label" style="font-size:12px;color:#888;margin-bottom:10px;"></div>
+      <div id="export-summary"></div>
+    </div>
+    <button class="export-btn" onclick="exportCSV()">📊 Télécharger CSV</button>
+    <button class="export-btn" onclick="copyReport()">📋 Copier rapport texte</button>
+  </div>
+
+</main>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DONNÉES ──────────────────────────────────────────────────────────────────
+const defaultPunches = [
+  {
+    name: "Matrix",
+    in: "2026-06-15T16:00:06",
+    out: "2026-06-15T19:40:39",
+    date: "2026-06-15",
+    inGeo: { lat: 45.51205, lng: -75.56, label: "45.51205, -75.56" },
+    outGeo: { lat: 45.51205, lng: -75.56, label: "45.51205, -75.56" },
+    inPhoto: null, outPhoto: null
+  },
+  {
+    name: "Matrix",
+    in: "2026-06-16T15:30:00",
+    out: "2026-06-16T19:33:57",
+    date: "2026-06-16",
+    inGeo: { lat: 45.51201, lng: -75.56, label: "45.51201, -75.56" },
+    outGeo: { lat: 45.51201, lng: -75.56, label: "45.51201, -75.56" },
+    inPhoto: null, outPhoto: null
+  },
+  {
+    name: "Matrix",
+    in: "2026-06-17T13:29:15",
+    out: "2026-06-17T13:29:46",
+    date: "2026-06-17",
+    inGeo: { lat: 45.42661, lng: -75.71, label: "45.42661, -75.71" },
+    outGeo: { lat: 45.42661, lng: -75.71, label: "45.42661, -75.71" },
+    inPhoto: null, outPhoto: null
+  }
+];
+const stored = localStorage.getItem('v360_punches_v2');
+let punches = stored ? JSON.parse(stored) : defaultPunches;
+if (!stored) save();
+
+function save() { localStorage.setItem('v360_punches_v2', JSON.stringify(punches)); }
+
+// ── ÉTAT COURANT ─────────────────────────────────────────────────────────────
+let currentPhoto = null;
+let currentGeo = null;
+let weekOffset = 0;
+
+// ── HORLOGE ──────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  document.getElementById('date-display').textContent =
+    now.toLocaleDateString('fr-CA', {weekday:'long', day:'numeric', month:'long'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── GÉOLOCALISATION ───────────────────────────────────────────────────────────
+function getGeo() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) { reject('Non supporté'); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, label: `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}` }),
+      err => reject(err.message),
+      { timeout: 8000, enableHighAccuracy: true }
+    );
+  });
+}
+
+function updateGeoStatus(state, msg) {
+  const el = document.getElementById('geo-status');
+  el.className = 'geo-status' + (state === 'ok' ? ' ok' : state === 'err' ? ' err' : '');
+  el.textContent = msg;
+}
+
+// ── PHOTO ─────────────────────────────────────────────────────────────────────
+function onPhotoSelected() {
+  const file = document.getElementById('photo-input').files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentPhoto = e.target.result;
+    document.getElementById('photo-preview').src = currentPhoto;
+    document.getElementById('photo-preview-wrap').classList.add('visible');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── NOM INPUT ─────────────────────────────────────────────────────────────────
+function onNameInput() {
+  filterSugg();
+  updatePunchBtn();
+}
+
+function getKnownEmployees() {
+  return [...new Set(punches.map(p => p.name))].sort();
+}
+
+function filterSugg() {
+  const val = document.getElementById('emp-name').value.trim().toLowerCase();
+  const box = document.getElementById('suggestions');
+  const all = getKnownEmployees();
+  const matches = val ? all.filter(n => n.toLowerCase().includes(val)) : all;
+  if (!matches.length) { box.style.display = 'none'; return; }
+  box.innerHTML = matches.map(n =>
+    `<div class="suggestion-item" onmousedown="selectEmp('${n}')">${n}</div>`
+  ).join('');
+  box.style.display = 'block';
+}
+
+function hideSugg() { setTimeout(() => document.getElementById('suggestions').style.display = 'none', 150); }
+
+function selectEmp(name) {
+  document.getElementById('emp-name').value = name;
+  document.getElementById('suggestions').style.display = 'none';
+  updatePunchBtn();
+}
+
+// ── ÉTAT BOUTON ───────────────────────────────────────────────────────────────
+function getActiveShift(name) {
+  const s = punches.filter(p => p.name === name);
+  const last = s[s.length - 1];
+  return last && !last.out ? last : null;
+}
+
+function updatePunchBtn() {
+  const name = document.getElementById('emp-name').value.trim();
+  const btn = document.getElementById('punch-btn');
+  const label = document.getElementById('punch-btn-label');
+  const icon = document.getElementById('btn-icon');
+  const statusBox = document.getElementById('active-status');
+
+  if (!name) {
+    btn.className = 'punch-btn punch-btn-in';
+    icon.textContent = '▶'; label.textContent = 'PUNCH IN';
+    statusBox.classList.remove('visible'); return;
+  }
+  const active = getActiveShift(name);
+  if (active) {
+    btn.className = 'punch-btn punch-btn-out';
+    icon.textContent = '⏹'; label.textContent = 'PUNCH OUT';
+    statusBox.classList.add('visible');
+    document.getElementById('status-name').textContent = name + ' — En service';
+    const since = new Date(active.in);
+    document.getElementById('status-since').textContent =
+      'Depuis ' + since.toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'});
+  } else {
+    btn.className = 'punch-btn punch-btn-in';
+    icon.textContent = '▶'; label.textContent = 'PUNCH IN';
+    statusBox.classList.remove('visible');
+  }
+}
+
+// ── PUNCH ─────────────────────────────────────────────────────────────────────
+async function doPunch() {
+  const name = document.getElementById('emp-name').value.trim();
+  if (!name) { showToast('⚠️ Entre un nom'); return; }
+
+  const btn = document.getElementById('punch-btn');
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
+
+  updateGeoStatus('', '📍 Localisation en cours...');
+
+  let geo = null;
+  try {
+    geo = await getGeo();
+    currentGeo = geo;
+    updateGeoStatus('ok', `📍 ${geo.label}`);
+  } catch(e) {
+    updateGeoStatus('err', '📍 Localisation non disponible');
+  }
+
+  const now = new Date();
+  const active = getActiveShift(name);
+
+  if (active) {
+    active.out = now.toISOString();
+    active.outGeo = geo;
+    active.outPhoto = currentPhoto;
+    const mins = Math.round((now - new Date(active.in)) / 60000);
+    const h = Math.floor(mins/60), m = mins%60;
+    showToast(`✔ ${name} — ${h}h${String(m).padStart(2,'0')} travaillé`);
+  } else {
+    punches.push({
+      name,
+      in: now.toISOString(),
+      out: null,
+      date: toDateStr(now),
+      inGeo: geo,
+      outGeo: null,
+      inPhoto: currentPhoto,
+      outPhoto: null
+    });
+    showToast(`▶ ${name} — Punch IN`);
+  }
+
+  save();
+  currentPhoto = null;
+  document.getElementById('photo-preview-wrap').classList.remove('visible');
+  document.getElementById('photo-input').value = '';
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  updatePunchBtn();
+  updateStats();
+  renderShifts();
+  renderExport();
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────────
+function updateStats() {
+  const today = toDateStr(new Date());
+  document.getElementById('stat-actifs').textContent = punches.filter(p => !p.out).length;
+  document.getElementById('stat-shifts').textContent = punches.filter(p => p.date === today && p.out).length;
+}
+
+// ── SEMAINE ───────────────────────────────────────────────────────────────────
+function getWeekBounds(offset=0) {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diff + offset * 7);
+  monday.setHours(0,0,0,0);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23,59,59,999);
+  return { monday, sunday };
+}
+
+function formatDate(d) { return d.toLocaleDateString('fr-CA', {day:'numeric', month:'short'}); }
+function toDateStr(d) { return d.toISOString().split('T')[0]; }
+function calcDur(inStr, outStr) {
+  if (!outStr) return null;
+  const mins = Math.round((new Date(outStr) - new Date(inStr)) / 60000);
+  return `${Math.floor(mins/60)}h${String(mins%60).padStart(2,'0')}`;
+}
+function initials(name) { return name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
+
+function updateWeekLabel() {
+  const { monday, sunday } = getWeekBounds(weekOffset);
+  const label = `${formatDate(monday)} – ${formatDate(sunday)} ${sunday.getFullYear()}`;
+  document.getElementById('week-label').textContent = label;
+  document.getElementById('export-week-label').textContent = 'Semaine du ' + label;
+}
+
+function changeWeek(dir) {
+  weekOffset += dir;
+  updateWeekLabel();
+  renderShifts();
+  renderExport();
+}
+
+function renderShifts() {
+  const { monday, sunday } = getWeekBounds(weekOffset);
+  const list = document.getElementById('shift-list');
+  const week = punches.filter(p => {
+    const d = new Date(p.in);
+    return d >= monday && d <= sunday;
+  }).sort((a,b) => new Date(b.in) - new Date(a.in));
+
+  if (!week.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div>Aucun punch cette semaine</div>';
+    return;
+  }
+
+  list.innerHTML = week.map((p, idx) => {
+    const inTime = new Date(p.in).toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'});
+    const outTime = p.out ? new Date(p.out).toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'}) : null;
+    const dur = calcDur(p.in, p.out);
+    const dateStr = new Date(p.in).toLocaleDateString('fr-CA', {weekday:'short', day:'numeric', month:'short'});
+
+    // Photos
+    let metaHTML = '';
+    const photos = [];
+    if (p.inPhoto) photos.push({ src: p.inPhoto, label: 'IN' });
+    if (p.outPhoto) photos.push({ src: p.outPhoto, label: 'OUT' });
+
+    const geos = [];
+    if (p.inGeo) geos.push({ geo: p.inGeo, label: 'IN' });
+    if (p.outGeo) geos.push({ geo: p.outGeo, label: 'OUT' });
+
+    if (photos.length || geos.length) {
+      metaHTML = `<div class="shift-meta">`;
+      photos.forEach((ph, i) => {
+        metaHTML += `<img class="shift-thumb" src="${ph.src}" alt="Photo ${ph.label}" onclick="openLightbox('${ph.src}')">`;
+      });
+      geos.forEach(g => {
+        metaHTML += `<a class="shift-geo-link" href="https://maps.google.com/?q=${g.geo.lat},${g.geo.lng}" target="_blank">📍 Carte ${g.label}</a>`;
+      });
+      metaHTML += `</div>`;
+    }
+
+    return `<li class="shift-item">
+      <div class="shift-top">
+        <div class="shift-avatar">${initials(p.name)}</div>
+        <div class="shift-info">
+          <div class="shift-name">${p.name}</div>
+          <div class="shift-times">${dateStr} · ${inTime}${outTime ? ' → ' + outTime : ''}</div>
+        </div>
+        ${dur ? `<div class="shift-duration">${dur}</div>` : `<div class="shift-active">⏳ En service</div>`}
+      </div>
+      ${metaHTML}
+    </li>`;
+  }).join('');
+}
+
+// ── LIGHTBOX ──────────────────────────────────────────────────────────────────
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function renderExport() {
+  const { monday, sunday } = getWeekBounds(weekOffset);
+  const week = punches.filter(p => { const d = new Date(p.in); return d >= monday && d <= sunday && p.out; });
+  const byEmp = {};
+  week.forEach(p => { if (!byEmp[p.name]) byEmp[p.name] = 0; byEmp[p.name] += (new Date(p.out) - new Date(p.in)) / 3600000; });
+  const summary = document.getElementById('export-summary');
+  if (!Object.keys(byEmp).length) { summary.innerHTML = '<span style="color:#BBB">Aucune donnée.</span>'; return; }
+  summary.innerHTML = Object.entries(byEmp).map(([name, hrs]) => {
+    const h = Math.floor(hrs), m = Math.round((hrs%1)*60);
+    return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F0F0F0;">
+      <span style="font-weight:600">${name}</span>
+      <span style="color:var(--bordeaux);font-weight:700">${h}h${String(m).padStart(2,'0')}</span></div>`;
+  }).join('') + (() => {
+    const tot = Object.values(byEmp).reduce((a,b)=>a+b,0);
+    const h = Math.floor(tot), m = Math.round((tot%1)*60);
+    return `<div style="display:flex;justify-content:space-between;padding:10px 0 0;font-weight:800;font-size:15px;">
+      <span>TOTAL</span><span style="color:var(--bordeaux)">${h}h${String(m).padStart(2,'0')}</span></div>`;
+  })();
+}
+
+function exportCSV() {
+  const { monday, sunday } = getWeekBounds(weekOffset);
+  const week = punches.filter(p => { const d = new Date(p.in); return d >= monday && d <= sunday; });
+  if (!week.length) { showToast('Aucune donnée'); return; }
+  const rows = [['Employé','Date','Entrée','Sortie','Heures','Géo IN','Géo OUT']];
+  week.forEach(p => {
+    const inD = new Date(p.in), outD = p.out ? new Date(p.out) : null;
+    const dur = p.out ? ((outD-inD)/3600000).toFixed(2) : '';
+    rows.push([p.name, toDateStr(inD),
+      inD.toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'}),
+      outD ? outD.toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'}) : 'En service',
+      dur,
+      p.inGeo ? p.inGeo.label : '',
+      p.outGeo ? p.outGeo.label : ''
+    ]);
+  });
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `Punch_Verdict360AI_${toDateStr(monday)}.csv`; a.click();
+  showToast('📊 CSV téléchargé');
+}
+
+function copyReport() {
+  const { monday, sunday } = getWeekBounds(weekOffset);
+  const week = punches.filter(p => { const d = new Date(p.in); return d >= monday && d <= sunday && p.out; });
+  if (!week.length) { showToast('Aucune donnée'); return; }
+  const byEmp = {};
+  week.forEach(p => { if (!byEmp[p.name]) byEmp[p.name]=0; byEmp[p.name]+=(new Date(p.out)-new Date(p.in))/3600000; });
+  let text = `VERDICT 360 AI — Rapport Punch\nSemaine du ${formatDate(monday)} au ${formatDate(sunday)}\n${'─'.repeat(32)}\n`;
+  Object.entries(byEmp).forEach(([n,h]) => { const hh=Math.floor(h),mm=Math.round((h%1)*60); text+=`${n} : ${hh}h${String(mm).padStart(2,'0')}\n`; });
+  const tot = Object.values(byEmp).reduce((a,b)=>a+b,0);
+  const th=Math.floor(tot),tm=Math.round((tot%1)*60);
+  text += `${'─'.repeat(32)}\nTOTAL : ${th}h${String(tm).padStart(2,'0')}`;
+  navigator.clipboard.writeText(text).then(()=>showToast('📋 Rapport copié'));
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['punch','semaine','export'][i]===id));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+id));
+  if(id==='semaine') renderShifts();
+  if(id==='export') renderExport();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+updateWeekLabel(); updateStats(); renderShifts(); renderExport();
+</script>
+</body>
+</html>
