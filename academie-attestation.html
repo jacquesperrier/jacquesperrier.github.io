@@ -1,1 +1,484 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attestation — Verdict 360 AI ACADÉMIE</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
 
+  :root {
+    --or-solide: #B8954A;
+    --or-ombre: #9C7F3D;
+    --or-reflet: #D4C28E;
+    --or-highlight: #F0E4C0;
+    --or-gradient: linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);
+    --noir: #0A0A0A;
+    --gris-fonce: #1A1A1A;
+    --gris-moyen: #444;
+    --blanc: #FAFAFA;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1a1a;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* ── Bouton imprimer (hors impression) ── */
+  .print-btn {
+    background: var(--or-gradient);
+    color: var(--noir);
+    border: none;
+    padding: 12px 32px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-bottom: 24px;
+    border-radius: 2px;
+    transition: opacity 0.2s;
+  }
+  .print-btn:hover { opacity: 0.85; }
+
+  /* ── Certificat ── */
+  .certificat {
+    background: var(--blanc);
+    width: 100%;
+    max-width: 820px;
+    min-height: 560px;
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  /* Bordure or brossé */
+  .certificat::before {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border: 2px solid var(--or-solide);
+    pointer-events: none;
+    z-index: 10;
+  }
+  .certificat::after {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border: 0.5px solid var(--or-reflet);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Bande supérieure noire */
+  .header-band {
+    background: var(--gris-fonce);
+    padding: 28px 50px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .logo-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .logo-v360 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--or-reflet);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+  }
+
+  .module-badge {
+    background: var(--or-gradient);
+    padding: 6px 18px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--noir);
+    border-radius: 1px;
+  }
+
+  /* Corps du certificat */
+  .corps {
+    padding: 40px 60px 36px;
+    text-align: center;
+    position: relative;
+  }
+
+  .titre-attestation {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--or-ombre);
+    margin-bottom: 6px;
+  }
+
+  .titre-principal {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--gris-fonce);
+    line-height: 1.15;
+    margin-bottom: 24px;
+  }
+
+  .ligne-separateur {
+    width: 80px;
+    height: 2px;
+    background: var(--or-gradient);
+    margin: 0 auto 24px;
+    border-radius: 1px;
+  }
+
+  .texte-intro {
+    font-size: 13px;
+    color: var(--gris-moyen);
+    letter-spacing: 0.3px;
+    margin-bottom: 8px;
+  }
+
+  .nom-participant {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 6px 0 20px;
+    line-height: 1.2;
+  }
+
+  .texte-programme {
+    font-size: 13px;
+    color: var(--gris-moyen);
+    margin-bottom: 4px;
+  }
+
+  .nom-programme {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gris-fonce);
+    margin-bottom: 24px;
+  }
+
+  /* Score */
+  .score-zone {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--gris-fonce);
+    padding: 10px 28px;
+    margin-bottom: 28px;
+    border-radius: 2px;
+  }
+
+  .score-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--or-reflet);
+  }
+
+  .score-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Infos bas */
+  .infos-bas {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 60px 32px;
+    gap: 20px;
+  }
+
+  .bloc-info {
+    text-align: left;
+  }
+
+  .bloc-info-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--or-ombre);
+    margin-bottom: 3px;
+  }
+
+  .bloc-info-value {
+    font-size: 12px;
+    color: var(--gris-fonce);
+    font-weight: 500;
+  }
+
+  /* Signature zone */
+  .signature-zone {
+    text-align: center;
+  }
+
+  .signature-nom {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gris-fonce);
+    margin-bottom: 2px;
+  }
+
+  .signature-titre {
+    font-size: 10px;
+    color: var(--gris-moyen);
+    letter-spacing: 0.5px;
+  }
+
+  .ligne-signature {
+    width: 140px;
+    height: 1px;
+    background: var(--or-solide);
+    margin: 8px auto 6px;
+  }
+
+  /* Footer doré */
+  .footer-band {
+    background: var(--or-gradient);
+    height: 6px;
+  }
+
+  /* Filigrane décoratif */
+  .filigrane {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 180px;
+    font-weight: 900;
+    color: rgba(184, 149, 74, 0.05);
+    font-family: 'Playfair Display', serif;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+    white-space: nowrap;
+  }
+
+  .corps, .infos-bas { position: relative; z-index: 1; }
+
+  /* Erreur */
+  .erreur {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+    padding: 24px 32px;
+    text-align: center;
+    max-width: 500px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── IMPRESSION ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: white; padding: 0; }
+    .print-btn { display: none !important; }
+    .certificat {
+      box-shadow: none;
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+  // ── Paramètres URL ──
+  const params = new URLSearchParams(window.location.search);
+  const code     = params.get('code');
+  const nom      = params.get('nom');
+  const programme= params.get('programme');
+  const scoreRaw = params.get('score');
+  const lang     = (params.get('lang') || 'fr').toLowerCase();
+
+  // ── Programmes connus ──
+  const programmes = {
+    manipulateur: {
+      fr: 'Manipulation sécuritaire des aliments',
+      en: 'Safe Food Handling'
+    },
+    superviseur: {
+      fr: 'Supervision en hygiène alimentaire',
+      en: 'Food Hygiene Supervision'
+    },
+    haccp: {
+      fr: 'Principes HACCP fondamentaux',
+      en: 'HACCP Fundamentals'
+    },
+    mapaq: {
+      fr: 'Normes MAPAQ et inspection',
+      en: 'MAPAQ Standards & Inspection'
+    }
+  };
+
+  // ── Textes bilingues ──
+  const i18n = {
+    fr: {
+      module:        'ACADÉMIE',
+      surtitle:      'Attestation de réussite',
+      title:         'Certificat\nde Réussite',
+      intro:         'La présente atteste que',
+      has_completed: 'a complété avec succès le programme',
+      score_label:   'Score obtenu',
+      date_label:    'Date d\'émission',
+      ref_label:     'Référence',
+      signer_title:  'Auditeur en hygiène et salubrité alimentaire\nExpert des normes MAPAQ et HACCP',
+      watermark:     '360',
+      error_title:   'Paramètres manquants',
+      error_body:    'Cette page nécessite les paramètres suivants dans l\'URL :<br><code>?code=XXXXXX&nom=NOM&programme=PROGRAMME&score=XX</code>',
+    },
+    en: {
+      module:        'ACADEMY',
+      surtitle:      'Certificate of Completion',
+      title:         'Certificate\nof Completion',
+      intro:         'This is to certify that',
+      has_completed: 'has successfully completed the program',
+      score_label:   'Score',
+      date_label:    'Issue Date',
+      ref_label:     'Reference',
+      signer_title:  'Food Hygiene & Sanitation Auditor\nMAPAQ & HACCP Standards Expert',
+      watermark:     '360',
+      error_title:   'Missing Parameters',
+      error_body:    'This page requires the following URL parameters:<br><code>?code=XXXXXX&nom=NAME&programme=PROGRAM&score=XX</code>',
+    }
+  };
+
+  const t = i18n[lang] || i18n['fr'];
+
+  // ── Date formatée ──
+  function formaterDate(lg) {
+    const now = new Date();
+    if (lg === 'en') {
+      return now.toLocaleDateString('en-CA', { year:'numeric', month:'long', day:'numeric' });
+    }
+    return now.toLocaleDateString('fr-CA', { year:'numeric', month:'long', day:'numeric' });
+  }
+
+  // ── Nom de programme ──
+  function nomProgramme(slug, lg) {
+    const p = programmes[slug] || programmes[slug?.toLowerCase()];
+    if (p) return p[lg] || p['fr'];
+    // Fallback: décoder le slug brut
+    return slug ? decodeURIComponent(slug).replace(/-/g,' ') : '—';
+  }
+
+  // ── Render ──
+  const app = document.getElementById('app');
+
+  if (!code || !nom || !programme || !scoreRaw) {
+    app.innerHTML = `
+      <div class="erreur">
+        <strong>${t.error_title}</strong><br><br>
+        ${t.error_body}
+      </div>`;
+  } else {
+    const score    = parseInt(scoreRaw, 10);
+    const dateStr  = formaterDate(lang);
+    const ref      = `V360-ACAD-${code}`;
+    const nomProg  = nomProgramme(programme, lang);
+    const nomAffiche = decodeURIComponent(nom).replace(/\+/g,' ');
+
+    app.innerHTML = `
+      <button class="print-btn" onclick="window.print()">
+        ${lang === 'en' ? '🖨 Print / Save PDF' : '🖨 Imprimer / Sauvegarder PDF'}
+      </button>
+
+      <div class="certificat">
+        <div class="filigrane">${t.watermark}</div>
+
+        <div class="header-band">
+          <div class="logo-zone">
+            <span class="logo-v360">Verdict 360 AI</span>
+            <span class="logo-sub">${t.module}</span>
+          </div>
+          <div class="module-badge">${t.module}</div>
+        </div>
+
+        <div class="corps">
+          <div class="titre-attestation">${t.surtitle}</div>
+          <div class="titre-principal">${t.title.replace('\n','<br>')}</div>
+          <div class="ligne-separateur"></div>
+
+          <div class="texte-intro">${t.intro}</div>
+          <div class="nom-participant">${nomAffiche}</div>
+
+          <div class="texte-programme">${t.has_completed}</div>
+          <div class="nom-programme">${nomProg}</div>
+
+          <div class="score-zone">
+            <span class="score-label">${t.score_label}</span>
+            <span class="score-value">${score}%</span>
+          </div>
+        </div>
+
+        <div class="infos-bas">
+          <div class="bloc-info">
+            <div class="bloc-info-label">${t.date_label}</div>
+            <div class="bloc-info-value">${dateStr}</div>
+          </div>
+
+          <div class="signature-zone">
+            <div class="signature-nom">Jacques Perrier</div>
+            <div class="ligne-signature"></div>
+            <div class="signature-titre">${t.signer_title.replace('\n','<br>')}</div>
+          </div>
+
+          <div class="bloc-info" style="text-align:right">
+            <div class="bloc-info-label">${t.ref_label}</div>
+            <div class="bloc-info-value">${ref}</div>
+          </div>
+        </div>
+
+        <div class="footer-band"></div>
+      </div>`;
+  }
+</script>
+</body>
+</html>
