@@ -275,6 +275,18 @@
     margin: 8px auto 6px;
   }
 
+  /* Disclaimer band */
+  .disclaimer-band {
+    text-align: center;
+    font-size: 10px;
+    color: #888;
+    font-style: italic;
+    letter-spacing: 0.3px;
+    padding: 10px 40px;
+    border-top: 1px solid var(--or-highlight);
+    background: #f8f6f2;
+  }
+
   /* Footer doré */
   .footer-band {
     background: var(--or-gradient);
@@ -469,7 +481,7 @@
 
           <div class="score-zone">
             <span class="score-label">${t.score_label}</span>
-            <span class="score-value">${score}%</span>
+            <span class="score-value">${score}</span>
           </div>
         </div>
 
@@ -491,10 +503,9 @@
           </div>
         </div>
 
+        <div class="disclaimer-band">${t.disclaimer}</div>
         <div class="footer-band"></div>
-      </div>
-
-      <div class="disclaimer">${t.disclaimer}</div>`;
+      </div>`;
   }
 </script>
 </body>
