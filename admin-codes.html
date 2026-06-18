@@ -1,1 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Codes ACADÉMIE</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, sans-serif;
+    background: #0A0A0A;
+    color: #fff;
+    min-height: 100vh;
+    padding: 32px 20px;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #9C7F3D;
+    padding-bottom: 20px;
+  }
+  .brand {
+    font-size: 18px;
+    font-weight: bold;
+    background: linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+  }
+  .subtitle { font-size: 12px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
 
+  .card {
+    background: #1A1A1A;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .card h2 { font-size: 14px; color: #B8954A; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+
+  label { display: block; font-size: 12px; color: #999; margin-bottom: 6px; }
+  input, select {
+    width: 100%;
+    background: #0A0A0A;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #fff;
+    padding: 12px 14px;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  input:focus, select:focus { outline: none; border-color: #B8954A; }
+
+  .btn {
+    width: 100%;
+    background: linear-gradient(110deg, #9C7F3D 0%, #B8954A 50%, #9C7F3D 100%);
+    color: #0A0A0A;
+    border: none;
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+  }
+  .btn:active { opacity: 0.85; }
+
+  /* Résultat */
+  .result {
+    display: none;
+    background: #0A0A0A;
+    border: 2px solid #B8954A;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 16px;
+  }
+  .result.visible { display: block; }
+  .code-display {
+    font-size: 48px;
+    font-weight: bold;
+    letter-spacing: 8px;
+    color: #B8954A;
+    margin: 12px 0;
+  }
+  .code-info { font-size: 12px; color: #666; margin-bottom: 12px; }
+  .copy-btn {
+    background: #1A1A1A;
+    border: 1px solid #B8954A;
+    color: #B8954A;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* Vérification */
+  .verif-result {
+    display: none;
+    padding: 14px;
+    border-radius: 6px;
+    margin-top: 12px;
+    font-size: 13px;
+    text-align: center;
+  }
+  .verif-result.ok { background: #0d2b0d; border: 1px solid #4CAF50; color: #81C784; display: block; }
+  .verif-result.err { background: #2b0d0d; border: 1px solid #f44336; color: #EF9A9A; display: block; }
+
+  .essais-badge {
+    display: inline-block;
+    background: #B8954A22;
+    border: 1px solid #B8954A;
+    color: #B8954A;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">VERDICT 360 AI</div>
+  <div class="subtitle">Admin · Codes ACADÉMIE</div>
+</div>
+
+<!-- GÉNÉRER UN CODE -->
+<div class="card">
+  <h2>Générer un code d'accès</h2>
+
+  <label>Nom de l'employé</label>
+  <input type="text" id="nomEmploye" placeholder="ex: Marie Tremblay">
+
+  <label>Programme</label>
+  <select id="programme">
+    <option value="manipulateur">Manipulateur d'aliments (≈ 45 min)</option>
+    <option value="gestionnaire">Gestionnaire d'établissement (≈ 60 min)</option>
+  </select>
+
+  <button class="btn" onclick="genererCode()">Générer le code</button>
+
+  <div class="result" id="resultat">
+    <div style="font-size:12px; color:#666; text-transform:uppercase; letter-spacing:1px;">Code d'accès</div>
+    <div class="code-display" id="codeAffiche">——</div>
+    <div class="code-info" id="codeInfo"></div>
+    <div class="essais-badge">3 essais maximum</div>
+    <br><br>
+    <button class="copy-btn" onclick="copierCode()">📋 Copier le code</button>
+  </div>
+</div>
+
+<!-- VÉRIFIER UN CODE -->
+<div class="card">
+  <h2>Vérifier un code existant</h2>
+
+  <label>Code à vérifier</label>
+  <input type="text" id="codeVerif" placeholder="6 chiffres" maxlength="6" inputmode="numeric">
+
+  <button class="btn" onclick="verifierCode()" style="background:#1A1A1A; border:1px solid #B8954A; color:#B8954A;">Vérifier le statut</button>
+
+  <div class="verif-result" id="verifResult"></div>
+</div>
+
+<script>
+const WORKER_URL = "https://academie.fragrant-pond-3bd6.workers.dev";
+let dernierCode = "";
+
+async function genererCode() {
+  const nom = document.getElementById("nomEmploye").value.trim();
+  const programme = document.getElementById("programme").value;
+
+  if (!nom) {
+    alert("Entrez le nom de l'employé.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${WORKER_URL}/generer-code`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nom, programme })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      dernierCode = data.code;
+      document.getElementById("codeAffiche").textContent = data.code;
+      document.getElementById("codeInfo").textContent =
+        `${data.nom} · ${data.programme === "manipulateur" ? "Manipulateur d'aliments" : "Gestionnaire d'établissement"}`;
+      document.getElementById("resultat").classList.add("visible");
+    } else {
+      alert("Erreur : " + data.erreur);
+    }
+  } catch (e) {
+    alert("Erreur de connexion au serveur.");
+  }
+}
+
+async function verifierCode() {
+  const code = document.getElementById("codeVerif").value.trim();
+  const el = document.getElementById("verifResult");
+
+  if (code.length !== 6) {
+    el.className = "verif-result err";
+    el.textContent = "Code invalide — 6 chiffres requis.";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${WORKER_URL}/statut-code?code=${code}`);
+    const data = await res.json();
+
+    if (data.erreur) {
+      el.className = "verif-result err";
+      el.textContent = data.erreur;
+    } else {
+      const statut = data.utilise ? "✅ Formation complétée" :
+                     data.essais_restants <= 0 ? "🔒 Désactivé (0 essai restant)" :
+                     `🟢 Actif — ${data.essais_restants} essai(s) restant(s)`;
+      el.className = "verif-result ok";
+      el.innerHTML = `<strong>${data.nom}</strong><br>${data.programme}<br>${statut}`;
+    }
+  } catch (e) {
+    el.className = "verif-result err";
+    el.textContent = "Erreur de connexion.";
+  }
+}
+
+function copierCode() {
+  if (dernierCode) {
+    navigator.clipboard.writeText(dernierCode);
+    alert(`Code ${dernierCode} copié !`);
+  }
+}
+</script>
+</body>
+</html>
