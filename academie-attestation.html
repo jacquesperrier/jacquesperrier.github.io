@@ -312,6 +312,19 @@
     line-height: 1.6;
   }
 
+  /* Disclaimer */
+  .disclaimer {
+    max-width: 820px;
+    width: 100%;
+    text-align: center;
+    font-size: 11px;
+    color: #888;
+    margin-top: 14px;
+    letter-spacing: 0.3px;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
   /* ── IMPRESSION ── */
   @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -341,20 +354,20 @@
   // ── Programmes connus ──
   const programmes = {
     manipulateur: {
-      fr: 'Manipulation sécuritaire des aliments',
-      en: 'Safe Food Handling'
+      fr: 'Manipulation sécuritaire des aliments — Verdict 360 AI',
+      en: 'Safe Food Handling — Verdict 360 AI'
     },
     superviseur: {
-      fr: 'Supervision en hygiène alimentaire',
-      en: 'Food Hygiene Supervision'
+      fr: 'Supervision en hygiène alimentaire — Verdict 360 AI',
+      en: 'Food Hygiene Supervision — Verdict 360 AI'
     },
     haccp: {
-      fr: 'Principes HACCP fondamentaux',
-      en: 'HACCP Fundamentals'
+      fr: 'Principes HACCP fondamentaux — Verdict 360 AI',
+      en: 'HACCP Fundamentals — Verdict 360 AI'
     },
     mapaq: {
-      fr: 'Normes MAPAQ et inspection',
-      en: 'MAPAQ Standards & Inspection'
+      fr: 'Normes MAPAQ et inspection — Verdict 360 AI',
+      en: 'MAPAQ Standards & Inspection — Verdict 360 AI'
     }
   };
 
@@ -371,6 +384,7 @@
       ref_label:     'Référence',
       signer_title:  'Auditeur en hygiène et salubrité alimentaire\nExpert des normes MAPAQ et HACCP',
       watermark:     '360',
+      disclaimer:    'Cette attestation est délivrée par Verdict 360 AI et ne remplace pas une certification officielle émise par le MAPAQ.',
       error_title:   'Paramètres manquants',
       error_body:    'Cette page nécessite les paramètres suivants dans l\'URL :<br><code>?code=XXXXXX&nom=NOM&programme=PROGRAMME&score=XX</code>',
     },
@@ -385,6 +399,7 @@
       ref_label:     'Reference',
       signer_title:  'Food Hygiene & Sanitation Auditor\nMAPAQ & HACCP Standards Expert',
       watermark:     '360',
+      disclaimer:    'This certificate is issued by Verdict 360 AI and does not replace an official certification issued by the MAPAQ.',
       error_title:   'Missing Parameters',
       error_body:    'This page requires the following URL parameters:<br><code>?code=XXXXXX&nom=NAME&programme=PROGRAM&score=XX</code>',
     }
@@ -477,7 +492,9 @@
         </div>
 
         <div class="footer-band"></div>
-      </div>`;
+      </div>
+
+      <div class="disclaimer">${t.disclaimer}</div>`;
   }
 </script>
 </body>
