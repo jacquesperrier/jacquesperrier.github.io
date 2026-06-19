@@ -17,7 +17,6 @@ body{font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;background:var(
 body[data-lang="fr"] .L-en{display:none !important}
 body[data-lang="en"] .L-fr{display:none !important}
 
-/* ===== EN-TÊTE ===== */
 header{background:var(--noir);border-bottom:3px solid var(--or);padding:14px 16px;position:sticky;top:0;z-index:50}
 .head-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .marque{color:var(--blanc);font-weight:700;font-size:14px;letter-spacing:.5px;white-space:nowrap}
@@ -28,7 +27,6 @@ header{background:var(--noir);border-bottom:3px solid var(--or);padding:14px 16p
 .lang-sw button{background:transparent;color:var(--or2);border:none;font-size:12px;font-weight:800;padding:5px 10px;cursor:pointer}
 .lang-sw button.actif{background:linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);color:var(--noir)}
 
-/* ===== HÉROS ===== */
 .heros{background:var(--noir);color:var(--blanc);padding:40px 20px 48px;text-align:center}
 .heros-inner{max-width:680px;margin:0 auto}
 .heros .eyebrow{color:var(--or);font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px}
@@ -38,11 +36,9 @@ header{background:var(--noir);border-bottom:3px solid var(--or);padding:14px 16p
 .heros .pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .pill{border:1px solid var(--or);color:var(--or2);font-size:12px;font-weight:600;padding:6px 14px;border-radius:30px}
 
-/* ===== AVIS ===== */
 .avis-wrap{max-width:860px;margin:18px auto 0;padding:0 16px}
 .avis{background:#FFF8E1;border:1px solid var(--or);border-radius:10px;padding:12px 16px;font-size:13px;color:#5D4037;text-align:center}
 
-/* ===== CHOIX PROGRAMME ===== */
 .choix{max-width:860px;margin:16px auto 0;padding:0 16px;display:grid;grid-template-columns:1fr;gap:14px;position:relative;z-index:5}
 @media(min-width:640px){.choix{grid-template-columns:1fr 1fr}}
 .prog-card{background:var(--carte);border-radius:14px;padding:24px 22px;box-shadow:0 8px 28px rgba(10,10,10,.14);cursor:pointer;border:2px solid transparent;transition:border-color .2s, transform .15s}
@@ -56,7 +52,6 @@ header{background:var(--noir);border-bottom:3px solid var(--or);padding:14px 16p
 .btn.or{background:linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);color:var(--noir)}
 .btn:active{opacity:.85}
 
-/* ===== SECTIONS PROGRAMME ===== */
 .programme{display:none;max-width:860px;margin:0 auto;padding:34px 16px 10px}
 .programme.visible{display:block}
 .prog-titre{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
@@ -66,7 +61,6 @@ header{background:var(--noir);border-bottom:3px solid var(--or);padding:14px 16p
 .progress-wrap{background:#E8E4DB;border-radius:30px;height:10px;margin-bottom:26px;overflow:hidden}
 .progress-bar{background:linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);height:100%;width:0%;border-radius:30px;transition:width .4s}
 
-/* Leçons */
 .lecon{background:var(--carte);border-radius:12px;margin-bottom:12px;box-shadow:0 2px 10px rgba(10,10,10,.06);overflow:hidden}
 .lecon-head{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none;-webkit-user-select:none}
 .lecon-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--noir);color:var(--or2);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center}
@@ -94,7 +88,6 @@ header{background:var(--noir);border-bottom:3px solid var(--or);padding:14px 16p
 .t-table td{padding:9px 8px;border-bottom:1px solid #EEE9E0}
 .t-table tr:nth-child(even) td{background:#FAF8F3}
 
-/* ===== QUIZ ===== */
 .quiz-bloc{background:var(--noir);border-radius:16px;padding:26px 20px;margin:26px 0 40px;color:var(--blanc)}
 .quiz-bloc .eyebrow{color:var(--or);font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px}
 .quiz-bloc h3{font-family:Georgia,serif;font-size:22px;margin-bottom:6px}
@@ -118,7 +111,6 @@ header{background:var(--noir);border-bottom:3px solid var(--or);padding:14px 16p
 .q-verdict{font-family:Georgia,serif;font-size:22px;margin-bottom:8px}
 .q-msg{color:#CFC9BD;font-size:14px;max-width:420px;margin:0 auto 20px}
 
-/* ===== PIED ===== */
 footer{background:var(--noir);border-top:3px solid var(--or);color:#CFC9BD;padding:34px 20px;text-align:center;font-size:13px;margin-top:30px}
 footer .f-marque{color:var(--blanc);font-weight:700;font-size:16px;margin-bottom:6px}
 footer .f-marque span{color:var(--or)}
@@ -701,9 +693,17 @@ function changerLangue(l){
   document.documentElement.lang=l;
   document.getElementById('btn-fr').className=(l==='fr')?'actif':'';
   document.getElementById('btn-en').className=(l==='en')?'actif':'';
-  // Redessiner la question/résultat du quiz en cours dans la nouvelle langue
   ['A','B'].forEach(function(p){ if(ETAT[p].quizDemarre){ if(ETAT[p].fini){afficherResultat(p);} else {afficherQuestion(p);} } });
 }
+
+/* ====== Pré-remplissage langue depuis l'URL (transmise par le worker) ====== */
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var urlLang = params.get('lang');
+  if (urlLang === 'en') {
+    setTimeout(function(){ changerLangue('en'); }, 0);
+  }
+})();
 
 /* ====== TEXTES D'INTERFACE ====== */
 var TXT={
@@ -837,6 +837,7 @@ function repondre(p,j,btn){
   sv.style.display='block';
 }
 function questionSuivante(p){ ETAT[p].i++; afficherQuestion(p); }
+
 function afficherResultat(p){
   var zone=document.querySelector('#quiz-'+p+' .q-zone');
   var e=ETAT[p], total=QUIZ[LANG][p].length, t=TXT[LANG];
@@ -851,9 +852,30 @@ function afficherResultat(p){
   html+='<div class="score-cercle '+classe+'"><div class="pct">'+pct+'%</div><div class="lab">'+e.score+' / '+total+'</div></div>';
   html+='<div class="q-verdict">'+verdict+'</div>';
   html+='<p class="q-msg">'+msg+'</p>';
+  if (reussi) {
+    html += '<div style="text-align:center;color:#CFC9BD;font-size:12px;margin-bottom:14px">'
+          + (LANG==='en' ? 'Redirecting to your certificate...' : 'Redirection vers votre attestation...')
+          + '</div>';
+  }
   html+='<button type="button" class="q-suivant" style="display:block" onclick="demarrerQuiz(\''+p+'\')">'+t.reprendre+'</button>';
   html+='</div>';
   zone.innerHTML=html;
+
+  if (reussi) {
+    var params = new URLSearchParams(window.location.search);
+    var code = params.get('code') || '';
+    var nom = params.get('nom') || '';
+    var programmeParam = (p === 'A') ? 'manipulateur' : 'gestionnaire';
+    var attestationUrl = 'academie-attestation.html'
+      + '?code=' + encodeURIComponent(code)
+      + '&nom=' + encodeURIComponent(nom)
+      + '&programme=' + encodeURIComponent(programmeParam)
+      + '&score=' + pct
+      + '&lang=' + LANG;
+    setTimeout(function(){
+      window.location.href = attestationUrl;
+    }, 3000);
+  }
 }
 </script>
 </body>
