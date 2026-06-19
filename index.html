@@ -404,8 +404,16 @@ document.getElementById('btnAnalyze').addEventListener('click', function() {
 var ANALYSIS_SYSTEM_PROMPT =
 "Tu es un auditeur expert en hygiene et salubrite alimentaire au Quebec, specialise dans les normes MAPAQ et HACCP. " +
 "Tu analyses des photos prises lors d'une inspection d'etablissement alimentaire (restaurant, cuisine commerciale, epicerie). " +
-"Pour CHAQUE photo recue, identifie les non-conformites REELLEMENT VISIBLES sur cette image precise. " +
-"Ne jamais inventer un probleme qui n'est pas visible sur la photo. Si la photo ne montre aucun probleme evident, retourne un tableau vide. " +
+"Pour CHAQUE photo recue, examine attentivement TOUTE l'image, y compris l'arriere-plan, les surfaces, le sol, les murs et les equipements, pas seulement le sujet principal au centre. " +
+"Identifie TOUTES les non-conformites REELLEMENT VISIBLES sur cette image precise. Ne jamais inventer un probleme qui n'est pas visible sur la photo. " +
+"Examine systematiquement ces categories avant de conclure: \n" +
+"1) Comportement du personnel (mains, gants, contact visage/cheveux, hygiene)\n" +
+"2) Surfaces de travail (proprete, residus, taches, contamination croisee)\n" +
+"3) Etat physique des equipements et surfaces (rouille, corrosion, fissures, usure, peinture ecaillee, surfaces poreuses ou endommagees)\n" +
+"4) Plancher et murs (proprete, humidite, debris, etat general)\n" +
+"5) Entreposage et etiquetage (couvercles, dates, allergenes, separation cru/cuit)\n" +
+"6) Equipements de nettoyage (linges, produits, organisation)\n" +
+"Si la photo ne montre vraiment aucun probleme apres cet examen complet, retourne un tableau vide. " +
 "Voici la liste des articles MAPAQ de reference que tu peux citer:\n" + MAPAQ_LIST_TEXT + "\n\n" +
 "Pour chaque non-conformite identifiee, fournis sa position approximative sur l'image en pourcentage (x,y de 0 a 1, " +
 "0,0 etant le coin superieur gauche et 1,1 le coin inferieur droit), centree sur l'endroit precis du probleme. " +
@@ -413,6 +421,7 @@ var ANALYSIS_SYSTEM_PROMPT =
 '{"nonConformites":[{"observation":"description precise de ce qui est visible sur LA photo","type":"CRITIQUE|MAJEUR|MINEURE","article":36,"action":"action corrective concrete","position":{"x":0.5,"y":0.5}}]}\n\n' +
 "Types: CRITIQUE (risque immediat sante), MAJEUR (a corriger sous 24h), MINEURE (planifiable). " +
 "Sois precis et factuel - decris vraiment ce que tu vois (ex: 'employe touchant son visage avec des gants', 'rouille visible sur la surface metallique de la table', 'plancher humide et sale pres de l'evier').";
+
 
 function dataURLtoBase64(dataUrl) {
   return dataUrl.split(',')[1];
@@ -588,7 +597,8 @@ function annotatePhoto(b64, ncs, photoIdx, callback) {
       ctx.fillStyle = '#fff';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(String(idx+1), cx, cy+1);
+      var numAffiche = nc.no ? nc.no.replace('NC-','') : String(idx+1);
+      ctx.fillText(numAffiche, cx, cy+1);
     });
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
@@ -660,7 +670,8 @@ function buildReport() {
     if (pz.ncs && pz.ncs.length > 0) {
       html += '<div class="pz-legend">';
       pz.ncs.forEach(function(nc, idx) {
-        html += '<div class="pz-legend-item"><span class="pz-num">'+(idx+1)+'</span><span><strong>'+nc.no+'</strong> &#8212; '+nc.observation+'</span></div>';
+        var numLegende = nc.no ? nc.no.replace('NC-','') : (idx+1);
+        html += '<div class="pz-legend-item"><span class="pz-num">'+numLegende+'</span><span><strong>'+nc.no+'</strong> &#8212; '+nc.observation+'</span></div>';
       });
       html += '</div>';
     } else {
