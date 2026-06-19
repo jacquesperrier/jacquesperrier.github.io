@@ -248,6 +248,8 @@ var result = null;
 var sigs = {1:null,2:null};
 var drawing = false;
 
+var PROXY_URL = "https://verdict-proxy.mjacquesperrier.workers.dev";
+
 var ZONES_DISPONIBLES = [
   'Cuisine et preparation',
   'Zone de cuisson',
@@ -279,61 +281,7 @@ var MAPAQ = {
   57: 'Art.57 - Les contenants doivent etre identifies avec le nom du produit et les allergenes'
 };
 
-var NC_BANK_CUISINE = [
-  { type:'CRITIQUE', priorite:'IMMEDIAT', obs:'Accumulation importante de debris alimentaires et residus graisseux sur les surfaces de travail en contact direct avec les aliments', art:36, action:'Nettoyer et desinfecter immediatement toutes les surfaces avant de reprendre les operations.' },
-  { type:'CRITIQUE', priorite:'IMMEDIAT', obs:'Planche a decouper en bois profondement entaillee et tachee - surface poreuse impossible a assainir adequatement', art:40, action:'Retirer et remplacer immediatement par une planche en polyethylene homologuee pour usage alimentaire.' },
-  { type:'MAJEUR', priorite:'URG24h', obs:'Chiffons et linges souilles poses directement sur les comptoirs et equipements de preparation', art:38, action:'Retirer tous les chiffons de la zone de preparation. Utiliser des essuie-tout a usage unique.' },
-  { type:'MAJEUR', priorite:'URG24h', obs:'Contenants alimentaires sans couvercle et sans identification des allergenes ni date de preparation', art:57, action:'Identifier tous les contenants: nom produit, allergenes, date de preparation. Couvrir immediatement.' },
-  { type:'MINEURE', priorite:'PLANIFIE', obs:'Etiquettes de prix partiellement cachees sur certains produits - information consommateur incomplete', art:57, action:'Repositionner les etiquettes pour assurer leur lisibilite complete par les consommateurs.' }
-];
-
-var NC_BANK_CUISSON = [
-  { type:'CRITIQUE', priorite:'IMMEDIAT', obs:'Aliments crus (viandes) entreposes sans separation au-dessus des aliments prets-a-manger - contamination croisee grave', art:28, action:'Reorganiser immediatement: viandes crues au bas, aliments prets-a-manger en haut. Couvrir tous les contenants.' },
-  { type:'CRITIQUE', priorite:'IMMEDIAT', obs:'Presence de moisissures et de souillures chroniques sur les murs et les joints - risque de contamination des aliments', art:35, action:'Nettoyage approfondi et traitement antifongique. Identifier et corriger la source d humidite.' },
-  { type:'MAJEUR', priorite:'URG24h', obs:'Absence de thermometre visible pour verifier la temperature des aliments en zone de cuisson', art:32, action:'Installer un thermometre de controle. Documenter les temperatures toutes les 2 heures.' },
-  { type:'MAJEUR', priorite:'URG24h', obs:'Revetement mural endommage laissant apparaitre le support poreux en zone de preparation alimentaire', art:35, action:'Reparer avec un revetement etanche et lavable dans les 24 heures. Planifier les travaux immediatement.' }
-];
-
-var NC_BANK_LAVERIE = [
-  { type:'MAJEUR', priorite:'URG24h', obs:'Vaisselle propre empilee sans protection a proximite de vaisselle sale et d aliments non proteges', art:41, action:'Creer des zones distinctes vaisselle propre et vaisselle sale. Proteger la vaisselle propre.' },
-  { type:'CRITIQUE', priorite:'IMMEDIAT', obs:'Manipulateur touchant son visage avec les mains gantees pendant la preparation des aliments', art:22, action:'Formation immediate. Lavage des mains obligatoire apres tout contact avec le visage ou le corps.' },
-  { type:'MINEURE', priorite:'PLANIFIE', obs:'Joint de porte du refrigerateur endommage reduisant l efficacite du joint thermique', art:35, action:'Remplacer le joint dans les 7 jours. Verifier la temperature du refrigerateur quotidiennement.' }
-];
-
-var NC_BANK_FROIDE = [
-  { type:'CRITIQUE', priorite:'IMMEDIAT', obs:'Aliments crus (viandes) entreposes sans separation au-dessus des aliments prets-a-manger - risque de contamination croisee', art:28, action:'Reorganiser immediatement la chambre froide. Viandes crues en bas, prets-a-manger en haut.' },
-  { type:'MAJEUR', priorite:'URG24h', obs:'Contenants sans couvercle ni etiquette de date dans la chambre froide - risque de contamination et perte de tracabilite', art:57, action:'Couvrir et etiqueter tous les contenants: nom, date, allergenes.' },
-  { type:'MINEURE', priorite:'PLANIFIE', obs:'Condensation excessive sur les parois internes - risque de contamination par l eau de condensation', art:35, action:'Verifier le systeme de refroidissement et nettoyer les serpentins dans les 7 jours.' }
-];
-
-var NC_BANK_SANITAIRES = [
-  { type:'CRITIQUE', priorite:'IMMEDIAT', obs:'Absence de savon et/ou de papier essuie-mains au poste de lavage des mains des employes', art:22, action:'Approvisionner immediatement en savon antibacterien et essuie-mains. Verifier 3 fois par jour.' },
-  { type:'MAJEUR', priorite:'URG24h', obs:'Accumulation de souillures et de moisissures visibles sur les murs et les joints des sanitaires employes - risque de contamination croisee', art:35, action:'Nettoyage et desinfection complets des sanitaires. Traitement antifongique si necessaire.' },
-  { type:'MAJEUR', priorite:'URG24h', obs:'Absence d affichage obligatoire du protocole de lavage des mains a la vue des employes', art:22, action:'Installer immediatement l affichage du protocole MAPAQ de lavage des mains.' },
-  { type:'MINEURE', priorite:'PLANIFIE', obs:'Poubelle sans couvercle a pedal dans les sanitaires employes', art:35, action:'Remplacer par une poubelle avec couvercle a ouverture sans contact dans les 7 jours.' }
-];
-
-var NC_BANK_RECEPTION = [
-  { type:'MAJEUR', priorite:'URG24h', obs:'Livraisons acceptees sans verification des temperatures des produits refrigeres ou congeles', art:32, action:'Etablir un protocole de reception avec thermometre et registre de temperatures pour chaque livraison.' },
-  { type:'MINEURE', priorite:'PLANIFIE', obs:'Zone de reception desorganisee - produits temporairement entreposes sur le plancher', art:35, action:'Organiser la zone de reception. Installer des palettes ou des etageres. Ne jamais deposer sur le plancher.' }
-];
-
-var NC_BANK_DEFAULT = [
-  { type:'MAJEUR', priorite:'URG24h', obs:'Non-conformite observee dans cette zone - voir rapport detaille', art:35, action:'Corriger la situation dans les 24 heures et documenter les actions correctives.' },
-  { type:'MINEURE', priorite:'PLANIFIE', obs:'Entretien preventif requis dans cette zone', art:35, action:'Planifier les travaux d entretien dans les 7 jours.' }
-];
-
-function getNCBankForZone(zoneName) {
-  if (!zoneName) return NC_BANK_DEFAULT;
-  var z = zoneName.toLowerCase();
-  if (z.includes('cuisine') || z.includes('preparation')) return NC_BANK_CUISINE;
-  if (z.includes('cuisson')) return NC_BANK_CUISSON;
-  if (z.includes('laverie') || z.includes('plonge')) return NC_BANK_LAVERIE;
-  if (z.includes('froide')) return NC_BANK_FROIDE;
-  if (z.includes('sanitaire') || z.includes('vestiaire')) return NC_BANK_SANITAIRES;
-  if (z.includes('reception') || z.includes('entreposage')) return NC_BANK_RECEPTION;
-  return NC_BANK_DEFAULT;
-}
+var MAPAQ_LIST_TEXT = Object.keys(MAPAQ).map(function(k){ return 'Art.'+k+': '+MAPAQ[k].split(' - ')[1]; }).join('\n');
 
 document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
 
@@ -449,72 +397,144 @@ document.getElementById('btnAnalyze').addEventListener('click', function() {
   runAnalysis();
 });
 
-function runAnalysis() {
-  var msgs = ['Lecture des photos...','Identification des non-conformites par zone...','Calcul du score MAPAQ...','Generation du rapport...'];
-  var idx = 0;
-  var timer = setInterval(function() {
-    if (idx < msgs.length) document.getElementById('loadMsg').textContent = msgs[idx++];
-    else clearInterval(timer);
-  }, 1200);
+// ============================================================
+// ANALYSE RÉELLE PAR IA (Claude Vision via verdict-proxy)
+// ============================================================
 
-  setTimeout(function() {
-    clearInterval(timer);
-    result = generateAnalysis();
-    buildReport();
-  }, 5000);
+var ANALYSIS_SYSTEM_PROMPT =
+"Tu es un auditeur expert en hygiene et salubrite alimentaire au Quebec, specialise dans les normes MAPAQ et HACCP. " +
+"Tu analyses des photos prises lors d'une inspection d'etablissement alimentaire (restaurant, cuisine commerciale, epicerie). " +
+"Pour CHAQUE photo recue, identifie les non-conformites REELLEMENT VISIBLES sur cette image precise. " +
+"Ne jamais inventer un probleme qui n'est pas visible sur la photo. Si la photo ne montre aucun probleme evident, retourne un tableau vide. " +
+"Voici la liste des articles MAPAQ de reference que tu peux citer:\n" + MAPAQ_LIST_TEXT + "\n\n" +
+"Pour chaque non-conformite identifiee, fournis sa position approximative sur l'image en pourcentage (x,y de 0 a 1, " +
+"0,0 etant le coin superieur gauche et 1,1 le coin inferieur droit), centree sur l'endroit precis du probleme. " +
+"Reponds UNIQUEMENT en JSON valide, sans aucun texte avant ou apres, dans ce format exact:\n" +
+'{"nonConformites":[{"observation":"description precise de ce qui est visible sur LA photo","type":"CRITIQUE|MAJEUR|MINEURE","article":36,"action":"action corrective concrete","position":{"x":0.5,"y":0.5}}]}\n\n' +
+"Types: CRITIQUE (risque immediat sante), MAJEUR (a corriger sous 24h), MINEURE (planifiable). " +
+"Sois precis et factuel - decris vraiment ce que tu vois (ex: 'employe touchant son visage avec des gants', 'rouille visible sur la surface metallique de la table', 'plancher humide et sale pres de l'evier').";
+
+function dataURLtoBase64(dataUrl) {
+  return dataUrl.split(',')[1];
 }
 
-function generateAnalysis() {
+function callVisionAPI(photo, zoneName) {
+  var base64Data = dataURLtoBase64(photo.b64);
+  var mediaType = photo.type || 'image/jpeg';
+
+  var messages = [{
+    role: "user",
+    content: [
+      {
+        type: "image",
+        source: { type: "base64", media_type: mediaType, data: base64Data }
+      },
+      {
+        type: "text",
+        text: "Cette photo a ete prise dans la zone suivante de l'etablissement: \"" + zoneName + "\". " +
+              "Analyse cette photo et identifie les non-conformites MAPAQ reellement visibles. Reponds en JSON uniquement."
+      }
+    ]
+  }];
+
+  return fetch(PROXY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      messages: messages,
+      system: ANALYSIS_SYSTEM_PROMPT,
+      model: "claude-sonnet-4-6",
+      max_tokens: 1500
+    })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.error) {
+      console.error("Erreur API pour photo:", data.message || data.error);
+      return { nonConformites: [] };
+    }
+    var raw = data.result || "";
+    // Nettoyer d'eventuelles balises markdown ```json
+    raw = raw.replace(/```json/g, '').replace(/```/g, '').trim();
+    try {
+      var parsed = JSON.parse(raw);
+      return parsed && parsed.nonConformites ? parsed : { nonConformites: [] };
+    } catch(e) {
+      console.error("Erreur parsing JSON IA:", e, raw);
+      return { nonConformites: [] };
+    }
+  })
+  .catch(function(err) {
+    console.error("Erreur reseau analyse photo:", err);
+    return { nonConformites: [] };
+  });
+}
+
+function runAnalysis() {
+  var msgs = ['Connexion a l\'IA...','Analyse de la photo 1...','Identification des non-conformites...','Calcul du score MAPAQ...'];
+  var idx = 0;
+  document.getElementById('loadMsg').textContent = msgs[0];
+  var timer = setInterval(function() {
+    idx++;
+    var label = idx < photos.length ? ('Analyse de la photo '+(idx+1)+' / '+photos.length+'...') : msgs[Math.min(idx, msgs.length-1)];
+    document.getElementById('loadMsg').textContent = label;
+  }, 1800);
+
+  // Lancer l'analyse IA pour chaque photo, en sequence
+  var analysisPromises = photos.map(function(photo) {
+    return callVisionAPI(photo, photo.zone);
+  });
+
+  Promise.all(analysisPromises).then(function(allResults) {
+    clearInterval(timer);
+    result = buildResultFromAI(allResults);
+    buildReport();
+  }).catch(function(err) {
+    clearInterval(timer);
+    console.error("Erreur globale analyse:", err);
+    alert("Erreur lors de l'analyse IA. Verifiez la connexion et reessayez.");
+    goTo('s-form');
+  });
+}
+
+function buildResultFromAI(allResults) {
   var photoList = [];
   var allUsedNC = [];
-  var globalUsed = [];
+  var globalCounter = 0;
 
   photos.forEach(function(photo, i) {
-    var zoneName = photo.zone;
-    var bank = getNCBankForZone(zoneName);
-    var nbNC = 2 + Math.floor(Math.random() * 2);
+    var aiResult = allResults[i] || { nonConformites: [] };
+    var ncsRaw = aiResult.nonConformites || [];
     var ncs = [];
 
-    var shuffled = bank.slice().sort(function(){ return Math.random() - 0.5; });
-    shuffled.forEach(function(nc) {
-      if (ncs.length >= nbNC) return;
-      var key = nc.obs.slice(0, 20);
-      if (globalUsed.indexOf(key) === -1) {
-        var num = allUsedNC.length + 1;
-        var noStr = 'NC-' + (num < 10 ? '0'+num : num);
-        ncs.push({
-          no: noStr,
-          type: nc.type,
-          priorite: nc.priorite,
-          observation: nc.obs,
-          regle: MAPAQ[nc.art],
-          action: nc.action
-        });
-        allUsedNC.push(nc);
-        globalUsed.push(key);
-      }
+    ncsRaw.forEach(function(nc) {
+      globalCounter++;
+      var noStr = 'NC-' + (globalCounter < 10 ? '0'+globalCounter : globalCounter);
+      var article = nc.article && MAPAQ[nc.article] ? nc.article : 35;
+      var priorite = nc.type === 'CRITIQUE' ? 'IMMEDIAT' : (nc.type === 'MAJEUR' ? 'URG24h' : 'PLANIFIE');
+      var ncObj = {
+        no: noStr,
+        type: nc.type || 'MINEURE',
+        priorite: priorite,
+        observation: nc.observation || 'Non-conformite observee',
+        regle: MAPAQ[article],
+        action: nc.action || 'Corriger et documenter.',
+        position: (nc.position && typeof nc.position.x === 'number' && typeof nc.position.y === 'number')
+          ? { x: Math.max(0.05,Math.min(0.95,nc.position.x)), y: Math.max(0.05,Math.min(0.95,nc.position.y)) }
+          : { x: 0.5, y: 0.5 }
+      };
+      ncs.push(ncObj);
+      allUsedNC.push(ncObj);
     });
 
-    if (ncs.length === 0) {
-      var num = allUsedNC.length + 1;
-      ncs.push({
-        no: 'NC-' + (num < 10 ? '0'+num : num),
-        type: 'MAJEUR', priorite: 'URG24h',
-        observation: 'Non-conformite observee en zone: ' + zoneName,
-        regle: MAPAQ[35],
-        action: 'Corriger et documenter dans les 24 heures.'
-      });
-      allUsedNC.push({type:'MAJEUR'});
-    }
-
-    photoList.push({ zone: zoneName, photoIndex: i, ncs: ncs });
+    photoList.push({ zone: photo.zone, photoIndex: i, ncs: ncs });
   });
 
   var nbC = allUsedNC.filter(function(n){ return n.type==='CRITIQUE'; }).length;
   var nbM = allUsedNC.filter(function(n){ return n.type==='MAJEUR'; }).length;
   var nbMn = allUsedNC.filter(function(n){ return n.type==='MINEURE'; }).length;
   var penalite = nbC*15 + nbM*7 + nbMn*2;
-  var score = Math.max(25, Math.min(85, 100 - penalite));
+  var score = Math.max(20, Math.min(100, 100 - penalite));
   var cote = score < 50 ? 'ROUGE' : score < 70 ? 'JAUNE' : 'VERT';
 
   var zoneMap = {};
@@ -539,18 +559,8 @@ function generateAnalysis() {
   return { score:score, cote:cote, zones:zoneScores, photos:photoList };
 }
 
-var ANNOT_POS = [
-  [[0.30,0.30],[0.70,0.65],[0.20,0.75]],
-  [[0.35,0.75],[0.78,0.55],[0.15,0.20]],
-  [[0.25,0.25],[0.72,0.70],[0.68,0.30]],
-  [[0.35,0.45],[0.65,0.30],[0.25,0.78]],
-  [[0.30,0.65],[0.72,0.25],[0.30,0.20]]
-];
-
-/* ===== CORRECTIF : annotation fiable, sans rognage =====
-   Le CSS .pz-img utilise maintenant object-fit:contain (voir plus haut),
-   donc l'image entiere est toujours visible et les positions relatives
-   [0..1] correspondent exactement a ce qui est affiche, peu importe l'ecran. */
+/* ===== ANNOTATION : positions reelles fournies par l'IA (0..1), 
+   image affichee en object-fit:contain donc fiable a 100% ===== */
 function annotatePhoto(b64, ncs, photoIdx, callback) {
   var img = new Image();
   img.onerror = function() { callback(b64); };
@@ -560,11 +570,10 @@ function annotatePhoto(b64, ncs, photoIdx, callback) {
     var ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0);
     var w = img.width, h = img.height;
-    var pos = ANNOT_POS[photoIdx % ANNOT_POS.length];
     var r = Math.max(16, Math.round(w/26));
     ncs.forEach(function(nc, idx) {
-      var p = pos[idx % pos.length];
-      var cx = p[0]*w, cy = p[1]*h;
+      var cx = (nc.position ? nc.position.x : 0.5) * w;
+      var cy = (nc.position ? nc.position.y : 0.5) * h;
 
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, 2*Math.PI);
@@ -654,33 +663,40 @@ function buildReport() {
         html += '<div class="pz-legend-item"><span class="pz-num">'+(idx+1)+'</span><span><strong>'+nc.no+'</strong> &#8212; '+nc.observation+'</span></div>';
       });
       html += '</div>';
+    } else {
+      html += '<div class="pz-legend"><div class="pz-legend-item"><span style="color:#2E7D32;font-weight:700">&#10003; Aucune non-conformite identifiee sur cette photo</span></div></div>';
     }
-    html += '<table class="nc-tbl"><thead><tr><th>Ref.</th><th>Non-conformite</th><th>Type</th><th>Priorite</th></tr></thead><tbody>';
-    pz.ncs.forEach(function(nc) {
-      html += '<tr><td><strong>'+nc.no+'</strong></td><td>'+nc.observation+'</td><td>'+pill(nc.type,TC[nc.type])+'</td><td>'+pill(nc.priorite,PC[nc.priorite]||'#999')+'</td></tr>';
+    if (pz.ncs && pz.ncs.length > 0) {
+      html += '<table class="nc-tbl"><thead><tr><th>Ref.</th><th>Non-conformite</th><th>Type</th><th>Priorite</th></tr></thead><tbody>';
+      pz.ncs.forEach(function(nc) {
+        html += '<tr><td><strong>'+nc.no+'</strong></td><td>'+nc.observation+'</td><td>'+pill(nc.type,TC[nc.type])+'</td><td>'+pill(nc.priorite,PC[nc.priorite]||'#999')+'</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+    html += '</div>';
+  });
+
+  if (allNCs.length > 0) {
+    html += '<div class="sec-title">Fiches de non-conformites</div>';
+    allNCs.forEach(function(nc) {
+      var tc = TC[nc.type]||'#999', pc = PC[nc.priorite]||'#999';
+      html += '<div class="fiche"><div class="fiche-hdr"><div class="fh-no">'+nc.no+'</div><div class="fh-zone">'+nc.zone+'</div>';
+      html += '<div class="fh-type" style="background:'+tc+'">'+nc.type+'</div><div class="fh-prio" style="background:'+pc+'">'+nc.priorite+'</div></div>';
+      html += '<div class="fiche-body">';
+      html += '<div class="frow"><div class="fl">Observation</div><div class="fv">'+nc.observation+'</div></div>';
+      html += '<div class="frow"><div class="fl">Reglement</div><div class="fv">'+nc.regle+'</div></div>';
+      html += '<div class="frow"><div class="fl">Action</div><div class="fv"><strong>'+nc.action+'</strong></div></div>';
+      html += '</div></div>';
     });
-    html += '</tbody></table></div>';
-  });
 
-  html += '<div class="sec-title">Fiches de non-conformites</div>';
-  allNCs.forEach(function(nc) {
-    var tc = TC[nc.type]||'#999', pc = PC[nc.priorite]||'#999';
-    html += '<div class="fiche"><div class="fiche-hdr"><div class="fh-no">'+nc.no+'</div><div class="fh-zone">'+nc.zone+'</div>';
-    html += '<div class="fh-type" style="background:'+tc+'">'+nc.type+'</div><div class="fh-prio" style="background:'+pc+'">'+nc.priorite+'</div></div>';
-    html += '<div class="fiche-body">';
-    html += '<div class="frow"><div class="fl">Observation</div><div class="fv">'+nc.observation+'</div></div>';
-    html += '<div class="frow"><div class="fl">Reglement</div><div class="fv">'+nc.regle+'</div></div>';
-    html += '<div class="frow"><div class="fl">Action</div><div class="fv"><strong>'+nc.action+'</strong></div></div>';
-    html += '</div></div>';
-  });
-
-  html += '<div class="sec-title">Plan d&#39;actions prioritaires</div>';
-  html += '<table class="plan-tbl"><thead><tr><th>Ref.</th><th>Priorite</th><th>Action</th><th>Delai</th></tr></thead><tbody>';
-  allNCs.forEach(function(nc) {
-    var pc = PC[nc.priorite]||'#999', dl = DL[nc.priorite]||'--';
-    html += '<tr><td><strong>'+nc.no+'</strong></td><td>'+pill(nc.priorite,pc)+'</td><td>'+nc.action+'</td><td>'+dl+'</td></tr>';
-  });
-  html += '</tbody></table>';
+    html += '<div class="sec-title">Plan d&#39;actions prioritaires</div>';
+    html += '<table class="plan-tbl"><thead><tr><th>Ref.</th><th>Priorite</th><th>Action</th><th>Delai</th></tr></thead><tbody>';
+    allNCs.forEach(function(nc) {
+      var pc = PC[nc.priorite]||'#999', dl = DL[nc.priorite]||'--';
+      html += '<tr><td><strong>'+nc.no+'</strong></td><td>'+pill(nc.priorite,pc)+'</td><td>'+nc.action+'</td><td>'+dl+'</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
 
   html += '<div class="sec-title">Signatures</div><div class="sig-section">';
   html += '<div class="sig-steps"><div class="sstep active" id="ss1">1 Inspecteur</div><div class="sstep" id="ss2">2 Client</div><div class="sstep" id="ss3">3 Finaliser</div></div>';
@@ -777,6 +793,7 @@ function resetApp() {
   document.getElementById('btnAnalyze').disabled=true;
   goTo('s-home');
 }
+
 </script>
 
 </body>
