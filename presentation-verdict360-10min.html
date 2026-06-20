@@ -1,1 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Verdict 360 AI — Présentation Standard 10 minutes</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root {
+    --noir:#0A0A0A; --noir2:#1A1A1A;
+    --or:#B8954A; --orbd:#9C7F3D; --orref:#D4C28E; --orhi:#F0E4C0;
+    --grad:linear-gradient(110deg,#9C7F3D 0%,#B8954A 35%,#F0E4C0 50%,#B8954A 65%,#9C7F3D 100%);
+    --vert:#1B5E20; --vertc:#C8E6C9; --crit:#FF7043; --maj:#FFA726; --conf:#66BB6A;
+    --blanc:#F5F1E6; --gris:rgba(245,241,230,0.55);
+  }
+  html,body { height:100%; background:var(--noir); color:var(--blanc);
+    font-family:-apple-system,'Helvetica Neue',Arial,sans-serif; overflow:hidden; }
+  .deck { position:relative; width:100%; height:100%; }
 
+  .slide { position:absolute; top:0; left:0; width:100%; height:100%;
+    display:none; flex-direction:column; justify-content:center; align-items:center;
+    padding:56px 7vw 120px; text-align:center;
+    background:radial-gradient(ellipse at 50% 0%, #181408 0%, var(--noir) 60%); }
+  .slide.active { display:flex; }
+
+  .tag { font-size:11px; letter-spacing:4px; text-transform:uppercase;
+    color:var(--or); margin-bottom:14px; }
+  h1 { font-family:Georgia,'Times New Roman',serif; font-weight:700;
+    font-size:clamp(34px,7vw,64px); line-height:1.1; color:var(--blanc); }
+  h1 .gold { background:var(--grad); -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:var(--orhi); }
+  h2 { font-family:Georgia,serif; font-weight:700;
+    font-size:clamp(26px,5vw,44px); line-height:1.15; margin-bottom:18px; }
+  .lead { font-size:clamp(15px,2.4vw,19px); color:var(--gris);
+    max-width:680px; line-height:1.55; }
+  .filet { width:64px; height:3px; background:var(--grad); margin:20px auto; border-radius:2px; }
+
+  .grid { display:flex; flex-wrap:wrap; justify-content:center; gap:12px;
+    margin-top:22px; max-width:880px; }
+  .card { background:var(--noir2); border:1px solid rgba(184,149,74,0.4);
+    border-radius:12px; padding:16px 14px; width:150px; }
+  .card .ic { font-size:26px; }
+  .card .nm { font-size:13px; font-weight:700; letter-spacing:2px;
+    color:var(--orhi); margin:8px 0 6px; }
+  .card .ds { font-size:11.5px; color:var(--gris); line-height:1.45; }
+  .card.big { width:240px; text-align:left; }
+  .card.big .ds { font-size:12.5px; }
+
+  .stats { display:flex; flex-wrap:wrap; justify-content:center; gap:28px; margin-top:26px; }
+  .stat .num { font-family:Georgia,serif; font-size:clamp(36px,7vw,58px);
+    font-weight:700; background:var(--grad); -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:var(--orhi); }
+  .stat .lbl { font-size:12px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--gris); margin-top:4px; }
+
+  ul.pts { list-style:none; text-align:left; max-width:620px; margin-top:18px; }
+  ul.pts li { padding:9px 0 9px 28px; position:relative; font-size:clamp(14px,2.2vw,17px);
+    color:var(--blanc); border-bottom:1px solid rgba(184,149,74,0.18); line-height:1.45; }
+  ul.pts li:before { content:"\25C6"; color:var(--or); position:absolute; left:4px; font-size:11px; top:13px; }
+  ul.pts li b { color:var(--orhi); }
+
+  .ok { display:inline-block; background:var(--vertc); color:var(--vert);
+    font-size:12px; font-weight:700; padding:5px 14px; border-radius:20px; margin-top:18px; }
+  .badge-crit { color:var(--crit); font-weight:700; }
+  .badge-conf { color:var(--conf); font-weight:700; }
+
+  .forfaits { display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-top:20px; }
+  .forfait { background:var(--noir2); border:1px solid rgba(184,149,74,0.35);
+    border-radius:14px; padding:20px 18px; width:210px; text-align:left; }
+  .forfait.star { border:1px solid transparent; background:
+    linear-gradient(var(--noir2),var(--noir2)) padding-box, var(--grad) border-box;
+    box-shadow:0 0 24px rgba(184,149,74,0.22); }
+  .forfait h3 { font-family:Georgia,serif; font-size:18px; color:var(--orhi); margin-bottom:10px; }
+  .forfait p { font-size:12px; color:var(--gris); line-height:1.55; }
+
+  .contact { margin-top:26px; font-size:clamp(14px,2.4vw,18px); line-height:2; }
+  .contact b { color:var(--orhi); }
+
+  /* Barre de contrôle */
+  .hud { position:fixed; left:0; right:0; bottom:0; z-index:50;
+    background:rgba(10,10,10,0.92); border-top:1px solid rgba(184,149,74,0.35);
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+    display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .hud button { background:var(--noir2); color:var(--orhi); border:1px solid var(--or);
+    border-radius:10px; font-size:15px; padding:10px 18px; font-weight:700; }
+  .hud button:active { background:var(--or); color:var(--noir); }
+  .meta { font-size:12px; color:var(--gris); letter-spacing:1px; text-align:center; flex:1; }
+  .meta .t { color:var(--orhi); font-weight:700; }
+  .prog { position:fixed; top:0; left:0; height:3px; background:var(--grad); z-index:60;
+    transition:width 0.25s; }
+
+  /* Script présentateur */
+  .notes { position:fixed; left:0; right:0; bottom:62px; z-index:40;
+    background:#14110A; border-top:2px solid var(--or);
+    padding:16px 18px calc(16px + env(safe-area-inset-bottom)); display:none;
+    max-height:46%; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .notes.show { display:block; }
+  .notes h4 { font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--or); margin-bottom:8px; }
+  .notes p { font-size:15px; line-height:1.65; color:var(--blanc); }
+  .chrono-on { color:var(--conf) !important; border-color:var(--conf) !important; }
+
+  .zone { position:fixed; top:0; bottom:80px; width:33%; z-index:30; }
+  .zL { left:0; } .zR { right:0; }
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<div class="deck" id="deck">
+
+<!-- SLIDE 1 — TITRE -->
+<section class="slide active" data-time="0:30">
+  <div class="tag">Présentation officielle</div>
+  <h1>Verdict <span class="gold">360</span> AI</h1>
+  <div class="filet"></div>
+  <p class="lead">La plateforme bilingue d'audit et de conformité alimentaire propulsée par l'intelligence artificielle. Normes MAPAQ et HACCP.</p>
+  <div class="stats">
+    <div class="stat"><div class="num">6</div><div class="lbl">Modules</div></div>
+    <div class="stat"><div class="num">24h</div><div class="lbl">Rapport livré</div></div>
+    <div class="stat"><div class="num">FR&middot;EN</div><div class="lbl">Bilingue</div></div>
+  </div>
+  <div class="notes-data" hidden>Bonjour, je m'appelle Jacques Perrier. Aujourd'hui je vous présente Verdict 360 AI : la première plateforme qui combine l'intelligence artificielle et l'expertise humaine d'un auditeur pour proteger votre etablissement face au MAPAQ. Six modules, un seul ecosysteme. Dix minutes, et vous comprendrez exactement comment ca protege votre entreprise.</div>
+</section>
+
+<!-- SLIDE 2 — QUI SUIS-JE -->
+<section class="slide" data-time="1:00">
+  <div class="tag">Votre expert</div>
+  <h2>Jacques Perrier</h2>
+  <p class="lead">Auditeur en hygiène et salubrité alimentaire<br>Expert des normes MAPAQ et HACCP</p>
+  <div class="filet"></div>
+  <ul class="pts">
+    <li><b>20 ans et plus</b> d'expérience combinée : chef-propriétaire et auditeur terrain</li>
+    <li>Connaissance des <b>deux côtés du comptoir</b> : opérations ET inspection</li>
+    <li>Basé à Gatineau — interventions <b>Gatineau &middot; Ottawa &middot; Montréal &middot; Québec</b></li>
+    <li>Service entièrement <b>bilingue</b>, français et anglais</li>
+  </ul>
+  <div class="notes-data" hidden>J'ai passe plus de vingt ans dans le milieu alimentaire : d'abord comme chef-proprietaire, ensuite comme auditeur en hygiene et salubrite. Je connais les deux cotes du comptoir : la pression des operations ET les exigences des inspecteurs. C'est exactement cette double experience que Verdict 360 AI met dans votre poche. [Mention verbale possible ici de l'experience grands comptes - jamais a l'ecrit.]</div>
+</section>
+
+<!-- SLIDE 3 — LE PROBLÈME -->
+<section class="slide" data-time="1:00">
+  <div class="tag">Le constat</div>
+  <h2>Une inspection MAPAQ peut tout changer. <span style="color:var(--crit)">En une visite.</span></h2>
+  <ul class="pts">
+    <li><span class="badge-crit">Condamnation publique</span> : votre nom affiché sur le site du MAPAQ, visible par tous vos clients</li>
+    <li><b>Paperasse manuelle</b> : registres de températures, nettoyage, réception — incomplets ou oubliés</li>
+    <li><b>Personnel non formé</b> : la cause numéro un des non-conformités répétées</li>
+    <li><b>Aucune visibilité</b> : vous découvrez les problèmes quand l'inspecteur les découvre</li>
+  </ul>
+  <div class="notes-data" hidden>Le probleme est simple : la majorite des etablissements gerent leur conformite avec du papier, de la memoire et de la bonne volonte. Resultat : quand l'inspecteur du MAPAQ arrive, c'est lui qui decouvre vos problemes avant vous. Et une condamnation, c'est public - vos clients la voient en ligne. La question n'est pas SI vous serez inspecte, mais QUAND.</div>
+</section>
+
+<!-- SLIDE 4 — LA SOLUTION -->
+<section class="slide" data-time="1:00">
+  <div class="tag">La solution</div>
+  <h2>Voyez tout. <span class="gold" style="background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Avant que le MAPAQ arrive.</span></h2>
+  <p class="lead">Verdict 360 AI inverse le rapport de force : l'intelligence artificielle détecte les non-conformités en continu, et un auditeur humain valide, priorise et vous accompagne.</p>
+  <div class="filet"></div>
+  <ul class="pts">
+    <li><b>IA + expertise humaine</b> : analyse photo automatique, validée par un auditeur</li>
+    <li><b>Rapports professionnels</b> conformes au format MAPAQ, livrés en 24h</li>
+    <li><b>Priorisation claire</b> : IMMÉDIAT &middot; URGENT 24h &middot; URGENT 48h &middot; PLANIFIÉ</li>
+    <li><b>100% mobile</b> : tout se fait depuis un iPhone ou une tablette</li>
+  </ul>
+  <div class="notes-data" hidden>Verdict 360 AI inverse le rapport de force. Au lieu de subir l'inspection, vous la simulez en continu. L'intelligence artificielle analyse vos photos, detecte les non-conformites, et moi, comme auditeur, je valide et je priorise chaque correction : immediat, urgent 24 heures, urgent 48 heures, ou planifie. Tout se fait depuis un telephone. Aucun papier.</div>
+</section>
+
+<!-- SLIDE 5 — LES 6 MODULES -->
+<section class="slide" data-time="1:00">
+  <div class="tag">L'écosystème complet</div>
+  <h2>6 modules. <span style="color:var(--orhi)">1 plateforme.</span> Zéro angle mort.</h2>
+  <div class="grid">
+    <div class="card"><div class="ic">&#9670;</div><div class="nm">360</div><div class="ds">Le cœur : audit complet piloté par votre auditeur</div></div>
+    <div class="card"><div class="ic">&#128336;</div><div class="nm">PUNCH</div><div class="ds">Pointage anti-fraude : GPS, selfie, NIP</div></div>
+    <div class="card"><div class="ic">&#128737;</div><div class="nm">SÉCURITÉ</div><div class="ds">Inspections et rondes de sécurité conformes</div></div>
+    <div class="card"><div class="ic">&#129529;</div><div class="nm">HYGIÈNE</div><div class="ds">Protocoles nettoyage et zones critiques</div></div>
+    <div class="card"><div class="ic">&#128230;</div><div class="nm">CONTRÔLE</div><div class="ds">Réception fournisseurs et traçabilité</div></div>
+    <div class="card"><div class="ic">&#127891;</div><div class="nm">ACADÉMIE</div><div class="ds">Formation MAPAQ/HACCP du personnel</div></div>
+  </div>
+  <div class="notes-data" hidden>Voici l'ecosysteme complet : six modules qui couvrent chaque angle mort de votre conformite. 360, le coeur de la plateforme. PUNCH pour le pointage. SECURITE pour les inspections. HYGIENE pour le nettoyage. CONTROLE pour vos fournisseurs. Et ACADEMIE pour former votre equipe. Je vous les presente un par un - rapidement.</div>
+</section>
+
+<!-- SLIDE 6 — MODULE 360 -->
+<section class="slide" data-time="1:00">
+  <div class="tag">Module 1 sur 6</div>
+  <h2><span style="color:var(--orhi)">&#9670; 360</span> — Le bouclier permanent</h2>
+  <p class="lead">Le module central qui unifie tout : un audit complet de votre établissement, piloté par votre auditeur, avec photos annotées par IA et plan d'actions signé.</p>
+  <ul class="pts">
+    <li>Inspection complète par zones avec <b>photos annotées par l'IA</b></li>
+    <li>Rapport officiel PDF avec <b>signatures des deux parties</b></li>
+    <li>Plan d'actions priorisé, <b>remis à l'inspecteur comme preuve de bonne foi</b></li>
+    <li>Suivi continu 30 et 60 jours</li>
+  </ul>
+  <div class="notes-data" hidden>Le module 360, c'est le coeur. Je viens dans votre etablissement, je documente chaque zone avec des photos que l'intelligence artificielle annote automatiquement. Vous recevez un rapport officiel au format MAPAQ avec un plan d'actions signe - un document que vous pouvez litteralement remettre a l'inspecteur comme preuve de bonne foi. Et le suivi continue a 30 et 60 jours.</div>
+</section>
+
+<!-- SLIDE 7 — SÉCURITÉ + HYGIÈNE -->
+<section class="slide" data-time="1:00">
+  <div class="tag">Modules 2 et 3 sur 6</div>
+  <h2>&#128737; SÉCURITÉ &nbsp;&middot;&nbsp; &#129529; HYGIÈNE</h2>
+  <div class="grid">
+    <div class="card big">
+      <div class="nm">SÉCURITÉ</div>
+      <div class="ds">Inspections internes illimitées depuis votre iPhone. Rondes structurées par zones, scores automatiques, alertes sur les zones à risque. Votre score MAPAQ simulé en temps réel.</div>
+    </div>
+    <div class="card big">
+      <div class="nm">HYGIÈNE</div>
+      <div class="ds">Registres de nettoyage et désinfection numériques. Protocoles par zone critique, vérifications horodatées, historique complet prêt à montrer à l'inspecteur.</div>
+    </div>
+  </div>
+  <div class="ok">Fini les registres papier perdus ou incomplets</div>
+  <div class="notes-data" hidden>SECURITE, c'est votre inspecteur interne dans votre poche : des rondes illimitees depuis votre telephone, avec un score simule en temps reel. Vous savez toujours ou vous en etes. HYGIENE remplace tous vos registres papier de nettoyage : chaque verification est horodatee et archivee. Quand l'inspecteur demande vos registres, vous les montrez en deux clics.</div>
+</section>
+
+<!-- SLIDE 8 — PUNCH + CONTRÔLE -->
+<section class="slide" data-time="1:00">
+  <div class="tag">Modules 4 et 5 sur 6</div>
+  <h2>&#128336; PUNCH &nbsp;&middot;&nbsp; &#128230; CONTRÔLE</h2>
+  <div class="grid">
+    <div class="card big">
+      <div class="nm">PUNCH</div>
+      <div class="ds">Pointage des employés anti-fraude : géolocalisation GPS, selfie et NIP. Connecté directement à vos feuilles de paie. Déjà déployé et opérationnel en entreprise.</div>
+    </div>
+    <div class="card big">
+      <div class="nm">CONTRÔLE</div>
+      <div class="ds">Réception fournisseurs et traçabilité : conformité des livraisons, températures à la réception, suivi des produits entrants. La chaîne du froid documentée de bout en bout.</div>
+    </div>
+  </div>
+  <div class="notes-data" hidden>PUNCH regle un probleme que tous les gestionnaires connaissent : le pointage frauduleux. GPS, selfie, NIP - impossible de puncher pour un collegue. Et c'est deja deploye en entreprise, c'est du concret. CONTROLE, lui, documente votre chaine du froid a la reception : chaque livraison, chaque temperature, chaque fournisseur. En cas de rappel ou d'enquete, votre tracabilite est beton.</div>
+</section>
+
+<!-- SLIDE 9 — ACADÉMIE -->
+<section class="slide" data-time="0:45">
+  <div class="tag">Module 6 sur 6</div>
+  <h2>&#127891; ACADÉMIE — Former, c'est prévenir</h2>
+  <p class="lead">La cause numéro un des non-conformités répétées, c'est le manque de formation. ACADÉMIE forme votre équipe directement sur la plateforme.</p>
+  <ul class="pts">
+    <li>Formations <b>MAPAQ et HACCP</b> interactives, en français et en anglais</li>
+    <li><b>Quiz de validation</b> et suivi des certifications par employé</li>
+    <li>Accessible sur le téléphone de chaque employé — <b>aucune salle de classe</b></li>
+  </ul>
+  <div class="notes-data" hidden>Dernier module : ACADEMIE. La cause numero un des non-conformites repetees, c'est le personnel mal forme. ACADEMIE forme vos employes directement sur leur telephone : formations interactives, quiz, suivi des certifications. Un employe forme, c'est une non-conformite evitee.</div>
+</section>
+
+<!-- SLIDE 10 — ROI -->
+<section class="slide" data-time="1:00">
+  <div class="tag">Le retour sur investissement</div>
+  <h2>Ce que Verdict 360 AI vous <span style="color:var(--orhi)">rapporte</span></h2>
+  <div class="stats">
+    <div class="stat"><div class="num">15h</div><div class="lbl">de paperasse sauvées / mois</div></div>
+    <div class="stat"><div class="num">24h</div><div class="lbl">rapport complet livré</div></div>
+    <div class="stat"><div class="num">100%</div><div class="lbl">traçabilité numérique</div></div>
+  </div>
+  <div class="filet"></div>
+  <ul class="pts">
+    <li>Une condamnation MAPAQ peut coûter des <b>milliers de dollars</b> en clientèle perdue</li>
+    <li>Verdict 360 AI coûte <b>moins cher qu'une seule journée de fermeture</b></li>
+    <li><span class="badge-conf">Préparation continue</span> = inspections sans surprise</li>
+  </ul>
+  <div class="notes-data" hidden>Parlons chiffres. Une condamnation publique du MAPAQ, c'est des clients qui ne reviennent pas - ca peut couter des milliers de dollars. Verdict 360 AI coute moins cher qu'une seule journee de fermeture. Et en bonus : environ quinze heures de paperasse eliminees par mois. La conformite passe de fardeau a avantage concurrentiel.</div>
+</section>
+
+<!-- SLIDE 11 — FORFAITS + CTA -->
+<section class="slide" data-time="0:45">
+  <div class="tag">Passez à l'action</div>
+  <h2>Trois niveaux de protection</h2>
+  <div class="forfaits">
+    <div class="forfait"><h3>Essentiel</h3><p>L'audit 360 complet : rapport officiel, plan d'actions signé, suivi 30 jours.</p></div>
+    <div class="forfait star"><h3>Complet &#9733;</h3><p>Tout l'Essentiel + inspections internes illimitées + accès aux 6 modules + intervention de crise incluse.</p></div>
+    <div class="forfait"><h3>Entreprise</h3><p>Multi-établissements, formation terrain de l'équipe, ACADÉMIE illimitée, gestionnaire dédié.</p></div>
+  </div>
+  <div class="contact">
+    <b>verdict360ai.com</b><br>
+    info@verdict360ai.com &nbsp;&middot;&nbsp; +1 (873) 822-1455
+  </div>
+  <div class="notes-data" hidden>Trois niveaux de protection, selon vos besoins : Essentiel pour l'audit ponctuel, Complet pour la protection continue avec les six modules, et Entreprise pour les multi-etablissements. [Tarifs presentes verbalement selon l'etablissement.] La prochaine etape est simple : une visite d'evaluation gratuite. Je vous laisse mes coordonnees - quand est-ce qu'on planifie ca?</div>
+</section>
+
+</div>
+
+<div class="zone zL" id="zL"></div>
+<div class="zone zR" id="zR"></div>
+
+<div class="notes" id="notes">
+  <h4>Script présentateur</h4>
+  <p id="notesTxt"></p>
+</div>
+
+<div class="hud">
+  <button id="bPrev">&#8249;</button>
+  <div class="meta">
+    <span id="cnt">1 / 11</span> &nbsp;&middot;&nbsp; cible <span class="t" id="tgt">0:30</span> &nbsp;&middot;&nbsp; total <span class="t" id="clk">0:00</span>
+  </div>
+  <button id="bNotes">Script</button>
+  <button id="bClock">&#9201;</button>
+  <button id="bNext">&#8250;</button>
+</div>
+
+<script>
+(function(){
+  var slides = document.querySelectorAll('.slide');
+  var n = slides.length, cur = 0;
+  var cnt = document.getElementById('cnt');
+  var tgt = document.getElementById('tgt');
+  var prog = document.getElementById('prog');
+  var notes = document.getElementById('notes');
+  var notesTxt = document.getElementById('notesTxt');
+  var clk = document.getElementById('clk');
+  var bClock = document.getElementById('bClock');
+  var sec = 0, timer = null;
+
+  function show(i){
+    if(i < 0) i = 0;
+    if(i > n-1) i = n-1;
+    slides[cur].className = 'slide';
+    cur = i;
+    slides[cur].className = 'slide active';
+    cnt.innerHTML = (cur+1) + ' / ' + n;
+    tgt.innerHTML = slides[cur].getAttribute('data-time');
+    prog.style.width = (((cur+1)/n)*100) + '%';
+    var d = slides[cur].querySelector('.notes-data');
+    notesTxt.innerHTML = d ? d.innerHTML : '';
+  }
+
+  function pad(x){ return x < 10 ? '0'+x : ''+x; }
+  function tick(){
+    sec++;
+    clk.innerHTML = Math.floor(sec/60) + ':' + pad(sec%60);
+  }
+
+  document.getElementById('bPrev').onclick = function(){ show(cur-1); };
+  document.getElementById('bNext').onclick = function(){ show(cur+1); };
+  document.getElementById('zL').onclick = function(){ show(cur-1); };
+  document.getElementById('zR').onclick = function(){ show(cur+1); };
+  document.getElementById('bNotes').onclick = function(){
+    notes.className = (notes.className === 'notes') ? 'notes show' : 'notes';
+  };
+  bClock.onclick = function(){
+    if(timer){ clearInterval(timer); timer = null; bClock.className = ''; }
+    else { timer = setInterval(tick, 1000); bClock.className = 'chrono-on'; }
+  };
+  document.onkeydown = function(e){
+    var k = e.keyCode;
+    if(k === 39 || k === 32) show(cur+1);
+    if(k === 37) show(cur-1);
+  };
+
+  var x0 = null;
+  document.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; }, false);
+  document.addEventListener('touchend', function(e){
+    if(x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if(dx < -60) show(cur+1);
+    if(dx > 60) show(cur-1);
+    x0 = null;
+  }, false);
+
+  show(0);
+})();
+</script>
+</body>
+</html>
