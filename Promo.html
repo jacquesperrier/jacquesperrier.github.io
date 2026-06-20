@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Promo ACADÉMIE — Verdict 360 AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;800&display=swap');
+
+  :root {
+    --or: #B8954A;
+    --or-ombre: #9C7F3D;
+    --or-reflet: #D4C28E;
+    --or-hi: #F0E4C0;
+    --or-gradient: linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);
+    --noir: #0A0A0A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .stage {
+    width: 100vw;
+    height: 100vh;
+    max-width: 480px;
+    max-height: 854px;
+    margin: 0 auto;
+    position: relative;
+    background: var(--noir);
+    overflow: hidden;
+  }
+
+  /* ── Flash blanc entre chaque slide ── */
+  .flash {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  /* ── Slides ── */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  .slide.intro { background: var(--noir); }
+  .slide.s1 { background: linear-gradient(135deg, #141414 0%, #0A0A0A 100%); }
+  .slide.s2 { background: #0A0A0A; }
+  .slide.s3 { background: linear-gradient(135deg, #0A0A0A 0%, #1a1408 100%); }
+  .slide.s4 { background: var(--noir); }
+  .slide.outro { background: var(--noir); }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--or-reflet);
+    margin-bottom: 18px;
+  }
+
+  .big-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px;
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  .big-text .gold {
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .sub-text {
+    font-size: 16px;
+    color: #ABA399;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+
+  .icon-big {
+    font-size: 72px;
+    margin-bottom: 24px;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 28px;
+    margin-top: 28px;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 900;
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .stat .lab {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8A8378;
+    margin-top: 4px;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .badge {
+    border: 1px solid var(--or);
+    color: var(--or-reflet);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 30px;
+  }
+
+  .logo-final {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  .logo-final span {
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .tagline-final {
+    font-size: 13px;
+    color: var(--or-reflet);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+
+  .cta-final {
+    margin-top: 32px;
+    background: var(--or-gradient);
+    color: var(--noir);
+    font-weight: 800;
+    font-size: 14px;
+    padding: 14px 32px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Barre de progression du montage ── */
+  .progress-track {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    z-index: 50;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--or-gradient);
+  }
+
+  /* ── Contrôles (hors export) ── */
+  .controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    display: flex;
+    gap: 10px;
+  }
+  .controls button {
+    background: var(--or-gradient);
+    border: none;
+    color: var(--noir);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <div class="slide intro" id="slide-0">
+    <div class="eyebrow">Verdict 360 AI</div>
+    <div class="big-text">Former votre<br><span class="gold">équipe.</span></div>
+  </div>
+
+  <div class="slide s1" id="slide-1">
+    <div class="icon-big">🛡️</div>
+    <div class="big-text">Protéger<br><span class="gold">votre permis.</span></div>
+    <div class="sub-text">Une non-conformité MAPAQ coûte cher — en amende, en réputation.</div>
+  </div>
+
+  <div class="slide s2" id="slide-2">
+    <div class="eyebrow">Module Académie</div>
+    <div class="big-text">6 leçons.<br><span class="gold">10 questions.</span></div>
+    <div class="sub-text">Basé sur le Guide des bonnes pratiques (5M) du MAPAQ.</div>
+    <div class="stat-row">
+      <div class="stat"><div class="num">45</div><div class="lab">Minutes</div></div>
+      <div class="stat"><div class="num">80%</div><div class="lab">Seuil</div></div>
+      <div class="stat"><div class="num">100%</div><div class="lab">Mobile</div></div>
+    </div>
+  </div>
+
+  <div class="slide s3" id="slide-3">
+    <div class="icon-big">🏅</div>
+    <div class="big-text"><span class="gold">Attestation</span><br>instantanée.</div>
+    <div class="sub-text">Résultat immédiat. Document officiel pour votre registre de formation.</div>
+    <div class="badge-row">
+      <div class="badge">🇫🇷 FR / 🇬🇧 EN</div>
+      <div class="badge">✅ Quiz noté</div>
+    </div>
+  </div>
+
+  <div class="slide s4" id="slide-4">
+    <div class="eyebrow">Pour qui?</div>
+    <div class="big-text">Cuisiniers.<br>Serveurs.<br><span class="gold">Gestionnaires.</span></div>
+  </div>
+
+  <div class="slide outro" id="slide-5">
+    <div class="logo-final">VERDICT <span>360</span> AI</div>
+    <div class="tagline-final">Académie · Formation alimentaire</div>
+    <div class="cta-final">Commencer →</div>
+  </div>
+
+  <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+</div>
+
+<div class="controls">
+  <button onclick="restart()">↺ Rejouer</button>
+</div>
+
+<script>
+const slideDuration = 3800; // ms par slide
+const slides = document.querySelectorAll('.slide');
+const progress = document.getElementById('progress');
+let totalTime = slideDuration * slides.length;
+
+function animate() {
+  let timeline = [];
+  slides.forEach((slide, i) => {
+    const start = i * slideDuration;
+
+    // Apparition slide (fade in doux + léger mouvement vers le haut)
+    timeline.push(setTimeout(() => {
+      slides.forEach(s => { s.style.zIndex = '1'; });
+      slide.style.zIndex = '2';
+      slide.style.transition = 'opacity 1400ms ease-out, transform 1400ms cubic-bezier(0.16, 1, 0.3, 1)';
+      slide.style.opacity = '1';
+      slide.style.transform = 'scale(1) translateY(0)';
+    }, start));
+
+    // Disparition slide (fade out doux + léger mouvement vers le haut)
+    if (i < slides.length - 1) {
+      timeline.push(setTimeout(() => {
+        slide.style.transition = 'opacity 1200ms ease-in, transform 1200ms ease-in';
+        slide.style.opacity = '0';
+        slide.style.transform = 'scale(1) translateY(-18px)';
+      }, start + slideDuration - 1200));
+    }
+  });
+
+  // Barre de progression
+  progress.style.transition = `width ${totalTime}ms linear`;
+  requestAnimationFrame(() => { progress.style.width = '100%'; });
+}
+
+function restart() {
+  slides.forEach(s => {
+    s.style.transition = 'none';
+    s.style.opacity = '0';
+    s.style.transform = 'scale(1) translateY(18px)';
+  });
+  progress.style.transition = 'none';
+  progress.style.width = '0%';
+  void document.body.offsetWidth; // force reflow
+  setTimeout(animate, 50);
+}
+
+animate();
+</script>
+
+</body>
+</html>
