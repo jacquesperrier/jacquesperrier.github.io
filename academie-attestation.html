@@ -50,6 +50,18 @@
   }
   .print-btn:hover { opacity: 0.85; }
 
+  /* ── Indicateur de sauvegarde (hors impression) ── */
+  .save-status {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 16px;
+    text-align: center;
+    letter-spacing: 0.5px;
+    min-height: 14px;
+  }
+  .save-status.ok { color: #81C784; }
+  .save-status.err { color: #EF9A9A; }
+
   /* ── Certificat ── */
   .certificat {
     background: var(--blanc);
@@ -275,18 +287,6 @@
     margin: 8px auto 6px;
   }
 
-  /* Disclaimer band */
-  .disclaimer-band {
-    text-align: center;
-    font-size: 10px;
-    color: #888;
-    font-style: italic;
-    letter-spacing: 0.3px;
-    padding: 10px 40px;
-    border-top: 1px solid var(--or-highlight);
-    background: #f8f6f2;
-  }
-
   /* Footer doré */
   .footer-band {
     background: var(--or-gradient);
@@ -341,7 +341,7 @@
   @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     body { background: white; padding: 0; }
-    .print-btn { display: none !important; }
+    .print-btn, .save-status { display: none !important; }
     .certificat {
       box-shadow: none;
       max-width: 100%;
@@ -355,6 +355,9 @@
 <div id="app"></div>
 
 <script>
+  // ── URL du Worker ACADÉMIE (sauvegarde de la complétion) ──
+  const WORKER_BASE = 'https://academie.mjacquesperrier.workers.dev';
+
   // ── Paramètres URL ──
   const params = new URLSearchParams(window.location.search);
   const code     = params.get('code');
@@ -399,6 +402,9 @@
       disclaimer:    'Cette attestation est délivrée par Verdict 360 AI et ne remplace pas une certification officielle émise par le MAPAQ.',
       error_title:   'Paramètres manquants',
       error_body:    'Cette page nécessite les paramètres suivants dans l\'URL :<br><code>?code=XXXXXX&nom=NOM&programme=PROGRAMME&score=XX</code>',
+      save_saving:   'Enregistrement de la complétion…',
+      save_ok:       'Formation enregistrée ✓',
+      save_err:      'Avertissement : la complétion n\'a pas pu être enregistrée automatiquement.',
     },
     en: {
       module:        'ACADEMY',
@@ -414,6 +420,9 @@
       disclaimer:    'This certificate is issued by Verdict 360 AI and does not replace an official certification issued by the MAPAQ.',
       error_title:   'Missing Parameters',
       error_body:    'This page requires the following URL parameters:<br><code>?code=XXXXXX&nom=NAME&programme=PROGRAM&score=XX</code>',
+      save_saving:   'Saving completion…',
+      save_ok:       'Training recorded ✓',
+      save_err:      'Warning: completion could not be saved automatically.',
     }
   };
 
@@ -436,6 +445,38 @@
     return slug ? decodeURIComponent(slug).replace(/-/g,' ') : '—';
   }
 
+  // ── Sauvegarde de la complétion auprès du Worker ──
+  async function enregistrerCompletion(codeAcces, scoreFinal) {
+    const statusEl = document.getElementById('saveStatus');
+    if (!codeAcces) return; // pas de code -> rien à enregistrer (ex: aperçu manuel)
+    if (statusEl) {
+      statusEl.textContent = t.save_saving;
+      statusEl.className = 'save-status';
+    }
+    try {
+      const res = await fetch(WORKER_BASE + '/completer-formation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codeAcces, score: scoreFinal })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (statusEl) {
+        if (res.ok && data.success) {
+          statusEl.textContent = t.save_ok;
+          statusEl.className = 'save-status ok';
+        } else {
+          statusEl.textContent = t.save_err;
+          statusEl.className = 'save-status err';
+        }
+      }
+    } catch (e) {
+      if (statusEl) {
+        statusEl.textContent = t.save_err;
+        statusEl.className = 'save-status err';
+      }
+    }
+  }
+
   // ── Render ──
   const app = document.getElementById('app');
 
@@ -456,6 +497,7 @@
       <button class="print-btn" onclick="window.print()">
         ${lang === 'en' ? '🖨 Print / Save PDF' : '🖨 Imprimer / Sauvegarder PDF'}
       </button>
+      <div class="save-status" id="saveStatus"></div>
 
       <div class="certificat">
         <div class="filigrane">${t.watermark}</div>
@@ -479,7 +521,10 @@
           <div class="texte-programme">${t.has_completed}</div>
           <div class="nom-programme">${nomProg}</div>
 
-
+          <div class="score-zone">
+            <span class="score-label">${t.score_label}</span>
+            <span class="score-value">${score}</span>
+          </div>
         </div>
 
         <div class="infos-bas">
@@ -500,9 +545,13 @@
           </div>
         </div>
 
-        <div class="disclaimer-band">${t.disclaimer}</div>
         <div class="footer-band"></div>
-      </div>`;
+      </div>
+
+      <div class="disclaimer">${t.disclaimer}</div>`;
+
+    // ── Déclenche la sauvegarde côté Worker dès l'affichage du certificat ──
+    enregistrerCompletion(code, score);
   }
 </script>
 </body>
