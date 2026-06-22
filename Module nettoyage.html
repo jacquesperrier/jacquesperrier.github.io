@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nettoyage — V360AI">
+<title>Module Nettoyage — Verdict 360 AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Source+Sans+3:wght@400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+:root{
+  --or-solide:#B8954A;--or-ombre:#9C7F3D;--or-highlight:#F0E4C0;
+  --or-grad:linear-gradient(110deg,#9C7F3D 0%,#B8954A 35%,#F0E4C0 50%,#B8954A 65%,#9C7F3D 100%);
+  --noir:#1A1A1A;--crit:#FF7043;--maj:#FFA726;--conf:#66BB6A;
+  --rouge-fonce:#8B1A1A;--immed:#8B1A1A;--u24:#E65100;--u48:#BF360C;--plan:#546E7A;
+}
+body{font-family:'Source Sans 3','Segoe UI',Arial,sans-serif;background:#f2f2f2;min-height:100vh;}
+
+/* ══ NAV ══ */
+.nav{position:sticky;top:0;z-index:100;background:#1A1A1A;border-bottom:2px solid var(--or-ombre);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;letter-spacing:3px;background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-logo span{color:var(--or-solide);-webkit-text-fill-color:var(--or-solide);}
+.nav-module-badge{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:6px;background:var(--or-grad);color:#1A1A1A;border:none;}
+
+/* ══ HERO ══ */
+.hero{background:#1A1A1A;padding:32px 20px 28px;text-align:center;border-bottom:3px solid var(--or-ombre);}
+.hero-eyebrow{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;color:var(--or-solide);text-transform:uppercase;margin-bottom:14px;}
+.hero-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;line-height:1.15;color:#fff;margin-bottom:12px;}
+.hero-title em{font-style:normal;background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:14px;color:#ccc;line-height:1.6;max-width:480px;margin:0 auto 20px;}
+.hero-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.hero-chip{display:flex;align-items:center;gap:6px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.5px;padding:7px 14px;border-radius:50px;border:1.5px solid var(--or-ombre);color:var(--or-highlight);}
+
+/* ══ SCORE CARD ══ */
+.score-card{max-width:860px;margin:0 auto;background:#1A1A1A;border-left:4px solid var(--or-solide);border-bottom:2px solid var(--or-ombre);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.score-counters{display:flex;gap:20px;align-items:center;}
+.sc-item{text-align:center;}
+.sc-val{font-family:'Montserrat',sans-serif;font-size:24px;font-weight:900;line-height:1;}
+.sc-lbl{font-size:8px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.sc-item.conf .sc-val{color:var(--conf);}
+.sc-item.nc   .sc-val{color:var(--crit);}
+.sc-item.na   .sc-val{color:#555;}
+.sc-item.pac  .sc-val{color:var(--rouge-fonce);}
+.dv{width:1px;height:36px;background:#333;}
+.score-badge{display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--or-solide);border-radius:10px;width:90px;height:74px;flex-shrink:0;background:#111;}
+.sb-pct{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;color:#fff;line-height:1;}
+.sb-lbl{font-size:8px;font-weight:700;color:var(--or-solide);letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+.sb-verdict{font-size:8px;font-weight:800;padding:2px 7px;border-radius:20px;margin-top:4px;letter-spacing:1px;}
+
+/* ══ CONTENU ══ */
+.contenu{max-width:860px;margin:0 auto;padding:20px 16px 40px;}
+
+/* ══ CARD ══ */
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:16px;overflow:hidden;}
+.card-header{background:#1A1A1A;padding:12px 18px;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--or-ombre);}
+.card-header-icon{font-size:16px;}
+.card-header-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase;background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.card-body{padding:16px 18px;}
+
+/* ══ CHAMPS ══ */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+.field{background:#f9f5ec;border-left:3px solid var(--or-solide);padding:9px 12px;border-radius:0 8px 8px 0;}
+.field-label{font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--or-ombre);text-transform:uppercase;margin-bottom:3px;}
+.field input{width:100%;border:none;background:transparent;font-size:13px;font-weight:600;color:#1A1A1A;font-family:'Source Sans 3',sans-serif;outline:none;}
+.produits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.prod-field{background:#f9f5ec;border-left:3px solid var(--or-solide);padding:9px 12px;border-radius:0 8px 8px 0;}
+.prod-label{font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--or-ombre);text-transform:uppercase;margin-bottom:3px;}
+.prod-field input{width:100%;border:none;background:transparent;font-size:12px;font-weight:600;color:#1A1A1A;font-family:'Source Sans 3',sans-serif;outline:none;}
+
+/* ══ FILTRES ══ */
+.filtre-zones{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.btn-zone{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1.5px solid #ddd;background:#fff;color:#888;cursor:pointer;transition:all 0.15s;}
+.btn-zone.actif{border-color:var(--or-solide);background:var(--or-solide);color:#fff;}
+.btn-zone-all.actif{border-color:#1A1A1A;background:#1A1A1A;color:#fff;}
+
+/* ══ TABLEAU ══ */
+.net-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px;}
+.net-table thead th{background:#1A1A1A;color:var(--or-highlight);padding:9px 8px;text-align:left;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--or-ombre);}
+.net-table tbody tr{border-bottom:1px solid #eee;transition:background 0.15s;}
+.net-table tbody tr:hover{background:#fdfaf3;}
+.net-table tbody tr:nth-child(even){background:#fafafa;}
+.net-table td{padding:6px 8px;vertical-align:middle;}
+.td-code{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:900;color:var(--or-ombre);white-space:nowrap;width:58px;}
+.td-zone{width:90px;}
+.sel-zone{border:1px solid #eee;border-radius:6px;padding:3px 5px;font-size:9px;font-family:'Montserrat',sans-serif;font-weight:700;color:#1A1A1A;background:#fff;outline:none;cursor:pointer;width:100%;}
+.inp-surface{border:none;background:transparent;font-size:11px;font-weight:600;color:#1A1A1A;font-family:'Source Sans 3',sans-serif;outline:none;width:100%;min-width:90px;}
+.td-freq{width:90px;}
+.sel-freq{border:1px solid #eee;border-radius:6px;padding:3px 5px;font-size:9px;font-family:'Source Sans 3',sans-serif;color:#555;background:#fff;outline:none;cursor:pointer;width:100%;}
+.td-methode{width:95px;}
+.sel-methode{border:1px solid #eee;border-radius:6px;padding:3px 5px;font-size:9px;font-family:'Source Sans 3',sans-serif;color:#555;background:#fff;outline:none;cursor:pointer;width:100%;}
+.td-crit{width:82px;}
+.sel-crit{border:none;border-radius:20px;padding:4px 7px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;width:100%;}
+.sel-crit.c-crit{background:var(--crit);color:#fff;}
+.sel-crit.c-maj {background:var(--maj);color:#1A1A1A;}
+.sel-crit.c-min {background:#e0e0e0;color:#555;}
+.td-result{width:100px;}
+.sel-result{width:100%;border:none;border-radius:20px;padding:5px 7px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;transition:background 0.2s,color 0.2s;}
+.sel-result.state-conf{background:var(--conf);color:#fff;}
+.sel-result.state-nc  {background:var(--crit);color:#fff;}
+.sel-result.state-na  {background:#e0e0e0;color:#666;}
+.td-del{width:28px;text-align:center;}
+.btn-del{background:none;border:none;cursor:pointer;color:#ccc;font-size:13px;padding:2px;border-radius:4px;transition:color 0.15s;}
+.btn-del:hover{color:var(--crit);}
+
+/* ══ BOUTON AJOUTER ══ */
+.btn-ajouter{display:flex;align-items:center;gap:8px;margin:10px 0 4px;background:none;border:2px dashed var(--or-ombre);border-radius:10px;padding:10px 16px;color:var(--or-ombre);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;width:100%;transition:all 0.2s;}
+.btn-ajouter:hover{border-color:var(--or-solide);color:var(--or-solide);background:#fdfaf3;}
+
+/* ══ PHOTOS ══ */
+.zone-photos{margin-bottom:14px;}
+.zone-photo-titre{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800;color:var(--rouge-fonce);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.zone-photo-titre::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--or-solide);flex-shrink:0;}
+.photos-row{display:flex;gap:10px;flex-wrap:wrap;}
+.photo-slot{flex:1;min-width:120px;max-width:190px;border:1.5px dashed #ccc;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;background:#f8f8f8;transition:border-color 0.2s;}
+.photo-slot:hover{border-color:var(--or-solide);}
+.photo-slot-inner{width:100%;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 8px;gap:4px;}
+.photo-slot img{width:100%;height:90px;object-fit:cover;display:block;}
+.photo-icone{font-size:20px;color:#bbb;}
+.photo-label-txt{font-size:9px;color:#bbb;text-align:center;font-family:'Montserrat',sans-serif;font-weight:600;}
+.photo-slot input[type=file]{display:none;}
+.photo-caption{background:#1A1A1A;padding:4px 8px;}
+.photo-caption input{background:transparent;border:none;outline:none;font-size:9px;color:#aaa;font-family:'Source Sans 3',sans-serif;width:100%;}
+.btn-photo-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.55);border:none;border-radius:50%;width:18px;height:18px;color:#fff;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;}
+
+/* ══ PAC ══ */
+.pac-vide{background:#f5f5f5;border:1.5px dashed #ddd;border-radius:10px;padding:20px;text-align:center;font-size:11px;color:#aaa;font-style:italic;}
+.pac-hint{font-size:9px;color:#aaa;font-style:italic;margin-bottom:12px;}
+.pac-table{width:100%;border-collapse:collapse;font-size:11px;}
+.pac-table thead th{background:#1A1A1A;color:var(--or-highlight);padding:9px 10px;text-align:left;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--or-ombre);}
+.pac-table tbody tr{border-bottom:1px solid #eee;}
+.pac-table tbody tr:nth-child(even) td{background:#fafafa;}
+.pac-table td{padding:8px 10px;vertical-align:top;}
+.pac-code{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:900;color:var(--or-ombre);white-space:nowrap;}
+.pac-zone-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;background:#1A1A1A;color:var(--or-highlight);}
+.badge-crit-inline{display:inline-block;padding:2px 7px;border-radius:20px;font-size:8px;font-weight:800;text-transform:uppercase;color:#fff;}
+.badge-crit-inline.crit{background:var(--crit);}
+.badge-crit-inline.maj{background:var(--maj);color:#1A1A1A;}
+.badge-crit-inline.min{background:#9E9E9E;}
+.pac-action input{width:100%;border:none;border-bottom:1px dashed #ddd;outline:none;font-size:11px;background:transparent;font-family:'Source Sans 3',sans-serif;padding:2px 0;}
+.pac-delai select{border:1px solid #eee;border-radius:6px;padding:3px 6px;font-size:10px;font-family:'Montserrat',sans-serif;font-weight:700;background:#fff;outline:none;cursor:pointer;}
+
+/* ══ AVIS ══ */
+.avis-block{background:#fff8e6;border:1.5px solid var(--or-ombre);border-radius:10px;padding:12px 16px;font-size:11px;color:#555;line-height:1.6;margin-bottom:16px;}
+.avis-block strong{color:var(--or-ombre);}
+
+/* ══ NOTES ══ */
+.notes-area{width:100%;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-family:'Source Sans 3',sans-serif;font-size:11px;color:#1A1A1A;resize:vertical;min-height:64px;outline:none;background:#fafafa;transition:border-color 0.2s;}
+.notes-area:focus{border-color:var(--or-solide);background:#fffdf7;}
+
+/* ══ FOOTER ══ */
+.footer{background:#1A1A1A;border-top:2px solid var(--or-ombre);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+.footer span{color:#666;font-size:9px;}
+.footer-brand{background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Montserrat',sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;}
+
+/* ══ BTN FLOTTANT ══ */
+#btn-dl{position:fixed;bottom:20px;right:16px;background:var(--or-grad);color:#1A1A1A;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;padding:13px 22px;border-radius:50px;box-shadow:0 4px 24px rgba(0,0,0,0.35);cursor:pointer;display:flex;align-items:center;gap:6px;z-index:9999;letter-spacing:1px;text-transform:uppercase;border:none;}
+
+/* ══ PRINT ══ */
+@media print{
+  body{background:#fff;}
+  .nav,.filtre-zones,.btn-del,.btn-ajouter,#btn-dl{display:none !important;}
+  .card{box-shadow:none;border:1px solid #eee;}
+  tr[style*="display:none"]{display:none !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="nav">
+  <div class="nav-logo">VERDICT <span>360</span> AI</div>
+  <div class="nav-module-badge">🧹 Nettoyage</div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-eyebrow">Module Terrain · Contrôle MAPAQ / HACCP</div>
+  <div class="hero-title"><em>Nettoyer</em> avec rigueur.<br>Protéger votre permis.</div>
+  <div class="hero-sub">Grille complète de 37 surfaces et équipements par zone, plan d'actions correctives auto-généré, photos par zone.</div>
+  <div class="hero-badges">
+    <div class="hero-chip">🧹 37 surfaces préconfigurées</div>
+    <div class="hero-chip">⚡ PAC auto-généré</div>
+    <div class="hero-chip">📷 Photos par zone</div>
+  </div>
+</div>
+
+<!-- ══ SCORE CARD ══ -->
+<div class="score-card">
+  <div class="score-counters">
+    <div class="sc-item conf"><div class="sc-val" id="cnt-conf">0</div><div class="sc-lbl">Conforme</div></div>
+    <div class="dv"></div>
+    <div class="sc-item nc"><div class="sc-val" id="cnt-nc">0</div><div class="sc-lbl">Non conforme</div></div>
+    <div class="dv"></div>
+    <div class="sc-item na"><div class="sc-val" id="cnt-na">0</div><div class="sc-lbl">N/A</div></div>
+    <div class="dv"></div>
+    <div class="sc-item pac"><div class="sc-val" id="cnt-pac">0</div><div class="sc-lbl">Actions requises</div></div>
+  </div>
+  <div class="score-badge">
+    <div class="sb-pct" id="sb-pct">—</div>
+    <div class="sb-lbl">Score</div>
+    <div class="sb-verdict" id="sb-verdict" style="background:#333;color:#888;">—</div>
+  </div>
+</div>
+
+<!-- ══ CONTENU ══ -->
+<div class="contenu">
+
+  <div class="avis-block">⚠️ <strong>Avis :</strong> Ce module est un outil d'audit interne. Il ne constitue pas un document officiel du MAPAQ ni un substitut à l'inspection réglementaire.</div>
+
+  <!-- INFO -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">📋</span><span class="card-header-title">Informations d'inspection</span></div>
+    <div class="card-body">
+      <div class="info-grid">
+        <div class="field"><div class="field-label">Établissement</div><input type="text" id="f-etab" placeholder="Nom de l'établissement"></div>
+        <div class="field"><div class="field-label">No permis MAPAQ</div><input type="text" placeholder="XXXX-XXXX"></div>
+        <div class="field"><div class="field-label">Date de contrôle</div><input type="date" id="f-date" onchange="majDate()"></div>
+        <div class="field"><div class="field-label">Inspecteur</div><input type="text" value="Jacques Perrier" readonly style="color:#888;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUITS -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">🧴</span><span class="card-header-title">Produits utilisés</span></div>
+    <div class="card-body">
+      <div class="produits-grid">
+        <div class="prod-field"><div class="prod-label">Détergent</div><input type="text" placeholder="Nom, concentration (ex : Savon DSC 2%)"></div>
+        <div class="prod-field"><div class="prod-label">Désinfectant</div><input type="text" placeholder="Nom, concentration (ex : Chlore 200 ppm)"></div>
+        <div class="prod-field"><div class="prod-label">Temps de contact désinfectant</div><input type="text" placeholder="ex : 2 minutes"></div>
+        <div class="prod-field"><div class="prod-label">Méthode de rinçage</div><input type="text" placeholder="ex : Eau potable froide"></div>
+        <div class="prod-field"><div class="prod-label">Produit sanitaire plancher</div><input type="text" placeholder="Nom, dilution"></div>
+        <div class="prod-field"><div class="prod-label">Fournisseur produits</div><input type="text" placeholder="ex : Ecolab, Diversey, NCH"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRILLE -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">🧹</span><span class="card-header-title">Grille de vérification</span></div>
+    <div class="card-body">
+      <div class="filtre-zones" id="filtre-zones">
+        <button class="btn-zone btn-zone-all actif" onclick="filtrerZone('TOUTES',this)">Toutes</button>
+        <button class="btn-zone" onclick="filtrerZone('Cuisine',this)">Cuisine</button>
+        <button class="btn-zone" onclick="filtrerZone('Préparation',this)">Préparation</button>
+        <button class="btn-zone" onclick="filtrerZone('Réfrigération',this)">Réfrigération</button>
+        <button class="btn-zone" onclick="filtrerZone('Entreposage',this)">Entreposage</button>
+        <button class="btn-zone" onclick="filtrerZone('Réception',this)">Réception</button>
+        <button class="btn-zone" onclick="filtrerZone('Sanitaires',this)">Sanitaires</button>
+        <button class="btn-zone" onclick="filtrerZone('Vestiaires',this)">Vestiaires</button>
+        <button class="btn-zone" onclick="filtrerZone('Déchets',this)">Déchets</button>
+      </div>
+      <table class="net-table">
+        <thead><tr><th>Code</th><th>Zone</th><th>Surface / Équipement</th><th>Fréquence</th><th>Méthode</th><th>Criticité</th><th>Résultat</th><th></th></tr></thead>
+        <tbody id="net-tbody"></tbody>
+      </table>
+      <button class="btn-ajouter" onclick="ajouterLigne()"><span style="font-size:16px;">＋</span> Ajouter une surface</button>
+    </div>
+  </div>
+
+  <!-- PHOTOS -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">📷</span><span class="card-header-title">Photos par zone</span></div>
+    <div class="card-body" id="zone-photos-container"></div>
+  </div>
+
+  <!-- PAC -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">⚡</span><span class="card-header-title">Plan d'actions correctives</span></div>
+    <div class="card-body">
+      <div class="pac-hint">Généré automatiquement depuis les non-conformités. Complétez les actions et délais.</div>
+      <div id="pac-container"><div class="pac-vide">Aucune non-conformité détectée — le plan d'actions s'affichera ici automatiquement.</div></div>
+    </div>
+  </div>
+
+  <!-- OBSERVATIONS -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">📝</span><span class="card-header-title">Observations générales</span></div>
+    <div class="card-body">
+      <textarea class="notes-area" placeholder="Zones à risque, équipements défectueux, produits épuisés, actions immédiates prises sur place…"></textarea>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>info@verdict360ai.com • (873) 822-1455</span>
+  <div class="footer-brand">VERDICT 360 AI</div>
+  <span>verdict360ai.com</span>
+</div>
+
+<button id="btn-dl" onclick="telecharger()">💾 Télécharger</button>
+
+<script>
+(function(){
+var ZONES=['Cuisine','Préparation','Réfrigération','Entreposage','Réception','Sanitaires','Vestiaires','Déchets'];
+var ZONES_PHOTO=['Cuisine','Préparation','Réfrigération','Entreposage','Réception','Sanitaires','Vestiaires','Déchets'];
+var FREQS=['Après chaque usage','Quotidien','2× par semaine','Hebdomadaire','Bimensuel','Mensuel'];
+var METHODES=['Manuel (brossage)','Mécanique (lave-vaisselle)','CIP (circuit fermé)','Vapeur','Chimique seul'];
+var DELAIS=['IMMÉDIAT','URGENT 24h','URGENT 48h','PLANIFIÉ'];
+var DEFAUT=[
+  {z:'Cuisine',s:'Surfaces de travail (inox)',f:'Quotidien',m:'Manuel (brossage)',c:'maj'},
+  {z:'Cuisine',s:'Hottes et filtres à graisse',f:'Hebdomadaire',m:'Manuel (brossage)',c:'maj'},
+  {z:'Cuisine',s:'Cuisinières, fours, grils',f:'Quotidien',m:'Manuel (brossage)',c:'crit'},
+  {z:'Cuisine',s:'Friteuses et bains de friture',f:'Hebdomadaire',m:'Manuel (brossage)',c:'crit'},
+  {z:'Cuisine',s:'Micro-ondes (intérieur)',f:'Quotidien',m:'Manuel (brossage)',c:'maj'},
+  {z:'Cuisine',s:'Sol cuisine (carrelage / résine)',f:'Quotidien',m:'Manuel (brossage)',c:'maj'},
+  {z:'Cuisine',s:'Murs et plinthes cuisine',f:'Hebdomadaire',m:'Manuel (brossage)',c:'min'},
+  {z:'Cuisine',s:'Poignées portes frigos cuisine',f:'Quotidien',m:'Chimique seul',c:'crit'},
+  {z:'Préparation',s:'Planches à découper (par couleur)',f:'Après chaque usage',m:'Mécanique (lave-vaisselle)',c:'crit'},
+  {z:'Préparation',s:'Couteaux et ustensiles',f:'Après chaque usage',m:'Mécanique (lave-vaisselle)',c:'crit'},
+  {z:'Préparation',s:'Mélangeurs, robots, trancheurs',f:'Quotidien',m:'Manuel (brossage)',c:'maj'},
+  {z:'Préparation',s:'Tables de préparation (inox)',f:'Après chaque usage',m:'Manuel (brossage)',c:'crit'},
+  {z:'Préparation',s:'Hachoir à viande',f:'Après chaque usage',m:'Manuel (brossage)',c:'crit'},
+  {z:'Préparation',s:'Bacs gastronormes et contenants',f:'Après chaque usage',m:'Mécanique (lave-vaisselle)',c:'maj'},
+  {z:'Réfrigération',s:'Tablettes réfrigérateur (walk-in)',f:'Hebdomadaire',m:'Manuel (brossage)',c:'maj'},
+  {z:'Réfrigération',s:'Joints de portes réfrigérateurs',f:'Hebdomadaire',m:'Manuel (brossage)',c:'maj'},
+  {z:'Réfrigération',s:'Sol chambre froide',f:'Hebdomadaire',m:'Manuel (brossage)',c:'maj'},
+  {z:'Réfrigération',s:'Condenseurs et serpentins',f:'Mensuel',m:'Manuel (brossage)',c:'min'},
+  {z:'Réfrigération',s:'Évaporateurs (dégivrage)',f:'Mensuel',m:'Manuel (brossage)',c:'min'},
+  {z:'Entreposage',s:'Tablettes entrepôt sec',f:'Bimensuel',m:'Manuel (brossage)',c:'min'},
+  {z:'Entreposage',s:'Sol entrepôt',f:'Hebdomadaire',m:'Manuel (brossage)',c:'maj'},
+  {z:'Entreposage',s:'Murs et plafond entrepôt',f:'Mensuel',m:'Manuel (brossage)',c:'min'},
+  {z:'Entreposage',s:'Chariots élévateurs / transpalettes',f:'Hebdomadaire',m:'Manuel (brossage)',c:'min'},
+  {z:'Réception',s:'Quai de réception',f:'Quotidien',m:'Manuel (brossage)',c:'maj'},
+  {z:'Réception',s:'Tables de réception',f:'Quotidien',m:'Manuel (brossage)',c:'maj'},
+  {z:'Réception',s:'Balances et équipements pesage',f:'Hebdomadaire',m:'Manuel (brossage)',c:'min'},
+  {z:'Sanitaires',s:'Toilettes (cuvettes, abattants)',f:'Quotidien',m:'Chimique seul',c:'crit'},
+  {z:'Sanitaires',s:'Lavabos et robinetterie',f:'Quotidien',m:'Chimique seul',c:'crit'},
+  {z:'Sanitaires',s:'Poignées de portes sanitaires',f:'Quotidien',m:'Chimique seul',c:'crit'},
+  {z:'Sanitaires',s:'Sol sanitaires',f:'Quotidien',m:'Chimique seul',c:'maj'},
+  {z:'Sanitaires',s:'Distributeurs savon / essuie-mains',f:'Hebdomadaire',m:'Manuel (brossage)',c:'maj'},
+  {z:'Vestiaires',s:'Casiers et portes vestiaires',f:'Hebdomadaire',m:'Manuel (brossage)',c:'min'},
+  {z:'Vestiaires',s:'Bancs et sols vestiaires',f:'Hebdomadaire',m:'Manuel (brossage)',c:'min'},
+  {z:'Vestiaires',s:'Lavabos et douches vestiaires',f:'Quotidien',m:'Chimique seul',c:'maj'},
+  {z:'Déchets',s:'Bacs à déchets (intérieur)',f:'Quotidien',m:'Manuel (brossage)',c:'crit'},
+  {z:'Déchets',s:'Bacs à déchets (extérieur)',f:'Hebdomadaire',m:'Manuel (brossage)',c:'maj'},
+  {z:'Déchets',s:'Zone de stockage déchets',f:'Hebdomadaire',m:'Manuel (brossage)',c:'maj'},
+  {z:'Déchets',s:'Compacteur / broyeur déchets',f:'Hebdomadaire',m:'Manuel (brossage)',c:'maj'},
+];
+var compteur=0,zoneActive='TOUTES';
+
+function init(){
+  var t=new Date();document.getElementById('f-date').value=t.toISOString().split('T')[0];majDate();
+  DEFAUT.forEach(function(d,i){creerLigne('NET-'+String(i+1).padStart(2,'0'),d.z,d.s,d.f,d.m,d.c);});
+  ZONES_PHOTO.forEach(function(z){initPhotoZone(z);});
+  majScore();
+}
+
+window.majDate=function(){
+  var v=document.getElementById('f-date').value;if(!v)return;
+  var d=new Date(v+'T12:00:00');
+  document.getElementById('ref-date')&&(document.getElementById('ref-date').textContent=d.toLocaleDateString('fr-CA',{year:'numeric',month:'long',day:'numeric'}));
+};
+
+function creerLigne(code,zone,surface,freq,methode,crit){
+  compteur++;var id=compteur;
+  var tbody=document.getElementById('net-tbody');
+  var tr=document.createElement('tr');
+  tr.id='row-'+id;tr.dataset.zone=zone||'';tr.dataset.surface=surface||'';tr.dataset.crit=crit||'min';
+  var optZ=ZONES.map(function(z){return'<option value="'+z+'"'+(z===zone?' selected':'')+'>'+z+'</option>';}).join('');
+  var optF=FREQS.map(function(f){return'<option value="'+f+'"'+(f===freq?' selected':'')+'>'+f+'</option>';}).join('');
+  var optM=METHODES.map(function(m){return'<option value="'+m+'"'+(m===methode?' selected':'')+'>'+m+'</option>';}).join('');
+  var cc=crit==='crit'?'c-crit':crit==='maj'?'c-maj':'c-min';
+  tr.innerHTML='<td class="td-code">'+code+'</td>'+
+    '<td class="td-zone"><select class="sel-zone" onchange="majZoneLigne(this,'+id+')">'+optZ+'</select></td>'+
+    '<td><input class="inp-surface" type="text" value="'+(surface||'')+'" placeholder="Surface…" oninput="majSurfLigne(this,'+id+')"></td>'+
+    '<td class="td-freq"><select class="sel-freq">'+optF+'</select></td>'+
+    '<td class="td-methode"><select class="sel-methode">'+optM+'</select></td>'+
+    '<td class="td-crit"><select class="sel-crit '+cc+'" id="crit-'+id+'" onchange="majCritStyle(this,'+id+')"><option value="crit"'+(crit==='crit'?' selected':'')+'>Critique</option><option value="maj"'+(crit==='maj'?' selected':'')+'>Majeur</option><option value="min"'+(crit==='min'?' selected':'')+'>Mineur</option></select></td>'+
+    '<td class="td-result"><select class="sel-result state-conf" id="sel-'+id+'" onchange="majSelectStyle(this,'+id+');majScore();genPAC();"><option value="conf">Conforme</option><option value="nc">Non conforme</option><option value="na">N/A</option></select></td>'+
+    '<td class="td-del"><button class="btn-del" onclick="supprimerLigne('+id+')">✕</button></td>';
+  tbody.appendChild(tr);
+  if(zoneActive!=='TOUTES'&&(zone||'')!==zoneActive)tr.style.display='none';
+}
+
+window.ajouterLigne=function(){
+  var n=document.querySelectorAll('#net-tbody tr').length+1;
+  var z=zoneActive!=='TOUTES'?zoneActive:ZONES[0];
+  creerLigne('NET-'+String(n).padStart(2,'0'),z,'',FREQS[0],METHODES[0],'min');
+  majScore();genPAC();
+};
+window.supprimerLigne=function(id){var r=document.getElementById('row-'+id);if(r)r.remove();majScore();genPAC();};
+window.majZoneLigne=function(sel,id){var r=document.getElementById('row-'+id);if(r)r.dataset.zone=sel.value;if(zoneActive!=='TOUTES'&&sel.value!==zoneActive)r.style.display='none';};
+window.majSurfLigne=function(inp,id){var r=document.getElementById('row-'+id);if(r)r.dataset.surface=inp.value;genPAC();};
+window.filtrerZone=function(zone,btn){
+  zoneActive=zone;
+  document.querySelectorAll('.btn-zone').forEach(function(b){b.classList.remove('actif');});btn.classList.add('actif');
+  document.querySelectorAll('#net-tbody tr').forEach(function(tr){tr.style.display=(zone==='TOUTES'||tr.dataset.zone===zone)?'':'none';});
+};
+window.majCritStyle=function(sel,id){
+  sel.classList.remove('c-crit','c-maj','c-min');sel.classList.add(sel.value==='crit'?'c-crit':sel.value==='maj'?'c-maj':'c-min');
+  var r=document.getElementById('row-'+id);if(r)r.dataset.crit=sel.value;genPAC();
+};
+window.majSelectStyle=function(sel,id){
+  sel.classList.remove('state-conf','state-nc','state-na');sel.classList.add(sel.value==='conf'?'state-conf':sel.value==='nc'?'state-nc':'state-na');
+  var tr=sel.closest('tr');tr.style.background='';if(sel.value==='nc')tr.style.background='#fff8f6';if(sel.value==='conf')tr.style.background='#f5fdf6';
+};
+window.majScore=function(){
+  var ss=document.querySelectorAll('#net-tbody .sel-result'),conf=0,nc=0,na=0;
+  ss.forEach(function(s){if(s.value==='conf')conf++;else if(s.value==='nc')nc++;else na++;});
+  var t=conf+nc,pct=t>0?Math.round((conf/t)*100):null;
+  document.getElementById('cnt-conf').textContent=conf;document.getElementById('cnt-nc').textContent=nc;document.getElementById('cnt-na').textContent=na;
+  var sbP=document.getElementById('sb-pct'),sbV=document.getElementById('sb-verdict');
+  if(pct===null){sbP.textContent='—';sbV.textContent='—';sbV.style.background='#333';sbV.style.color='#888';return;}
+  sbP.textContent=pct+'%';
+  if(pct>=90){sbV.textContent='✔ CONFORME';sbV.style.background='#66BB6A';sbV.style.color='#fff';}
+  else if(pct>=70){sbV.textContent='⚠ À CORRIGER';sbV.style.background='#FFA726';sbV.style.color='#1A1A1A';}
+  else{sbV.textContent='✕ CRITIQUE';sbV.style.background='#FF7043';sbV.style.color='#fff';}
+};
+window.genPAC=function(){
+  var rows=document.querySelectorAll('#net-tbody tr'),ncs=[];
+  rows.forEach(function(tr){var sel=tr.querySelector('.sel-result');if(!sel||sel.value!=='nc')return;
+    ncs.push({code:tr.querySelector('.td-code').textContent.trim(),zone:tr.dataset.zone||'—',surf:tr.dataset.surface||tr.querySelector('.inp-surface').value||'—',crit:tr.dataset.crit||'min'});});
+  document.getElementById('cnt-pac').textContent=ncs.length;
+  var c=document.getElementById('pac-container');
+  if(!ncs.length){c.innerHTML='<div class="pac-vide">Aucune non-conformité détectée — le plan d\'actions s\'affichera ici automatiquement.</div>';return;}
+  var db={crit:'IMMÉDIAT',maj:'URGENT 24h',min:'PLANIFIÉ'};
+  var rh=ncs.map(function(nc){
+    var dd=db[nc.crit]||'PLANIFIÉ';var cb=nc.crit==='crit'?'crit':nc.crit==='maj'?'maj':'min';var cl=nc.crit==='crit'?'Critique':nc.crit==='maj'?'Majeur':'Mineur';
+    var od=DELAIS.map(function(d){return'<option'+(d===dd?' selected':'')+'>'+d+'</option>';}).join('');
+    return'<tr><td class="pac-code">'+nc.code+'</td><td><span class="pac-zone-badge">'+nc.zone+'</span></td><td style="font-size:11px;">'+nc.surf+'</td><td><span class="badge-crit-inline '+cb+'">'+cl+'</span></td><td class="pac-action"><input type="text" placeholder="Décrire l\'action corrective…"></td><td class="pac-delai"><select>'+od+'</select></td></tr>';
+  }).join('');
+  c.innerHTML='<table class="pac-table"><thead><tr><th>Code</th><th>Zone</th><th>Surface</th><th>Criticité</th><th>Action corrective</th><th>Délai</th></tr></thead><tbody>'+rh+'</tbody></table>';
+};
+function initPhotoZone(zone){
+  var c=document.getElementById('zone-photos-container');var zId=zone.replace(/\s/g,'-');
+  var div=document.createElement('div');div.className='zone-photos';
+  div.innerHTML='<div class="zone-photo-titre">'+zone+'</div><div class="photos-row">'+slot(zId,0)+slot(zId,1)+slot(zId,2)+'</div>';
+  c.appendChild(div);
+}
+function slot(zId,idx){
+  var uid=zId+'-'+idx;
+  return'<div class="photo-slot" id="slot-'+uid+'"><div class="photo-slot-inner" id="inner-'+uid+'" onclick="clickSlot(\''+uid+'\')"><div class="photo-icone">📷</div><div class="photo-label-txt">Ajouter photo</div></div><input type="file" id="file-'+uid+'" accept="image/*" capture="environment" onchange="chargerPhoto(event,\''+uid+'\')"><div class="photo-caption" style="display:none;" id="caption-'+uid+'"><input type="text" placeholder="Légende…"></div><button class="btn-photo-del" id="delbtn-'+uid+'" onclick="supprimerPhoto(event,\''+uid+'\')">✕</button></div>';
+}
+window.clickSlot=function(uid){var i=document.getElementById('inner-'+uid);if(i&&i.querySelector('.photo-icone'))document.getElementById('file-'+uid).click();};
+window.chargerPhoto=function(e,uid){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){var i=document.getElementById('inner-'+uid);i.innerHTML='<img src="'+ev.target.result+'" style="width:100%;height:90px;object-fit:cover;display:block;">';document.getElementById('caption-'+uid).style.display='block';var d=document.getElementById('delbtn-'+uid);if(d)d.style.display='flex';};r.readAsDataURL(f);};
+window.supprimerPhoto=function(e,uid){e.stopPropagation();var i=document.getElementById('inner-'+uid);i.innerHTML='<div class="photo-icone">📷</div><div class="photo-label-txt">Ajouter photo</div>';document.getElementById('caption-'+uid).style.display='none';var d=document.getElementById('delbtn-'+uid);if(d)d.style.display='none';document.getElementById('file-'+uid).value='';};
+window.telecharger=function(){
+  var etab=document.getElementById('f-etab').value||'rapport';
+  var html=document.documentElement.outerHTML;var blob=new Blob([html],{type:'text/html'});var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='Nettoyage_'+etab.replace(/\s+/g,'_')+'.html';a.click();URL.revokeObjectURL(url);
+};
+init();
+})();
+</script>
+</body>
+</html>
