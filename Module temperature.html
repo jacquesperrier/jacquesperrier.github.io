@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Températures — V360AI">
+<title>Module Températures — Verdict 360 AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Source+Sans+3:wght@400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+:root{
+  --or-solide:#B8954A;
+  --or-ombre:#9C7F3D;
+  --or-highlight:#F0E4C0;
+  --or-grad:linear-gradient(110deg,#9C7F3D 0%,#B8954A 35%,#F0E4C0 50%,#B8954A 65%,#9C7F3D 100%);
+  --noir:#1A1A1A;
+  --crit:#FF7043; --maj:#FFA726; --conf:#66BB6A;
+  --rouge-fonce:#8B1A1A;
+  --immed:#8B1A1A; --u24:#E65100; --u48:#BF360C; --plan:#546E7A;
+}
+body{font-family:'Source Sans 3','Segoe UI',Arial,sans-serif;background:#f2f2f2;min-height:100vh;}
+
+/* ══ NAV ══ */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:#1A1A1A;
+  border-bottom:2px solid var(--or-ombre);
+  padding:0 20px;
+  height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{
+  font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;letter-spacing:3px;
+  background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.nav-logo span{color:var(--or-solide);-webkit-text-fill-color:var(--or-solide);}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-badge{
+  font-family:'Montserrat',sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  padding:5px 12px;border-radius:6px;border:1.5px solid var(--or-ombre);color:var(--or-highlight);cursor:pointer;
+  background:transparent;transition:all 0.15s;
+}
+.nav-badge:hover,.nav-badge.actif{background:var(--or-solide);border-color:var(--or-solide);color:#1A1A1A;}
+.nav-module-badge{
+  font-family:'Montserrat',sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  padding:5px 12px;border-radius:6px;
+  background:var(--or-grad);color:#1A1A1A;border:none;
+}
+
+/* ══ HERO ══ */
+.hero{
+  background:#1A1A1A;
+  padding:32px 20px 28px;
+  text-align:center;
+  border-bottom:3px solid var(--or-ombre);
+}
+.hero-eyebrow{
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;
+  color:var(--or-solide);text-transform:uppercase;margin-bottom:14px;
+}
+.hero-title{
+  font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;line-height:1.15;
+  color:#fff;margin-bottom:12px;
+}
+.hero-title em{
+  font-style:normal;
+  background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{font-size:14px;color:#ccc;line-height:1.6;max-width:480px;margin:0 auto 20px;}
+.hero-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.hero-chip{
+  display:flex;align-items:center;gap:6px;
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.5px;
+  padding:7px 14px;border-radius:50px;
+  border:1.5px solid var(--or-ombre);color:var(--or-highlight);
+}
+
+/* ══ SCORE CARD ══ */
+.score-card{
+  max-width:860px;margin:0 auto;
+  background:#1A1A1A;
+  border-left:4px solid var(--or-solide);
+  border-bottom:2px solid var(--or-ombre);
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.score-counters{display:flex;gap:20px;align-items:center;}
+.sc-item{text-align:center;}
+.sc-val{font-family:'Montserrat',sans-serif;font-size:24px;font-weight:900;line-height:1;}
+.sc-lbl{font-size:8px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.sc-item.conf .sc-val{color:var(--conf);}
+.sc-item.nc   .sc-val{color:var(--crit);}
+.sc-item.na   .sc-val{color:#555;}
+.sc-item.pac  .sc-val{color:var(--rouge-fonce);}
+.dv{width:1px;height:36px;background:#333;}
+.score-badge{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:3px solid var(--or-solide);border-radius:10px;
+  width:90px;height:74px;flex-shrink:0;background:#111;
+}
+.sb-pct{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;color:#fff;line-height:1;}
+.sb-lbl{font-size:8px;font-weight:700;color:var(--or-solide);letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+.sb-verdict{font-size:8px;font-weight:800;padding:2px 7px;border-radius:20px;margin-top:4px;letter-spacing:1px;}
+
+/* ══ CONTENU ══ */
+.contenu{max-width:860px;margin:0 auto;padding:20px 16px 40px;}
+
+/* ══ CARD ══ */
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:16px;overflow:hidden;}
+.card-header{
+  background:#1A1A1A;padding:12px 18px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:2px solid var(--or-ombre);
+}
+.card-header-icon{font-size:16px;}
+.card-header-title{
+  font-family:'Montserrat',sans-serif;font-size:11px;font-weight:900;
+  letter-spacing:2px;text-transform:uppercase;
+  background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.card-body{padding:16px 18px;}
+
+/* ══ CHAMPS INFO ══ */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+.field{background:#f9f5ec;border-left:3px solid var(--or-solide);padding:9px 12px;border-radius:0 8px 8px 0;}
+.field-label{font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--or-ombre);text-transform:uppercase;margin-bottom:3px;}
+.field input{width:100%;border:none;background:transparent;font-size:13px;font-weight:600;color:#1A1A1A;font-family:'Source Sans 3',sans-serif;outline:none;}
+
+/* ══ FILTRES ZONES ══ */
+.filtre-zones{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.btn-zone{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1.5px solid #ddd;background:#fff;color:#888;cursor:pointer;transition:all 0.15s;}
+.btn-zone.actif{border-color:var(--or-solide);background:var(--or-solide);color:#fff;}
+.btn-zone-all.actif{border-color:#1A1A1A;background:#1A1A1A;color:#fff;}
+
+/* ══ TABLEAU ══ */
+.tmp-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px;}
+.tmp-table thead th{background:#1A1A1A;color:var(--or-highlight);padding:9px 8px;text-align:left;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--or-ombre);}
+.tmp-table tbody tr{border-bottom:1px solid #eee;transition:background 0.15s;}
+.tmp-table tbody tr:hover{background:#fdfaf3;}
+.tmp-table tbody tr:nth-child(even){background:#fafafa;}
+.tmp-table td{padding:7px 8px;vertical-align:middle;}
+.td-code{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:900;color:var(--or-ombre);white-space:nowrap;width:58px;}
+.td-zone{width:90px;}
+.sel-zone{border:1px solid #eee;border-radius:6px;padding:3px 5px;font-size:9px;font-family:'Montserrat',sans-serif;font-weight:700;color:#1A1A1A;background:#fff;outline:none;cursor:pointer;width:100%;}
+.inp-point{border:none;background:transparent;font-size:11px;font-weight:600;color:#1A1A1A;font-family:'Source Sans 3',sans-serif;outline:none;width:100%;min-width:90px;}
+.td-norme{font-size:9px;color:#999;white-space:nowrap;width:80px;}
+.td-temp{width:76px;}
+.inp-temp{width:68px;border:1px solid #ddd;border-radius:8px;padding:5px 6px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:#1A1A1A;text-align:center;outline:none;background:#fff;transition:border-color 0.2s,background 0.2s;}
+.inp-temp:focus{border-color:var(--or-solide);background:#fffdf7;}
+.inp-temp.ok {border-color:var(--conf);background:#f0faf2;color:#2e7d32;}
+.inp-temp.nok{border-color:var(--crit);background:#fff4f0;color:#c62828;}
+.td-crit{width:82px;}
+.sel-crit{border:none;border-radius:20px;padding:4px 7px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;width:100%;}
+.sel-crit.c-crit{background:var(--crit);color:#fff;}
+.sel-crit.c-maj {background:var(--maj);color:#1A1A1A;}
+.sel-crit.c-min {background:#e0e0e0;color:#555;}
+.td-result{width:100px;}
+.sel-result{width:100%;border:none;border-radius:20px;padding:5px 7px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;transition:background 0.2s,color 0.2s;}
+.sel-result.state-conf{background:var(--conf);color:#fff;}
+.sel-result.state-nc  {background:var(--crit);color:#fff;}
+.sel-result.state-na  {background:#e0e0e0;color:#666;}
+.td-del{width:28px;text-align:center;}
+.btn-del{background:none;border:none;cursor:pointer;color:#ccc;font-size:13px;padding:2px;border-radius:4px;transition:color 0.15s;}
+.btn-del:hover{color:var(--crit);}
+
+/* ══ BOUTON AJOUTER ══ */
+.btn-ajouter{display:flex;align-items:center;gap:8px;margin:10px 0 4px;background:none;border:2px dashed var(--or-ombre);border-radius:10px;padding:10px 16px;color:var(--or-ombre);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;width:100%;transition:all 0.2s;}
+.btn-ajouter:hover{border-color:var(--or-solide);color:var(--or-solide);background:#fdfaf3;}
+
+/* ══ PHOTOS ══ */
+.zone-photos{margin-bottom:14px;}
+.zone-photo-titre{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800;color:var(--rouge-fonce);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.zone-photo-titre::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--or-solide);flex-shrink:0;}
+.photos-row{display:flex;gap:10px;flex-wrap:wrap;}
+.photo-slot{flex:1;min-width:120px;max-width:190px;border:1.5px dashed #ccc;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;background:#f8f8f8;transition:border-color 0.2s;}
+.photo-slot:hover{border-color:var(--or-solide);}
+.photo-slot-inner{width:100%;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 8px;gap:4px;}
+.photo-slot img{width:100%;height:90px;object-fit:cover;display:block;}
+.photo-icone{font-size:20px;color:#bbb;}
+.photo-label-txt{font-size:9px;color:#bbb;text-align:center;font-family:'Montserrat',sans-serif;font-weight:600;}
+.photo-slot input[type=file]{display:none;}
+.photo-caption{background:#1A1A1A;padding:4px 8px;}
+.photo-caption input{background:transparent;border:none;outline:none;font-size:9px;color:#aaa;font-family:'Source Sans 3',sans-serif;width:100%;}
+.btn-photo-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.55);border:none;border-radius:50%;width:18px;height:18px;color:#fff;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;}
+
+/* ══ PAC ══ */
+.pac-vide{background:#f5f5f5;border:1.5px dashed #ddd;border-radius:10px;padding:20px;text-align:center;font-size:11px;color:#aaa;font-style:italic;}
+.pac-hint{font-size:9px;color:#aaa;font-style:italic;margin-bottom:12px;}
+.pac-table{width:100%;border-collapse:collapse;font-size:11px;}
+.pac-table thead th{background:#1A1A1A;color:var(--or-highlight);padding:9px 10px;text-align:left;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--or-ombre);}
+.pac-table tbody tr{border-bottom:1px solid #eee;}
+.pac-table tbody tr:nth-child(even) td{background:#fafafa;}
+.pac-table td{padding:8px 10px;vertical-align:top;}
+.pac-code{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:900;color:var(--or-ombre);white-space:nowrap;}
+.pac-zone-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;background:#1A1A1A;color:var(--or-highlight);}
+.badge-crit-inline{display:inline-block;padding:2px 7px;border-radius:20px;font-size:8px;font-weight:800;text-transform:uppercase;color:#fff;}
+.badge-crit-inline.crit{background:var(--crit);}
+.badge-crit-inline.maj{background:var(--maj);color:#1A1A1A;}
+.badge-crit-inline.min{background:#9E9E9E;}
+.pac-action input{width:100%;border:none;border-bottom:1px dashed #ddd;outline:none;font-size:11px;background:transparent;font-family:'Source Sans 3',sans-serif;padding:2px 0;}
+.pac-delai select{border:1px solid #eee;border-radius:6px;padding:3px 6px;font-size:10px;font-family:'Montserrat',sans-serif;font-weight:700;background:#fff;outline:none;cursor:pointer;}
+
+/* ══ AVIS ══ */
+.avis-block{
+  background:#fff8e6;border:1.5px solid var(--or-ombre);border-radius:10px;
+  padding:12px 16px;font-size:11px;color:#555;line-height:1.6;margin-bottom:16px;
+}
+.avis-block strong{color:var(--or-ombre);}
+
+/* ══ NOTES ══ */
+.notes-area{width:100%;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-family:'Source Sans 3',sans-serif;font-size:11px;color:#1A1A1A;resize:vertical;min-height:64px;outline:none;background:#fafafa;transition:border-color 0.2s;}
+.notes-area:focus{border-color:var(--or-solide);background:#fffdf7;}
+
+/* ══ FOOTER ══ */
+.footer{background:#1A1A1A;border-top:2px solid var(--or-ombre);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+.footer span{color:#666;font-size:9px;}
+.footer-brand{background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Montserrat',sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;}
+
+/* ══ BTN FLOTTANT ══ */
+#btn-dl{position:fixed;bottom:20px;right:16px;background:var(--or-grad);color:#1A1A1A;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;padding:13px 22px;border-radius:50px;box-shadow:0 4px 24px rgba(0,0,0,0.35);cursor:pointer;display:flex;align-items:center;gap:6px;z-index:9999;letter-spacing:1px;text-transform:uppercase;border:none;}
+
+/* ══ PRINT ══ */
+@media print{
+  body{background:#fff;}
+  .nav,.filtre-zones,.btn-del,.btn-ajouter,#btn-dl{display:none !important;}
+  .card{box-shadow:none;border:1px solid #eee;}
+  tr[style*="display:none"]{display:none !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="nav">
+  <div class="nav-logo">VERDICT <span>360</span> AI</div>
+  <div class="nav-right">
+    <div class="nav-module-badge">🌡 Températures</div>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-eyebrow">Module Terrain · Contrôle MAPAQ / HACCP</div>
+  <div class="hero-title"><em>Contrôler</em> vos températures.<br>Protéger votre permis.</div>
+  <div class="hero-sub">Relevé complet des points critiques, évaluation automatique, plan d'actions correctives généré en temps réel.</div>
+  <div class="hero-badges">
+    <div class="hero-chip">🌡 20 points préconfigurés</div>
+    <div class="hero-chip">⚡ PAC auto-généré</div>
+    <div class="hero-chip">📷 Photos par zone</div>
+  </div>
+</div>
+
+<!-- ══ SCORE CARD ══ -->
+<div class="score-card">
+  <div class="score-counters">
+    <div class="sc-item conf"><div class="sc-val" id="cnt-conf">0</div><div class="sc-lbl">Conforme</div></div>
+    <div class="dv"></div>
+    <div class="sc-item nc"><div class="sc-val" id="cnt-nc">0</div><div class="sc-lbl">Non conforme</div></div>
+    <div class="dv"></div>
+    <div class="sc-item na"><div class="sc-val" id="cnt-na">0</div><div class="sc-lbl">N/A</div></div>
+    <div class="dv"></div>
+    <div class="sc-item pac"><div class="sc-val" id="cnt-pac">0</div><div class="sc-lbl">Actions requises</div></div>
+  </div>
+  <div class="score-badge">
+    <div class="sb-pct" id="sb-pct">—</div>
+    <div class="sb-lbl">Score</div>
+    <div class="sb-verdict" id="sb-verdict" style="background:#333;color:#888;">—</div>
+  </div>
+</div>
+
+<!-- ══ CONTENU ══ -->
+<div class="contenu">
+
+  <!-- AVIS -->
+  <div class="avis-block">
+    ⚠️ <strong>Avis :</strong> Ce module est un outil d'audit interne. Il ne constitue pas un document officiel du MAPAQ ni un substitut à l'inspection réglementaire.
+  </div>
+
+  <!-- CARD INFO -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">📋</span><span class="card-header-title">Informations d'inspection</span></div>
+    <div class="card-body">
+      <div class="info-grid">
+        <div class="field"><div class="field-label">Établissement</div><input type="text" id="f-etab" placeholder="Nom de l'établissement"></div>
+        <div class="field"><div class="field-label">No permis MAPAQ</div><input type="text" placeholder="XXXX-XXXX"></div>
+        <div class="field"><div class="field-label">Date de contrôle</div><input type="date" id="f-date" onchange="majDate()"></div>
+        <div class="field"><div class="field-label">Inspecteur</div><input type="text" value="Jacques Perrier" readonly style="color:#888;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD ÉQUIPEMENTS -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">🔧</span><span class="card-header-title">Équipements de mesure</span></div>
+    <div class="card-body">
+      <div class="info-grid">
+        <div class="field"><div class="field-label">Thermomètre utilisé</div><input type="text" placeholder="Marque, modèle (ex : Testo 104)"></div>
+        <div class="field"><div class="field-label">No de série / calibration</div><input type="text" placeholder="ex : SN-20240315"></div>
+        <div class="field"><div class="field-label">Date dernière calibration</div><input type="date"></div>
+        <div class="field"><div class="field-label">Méthode vérification</div><input type="text" placeholder="ex : Glace fondante 0 °C"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD RELEVÉ -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">🌡</span><span class="card-header-title">Relevé de températures</span></div>
+    <div class="card-body">
+      <div class="filtre-zones" id="filtre-zones">
+        <button class="btn-zone btn-zone-all actif" onclick="filtrerZone('TOUTES',this)">Toutes</button>
+        <button class="btn-zone" onclick="filtrerZone('Réfrigération',this)">Réfrigération</button>
+        <button class="btn-zone" onclick="filtrerZone('Congélation',this)">Congélation</button>
+        <button class="btn-zone" onclick="filtrerZone('Chaud',this)">Maintien chaud</button>
+        <button class="btn-zone" onclick="filtrerZone('Préparation',this)">Préparation</button>
+        <button class="btn-zone" onclick="filtrerZone('Réception',this)">Réception</button>
+        <button class="btn-zone" onclick="filtrerZone('Sanitaire',this)">Sanitaire</button>
+      </div>
+      <table class="tmp-table">
+        <thead><tr><th>Code</th><th>Zone</th><th>Point de contrôle</th><th>Norme</th><th>Temp. °C</th><th>Criticité</th><th>Résultat</th><th></th></tr></thead>
+        <tbody id="tmp-tbody"></tbody>
+      </table>
+      <button class="btn-ajouter" onclick="ajouterLigne()"><span style="font-size:16px;">＋</span> Ajouter un point de contrôle</button>
+    </div>
+  </div>
+
+  <!-- CARD PHOTOS -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">📷</span><span class="card-header-title">Photos par zone</span></div>
+    <div class="card-body" id="zone-photos-container"></div>
+  </div>
+
+  <!-- CARD PAC -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">⚡</span><span class="card-header-title">Plan d'actions correctives</span></div>
+    <div class="card-body">
+      <div class="pac-hint">Généré automatiquement depuis les non-conformités. Complétez les actions et délais.</div>
+      <div id="pac-container"><div class="pac-vide">Aucune non-conformité détectée — le plan d'actions s'affichera ici automatiquement.</div></div>
+    </div>
+  </div>
+
+  <!-- CARD OBSERVATIONS -->
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">📝</span><span class="card-header-title">Observations générales</span></div>
+    <div class="card-body">
+      <textarea class="notes-area" placeholder="Pannes, équipements défectueux, variations anormales, actions immédiates prises sur place…"></textarea>
+    </div>
+  </div>
+
+</div><!-- /contenu -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>info@verdict360ai.com • (873) 822-1455</span>
+  <div class="footer-brand">VERDICT 360 AI</div>
+  <span>verdict360ai.com</span>
+</div>
+
+<button id="btn-dl" onclick="telecharger()">💾 Télécharger</button>
+
+<script>
+(function(){
+var ZONES_PHOTO=['Réfrigération','Congélation','Chaud','Préparation','Réception','Sanitaire'];
+var DELAIS=['IMMÉDIAT','URGENT 24h','URGENT 48h','PLANIFIÉ'];
+var DEFAUT=[
+  {code:'TMP-01',zone:'Réfrigération',point:'Réfrigérateur #1 (viandes)',norme:'≤ 4 °C',dir:-1,seuil:4,crit:'crit'},
+  {code:'TMP-02',zone:'Réfrigération',point:'Réfrigérateur #2 (produits laitiers)',norme:'≤ 4 °C',dir:-1,seuil:4,crit:'crit'},
+  {code:'TMP-03',zone:'Réfrigération',point:'Chambre froide (walk-in)',norme:'≤ 4 °C',dir:-1,seuil:4,crit:'crit'},
+  {code:'TMP-04',zone:'Réfrigération',point:'Comptoir réfrigéré (service)',norme:'≤ 4 °C',dir:-1,seuil:4,crit:'maj'},
+  {code:'TMP-05',zone:'Congélation',point:'Congélateur vertical #1',norme:'≤ -18 °C',dir:-1,seuil:-18,crit:'crit'},
+  {code:'TMP-06',zone:'Congélation',point:'Congélateur coffre #2',norme:'≤ -18 °C',dir:-1,seuil:-18,crit:'crit'},
+  {code:'TMP-07',zone:'Congélation',point:'Chambre de congélation (walk-in)',norme:'≤ -18 °C',dir:-1,seuil:-18,crit:'crit'},
+  {code:'TMP-08',zone:'Chaud',point:'Bain-marie (service)',norme:'≥ 60 °C',dir:1,seuil:60,crit:'crit'},
+  {code:'TMP-09',zone:'Chaud',point:'Lampe chauffante (service)',norme:'≥ 60 °C',dir:1,seuil:60,crit:'crit'},
+  {code:'TMP-10',zone:'Chaud',point:'Four de maintien (holding)',norme:'≥ 60 °C',dir:1,seuil:60,crit:'maj'},
+  {code:'TMP-11',zone:'Chaud',point:'Soupe / bouillons en service',norme:'≥ 60 °C',dir:1,seuil:60,crit:'crit'},
+  {code:'TMP-12',zone:'Préparation',point:'Zone de préparation (air ambiant)',norme:'≤ 21 °C',dir:-1,seuil:21,crit:'maj'},
+  {code:'TMP-13',zone:'Préparation',point:'Cuisson interne volaille',norme:'≥ 74 °C',dir:1,seuil:74,crit:'crit'},
+  {code:'TMP-14',zone:'Préparation',point:'Cuisson interne bœuf haché',norme:'≥ 70 °C',dir:1,seuil:70,crit:'crit'},
+  {code:'TMP-15',zone:'Préparation',point:'Cuisson interne porc',norme:'≥ 71 °C',dir:1,seuil:71,crit:'crit'},
+  {code:'TMP-16',zone:'Préparation',point:'Refroidissement rapide (2h)',norme:'≤ 21 °C',dir:-1,seuil:21,crit:'crit'},
+  {code:'TMP-17',zone:'Préparation',point:'Refroidissement final (4h)',norme:'≤ 4 °C',dir:-1,seuil:4,crit:'crit'},
+  {code:'TMP-18',zone:'Réception',point:'Viandes fraîches à réception',norme:'≤ 4 °C',dir:-1,seuil:4,crit:'crit'},
+  {code:'TMP-19',zone:'Réception',point:'Produits congelés à réception',norme:'≤ -18 °C',dir:-1,seuil:-18,crit:'crit'},
+  {code:'TMP-20',zone:'Sanitaire',point:'Eau chaude lavabos / lave-mains',norme:'≥ 60 °C',dir:1,seuil:60,crit:'maj'},
+];
+var compteur=0,zoneActive='TOUTES';
+
+function init(){
+  var t=new Date();
+  document.getElementById('f-date').value=t.toISOString().split('T')[0];
+  majDate();
+  DEFAUT.forEach(function(d){creerLigne(d.code,d.zone,d.point,d.norme,d.dir,d.seuil,d.crit);});
+  ZONES_PHOTO.forEach(function(z){initPhotoZone(z);});
+  majScore();
+}
+
+window.majDate=function(){
+  var v=document.getElementById('f-date').value;
+  if(!v)return;
+  var d=new Date(v+'T12:00:00');
+  document.getElementById('ref-date')&&(document.getElementById('ref-date').textContent=d.toLocaleDateString('fr-CA',{year:'numeric',month:'long',day:'numeric'}));
+};
+
+function creerLigne(code,zone,point,norme,dir,seuil,crit){
+  compteur++;var id=compteur;
+  var tbody=document.getElementById('tmp-tbody');
+  var tr=document.createElement('tr');
+  tr.id='row-'+id;tr.dataset.zone=zone||'';tr.dataset.point=point||'';tr.dataset.norme=norme||'';tr.dataset.crit=crit||'min';
+  var ZL=['Réfrigération','Congélation','Chaud','Préparation','Réception','Sanitaire'];
+  var optZ=ZL.map(function(z){return'<option value="'+z+'"'+(z===zone?' selected':'')+'>'+z+'</option>';}).join('');
+  var cc=crit==='crit'?'c-crit':crit==='maj'?'c-maj':'c-min';
+  tr.innerHTML='<td class="td-code">'+(code||genCode())+'</td>'+
+    '<td class="td-zone"><select class="sel-zone" onchange="majZoneLigne(this,'+id+')">'+optZ+'</select></td>'+
+    '<td><input class="inp-point" type="text" value="'+(point||'')+'" placeholder="Point…" oninput="majPointLigne(this,'+id+')"></td>'+
+    '<td class="td-norme">'+(norme||'—')+'</td>'+
+    '<td class="td-temp"><input class="inp-temp" type="number" id="tmp-'+id+'" placeholder="°C" data-seuil="'+(seuil!==undefined&&seuil!==null?seuil:'')+'" data-dir="'+(dir||'-1')+'" oninput="evalTemp(this,'+id+')" step="0.1"></td>'+
+    '<td class="td-crit"><select class="sel-crit '+cc+'" id="crit-'+id+'" onchange="majCritStyle(this,'+id+')"><option value="crit"'+(crit==='crit'?' selected':'')+'>Critique</option><option value="maj"'+(crit==='maj'?' selected':'')+'>Majeur</option><option value="min"'+(crit==='min'?' selected':'')+'>Mineur</option></select></td>'+
+    '<td class="td-result"><select class="sel-result state-conf" id="sel-'+id+'" onchange="majSelectStyle(this,'+id+');majScore();genPAC();"><option value="conf">Conforme</option><option value="nc">Non conforme</option><option value="na">N/A</option></select></td>'+
+    '<td class="td-del"><button class="btn-del" onclick="supprimerLigne('+id+')">✕</button></td>';
+  tbody.appendChild(tr);
+  if(zoneActive!=='TOUTES'&&(zone||'')!==zoneActive)tr.style.display='none';
+}
+function genCode(){return'TMP-'+String(document.querySelectorAll('#tmp-tbody tr').length+1).padStart(2,'0');}
+
+window.ajouterLigne=function(){
+  var n=document.querySelectorAll('#tmp-tbody tr').length+1;
+  var z=zoneActive!=='TOUTES'?zoneActive:'Réfrigération';
+  creerLigne('TMP-'+String(n).padStart(2,'0'),z,'','',- 1,null,'min');
+  majScore();genPAC();
+};
+window.supprimerLigne=function(id){
+  var r=document.getElementById('row-'+id);if(r)r.remove();
+  majScore();genPAC();
+};
+window.majZoneLigne=function(sel,id){
+  var r=document.getElementById('row-'+id);if(r)r.dataset.zone=sel.value;
+  if(zoneActive!=='TOUTES'&&sel.value!==zoneActive)r.style.display='none';
+};
+window.majPointLigne=function(inp,id){
+  var r=document.getElementById('row-'+id);if(r)r.dataset.point=inp.value;genPAC();
+};
+window.filtrerZone=function(zone,btn){
+  zoneActive=zone;
+  document.querySelectorAll('.btn-zone').forEach(function(b){b.classList.remove('actif');});
+  btn.classList.add('actif');
+  document.querySelectorAll('#tmp-tbody tr').forEach(function(tr){
+    tr.style.display=(zone==='TOUTES'||tr.dataset.zone===zone)?'':'none';
+  });
+};
+window.evalTemp=function(inp,id){
+  var val=parseFloat(inp.value),seuil=parseFloat(inp.dataset.seuil),dir=parseInt(inp.dataset.dir);
+  var sel=document.getElementById('sel-'+id);
+  inp.classList.remove('ok','nok');
+  if(inp.value===''||isNaN(val))return;
+  if(isNaN(seuil)){inp.classList.add('ok');return;}
+  var ok=(dir===-1)?(val<=seuil):(val>=seuil);
+  if(ok){inp.classList.add('ok');sel.value='conf';}else{inp.classList.add('nok');sel.value='nc';}
+  majSelectStyle(sel,id);majScore();genPAC();
+};
+window.majCritStyle=function(sel,id){
+  sel.classList.remove('c-crit','c-maj','c-min');
+  sel.classList.add(sel.value==='crit'?'c-crit':sel.value==='maj'?'c-maj':'c-min');
+  var r=document.getElementById('row-'+id);if(r)r.dataset.crit=sel.value;genPAC();
+};
+window.majSelectStyle=function(sel,id){
+  sel.classList.remove('state-conf','state-nc','state-na');
+  sel.classList.add(sel.value==='conf'?'state-conf':sel.value==='nc'?'state-nc':'state-na');
+  var tr=sel.closest('tr');tr.style.background='';
+  if(sel.value==='nc')tr.style.background='#fff8f6';
+  if(sel.value==='conf')tr.style.background='#f5fdf6';
+};
+window.majScore=function(){
+  var ss=document.querySelectorAll('#tmp-tbody .sel-result'),conf=0,nc=0,na=0;
+  ss.forEach(function(s){if(s.value==='conf')conf++;else if(s.value==='nc')nc++;else na++;});
+  var t=conf+nc,pct=t>0?Math.round((conf/t)*100):null;
+  document.getElementById('cnt-conf').textContent=conf;
+  document.getElementById('cnt-nc').textContent=nc;
+  document.getElementById('cnt-na').textContent=na;
+  var sbP=document.getElementById('sb-pct'),sbV=document.getElementById('sb-verdict');
+  if(pct===null){sbP.textContent='—';sbV.textContent='—';sbV.style.background='#333';sbV.style.color='#888';return;}
+  sbP.textContent=pct+'%';
+  if(pct>=90){sbV.textContent='✔ CONFORME';sbV.style.background='#66BB6A';sbV.style.color='#fff';}
+  else if(pct>=70){sbV.textContent='⚠ À CORRIGER';sbV.style.background='#FFA726';sbV.style.color='#1A1A1A';}
+  else{sbV.textContent='✕ CRITIQUE';sbV.style.background='#FF7043';sbV.style.color='#fff';}
+};
+window.genPAC=function(){
+  var rows=document.querySelectorAll('#tmp-tbody tr'),ncs=[];
+  rows.forEach(function(tr){
+    var sel=tr.querySelector('.sel-result');if(!sel||sel.value!=='nc')return;
+    var code=tr.querySelector('.td-code').textContent.trim();
+    var ti=tr.querySelector('.inp-temp');var tv=ti?ti.value:'';
+    ncs.push({code:code,zone:tr.dataset.zone||'—',point:tr.dataset.point||tr.querySelector('.inp-point').value||'—',norme:tr.dataset.norme||'—',crit:tr.dataset.crit||'min',temp:tv});
+  });
+  document.getElementById('cnt-pac').textContent=ncs.length;
+  var c=document.getElementById('pac-container');
+  if(!ncs.length){c.innerHTML='<div class="pac-vide">Aucune non-conformité détectée — le plan d\'actions s\'affichera ici automatiquement.</div>';return;}
+  var db={crit:'IMMÉDIAT',maj:'URGENT 24h',min:'PLANIFIÉ'};
+  var rh=ncs.map(function(nc){
+    var dd=db[nc.crit]||'PLANIFIÉ';
+    var cb=nc.crit==='crit'?'crit':nc.crit==='maj'?'maj':'min';
+    var cl=nc.crit==='crit'?'Critique':nc.crit==='maj'?'Majeur':'Mineur';
+    var ti=nc.temp?' (mesuré : '+nc.temp+' °C)':'';
+    var da=nc.crit==='crit'?'Retirer du service immédiatement — vérifier équipement'+ti:'Ajuster et revérifier dans 30 min'+ti;
+    var od=DELAIS.map(function(d){return'<option'+(d===dd?' selected':'')+'>'+d+'</option>';}).join('');
+    return'<tr><td class="pac-code">'+nc.code+'</td><td><span class="pac-zone-badge">'+nc.zone+'</span></td><td style="font-size:10px;">'+nc.point+'<br><span style="color:#aaa;font-size:9px;">Norme : '+nc.norme+'</span></td><td><span class="badge-crit-inline '+cb+'">'+cl+'</span></td><td class="pac-action"><input type="text" value="'+da+'"></td><td class="pac-delai"><select>'+od+'</select></td></tr>';
+  }).join('');
+  c.innerHTML='<table class="pac-table"><thead><tr><th>Code</th><th>Zone</th><th>Point / Norme</th><th>Criticité</th><th>Action corrective</th><th>Délai</th></tr></thead><tbody>'+rh+'</tbody></table>';
+};
+function initPhotoZone(zone){
+  var c=document.getElementById('zone-photos-container');
+  var zId=zone.replace(/\s/g,'-');
+  var div=document.createElement('div');div.className='zone-photos';
+  div.innerHTML='<div class="zone-photo-titre">'+zone+'</div><div class="photos-row">'+slot(zId,0)+slot(zId,1)+slot(zId,2)+'</div>';
+  c.appendChild(div);
+}
+function slot(zId,idx){
+  var uid=zId+'-'+idx;
+  return'<div class="photo-slot" id="slot-'+uid+'"><div class="photo-slot-inner" id="inner-'+uid+'" onclick="clickSlot(\''+uid+'\')"><div class="photo-icone">📷</div><div class="photo-label-txt">Ajouter photo</div></div><input type="file" id="file-'+uid+'" accept="image/*" capture="environment" onchange="chargerPhoto(event,\''+uid+'\')"><div class="photo-caption" style="display:none;" id="caption-'+uid+'"><input type="text" placeholder="Légende…"></div><button class="btn-photo-del" id="delbtn-'+uid+'" onclick="supprimerPhoto(event,\''+uid+'\')">✕</button></div>';
+}
+window.clickSlot=function(uid){var i=document.getElementById('inner-'+uid);if(i&&i.querySelector('.photo-icone'))document.getElementById('file-'+uid).click();};
+window.chargerPhoto=function(e,uid){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();r.onload=function(ev){
+    var i=document.getElementById('inner-'+uid);i.innerHTML='<img src="'+ev.target.result+'" style="width:100%;height:90px;object-fit:cover;display:block;">';
+    document.getElementById('caption-'+uid).style.display='block';
+    var d=document.getElementById('delbtn-'+uid);if(d)d.style.display='flex';
+  };r.readAsDataURL(f);
+};
+window.supprimerPhoto=function(e,uid){
+  e.stopPropagation();
+  var i=document.getElementById('inner-'+uid);i.innerHTML='<div class="photo-icone">📷</div><div class="photo-label-txt">Ajouter photo</div>';
+  document.getElementById('caption-'+uid).style.display='none';
+  var d=document.getElementById('delbtn-'+uid);if(d)d.style.display='none';
+  document.getElementById('file-'+uid).value='';
+};
+window.telecharger=function(){
+  var etab=document.getElementById('f-etab').value||'rapport';
+  var html=document.documentElement.outerHTML;
+  var blob=new Blob([html],{type:'text/html'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='Temperatures_'+etab.replace(/\s+/g,'_')+'.html';a.click();URL.revokeObjectURL(url);
+};
+init();
+})();
+</script>
+</body>
+</html>
