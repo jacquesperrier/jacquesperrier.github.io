@@ -1,1 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Promo ACADÉMIE Stories — Verdict 360 AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;800&display=swap');
 
+  :root {
+    --or: #B8954A;
+    --or-ombre: #9C7F3D;
+    --or-reflet: #D4C28E;
+    --or-hi: #F0E4C0;
+    --or-gradient: linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);
+    --noir: #0A0A0A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /* Format Stories: plein écran 9:16 */
+  .stage {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    background: var(--noir);
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 50px;
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  .slide.intro { background: var(--noir); }
+  .slide.s1 { background: linear-gradient(160deg, #1a1408 0%, #0A0A0A 60%); }
+  .slide.s2 { background: #0A0A0A; }
+  .slide.s3 { background: linear-gradient(160deg, #0A0A0A 0%, #1a1408 100%); }
+  .slide.s4 { background: var(--noir); }
+  .slide.outro { background: var(--noir); }
+
+  /* Barre de stories en haut */
+  .stories-bar {
+    position: absolute;
+    top: 18px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    gap: 4px;
+    z-index: 200;
+  }
+  .story-seg {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .story-seg .fill {
+    height: 100%;
+    width: 0%;
+    background: #fff;
+    border-radius: 2px;
+  }
+
+  /* Logo en haut */
+  .top-logo {
+    position: absolute;
+    top: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: var(--or-reflet);
+    text-transform: uppercase;
+    z-index: 100;
+    white-space: nowrap;
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--or-reflet);
+    margin-bottom: 20px;
+  }
+
+  .big-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 14vw, 80px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+
+  .big-text .gold {
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .sub-text {
+    font-size: clamp(16px, 4vw, 20px);
+    color: #ABA399;
+    max-width: 85%;
+    line-height: 1.5;
+  }
+
+  .icon-big {
+    font-size: clamp(80px, 22vw, 110px);
+    margin-bottom: 28px;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 40px;
+    margin-top: 36px;
+  }
+
+  .stat { text-align: center; }
+
+  .stat .num {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 9vw, 52px);
+    font-weight: 900;
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .stat .lab {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8A8378;
+    margin-top: 6px;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .badge {
+    border: 1px solid var(--or);
+    color: var(--or-reflet);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 20px;
+    border-radius: 30px;
+  }
+
+  .logo-final {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(38px, 10vw, 56px);
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 2px;
+  }
+
+  .logo-final span {
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .tagline-final {
+    font-size: 14px;
+    color: var(--or-reflet);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 14px;
+    margin-bottom: 8px;
+  }
+
+  .url-final {
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+    margin-top: 10px;
+  }
+
+  .cta-final {
+    margin-top: 36px;
+    background: var(--or-gradient);
+    color: var(--noir);
+    font-weight: 800;
+    font-size: 16px;
+    padding: 18px 44px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Barre de progression bas */
+  .progress-track {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    z-index: 50;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--or-gradient);
+  }
+
+  /* Bouton rejouer */
+  .controls {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 300;
+  }
+  .controls button {
+    background: rgba(184,149,74,0.15);
+    border: 1px solid var(--or);
+    color: var(--or-reflet);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px 26px;
+    border-radius: 30px;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+
+  /* Ligne déco */
+  .or-line {
+    width: 48px;
+    height: 2px;
+    background: var(--or-gradient);
+    margin: 20px auto 24px;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- Barre de stories style Instagram -->
+  <div class="stories-bar" id="stories-bar">
+    <div class="story-seg"><div class="fill" id="seg-0"></div></div>
+    <div class="story-seg"><div class="fill" id="seg-1"></div></div>
+    <div class="story-seg"><div class="fill" id="seg-2"></div></div>
+    <div class="story-seg"><div class="fill" id="seg-3"></div></div>
+    <div class="story-seg"><div class="fill" id="seg-4"></div></div>
+    <div class="story-seg"><div class="fill" id="seg-5"></div></div>
+  </div>
+
+  <div class="top-logo">VERDICT 360 AI</div>
+
+  <!-- SLIDE 0 -->
+  <div class="slide intro" id="slide-0">
+    <div class="eyebrow">Module Académie</div>
+    <div class="big-text">Former<br>votre<br><span class="gold">équipe.</span></div>
+    <div class="or-line"></div>
+    <div class="sub-text">La formation qui protège votre permis.</div>
+  </div>
+
+  <!-- SLIDE 1 -->
+  <div class="slide s1" id="slide-1">
+    <div class="icon-big">🛡️</div>
+    <div class="big-text">Protéger<br><span class="gold">votre<br>permis.</span></div>
+    <div class="sub-text">Une non-conformité MAPAQ coûte cher — en amende, en réputation.</div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div class="slide s2" id="slide-2">
+    <div class="eyebrow">Module Académie</div>
+    <div class="big-text">6 leçons.<br><span class="gold">20 questions.</span></div>
+    <div class="sub-text">Guide des bonnes pratiques (5M) du MAPAQ.</div>
+    <div class="stat-row">
+      <div class="stat"><div class="num">45</div><div class="lab">Minutes</div></div>
+      <div class="stat"><div class="num">80%</div><div class="lab">Seuil</div></div>
+      <div class="stat"><div class="num">100%</div><div class="lab">Mobile</div></div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div class="slide s3" id="slide-3">
+    <div class="icon-big">🏅</div>
+    <div class="big-text"><span class="gold">Attestation</span><br>instantanée.</div>
+    <div class="sub-text">Document officiel pour votre registre de formation.</div>
+    <div class="badge-row">
+      <div class="badge">🇫🇷 FR / 🇬🇧 EN</div>
+      <div class="badge">✅ Quiz noté</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 -->
+  <div class="slide s4" id="slide-4">
+    <div class="eyebrow">Pour qui?</div>
+    <div class="big-text">Cuisiniers.<br>Serveurs.<br><span class="gold">Gestionnaires.</span></div>
+  </div>
+
+  <!-- SLIDE 5 -->
+  <div class="slide outro" id="slide-5">
+    <div class="logo-final">VERDICT <span>360</span> AI</div>
+    <div class="tagline-final">Académie · Formation alimentaire</div>
+    <div class="cta-final">Commencer →</div>
+    <div class="url-final">verdict360ai.com</div>
+  </div>
+
+  <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+</div>
+
+<div class="controls" id="controls" style="display:none;">
+  <button onclick="restart()">↺ Rejouer</button>
+</div>
+
+<script>
+const slideDuration = 2500;
+const slides = document.querySelectorAll('.slide');
+const segs = document.querySelectorAll('.story-seg .fill');
+const progress = document.getElementById('progress');
+const controls = document.getElementById('controls');
+let totalTime = slideDuration * slides.length;
+let timers = [];
+
+function clearTimers() {
+  timers.forEach(t => clearTimeout(t));
+  timers = [];
+}
+
+function animate() {
+  clearTimers();
+
+  // Reset segments
+  segs.forEach(s => {
+    s.style.transition = 'none';
+    s.style.width = '0%';
+  });
+
+  slides.forEach((slide, i) => {
+    const start = i * slideDuration;
+
+    // Apparition
+    timers.push(setTimeout(() => {
+      slides.forEach(s => s.style.zIndex = '1');
+      slide.style.zIndex = '2';
+      slide.style.transition = 'opacity 700ms ease-out, transform 700ms cubic-bezier(0.16,1,0.3,1)';
+      slide.style.opacity = '1';
+      slide.style.transform = 'translateY(0)';
+
+      // Remplir le segment de stories
+      const seg = segs[i];
+      if (seg) {
+        seg.style.transition = `width ${slideDuration}ms linear`;
+        seg.style.width = '100%';
+      }
+    }, start));
+
+    // Disparition
+    if (i < slides.length - 1) {
+      timers.push(setTimeout(() => {
+        slide.style.transition = 'opacity 500ms ease-in, transform 500ms ease-in';
+        slide.style.opacity = '0';
+        slide.style.transform = 'translateY(-20px)';
+      }, start + slideDuration - 500));
+    }
+  });
+
+  // Afficher le bouton rejouer à la fin
+  timers.push(setTimeout(() => {
+    controls.style.display = 'block';
+  }, totalTime + 200));
+
+  // Barre de progression globale
+  progress.style.transition = `width ${totalTime}ms linear`;
+  requestAnimationFrame(() => { progress.style.width = '100%'; });
+}
+
+function restart() {
+  controls.style.display = 'none';
+  slides.forEach(s => {
+    s.style.transition = 'none';
+    s.style.opacity = '0';
+    s.style.transform = 'translateY(24px)';
+  });
+  segs.forEach(s => {
+    s.style.transition = 'none';
+    s.style.width = '0%';
+  });
+  progress.style.transition = 'none';
+  progress.style.width = '0%';
+  void document.body.offsetWidth;
+  setTimeout(animate, 60);
+}
+
+animate();
+</script>
+
+</body>
+</html>
