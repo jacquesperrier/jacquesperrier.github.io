@@ -36,6 +36,16 @@ h1 { text-align:center; font-size:26px; font-weight:900; letter-spacing:3px; col
 }
 .logo-foods { font-size:13px; font-weight:bold; color:#fff; letter-spacing:5px; margin-top:3px; }
 
+/* SAUVEGARDE BADGE */
+.save-badge {
+  text-align:center;
+  font-size:11px;
+  color:#888;
+  margin-bottom:16px;
+  min-height:16px;
+}
+.save-badge.saved { color:#2e7d32; }
+
 .info-row { display:flex; align-items:baseline; margin-bottom:16px; gap:10px; }
 .info-row label { font-weight:900; font-size:15px; color:#111; white-space:nowrap; min-width:60px; }
 .info-row input {
@@ -47,11 +57,13 @@ h1 { text-align:center; font-size:26px; font-weight:900; letter-spacing:3px; col
 table { width:100%; border-collapse:collapse; margin-bottom:20px; font-size:14px; }
 th,td { border:1px solid #999; text-align:center; padding:9px 4px; }
 th { background:#f0f0f0; font-weight:bold; font-size:13px; letter-spacing:1px; }
-td.day { font-weight:bold; font-size:13px; text-align:left; padding-left:8px; background:#fafafa; letter-spacing:0.3px; }
+td.day { font-weight:bold; font-size:13px; text-align:left; padding-left:8px; background:#fafafa; }
 td input { width:100%; border:none; text-align:center; font-size:14px; background:transparent; outline:none; padding:0; color:#111; }
 td input::placeholder { color:#bbb; }
 td.total-cell { font-weight:bold; color:#c0392b; font-size:14px; }
 tr.weekend td { background:#f9f9f9; }
+tr.today td { background:#fff8e1 !important; }
+tr.today td.day { color:#c0392b; }
 
 .totals-row { display:flex; gap:16px; margin-bottom:20px; }
 .total-block { flex:1; }
@@ -61,41 +73,33 @@ tr.weekend td { background:#f9f9f9; }
 
 .sig-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
 .sig-header label { font-weight:900; font-size:13px; }
-.btn-clear { border:1.5px solid #c0392b; background:#fff; color:#c0392b; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.btn-clear { border:1.5px solid #c0392b; background:#fff; color:#c0392b; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; cursor:pointer; }
 .sig-box { border:1px solid #bbb; border-radius:4px; background:#fdfdfd; margin-bottom:20px; position:relative; }
-.sig-box canvas { display:block; width:100%; height:140px; touch-action:none; cursor:crosshair; border-radius:4px; }
+.sig-box canvas { display:block; width:100%; height:130px; touch-action:none; cursor:crosshair; border-radius:4px; }
 .sig-hint { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#ccc; font-size:13px; pointer-events:none; }
 
-.btn-row { display:flex; gap:10px; margin-bottom:12px; }
+.btn-row { display:flex; gap:10px; margin-bottom:10px; }
 .btn {
-  flex:1; padding:14px 8px; border:none; border-radius:6px;
-  font-size:15px; font-weight:bold; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; gap:8px;
+  flex:1; padding:13px 8px; border:none; border-radius:6px;
+  font-size:14px; font-weight:bold; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:6px;
   -webkit-tap-highlight-color:transparent;
 }
 .btn-print { background:#555; color:#fff; }
-.btn-reset { background:#f0f0f0; color:#333; }
+.btn-reset { background:#f0f0f0; color:#333; border:1px solid #ddd; }
 
 .instructions {
-  background:#f0f7ff;
-  border:1px solid #b3d4f5;
-  border-radius:8px;
-  padding:12px 14px;
-  font-size:12.5px;
-  color:#333;
-  line-height:1.7;
+  background:#f0f7ff; border:1px solid #b3d4f5; border-radius:8px;
+  padding:11px 13px; font-size:12px; color:#333; line-height:1.7;
 }
 .instructions strong { color:#111; }
 
-/* ── PRINT : tout s'imprime sauf boutons ── */
 @media print {
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
   body { background:#fff !important; padding:0 !important; display:block; }
   .page { box-shadow:none; border-radius:0; max-width:100%; padding:12px; }
   .no-print { display:none !important; }
-  /* Les valeurs des inputs s'affichent grâce au content trick */
-  input { border:none !important; border-bottom:1px solid #999 !important; }
-  table { page-break-inside:avoid; }
+  .save-badge { display:none !important; }
 }
 </style>
 </head>
@@ -110,13 +114,15 @@ tr.weekend td { background:#f9f9f9; }
     <div class="logo-foods">FOODS</div>
   </div>
 
+  <div class="save-badge" id="saveBadge">Chargement...</div>
+
   <div class="info-row">
     <label>WEEK:</label>
-    <input type="text" id="week" placeholder="ex: 23 juin 2026">
+    <input type="text" id="week" placeholder="ex: 23 juin 2026" oninput="autoSave()">
   </div>
   <div class="info-row">
     <label>NAME:</label>
-    <input type="text" id="name" placeholder="Nom complet">
+    <input type="text" id="name" placeholder="Nom complet" oninput="autoSave()">
   </div>
 
   <table>
@@ -138,7 +144,7 @@ tr.weekend td { background:#f9f9f9; }
     </div>
     <div class="total-block">
       <label>BANKED HOURS:</label>
-      <input type="text" id="bankedHours">
+      <input type="text" id="bankedHours" oninput="autoSave()">
     </div>
   </div>
 
@@ -152,15 +158,12 @@ tr.weekend td { background:#f9f9f9; }
   </div>
 
   <div class="btn-row no-print">
-    <button class="btn btn-print" onclick="imprimer()">📄 Imprimer / Sauvegarder PDF</button>
-    <button class="btn btn-reset" onclick="resetForm()">↺ Reset</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 Imprimer / PDF</button>
+    <button class="btn btn-reset" onclick="resetForm()">↺ Nouvelle semaine</button>
   </div>
 
   <div class="instructions no-print">
-    <strong>💡 Sauvegarder en PDF sur iPhone :</strong><br>
-    1. Appuyez sur <strong>Imprimer / Sauvegarder PDF</strong><br>
-    2. Dans l'aperçu, <strong>pincez avec 2 doigts</strong> pour agrandir<br>
-    3. Appuyez sur <strong>⬆ Partage</strong> → <strong>Enregistrer dans Fichiers</strong>
+    💡 <strong>Sauvegarder en PDF :</strong> Imprimer → pincer l'aperçu avec 2 doigts → ⬆ Partage → <strong>Enregistrer dans Fichiers</strong>
   </div>
 
 </div>
@@ -176,15 +179,23 @@ const DAYS = [
   {en:'SUNDAY',   weekend:true},
 ];
 
+// Jour courant 0=lundi ... 6=dimanche
+function todayIndex() {
+  const d = new Date().getDay(); // 0=dim, 1=lun...
+  return d === 0 ? 6 : d - 1;
+}
+
 function buildTable() {
   const tbody = document.getElementById('tbody');
+  const today = todayIndex();
   DAYS.forEach((d, i) => {
     const tr = document.createElement('tr');
     if (d.weekend) tr.className = 'weekend';
+    if (i === today) tr.className = (tr.className ? tr.className + ' ' : '') + 'today';
     tr.innerHTML = `
-      <td class="day">${d.en}</td>
-      <td><input type="text" id="in${i}"  placeholder="${d.weekend?'':'800'}"  oninput="calcRow(${i})"></td>
-      <td><input type="text" id="out${i}" placeholder="${d.weekend?'':'1630'}" oninput="calcRow(${i})"></td>
+      <td class="day">${d.en}${i===today?' ◀':''}</td>
+      <td><input type="text" id="in${i}"  placeholder="${d.weekend?'':'800'}"  oninput="calcRow(${i}); autoSave()"></td>
+      <td><input type="text" id="out${i}" placeholder="${d.weekend?'':'1630'}" oninput="calcRow(${i}); autoSave()"></td>
       <td class="total-cell" id="tot${i}">—</td>
     `;
     tbody.appendChild(tr);
@@ -220,6 +231,66 @@ function calcTotals() {
   document.getElementById('totalHours').textContent = total>0 ? minToStr(total) : '—';
 }
 
+// ── AUTOSAVE localStorage ────────────────────────────────
+let saveTimer = null;
+function autoSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const data = {
+      week:        document.getElementById('week').value,
+      name:        document.getElementById('name').value,
+      banked:      document.getElementById('bankedHours').value,
+      sig:         document.getElementById('sigCanvas').toDataURL(),
+      rows: DAYS.map((_,i) => ({
+        in:  document.getElementById(`in${i}`).value,
+        out: document.getElementById(`out${i}`).value,
+      }))
+    };
+    localStorage.setItem('matrix_timesheet', JSON.stringify(data));
+    const badge = document.getElementById('saveBadge');
+    badge.textContent = '✓ Sauvegardé automatiquement — ' + new Date().toLocaleTimeString('fr-CA', {hour:'2-digit',minute:'2-digit'});
+    badge.className = 'save-badge saved';
+  }, 600);
+}
+
+function loadData() {
+  const raw = localStorage.getItem('matrix_timesheet');
+  const badge = document.getElementById('saveBadge');
+  if (!raw) { badge.textContent = 'Aucune donnée sauvegardée'; return; }
+  try {
+    const data = JSON.parse(raw);
+    document.getElementById('week').value        = data.week  || '';
+    document.getElementById('name').value        = data.name  || '';
+    document.getElementById('bankedHours').value = data.banked || '';
+
+    (data.rows || []).forEach((r, i) => {
+      const inEl  = document.getElementById(`in${i}`);
+      const outEl = document.getElementById(`out${i}`);
+      if (inEl)  inEl.value  = r.in  || '';
+      if (outEl) outEl.value = r.out || '';
+      calcRow(i);
+    });
+
+    // Restaurer signature
+    if (data.sig && data.sig !== 'data:,') {
+      const canvas = document.getElementById('sigCanvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, canvas.offsetWidth, canvas.offsetHeight);
+        document.getElementById('sigHint').style.opacity = '0';
+      };
+      img.src = data.sig;
+    }
+
+    badge.textContent = '✓ Données restaurées';
+    badge.className = 'save-badge saved';
+    setTimeout(() => { badge.textContent = 'Sauvegarde auto activée'; badge.className = 'save-badge'; }, 2500);
+  } catch(e) {
+    badge.textContent = 'Erreur de chargement';
+  }
+}
+
 // ── CANVAS ──────────────────────────────────────────────
 function initCanvas() {
   const canvas = document.getElementById('sigCanvas');
@@ -227,15 +298,26 @@ function initCanvas() {
   let drawing = false;
   function setSize() {
     const pr = window.devicePixelRatio||1;
+    // Sauvegarder le contenu avant resize
+    const dataURL = canvas.toDataURL();
     canvas.width  = canvas.offsetWidth  * pr;
     canvas.height = canvas.offsetHeight * pr;
     ctx.scale(pr,pr);
     ctx.strokeStyle='#111'; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round';
+    // Restaurer
+    if (dataURL !== 'data:,') {
+      const img = new Image(); img.onload=()=>ctx.drawImage(img,0,0,canvas.offsetWidth,canvas.offsetHeight); img.src=dataURL;
+    }
   }
   setSize();
   function pos(e){const r=canvas.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:s.clientX-r.left,y:s.clientY-r.top};}
   function down(e){e.preventDefault();drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);}
-  function move(e){e.preventDefault();if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();document.getElementById('sigHint').style.opacity='0';}
+  function move(e){
+    e.preventDefault();if(!drawing)return;
+    const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();
+    document.getElementById('sigHint').style.opacity='0';
+    autoSave();
+  }
   function up(e){e.preventDefault();drawing=false;}
   canvas.addEventListener('mousedown',down);
   canvas.addEventListener('mousemove',move);
@@ -244,20 +326,18 @@ function initCanvas() {
   canvas.addEventListener('touchmove', move,{passive:false});
   canvas.addEventListener('touchend',  up,  {passive:false});
 }
+
 function clearSig(){
   const c=document.getElementById('sigCanvas');
   c.getContext('2d').clearRect(0,0,c.width,c.height);
   document.getElementById('sigHint').style.opacity='1';
+  autoSave();
 }
 
-// ── IMPRESSION ──────────────────────────────────────────
-function imprimer() {
-  window.print();
-}
-
-// ── RESET ───────────────────────────────────────────────
+// ── RESET (nouvelle semaine) ─────────────────────────────
 function resetForm(){
-  if(!confirm('Effacer tout le formulaire?')) return;
+  if(!confirm('Effacer toutes les données et commencer une nouvelle semaine?')) return;
+  localStorage.removeItem('matrix_timesheet');
   ['week','name','bankedHours'].forEach(id=>document.getElementById(id).value='');
   DAYS.forEach((_,i)=>{
     document.getElementById(`in${i}`).value='';
@@ -266,10 +346,15 @@ function resetForm(){
   });
   document.getElementById('totalHours').textContent='—';
   clearSig();
+  document.getElementById('saveBadge').textContent='Nouveau timesheet';
+  document.getElementById('saveBadge').className='save-badge';
 }
 
+// ── INIT ────────────────────────────────────────────────
 buildTable();
 initCanvas();
+// Charger après que le canvas soit initialisé
+setTimeout(loadData, 100);
 </script>
 </body>
 </html>
