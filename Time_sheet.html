@@ -1,1 +1,413 @@
+<!DOCTYPE html>
 
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Timesheet Matrix Foods</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+
+body{
+
+font-family:Arial,sans-serif;
+
+max-width:900px;
+
+margin:auto;
+
+padding:20px;
+
+background:#f5f5f5;
+
+}
+
+.container{
+
+background:#fff;
+
+padding:20px;
+
+border-radius:10px;
+
+}
+
+h1{
+
+text-align:center;
+
+color:#c00000;
+
+}
+
+input{
+
+width:95%;
+
+padding:8px;
+
+border:1px solid #ccc;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+margin-top:20px;
+
+}
+
+th,td{
+
+border:1px solid #000;
+
+padding:8px;
+
+text-align:center;
+
+}
+
+.total{
+
+font-weight:bold;
+
+color:#c00000;
+
+}
+
+.signature-box{
+
+border:2px solid #000;
+
+width:100%;
+
+height:180px;
+
+touch-action:none;
+
+}
+
+button{
+
+padding:12px 20px;
+
+border:none;
+
+color:white;
+
+font-size:16px;
+
+cursor:pointer;
+
+margin-top:15px;
+
+}
+
+.pdf{
+
+background:#c00000;
+
+}
+
+.clear{
+
+background:#666;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container" id="timesheet">
+
+<h1>MATRIX FOODS</h1>
+
+<p>
+
+<b>Semaine :</b>
+
+<input type="date" id="week">
+
+</p>
+
+<p>
+
+<b>Nom :</b>
+
+<input type="text" id="employee">
+
+</p>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Jour</th>
+
+<th>Entrée</th>
+
+<th>Sortie</th>
+
+<th>Total</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tbody"></tbody>
+
+<tfoot>
+
+<tr>
+
+<td colspan="3"><b>Total heures</b></td>
+
+<td id="weeklyTotal">0h00</td>
+
+</tr>
+
+</tfoot>
+
+</table>
+
+<h3>Signature</h3>
+
+<canvas id="signature" class="signature-box"></canvas>
+
+<br>
+
+<button class="clear" onclick="clearSignature()">
+
+Effacer Signature
+
+</button>
+
+<button class="pdf" onclick="savePDF()">
+
+Enregistrer PDF
+
+</button>
+
+</div>
+
+<script>
+
+const days=[
+
+"Lundi",
+
+"Mardi",
+
+"Mercredi",
+
+"Jeudi",
+
+"Vendredi",
+
+"Samedi",
+
+"Dimanche"
+
+];
+
+const tbody=document.getElementById("tbody");
+
+days.forEach(day=>{
+
+tbody.innerHTML+=`
+
+<tr>
+
+<td>${day}</td>
+
+<td><input type="time" class="in"></td>
+
+<td><input type="time" class="out"></td>
+
+<td class="dailyTotal">0h00</td>
+
+</tr>`;
+
+});
+
+document.addEventListener("input",calculateHours);
+
+function calculateHours(){
+
+let weeklyMinutes=0;
+
+document.querySelectorAll("tbody tr").forEach(row=>{
+
+const start=row.querySelector(".in").value;
+
+const end=row.querySelector(".out").value;
+
+const totalCell=row.querySelector(".dailyTotal");
+
+if(start && end){
+
+let s=start.split(":");
+
+let e=end.split(":");
+
+let startMin=parseInt(s[0])*60+parseInt(s[1]);
+
+let endMin=parseInt(e[0])*60+parseInt(e[1]);
+
+let diff=endMin-startMin;
+
+if(diff<0) diff+=1440;
+
+weeklyMinutes+=diff;
+
+let h=Math.floor(diff/60);
+
+let m=diff%60;
+
+totalCell.innerHTML=
+
+`${h}h${String(m).padStart(2,"0")}`;
+
+}else{
+
+totalCell.innerHTML="0h00";
+
+}
+
+});
+
+let totalH=Math.floor(weeklyMinutes/60);
+
+let totalM=weeklyMinutes%60;
+
+document.getElementById("weeklyTotal").innerHTML=
+
+`${totalH}h${String(totalM).padStart(2,"0")}`;
+
+}
+
+/* SIGNATURE */
+
+const canvas=document.getElementById("signature");
+
+const ctx=canvas.getContext("2d");
+
+canvas.width=canvas.offsetWidth;
+
+canvas.height=canvas.offsetHeight;
+
+let drawing=false;
+
+function getPos(e){
+
+const rect=canvas.getBoundingClientRect();
+
+return{
+
+x:(e.touches?e.touches[0].clientX:e.clientX)-rect.left,
+
+y:(e.touches?e.touches[0].clientY:e.clientY)-rect.top
+
+};
+
+}
+
+canvas.addEventListener("mousedown",startDraw);
+
+canvas.addEventListener("touchstart",startDraw);
+
+canvas.addEventListener("mousemove",draw);
+
+canvas.addEventListener("touchmove",draw);
+
+canvas.addEventListener("mouseup",endDraw);
+
+canvas.addEventListener("touchend",endDraw);
+
+function startDraw(e){
+
+drawing=true;
+
+const pos=getPos(e);
+
+ctx.beginPath();
+
+ctx.moveTo(pos.x,pos.y);
+
+}
+
+function draw(e){
+
+if(!drawing) return;
+
+e.preventDefault();
+
+const pos=getPos(e);
+
+ctx.lineTo(pos.x,pos.y);
+
+ctx.stroke();
+
+}
+
+function endDraw(){
+
+drawing=false;
+
+}
+
+function clearSignature(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+}
+
+/* PDF */
+
+async function savePDF(){
+
+const { jsPDF } = window.jspdf;
+
+const canvasPDF=
+
+await html2canvas(document.getElementById("timesheet"));
+
+const imgData=
+
+canvasPDF.toDataURL("image/png");
+
+const pdf=new jsPDF("p","mm","a4");
+
+const width=190;
+
+const height=
+
+canvasPDF.height*width/canvasPDF.width;
+
+pdf.addImage(imgData,"PNG",10,10,width,height);
+
+pdf.save("Timesheet-Matrix.pdf");
+
+}
+
+</script>
+
+</body>
+
+</html>
