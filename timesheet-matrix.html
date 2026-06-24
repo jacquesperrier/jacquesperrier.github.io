@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Time Sheet – Matrix Foods</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: Arial, sans-serif;
+  background: #e8e8e8;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+.page {
+  background: #fff;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px 20px 28px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+h1 { text-align:center; font-size:26px; font-weight:900; letter-spacing:3px; color:#111; margin-bottom:16px; }
+
+.logo-wrap {
+  background: linear-gradient(180deg,#7ab648 0%,#4a8a20 40%,#2d5e10 100%);
+  border-radius:6px; padding:14px 10px 12px; text-align:center; margin-bottom:24px;
+}
+.logo-les  { font-size:11px; font-weight:bold; color:#fff; letter-spacing:4px; text-transform:uppercase; margin-bottom:2px; }
+.logo-matrix {
+  font-size:38px; font-weight:900; color:#c0392b; letter-spacing:2px;
+  text-shadow:2px 2px 0 #7b0000,-1px -1px 0 #ff6b6b,0 0 12px rgba(0,0,0,.5);
+  line-height:1; font-style:italic;
+}
+.logo-foods { font-size:13px; font-weight:bold; color:#fff; letter-spacing:5px; margin-top:3px; }
+
+.info-row { display:flex; align-items:baseline; margin-bottom:16px; gap:10px; }
+.info-row label { font-weight:900; font-size:15px; color:#111; white-space:nowrap; min-width:60px; }
+.info-row input {
+  flex:1; border:none; border-bottom:1.5px solid #aaa; border-radius:0;
+  padding:4px 2px; font-size:15px; color:#333; background:transparent; outline:none;
+}
+.info-row input:focus { border-bottom-color:#c0392b; }
+
+table { width:100%; border-collapse:collapse; margin-bottom:20px; font-size:14px; }
+th,td { border:1px solid #999; text-align:center; padding:9px 4px; }
+th { background:#f0f0f0; font-weight:bold; font-size:13px; letter-spacing:1px; }
+td.day { font-weight:bold; font-size:13px; text-align:left; padding-left:8px; background:#fafafa; letter-spacing:0.3px; }
+td input { width:100%; border:none; text-align:center; font-size:14px; background:transparent; outline:none; padding:0; color:#111; }
+td input::placeholder { color:#bbb; }
+td.total-cell { font-weight:bold; color:#c0392b; font-size:14px; }
+tr.weekend td { background:#f9f9f9; }
+
+.totals-row { display:flex; gap:16px; margin-bottom:20px; }
+.total-block { flex:1; }
+.total-block label { font-weight:900; font-size:13px; display:block; margin-bottom:6px; }
+.total-block .val { font-size:18px; font-weight:bold; color:#111; border-bottom:1.5px solid #aaa; padding-bottom:4px; min-height:28px; }
+.total-block input { width:100%; border:none; border-bottom:1.5px solid #aaa; font-size:16px; font-weight:bold; padding:2px; background:transparent; outline:none; }
+
+.sig-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.sig-header label { font-weight:900; font-size:13px; }
+.btn-clear { border:1.5px solid #c0392b; background:#fff; color:#c0392b; font-size:12px; font-weight:bold; padding:5px 12px; border-radius:4px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.sig-box { border:1px solid #bbb; border-radius:4px; background:#fdfdfd; margin-bottom:20px; position:relative; }
+.sig-box canvas { display:block; width:100%; height:140px; touch-action:none; cursor:crosshair; border-radius:4px; }
+.sig-hint { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#ccc; font-size:13px; pointer-events:none; }
+
+.btn-row { display:flex; gap:10px; margin-bottom:12px; }
+.btn {
+  flex:1; padding:14px 8px; border:none; border-radius:6px;
+  font-size:15px; font-weight:bold; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-print { background:#555; color:#fff; }
+.btn-reset { background:#f0f0f0; color:#333; }
+
+.instructions {
+  background:#f0f7ff;
+  border:1px solid #b3d4f5;
+  border-radius:8px;
+  padding:12px 14px;
+  font-size:12.5px;
+  color:#333;
+  line-height:1.7;
+}
+.instructions strong { color:#111; }
+
+/* ── PRINT : tout s'imprime sauf boutons ── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body { background:#fff !important; padding:0 !important; display:block; }
+  .page { box-shadow:none; border-radius:0; max-width:100%; padding:12px; }
+  .no-print { display:none !important; }
+  /* Les valeurs des inputs s'affichent grâce au content trick */
+  input { border:none !important; border-bottom:1px solid #999 !important; }
+  table { page-break-inside:avoid; }
+}
+</style>
+</head>
+<body>
+<div class="page" id="printZone">
+
+  <h1>TIME SHEET</h1>
+
+  <div class="logo-wrap">
+    <div class="logo-les">LES ALIMENTS</div>
+    <div class="logo-matrix">MATRIX</div>
+    <div class="logo-foods">FOODS</div>
+  </div>
+
+  <div class="info-row">
+    <label>WEEK:</label>
+    <input type="text" id="week" placeholder="ex: 23 juin 2026">
+  </div>
+  <div class="info-row">
+    <label>NAME:</label>
+    <input type="text" id="name" placeholder="Nom complet">
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:34%"></th>
+        <th style="width:22%">IN</th>
+        <th style="width:22%">OUT</th>
+        <th style="width:22%">TOTAL</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <div class="totals-row">
+    <div class="total-block">
+      <label>TOTAL HOURS:</label>
+      <div class="val" id="totalHours">—</div>
+    </div>
+    <div class="total-block">
+      <label>BANKED HOURS:</label>
+      <input type="text" id="bankedHours">
+    </div>
+  </div>
+
+  <div class="sig-header">
+    <label>SIGNATURE:</label>
+    <button class="btn-clear no-print" onclick="clearSig()">× Effacer</button>
+  </div>
+  <div class="sig-box">
+    <canvas id="sigCanvas"></canvas>
+    <div class="sig-hint" id="sigHint">Signez ici avec le doigt</div>
+  </div>
+
+  <div class="btn-row no-print">
+    <button class="btn btn-print" onclick="imprimer()">📄 Imprimer / Sauvegarder PDF</button>
+    <button class="btn btn-reset" onclick="resetForm()">↺ Reset</button>
+  </div>
+
+  <div class="instructions no-print">
+    <strong>💡 Sauvegarder en PDF sur iPhone :</strong><br>
+    1. Appuyez sur <strong>Imprimer / Sauvegarder PDF</strong><br>
+    2. Dans l'aperçu, <strong>pincez avec 2 doigts</strong> pour agrandir<br>
+    3. Appuyez sur <strong>⬆ Partage</strong> → <strong>Enregistrer dans Fichiers</strong>
+  </div>
+
+</div>
+
+<script>
+const DAYS = [
+  {en:'MONDAY',   weekend:false},
+  {en:'TUESDAY',  weekend:false},
+  {en:'WEDNESDAY',weekend:false},
+  {en:'THURSDAY', weekend:false},
+  {en:'FRIDAY',   weekend:false},
+  {en:'SATURDAY', weekend:true},
+  {en:'SUNDAY',   weekend:true},
+];
+
+function buildTable() {
+  const tbody = document.getElementById('tbody');
+  DAYS.forEach((d, i) => {
+    const tr = document.createElement('tr');
+    if (d.weekend) tr.className = 'weekend';
+    tr.innerHTML = `
+      <td class="day">${d.en}</td>
+      <td><input type="text" id="in${i}"  placeholder="${d.weekend?'':'800'}"  oninput="calcRow(${i})"></td>
+      <td><input type="text" id="out${i}" placeholder="${d.weekend?'':'1630'}" oninput="calcRow(${i})"></td>
+      <td class="total-cell" id="tot${i}">—</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function parseTime(val) {
+  val = (val||'').trim().replace(':','').replace('h','');
+  if (!val || isNaN(val)) return null;
+  const n = parseInt(val);
+  const h = Math.floor(n/100), m = n%100;
+  if (m>59||h>23) return null;
+  return h*60+m;
+}
+function minToStr(min) {
+  return `${Math.floor(min/60)}h${String(min%60).padStart(2,'0')}`;
+}
+function calcRow(i) {
+  const a = parseTime(document.getElementById(`in${i}`).value);
+  const b = parseTime(document.getElementById(`out${i}`).value);
+  const cell = document.getElementById(`tot${i}`);
+  if (a!==null && b!==null) { let d=b-a; if(d<0)d+=1440; cell.textContent=minToStr(d); }
+  else cell.textContent = '—';
+  calcTotals();
+}
+function calcTotals() {
+  let total = 0;
+  DAYS.forEach((_,i) => {
+    const a=parseTime(document.getElementById(`in${i}`).value);
+    const b=parseTime(document.getElementById(`out${i}`).value);
+    if(a!==null&&b!==null){let d=b-a;if(d<0)d+=1440;total+=d;}
+  });
+  document.getElementById('totalHours').textContent = total>0 ? minToStr(total) : '—';
+}
+
+// ── CANVAS ──────────────────────────────────────────────
+function initCanvas() {
+  const canvas = document.getElementById('sigCanvas');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  function setSize() {
+    const pr = window.devicePixelRatio||1;
+    canvas.width  = canvas.offsetWidth  * pr;
+    canvas.height = canvas.offsetHeight * pr;
+    ctx.scale(pr,pr);
+    ctx.strokeStyle='#111'; ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round';
+  }
+  setSize();
+  function pos(e){const r=canvas.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:s.clientX-r.left,y:s.clientY-r.top};}
+  function down(e){e.preventDefault();drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);}
+  function move(e){e.preventDefault();if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();document.getElementById('sigHint').style.opacity='0';}
+  function up(e){e.preventDefault();drawing=false;}
+  canvas.addEventListener('mousedown',down);
+  canvas.addEventListener('mousemove',move);
+  canvas.addEventListener('mouseup',up);
+  canvas.addEventListener('touchstart',down,{passive:false});
+  canvas.addEventListener('touchmove', move,{passive:false});
+  canvas.addEventListener('touchend',  up,  {passive:false});
+}
+function clearSig(){
+  const c=document.getElementById('sigCanvas');
+  c.getContext('2d').clearRect(0,0,c.width,c.height);
+  document.getElementById('sigHint').style.opacity='1';
+}
+
+// ── IMPRESSION ──────────────────────────────────────────
+function imprimer() {
+  window.print();
+}
+
+// ── RESET ───────────────────────────────────────────────
+function resetForm(){
+  if(!confirm('Effacer tout le formulaire?')) return;
+  ['week','name','bankedHours'].forEach(id=>document.getElementById(id).value='');
+  DAYS.forEach((_,i)=>{
+    document.getElementById(`in${i}`).value='';
+    document.getElementById(`out${i}`).value='';
+    document.getElementById(`tot${i}`).textContent='—';
+  });
+  document.getElementById('totalHours').textContent='—';
+  clearSig();
+}
+
+buildTable();
+initCanvas();
+</script>
+</body>
+</html>
