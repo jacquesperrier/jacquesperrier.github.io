@@ -294,7 +294,7 @@
   var btnAudio = document.getElementById('btnAudio');
   var audioEl = null;
   var enLecture = false;
-  var audioCache = {}; // Cache des URLs audio pré-chargées
+  var audioCache = {};
   var preloadDone = false;
 
   function stopAudio() {
@@ -333,7 +333,6 @@
           audioCache[i] = URL.createObjectURL(blob);
         }
       } catch(e) {}
-      // Mettre à jour le bouton avec la progression
       var pct = Math.round(((i+1)/n)*100);
       btnAudio.innerHTML = '… ' + pct + '%';
     }
@@ -352,7 +351,7 @@
       stopAudio();
       setTimeout(function() {
         if (cur < n-1) {
-          show(cur+1);
+          show(cur+1, true);  // true = transition auto, ne coupe pas l'enchaînement
           setTimeout(function() { jouerSlide(cur); }, 300);
         }
       }, 1500);
@@ -373,10 +372,12 @@
     jouerSlide(cur);
   };
 
-  function show(i) {
+  // keepAudio = true lors de l'enchaînement auto (ne stoppe pas la lecture)
+  // keepAudio = false (défaut) lors de navigation manuelle (stoppe la lecture)
+  function show(i, keepAudio) {
     if(i < 0) i = 0;
     if(i > n-1) i = n-1;
-    stopAudio();
+    if(!keepAudio) stopAudio();
     slides[cur].className = 'slide';
     cur = i;
     slides[cur].className = 'slide active';
@@ -409,7 +410,6 @@
   }, false);
 
   show(0);
-  // Lancer le préchargement de tous les audios
   preloadAll();
 })();
 </script>
