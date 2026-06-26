@@ -296,7 +296,7 @@
   var enLecture = false;
 
   function stopAudio() {
-    if (audioEl) { audioEl.pause(); audioEl = null; }
+    if (audioEl) { audioEl.onended = null; audioEl.onerror = null; audioEl.pause(); audioEl = null; }
     enLecture = false;
     btnAudio.classList.remove('actif');
     btnAudio.innerHTML = '▶ Écouter';
