@@ -142,7 +142,6 @@
       script:"Trois niveaux de protection, selon vos besoins : Essentiel pour l'audit ponctuel, Complet pour la protection continue avec les six modules, et Entreprise pour les multi-établissements. La prochaine étape est simple : une visite d'évaluation gratuite. Je vous laisse mes coordonnées — quand est-ce qu'on planifie ça?" }
   ];
 
-  var n = slides.length, cur = 0;
   var elCur = document.getElementById('cur'),
       elTot = document.getElementById('tot'),
       elEb = document.getElementById('eb'),
@@ -157,49 +156,66 @@
       lireLabel = document.getElementById('lire-label');
   elTot.textContent = n;
 
-  // ── LECTURE VOCALE ──
-  var synth = window.speechSynthesis;
+  // ── ELEVENLABS TTS ──
+  var XI_KEY = 'sk_91c950bd8e1222e4318fa77d6974a0b6af52c0946297928d';
+  var XI_VOICE = 'onwK4e9ZLuTAKqWW03F9'; // Daniel — voix française naturelle
+  var audioEl = null;
   var enLecture = false;
 
   function stopLecture() {
-    if (synth) synth.cancel();
+    if (audioEl) { audioEl.pause(); audioEl = null; }
     enLecture = false;
     btnLire.classList.remove('actif');
     lireIcone.textContent = '▶';
     lireLabel.textContent = 'Lire';
   }
 
-  window.toggleLecture = function() {
-    if (!synth) { alert("Lecture vocale non supportée sur ce navigateur."); return; }
-    if (enLecture) {
-      stopLecture();
-    } else {
-      var texte = elScript.textContent;
-      var utt = new SpeechSynthesisUtterance(texte);
-      utt.lang = 'fr-CA';
-      utt.rate = 0.92;
-      utt.pitch = 1;
+  window.toggleLecture = async function() {
+    if (enLecture) { stopLecture(); return; }
 
-      // Cibler Amélie fr-CA (voix visible par Safari iOS)
-      var voix = synth.getVoices();
-      var voixFR = voix.find(function(v){ return v.name === 'Amélie'; })
-                || voix.find(function(v){ return v.lang === 'fr-CA'; })
-                || voix.find(function(v){ return v.name === 'Thomas'; })
-                || voix.find(function(v){ return v.lang.startsWith('fr'); });
-      if (voixFR) utt.voice = voixFR;
+    var texte = elScript.textContent.trim();
+    if (!texte) return;
 
-      utt.onend = function() { stopLecture(); };
-      utt.onerror = function() { stopLecture(); };
+    btnLire.classList.add('actif');
+    lireIcone.textContent = '…';
+    lireLabel.textContent = 'Chargement';
+    enLecture = true;
 
-      synth.speak(utt);
-      enLecture = true;
-      btnLire.classList.add('actif');
+    try {
+      var resp = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' + XI_VOICE, {
+        method: 'POST',
+        headers: {
+          'xi-api-key': XI_KEY,
+          'Content-Type': 'application/json',
+          'Accept': 'audio/mpeg'
+        },
+        body: JSON.stringify({
+          text: texte,
+          model_id: 'eleven_multilingual_v2',
+          voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+        })
+      });
+
+      if (!resp.ok) { throw new Error('Erreur API ' + resp.status); }
+
+      var blob = await resp.blob();
+      var url = URL.createObjectURL(blob);
+      audioEl = new Audio(url);
+      audioEl.onended = stopLecture;
+      audioEl.onerror = stopLecture;
+      audioEl.play();
+
       lireIcone.textContent = '■';
       lireLabel.textContent = 'Arrêter';
+
+    } catch(e) {
+      stopLecture();
+      alert('Erreur lecture : ' + e.message);
     }
   };
 
-  // Arrêter la lecture quand on change de slide
+  var n = slides.length, cur = 0;
+
   function strip(html){ return html.replace(/<[^>]+>/g,''); }
   function show(i){
     if(i<0) i=0; if(i>n-1) i=n-1; cur=i;
@@ -213,26 +229,6 @@
     elNext.textContent = (cur < n-1) ? strip(slides[cur+1].title) : "— Fin de la présentation —";
     document.querySelector('.scriptbox').scrollTop = 0;
   }
-
-  // Charger les voix (iOS les charge en async)
-  function chargerVoix() { if (synth) synth.getVoices(); }
-  chargerVoix();
-  if (synth && synth.onvoiceschanged !== undefined) { synth.onvoiceschanged = chargerVoix; }
-  setTimeout(chargerVoix, 500);
-  setTimeout(chargerVoix, 1500);
-
-  // Appui long sur ▶ Lire = diagnostic des voix FR disponibles
-  var holdTimer = null;
-  btnLire.addEventListener('touchstart', function() {
-    holdTimer = setTimeout(function() {
-      var voix = synth.getVoices();
-      var noms = voix.filter(function(v){ return v.lang.startsWith('fr'); })
-                     .map(function(v){ return v.name + ' [' + v.lang + ']'; });
-      alert('Voix FR trouvées :\n' + (noms.length ? noms.join('\n') : 'Aucune'));
-    }, 1500);
-  });
-  btnLire.addEventListener('touchend', function() { clearTimeout(holdTimer); });
-  btnLire.addEventListener('touchmove', function() { clearTimeout(holdTimer); });
 
   var sec=0, timer=null;
   function pad(x){ return x<10 ? '0'+x : ''+x; }
