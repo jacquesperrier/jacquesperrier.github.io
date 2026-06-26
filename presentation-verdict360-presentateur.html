@@ -29,7 +29,6 @@
     -webkit-text-fill-color:transparent; }
   .chrono.run { -webkit-text-fill-color:var(--conf); color:var(--conf); }
 
-  /* Aperçu slide actuelle */
   .now { background:radial-gradient(ellipse at 50% 0%, #181408 0%, var(--noir2) 70%);
     border:1px solid rgba(184,149,74,0.3); border-radius:14px;
     padding:16px 18px; margin-top:12px; text-align:center; flex-shrink:0; }
@@ -41,20 +40,32 @@
   .now .tgt { font-size:11px; color:var(--gris); letter-spacing:1px; margin-top:6px; }
   .now .tgt b { color:var(--orhi); }
 
-  /* Script */
   .scriptbox { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
     margin-top:12px; padding:4px 2px; }
-  .scriptbox h4 { font-size:10px; letter-spacing:3px; text-transform:uppercase;
-    color:var(--or); margin-bottom:10px; }
-  .scriptbox p { font-size:clamp(17px,3.4vw,22px); line-height:1.6; color:var(--blanc); }
+  .scriptbox-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .scriptbox h4 { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--or); }
+  .scriptbox p { font-size:clamp(17px,3.4vw,22px); line-height:1.6; color:#F5F1E6 !important; opacity:1 !important; }
 
-  /* Prochaine slide */
+  /* Bouton lecture vocale */
+  .btn-lire {
+    display:flex; align-items:center; gap:6px;
+    background:transparent; border:1px solid var(--or);
+    border-radius:20px; padding:5px 14px;
+    color:var(--orhi); font-size:12px; font-weight:700;
+    letter-spacing:0.08em; text-transform:uppercase;
+    cursor:pointer; font-family:-apple-system,Arial,sans-serif;
+    touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+    transition:background 0.15s;
+    flex-shrink:0;
+  }
+  .btn-lire.actif { background:var(--or); color:var(--noir); }
+  .btn-lire .icone { font-size:14px; }
+
   .next { flex-shrink:0; margin-top:8px; padding:10px 14px;
     background:var(--noir3); border-radius:10px; border:1px solid rgba(184,149,74,0.18); }
   .next span { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--or); }
   .next div { font-size:13px; color:var(--gris); margin-top:3px; }
 
-  /* Commandes */
   .ctrl { flex-shrink:0; display:flex; gap:10px; align-items:stretch;
     padding:12px 0 calc(12px + env(safe-area-inset-bottom)); }
   .ctrl button { background:var(--noir2); color:var(--orhi);
@@ -81,7 +92,13 @@
   </div>
 
   <div class="scriptbox">
-    <h4>Ce que tu dois dire</h4>
+    <div class="scriptbox-header">
+      <h4>Ce que tu dois dire</h4>
+      <button class="btn-lire" id="btn-lire" onclick="toggleLecture()">
+        <span class="icone" id="lire-icone">▶</span>
+        <span id="lire-label">Lire</span>
+      </button>
+    </div>
     <p id="script"></p>
   </div>
 
@@ -100,12 +117,11 @@
 
 <script>
 (function(){
-  // Contenu synchronisé avec la présentation client
   var slides = [
     { eb:"Présentation officielle", title:'Verdict <span class="g">360</span> AI', tgt:"0:30",
       script:"Bonjour, je m'appelle Jacques Perrier. Aujourd'hui je vous présente Verdict 360 AI : la première plateforme qui combine l'intelligence artificielle et l'expertise humaine d'un auditeur pour protéger votre établissement face au MAPAQ. Six modules, un seul écosystème. Dix minutes, et vous comprendrez exactement comment ça protège votre entreprise." },
     { eb:"Votre expert", title:"Jacques Perrier", tgt:"1:00",
-      script:"J'ai passé plus de vingt ans dans le milieu alimentaire : d'abord comme chef-propriétaire, ensuite comme auditeur en hygiène et salubrité. Je connais les deux côtés du comptoir : la pression des opérations ET les exigences des inspecteurs. C'est exactement cette double expérience que Verdict 360 AI met dans votre poche. [Mention verbale possible ici de l'expérience grands comptes — jamais à l'écrit.]" },
+      script:"J'ai passé plus de vingt ans dans le milieu alimentaire : d'abord comme chef-propriétaire, ensuite comme auditeur en hygiène et salubrité. Je connais les deux côtés du comptoir : la pression des opérations ET les exigences des inspecteurs. C'est exactement cette double expérience que Verdict 360 AI met dans votre poche." },
     { eb:"Le constat", title:"Une inspection peut tout changer", tgt:"1:00",
       script:"Le problème est simple : la majorité des établissements gèrent leur conformité avec du papier, de la mémoire et de la bonne volonté. Résultat : quand l'inspecteur du MAPAQ arrive, c'est lui qui découvre vos problèmes avant vous. Et une condamnation, c'est public — vos clients la voient en ligne. La question n'est pas SI vous serez inspecté, mais QUAND." },
     { eb:"La solution", title:'Voyez tout. <span class="g">Avant le MAPAQ.</span>', tgt:"1:00",
@@ -123,7 +139,7 @@
     { eb:"Le retour sur investissement", title:'Ce que ça vous <span class="g">rapporte</span>', tgt:"1:00",
       script:"Parlons chiffres. Une condamnation publique du MAPAQ, c'est des clients qui ne reviennent pas — ça peut coûter des milliers de dollars. Verdict 360 AI coûte moins cher qu'une seule journée de fermeture. Et en bonus : environ quinze heures de paperasse éliminées par mois. La conformité passe de fardeau à avantage concurrentiel." },
     { eb:"Passez à l'action", title:"Trois niveaux de protection", tgt:"0:45",
-      script:"Trois niveaux de protection, selon vos besoins : Essentiel pour l'audit ponctuel, Complet pour la protection continue avec les six modules, et Entreprise pour les multi-établissements. [Tarifs présentés verbalement selon l'établissement.] La prochaine étape est simple : une visite d'évaluation gratuite. Je vous laisse mes coordonnées — quand est-ce qu'on planifie ça?" }
+      script:"Trois niveaux de protection, selon vos besoins : Essentiel pour l'audit ponctuel, Complet pour la protection continue avec les six modules, et Entreprise pour les multi-établissements. La prochaine étape est simple : une visite d'évaluation gratuite. Je vous laisse mes coordonnées — quand est-ce qu'on planifie ça?" }
   ];
 
   var n = slides.length, cur = 0;
@@ -135,12 +151,59 @@
       elScript = document.getElementById('script'),
       elNext = document.getElementById('next'),
       elChrono = document.getElementById('chrono'),
-      btnClock = document.getElementById('clock');
+      btnClock = document.getElementById('clock'),
+      btnLire = document.getElementById('btn-lire'),
+      lireIcone = document.getElementById('lire-icone'),
+      lireLabel = document.getElementById('lire-label');
   elTot.textContent = n;
 
+  // ── LECTURE VOCALE ──
+  var synth = window.speechSynthesis;
+  var enLecture = false;
+
+  function stopLecture() {
+    if (synth) synth.cancel();
+    enLecture = false;
+    btnLire.classList.remove('actif');
+    lireIcone.textContent = '▶';
+    lireLabel.textContent = 'Lire';
+  }
+
+  window.toggleLecture = function() {
+    if (!synth) { alert("Lecture vocale non supportée sur ce navigateur."); return; }
+    if (enLecture) {
+      stopLecture();
+    } else {
+      var texte = elScript.textContent;
+      var utt = new SpeechSynthesisUtterance(texte);
+      utt.lang = 'fr-CA';
+      utt.rate = 0.92;
+      utt.pitch = 1;
+
+      // Cibler Nicolas qualité améliorée, sinon meilleure voix FR dispo
+      var voix = synth.getVoices();
+      var voixFR = voix.find(function(v){ return v.name === 'Nicolas (qualité améliorée)'; })
+                || voix.find(function(v){ return v.name === 'Nicolas'; })
+                || voix.find(function(v){ return v.lang === 'fr-CA'; })
+                || voix.find(function(v){ return v.lang.startsWith('fr'); });
+      if (voixFR) utt.voice = voixFR;
+
+      utt.onend = function() { stopLecture(); };
+      utt.onerror = function() { stopLecture(); };
+
+      synth.speak(utt);
+      enLecture = true;
+      btnLire.classList.add('actif');
+      lireIcone.textContent = '■';
+      lireLabel.textContent = 'Arrêter';
+    }
+  };
+
+  // Arrêter la lecture quand on change de slide
   function strip(html){ return html.replace(/<[^>]+>/g,''); }
   function show(i){
     if(i<0) i=0; if(i>n-1) i=n-1; cur=i;
+    stopLecture();
     var s = slides[cur];
     elCur.textContent = cur+1;
     elEb.textContent = s.eb;
@@ -151,9 +214,21 @@
     document.querySelector('.scriptbox').scrollTop = 0;
   }
 
+  // Charger les voix (iOS les charge en async)
+  if (synth && synth.onvoiceschanged !== undefined) {
+    synth.onvoiceschanged = function() { synth.getVoices(); };
+  }
+
   var sec=0, timer=null;
   function pad(x){ return x<10 ? '0'+x : ''+x; }
   function tick(){ sec++; elChrono.textContent = Math.floor(sec/60)+':'+pad(sec%60); }
+  btnClock.addEventListener('touchend', function(e){
+    e.preventDefault();
+    if(timer){ clearInterval(timer); timer=null; elChrono.className='chrono';
+      btnClock.innerHTML='&#9201; Reprendre le chrono'; }
+    else { timer=setInterval(tick,1000); elChrono.className='chrono run';
+      btnClock.innerHTML='&#10073;&#10073; Pause chrono'; }
+  });
   btnClock.onclick = function(){
     if(timer){ clearInterval(timer); timer=null; elChrono.className='chrono';
       btnClock.innerHTML='&#9201; Reprendre le chrono'; }
@@ -161,8 +236,11 @@
       btnClock.innerHTML='&#10073;&#10073; Pause chrono'; }
   };
 
+  document.getElementById('prev').addEventListener('touchend', function(e){ e.preventDefault(); show(cur-1); });
+  document.getElementById('next-btn').addEventListener('touchend', function(e){ e.preventDefault(); show(cur+1); });
   document.getElementById('prev').onclick = function(){ show(cur-1); };
   document.getElementById('next-btn').onclick = function(){ show(cur+1); };
+
   document.onkeydown = function(e){
     if(e.keyCode===39||e.keyCode===32) show(cur+1);
     if(e.keyCode===37) show(cur-1);
