@@ -332,8 +332,19 @@
       var blob = await resp.blob();
       var url = URL.createObjectURL(blob);
       audioEl = new Audio(url);
-      audioEl.onended = stopAudio;
+      audioEl.onended = function() {
+        stopAudio();
+        // Avance automatique à la slide suivante après 1.5 secondes
+        setTimeout(function() {
+          if (cur < n-1) {
+            show(cur+1);
+            // Lance automatiquement la narration de la slide suivante
+            setTimeout(function() { toggleAudio(); }, 500);
+          }
+        }, 1500);
+      };
       audioEl.onerror = stopAudio;
+      audioEl.playbackRate = 1.15;
       audioEl.play();
       loadingBar.classList.remove('show');
       btnAudio.innerHTML = '■ Arrêter';
