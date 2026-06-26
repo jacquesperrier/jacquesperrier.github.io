@@ -1,1 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Script d'appel — ACADÉMIE | Verdict 360 AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
 
+  :root {
+    --noir: #0A0A0A;
+    --creme: #F5F0E8;
+    --or: #B8954A;
+    --or-ombre: #9C7F3D;
+    --or-reflet: #D4C28E;
+    --or-highlight: #F0E4C0;
+    --or-gradient: linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);
+    --vert: #2E7D32;
+    --rouge: #C62828;
+    --gris: #3A3A3A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--creme);
+    color: var(--noir);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px 20px 40px;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--or);
+    padding-bottom: 14px;
+    margin-bottom: 20px;
+  }
+  .logo-block .brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.04em;
+  }
+  .logo-block .subtitle {
+    font-size: 11px;
+    color: var(--or-ombre);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .header-meta { text-align: right; font-size: 11px; color: var(--gris); line-height: 1.8; }
+  .header-meta strong { color: var(--or-ombre); }
+
+  /* TITRE */
+  .script-title { text-align: center; margin-bottom: 22px; }
+  .script-title h1 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--noir); letter-spacing: 0.02em; }
+  .script-title .badge {
+    display: inline-block; margin-top: 6px; padding: 3px 14px;
+    background: var(--or-gradient); color: var(--noir);
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 2px;
+  }
+
+  /* BLOCS */
+  .bloc { background: #fff; border-left: 3px solid var(--or); border-radius: 0 4px 4px 0; padding: 14px 16px; margin-bottom: 14px; }
+  .bloc.vert  { border-left-color: var(--vert); }
+  .bloc.or    { border-left-color: var(--or); }
+  .bloc-label { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .bloc.or   .bloc-label { color: var(--or-ombre); }
+  .bloc.vert .bloc-label { color: var(--vert); }
+  .temps { margin-left: auto; font-size: 10px; font-weight: 600; color: var(--or-ombre); background: var(--or-highlight); padding: 1px 8px; border-radius: 10px; }
+  .script-text { font-size: 14px; color: var(--noir); line-height: 1.7; }
+  .script-text em { font-style: italic; color: var(--gris); font-size: 13px; }
+
+  /* DIVIDER */
+  .section-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0 12px; }
+  .section-divider span { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-ombre); white-space: nowrap; }
+  .section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--or-reflet); }
+
+  /* OBJECTIONS — boutons vrais */
+  .objections-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+
+  button.objection-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    border: 1.5px solid var(--or-reflet);
+    border-radius: 4px;
+    padding: 12px 14px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  button.objection-btn.cochee {
+    border-color: var(--rouge);
+    background: #fff5f5;
+  }
+  .objection-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .objection-q { font-size: 11px; font-weight: 700; color: var(--rouge); text-transform: uppercase; letter-spacing: 0.05em; }
+  .check-mark { font-size: 14px; color: var(--rouge); opacity: 0; transition: opacity 0.15s; }
+  button.objection-btn.cochee .check-mark { opacity: 1; }
+  .objection-r { font-size: 13px; color: var(--noir); line-height: 1.6; font-style: italic; }
+
+  /* NOTES */
+  .notes-section { background: #fff; border: 1px solid var(--or-reflet); border-radius: 4px; padding: 14px 16px; margin-bottom: 14px; }
+  .notes-section-title { font-size: 9px; font-weight: 700; color: var(--or-ombre); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--or-highlight); }
+  .notes-row { display: grid; gap: 10px; margin-bottom: 10px; }
+  .notes-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .notes-row.cols-2 { grid-template-columns: 1fr 1fr; }
+  .notes-row.cols-1 { grid-template-columns: 1fr; }
+  .note-field { display: flex; flex-direction: column; gap: 4px; }
+  .note-label { font-size: 9px; font-weight: 700; color: var(--or-ombre); text-transform: uppercase; letter-spacing: 0.08em; }
+  .note-input {
+    border: none; border-bottom: 1.5px solid var(--or-reflet);
+    background: transparent; font-family: 'Inter', sans-serif;
+    font-size: 13px; color: var(--noir); padding: 4px 2px; width: 100%;
+    outline: none; -webkit-appearance: none; border-radius: 0;
+  }
+  .note-input:focus { border-bottom-color: var(--or); }
+  .note-input::placeholder { color: #bbb; font-style: italic; font-size: 12px; }
+  textarea.note-input { resize: none; height: 52px; border: 1.5px solid var(--or-reflet); border-radius: 3px; padding: 6px 8px; }
+  textarea.note-input:focus { border-color: var(--or); }
+
+  /* STATUT — vrais boutons */
+  .statut-section { background: #fff; border: 1px solid var(--or-reflet); border-radius: 4px; padding: 12px 16px; margin-bottom: 14px; }
+  .statut-title { font-size: 9px; font-weight: 700; color: var(--or-ombre); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .statut-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  button.statut-pill {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 600; padding: 8px 16px;
+    border-radius: 20px; border: 1.5px solid; cursor: pointer;
+    background: transparent; font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background 0.15s, color 0.15s;
+  }
+  button.statut-pill.chaud { color: #C62828; border-color: #C62828; }
+  button.statut-pill.tiede { color: #E65100; border-color: #E65100; }
+  button.statut-pill.froid { color: #546E7A; border-color: #546E7A; }
+  button.statut-pill.chaud.actif { background: #C62828; color: #fff; }
+  button.statut-pill.tiede.actif { background: #E65100; color: #fff; }
+  button.statut-pill.froid.actif { background: #546E7A; color: #fff; }
+
+  /* PRINT BUTTON */
+  .print-btn { display: flex; justify-content: center; margin-bottom: 20px; }
+  .print-btn button {
+    background: var(--or-gradient); border: none; padding: 12px 32px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--noir);
+    border-radius: 3px; cursor: pointer; touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--or-reflet); padding-top: 10px; display: flex; justify-content: space-between; font-size: 10px; color: var(--gris); margin-top: 10px; flex-wrap: wrap; gap: 4px; }
+
+  /* PRINT */
+  @media print {
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { padding: 10px; max-width: 100%; }
+    .no-print { display: none !important; }
+    .note-input { border-bottom: 1px solid #ccc !important; }
+    textarea.note-input { border: 1px solid #ccc !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="print-btn no-print">
+  <button onclick="window.print()">🖨 Imprimer / PDF</button>
+</div>
+
+<header>
+  <div class="logo-block">
+    <div class="brand">VERDICT 360 AI</div>
+    <div class="subtitle">Auditeur en hygiène et salubrité alimentaire · Expert MAPAQ &amp; HACCP</div>
+  </div>
+  <div class="header-meta">
+    <strong>Jacques Perrier</strong><br>
+    +1 (873) 822-1455<br>
+    info@verdict360ai.com
+  </div>
+</header>
+
+<div class="script-title">
+  <h1>Script d'appel — Restaurateurs</h1>
+  <div class="badge">Module ACADÉMIE · Formation emplois &amp; gestes</div>
+</div>
+
+<div class="section-divider"><span>Étape 1 · Ouverture</span></div>
+<div class="bloc or">
+  <div class="bloc-label">📞 Ouverture <span class="temps">~10 sec</span></div>
+  <div class="script-text">
+    <em>« Bonjour, je cherche le/la responsable ou le propriétaire — c'est Jacques Perrier de Verdict 360 AI à Gatineau. »</em><br><br>
+    <em>Si on te demande c'est à quel sujet :</em><br>
+    <em>« Je contacte les restaurateurs de la région pour une formation hygiène et gestes sécuritaires pour les employés — c'est en ligne, bilingue, à compléter à leur rythme. »</em>
+  </div>
+</div>
+
+<div class="section-divider"><span>Étape 2 · Accroche</span></div>
+<div class="bloc or">
+  <div class="bloc-label">🎯 Accroche <span class="temps">~20 sec</span></div>
+  <div class="script-text">
+    <em>« On sait tous que former un nouvel employé sur les normes MAPAQ, c'est souvent fait vite fait entre deux services. Avec notre module ACADÉMIE, vos employés complètent la formation sur téléphone ou tablette, en 20 à 30 minutes, et vous recevez une attestation automatique pour chaque employé formé. »</em>
+  </div>
+</div>
+
+<div class="section-divider"><span>Étape 3 · Valeur MAPAQ</span></div>
+<div class="bloc vert">
+  <div class="bloc-label">✅ Pont réglementaire <span class="temps">~10 sec</span></div>
+  <div class="script-text">
+    <em>« C'est documenté, c'est traçable — si MAPAQ passe, vous avez la preuve de formation en main. »</em>
+  </div>
+</div>
+
+<div class="section-divider"><span>Étape 4 · Question d'engagement</span></div>
+<div class="bloc or">
+  <div class="bloc-label">💬 Engagement <span class="temps">Écouter</span></div>
+  <div class="script-text">
+    <em>« Est-ce que c'est quelque chose qui pourrait vous intéresser pour votre équipe? »</em><br><br>
+    ⟶ Laisser parler. Ne pas couper. Prendre note.
+  </div>
+</div>
+
+<div class="section-divider"><span>Objections — Appuyer pour cocher</span></div>
+<div class="objections-grid">
+  <button class="objection-btn" id="obj1">
+    <div class="objection-header">
+      <div class="objection-q">« C'est quoi le prix? »</div>
+      <span class="check-mark">✓</span>
+    </div>
+    <div class="objection-r">« On a différentes formules selon le nombre d'employés — je vous envoie ça par courriel. C'est quoi votre adresse? »</div>
+  </button>
+  <button class="objection-btn" id="obj2">
+    <div class="objection-header">
+      <div class="objection-q">« On a pas le temps »</div>
+      <span class="check-mark">✓</span>
+    </div>
+    <div class="objection-r">« C'est justement pour ça que c'est en ligne — c'est vos employés qui la font, pas vous. Zéro temps à animer. »</div>
+  </button>
+  <button class="objection-btn" id="obj3">
+    <div class="objection-header">
+      <div class="objection-q">« On a déjà ça »</div>
+      <span class="check-mark">✓</span>
+    </div>
+    <div class="objection-r">« Parfait — est-ce que vous avez les attestations documentées par employé? C'est ce que ACADÉMIE génère automatiquement. »</div>
+  </button>
+  <button class="objection-btn" id="obj4">
+    <div class="objection-header">
+      <div class="objection-q">« Rappelez plus tard »</div>
+      <span class="check-mark">✓</span>
+    </div>
+    <div class="objection-r">« Pas de problème — quel serait le meilleur moment? Matin ou après-midi? »</div>
+  </button>
+</div>
+
+<div class="section-divider"><span>Étape 5 · Clôture</span></div>
+<div class="bloc vert">
+  <div class="bloc-label">🏁 CTA — Choisir une option</div>
+  <div class="script-text">
+    <strong>Option A — Courriel :</strong><br>
+    <em>« Je vous envoie un lien de démonstration gratuite — vous pouvez la voir en 5 minutes. C'est quoi votre courriel? »</em><br><br>
+    <strong>Option B — Démo :</strong><br>
+    <em>« Je peux passer faire une démonstration rapide sur tablette, 10 minutes chez vous. Quand seriez-vous disponible cette semaine? »</em>
+  </div>
+</div>
+
+<div class="section-divider"><span>Notes après l'appel</span></div>
+<div class="notes-section">
+  <div class="notes-section-title">📋 Fiche prospect</div>
+  <div class="notes-row cols-3">
+    <div class="note-field">
+      <div class="note-label">Établissement</div>
+      <input class="note-input" type="text" placeholder="Nom du resto…" />
+    </div>
+    <div class="note-field">
+      <div class="note-label">Contact (nom)</div>
+      <input class="note-input" type="text" placeholder="Prénom Nom…" />
+    </div>
+    <div class="note-field">
+      <div class="note-label">Téléphone</div>
+      <input class="note-input" type="tel" placeholder="(819) 000-0000" />
+    </div>
+  </div>
+  <div class="notes-row cols-3">
+    <div class="note-field">
+      <div class="note-label">Courriel capté</div>
+      <input class="note-input" type="email" placeholder="prenom@resto.ca" />
+    </div>
+    <div class="note-field">
+      <div class="note-label">Date de rappel</div>
+      <input class="note-input" type="text" placeholder="ex. lundi 30 juin, 10h" />
+    </div>
+    <div class="note-field">
+      <div class="note-label">Démo confirmée?</div>
+      <input class="note-input" type="text" placeholder="Oui / Non / À confirmer" />
+    </div>
+  </div>
+  <div class="notes-row cols-2">
+    <div class="note-field">
+      <div class="note-label">Objection principale</div>
+      <input class="note-input" type="text" placeholder="Prix / Temps / Déjà ça / Rappeler…" />
+    </div>
+    <div class="note-field">
+      <div class="note-label">Nb d'employés</div>
+      <input class="note-input" type="text" placeholder="ex. ~8 employés…" />
+    </div>
+  </div>
+  <div class="notes-row cols-1">
+    <div class="note-field">
+      <div class="note-label">Notes libres</div>
+      <textarea class="note-input" placeholder="Intérêt, contexte, ce qu'il a dit, prochaine action…"></textarea>
+    </div>
+  </div>
+</div>
+
+<div class="statut-section">
+  <div class="statut-title">Statut du prospect — Appuyer pour sélectionner</div>
+  <div class="statut-row">
+    <button class="statut-pill chaud" id="s-chaud">🔴 Chaud — relancer 24h</button>
+    <button class="statut-pill tiede" id="s-tiede">🟡 Tiède — suivi J+3</button>
+    <button class="statut-pill froid" id="s-froid">⚫ Froid — pause 30 jours</button>
+  </div>
+</div>
+
+<footer>
+  <span>Verdict 360 AI · verdict360ai.com · info@verdict360ai.com · +1 (873) 822-1455</span>
+  <span>Module ACADÉMIE · Formation MAPAQ</span>
+</footer>
+
+<script>
+  // Objections
+  document.querySelectorAll('.objection-btn').forEach(function(btn) {
+    btn.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      this.classList.toggle('cochee');
+    });
+    btn.addEventListener('click', function() {
+      this.classList.toggle('cochee');
+    });
+  });
+
+  // Statut
+  document.querySelectorAll('.statut-pill').forEach(function(btn) {
+    btn.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      document.querySelectorAll('.statut-pill').forEach(function(p) { p.classList.remove('actif'); });
+      this.classList.add('actif');
+    });
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.statut-pill').forEach(function(p) { p.classList.remove('actif'); });
+      this.classList.add('actif');
+    });
+  });
+</script>
+
+</body>
+</html>
