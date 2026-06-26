@@ -180,11 +180,11 @@
       utt.rate = 0.92;
       utt.pitch = 1;
 
-      // Cibler Nicolas qualité améliorée, sinon meilleure voix FR dispo
+      // Cibler Amélie fr-CA (voix visible par Safari iOS)
       var voix = synth.getVoices();
-      var voixFR = voix.find(function(v){ return v.name === 'Nicolas (qualité améliorée)'; })
-                || voix.find(function(v){ return v.name === 'Nicolas'; })
+      var voixFR = voix.find(function(v){ return v.name === 'Amélie'; })
                 || voix.find(function(v){ return v.lang === 'fr-CA'; })
+                || voix.find(function(v){ return v.name === 'Thomas'; })
                 || voix.find(function(v){ return v.lang.startsWith('fr'); });
       if (voixFR) utt.voice = voixFR;
 
