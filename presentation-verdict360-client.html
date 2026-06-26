@@ -236,17 +236,19 @@
 
 <script>
 (function(){
-  var XI_KEY  = 'sk_18bd8697eac9abbcb215ad566ee579ff7f52fcd07d6a1292';
+  var XI_KEY   = 'sk_18bd8697eac9abbcb215ad566ee579ff7f52fcd07d6a1292';
   var XI_VOICE = 'onwK4e9ZLuTAKqWW03F9';
 
-  var slides     = document.querySelectorAll('.slide');
-  var n          = slides.length;
-  var cur        = 0;
-  var enLecture  = false;
+  var slides      = document.querySelectorAll('.slide');
+  var n           = slides.length;
+  var cur         = 0;
+  var enLecture   = false;
+  var autoPlay    = false;
+  var iosUnlocked = false;
   var preloadDone = false;
-  var autoPlay   = false; // true quand on est en mode lecture automatique
 
-  // Un objet Audio par slide, créé pendant le préchargement
+  // Blobs stockés, Audio créés après unlock iOS
+  var audioBlobs   = new Array(n).fill(null);
   var audioObjects = new Array(n).fill(null);
 
   var cnt        = document.getElementById('cnt');
@@ -254,29 +256,25 @@
   var loadingBar = document.getElementById('loadingBar');
   var btnAudio   = document.getElementById('btnAudio');
 
-  // ── Arrêter la lecture ───────────────────────────────────
+  // ── Arrêter ──────────────────────────────────────────────
   function stopAudio() {
     autoPlay  = false;
     enLecture = false;
-    // Arrêter l'audio de la slide courante
     var a = audioObjects[cur];
     if (a) { a.pause(); a.currentTime = 0; }
     btnAudio.classList.remove('actif');
     btnAudio.innerHTML = '▶ Écouter';
-    loadingBar.classList.remove('show');
   }
 
-  // ── Jouer la slide index ─────────────────────────────────
+  // ── Jouer slide index ────────────────────────────────────
   function jouerSlide(index) {
     var a = audioObjects[index];
-    if (!a) return;
+    if (!a) { stopAudio(); return; }
     a.currentTime = 0;
     a.playbackRate = 1.15;
-
     a.onended = function() {
       enLecture = false;
       if (autoPlay && cur < n - 1) {
-        // Avancer sans couper autoPlay
         showSlide(cur + 1, true);
         jouerSlide(cur);
       } else {
@@ -284,29 +282,68 @@
       }
     };
     a.onerror = stopAudio;
-
     a.play().then(function() {
       enLecture = true;
       btnAudio.classList.add('actif');
       btnAudio.innerHTML = '■ Arrêter';
-    }).catch(stopAudio);
+    }).catch(function(err) {
+      console.log('play() bloqué:', err);
+      stopAudio();
+    });
+  }
+
+  // ── Déverrouiller iOS puis jouer ─────────────────────────
+  // iOS bloque play() sauf si déclenché directement par un tap.
+  // On crée un Audio silencieux, on le joue dans le tap,
+  // puis on crée tous les vrais objets Audio depuis les blobs.
+  function unlockAndPlay() {
+    if (iosUnlocked) {
+      autoPlay = true;
+      jouerSlide(cur);
+      return;
+    }
+    // Silence 0.1s en base64 (audio/mpeg valide)
+    var silence = 'data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+    var unlock = new Audio(silence);
+    unlock.play().then(function() {
+      iosUnlocked = true;
+      // Créer les vrais objets Audio depuis les blobs déjà téléchargés
+      for (var i = 0; i < n; i++) {
+        if (audioBlobs[i] && !audioObjects[i]) {
+          audioObjects[i] = new Audio(audioBlobs[i]);
+          audioObjects[i].preload = 'auto';
+        }
+      }
+      autoPlay = true;
+      jouerSlide(cur);
+    }).catch(function() {
+      // Fallback : essayer quand même
+      iosUnlocked = true;
+      autoPlay = true;
+      jouerSlide(cur);
+    });
   }
 
   // ── Bouton Écouter / Arrêter ─────────────────────────────
   btnAudio.addEventListener('click', function() {
     if (enLecture) { stopAudio(); return; }
-    if (!preloadDone) { alert('Patientez, chargement en cours…'); return; }
-    autoPlay = true;
-    jouerSlide(cur);
+    if (!preloadDone) { btnAudio.innerHTML = '⏳ Patience…'; return; }
+    unlockAndPlay();
   });
 
   // ── Changer de slide ─────────────────────────────────────
-  // keepPlaying = true : transition automatique (ne stoppe pas)
-  // keepPlaying = false (défaut) : navigation manuelle (stoppe)
   function showSlide(i, keepPlaying) {
     if (i < 0) i = 0;
     if (i > n - 1) i = n - 1;
-    if (!keepPlaying) stopAudio();
+    if (!keepPlaying) {
+      // Navigation manuelle : arrêter l'audio courant
+      var a = audioObjects[cur];
+      if (a) { a.pause(); a.currentTime = 0; }
+      enLecture = false;
+      autoPlay  = false;
+      btnAudio.classList.remove('actif');
+      btnAudio.innerHTML = '▶ Écouter';
+    }
     slides[cur].className = 'slide';
     cur = i;
     slides[cur].className = 'slide active';
@@ -314,7 +351,8 @@
     prog.style.width = (((cur + 1) / n) * 100) + '%';
   }
 
-  // ── Préchargement ────────────────────────────────────────
+  // ── Préchargement (blobs seulement, pas d'Audio objects) ─
+  // Les Audio objects sont créés après le unlock iOS (au 1er tap)
   async function preloadAll() {
     loadingBar.classList.add('show');
     btnAudio.innerHTML = '… Préparation';
@@ -339,10 +377,7 @@
         });
         if (resp.ok) {
           var blob = await resp.blob();
-          var url  = URL.createObjectURL(blob);
-          // Créer l'objet Audio maintenant — pas dans setTimeout
-          audioObjects[i] = new Audio(url);
-          audioObjects[i].preload = 'auto';
+          audioBlobs[i] = URL.createObjectURL(blob);
         }
       } catch(e) {}
       btnAudio.innerHTML = '… ' + Math.round(((i + 1) / n) * 100) + '%';
@@ -365,7 +400,6 @@
 
   var x0 = null;
   document.addEventListener('touchstart', function(e) {
-    // Ignorer si c'est un bouton HUD
     if (e.target.closest('.hud')) return;
     x0 = e.touches[0].clientX;
   }, {passive: true});
