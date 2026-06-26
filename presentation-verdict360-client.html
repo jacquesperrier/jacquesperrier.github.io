@@ -64,13 +64,16 @@
   .contact b { color:var(--orhi); }
   .hud { position:fixed; left:0; right:0; bottom:0; z-index:50;
     background:rgba(10,10,10,0.92); border-top:1px solid rgba(184,149,74,0.35);
-    padding:10px 14px calc(10px + env(safe-area-inset-bottom));
-    display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    padding:8px 14px calc(8px + env(safe-area-inset-bottom));
+    display:flex; flex-direction:column; gap:6px; }
+  .hud-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .hud button { background:var(--noir2); color:var(--orhi); border:1px solid var(--or);
     border-radius:10px; font-size:15px; padding:10px 18px; font-weight:700;
     touch-action:manipulation; }
   .hud button:active { background:var(--or); color:var(--noir); }
   .meta { font-size:12px; color:var(--gris); letter-spacing:1px; text-align:center; flex:1; }
+  /* Statut debug — visible en permanence */
+  .statut { font-size:11px; color:var(--or); text-align:center; min-height:16px; letter-spacing:0.5px; }
   .prog { position:fixed; top:0; left:0; height:3px; background:var(--grad); z-index:60; transition:width 0.25s; }
   .btn-audio { display:flex; align-items:center; gap:6px; background:transparent;
     border:1px solid var(--or); border-radius:20px; padding:8px 16px; color:var(--orhi);
@@ -78,17 +81,10 @@
     cursor:pointer; font-family:-apple-system,Arial,sans-serif;
     touch-action:manipulation; transition:background 0.15s; white-space:nowrap; }
   .btn-audio.actif { background:var(--or); color:var(--noir); }
-  .loading-bar { position:fixed; top:3px; left:0; right:0; height:2px;
-    background:rgba(184,149,74,0.3); z-index:70; display:none; }
-  .loading-bar.show { display:block; }
-  .loading-bar::after { content:''; position:absolute; top:0; left:-40%;
-    width:40%; height:100%; background:var(--or); animation:slide 1s infinite linear; }
-  @keyframes slide { to { left:100%; } }
 </style>
 </head>
 <body>
 <div class="prog" id="prog"></div>
-<div class="loading-bar" id="loadingBar"></div>
 <div class="deck" id="deck">
 
 <section class="slide active" data-script="Bonjour. Vous regardez la présentation de Verdict 360 AI : la première plateforme qui combine l'intelligence artificielle et l'expertise humaine d'un auditeur pour protéger votre établissement face au MAPAQ. Six modules, un seul écosystème. Dix minutes, et vous comprendrez exactement comment ça protège votre entreprise.">
@@ -228,10 +224,13 @@
 </div>
 
 <div class="hud">
-  <button id="bPrev">‹</button>
-  <div class="meta"><span id="cnt">1 / 11</span></div>
-  <button class="btn-audio" id="btnAudio">▶ Écouter</button>
-  <button id="bNext">›</button>
+  <div class="statut" id="statut">Initialisation…</div>
+  <div class="hud-row">
+    <button id="bPrev">‹</button>
+    <div class="meta"><span id="cnt">1 / 11</span></div>
+    <button class="btn-audio" id="btnAudio">▶ Écouter</button>
+    <button id="bNext">›</button>
+  </div>
 </div>
 
 <script>
@@ -244,32 +243,33 @@
   var cur         = 0;
   var enLecture   = false;
   var autoPlay    = false;
-  var iosUnlocked = false;
   var preloadDone = false;
+  var audioBlobs  = new Array(n).fill(null);
+  var audioObjs   = new Array(n).fill(null);
 
-  // Blobs stockés, Audio créés après unlock iOS
-  var audioBlobs   = new Array(n).fill(null);
-  var audioObjects = new Array(n).fill(null);
+  var cnt     = document.getElementById('cnt');
+  var prog    = document.getElementById('prog');
+  var statut  = document.getElementById('statut');
+  var btnAudio = document.getElementById('btnAudio');
 
-  var cnt        = document.getElementById('cnt');
-  var prog       = document.getElementById('prog');
-  var loadingBar = document.getElementById('loadingBar');
-  var btnAudio   = document.getElementById('btnAudio');
+  function log(msg) { statut.textContent = msg; }
 
   // ── Arrêter ──────────────────────────────────────────────
   function stopAudio() {
     autoPlay  = false;
     enLecture = false;
-    var a = audioObjects[cur];
-    if (a) { a.pause(); a.currentTime = 0; }
+    var a = audioObjs[cur];
+    if (a) { try { a.pause(); a.currentTime = 0; } catch(e){} }
     btnAudio.classList.remove('actif');
     btnAudio.innerHTML = '▶ Écouter';
+    log('Arrêté — slide ' + (cur+1));
   }
 
   // ── Jouer slide index ────────────────────────────────────
   function jouerSlide(index) {
-    var a = audioObjects[index];
-    if (!a) { stopAudio(); return; }
+    log('Lecture slide ' + (index+1) + '…');
+    var a = audioObjs[index];
+    if (!a) { log('❌ Pas d\'audio pour slide ' + (index+1)); stopAudio(); return; }
     a.currentTime = 0;
     a.playbackRate = 1.15;
     a.onended = function() {
@@ -281,54 +281,38 @@
         stopAudio();
       }
     };
-    a.onerror = stopAudio;
-    a.play().then(function() {
-      enLecture = true;
-      btnAudio.classList.add('actif');
-      btnAudio.innerHTML = '■ Arrêter';
-    }).catch(function(err) {
-      console.log('play() bloqué:', err);
-      stopAudio();
-    });
-  }
-
-  // ── Déverrouiller iOS puis jouer ─────────────────────────
-  // iOS bloque play() sauf si déclenché directement par un tap.
-  // On crée un Audio silencieux, on le joue dans le tap,
-  // puis on crée tous les vrais objets Audio depuis les blobs.
-  function unlockAndPlay() {
-    if (iosUnlocked) {
-      autoPlay = true;
-      jouerSlide(cur);
-      return;
+    a.onerror = function(e) { log('❌ Erreur audio: ' + e.type); stopAudio(); };
+    var p = a.play();
+    if (p !== undefined) {
+      p.then(function() {
+        enLecture = true;
+        btnAudio.classList.add('actif');
+        btnAudio.innerHTML = '■ Arrêter';
+        log('▶ Slide ' + (index+1) + ' / ' + n);
+      }).catch(function(err) {
+        log('❌ play() bloqué: ' + err.name);
+        stopAudio();
+      });
     }
-    // Silence 0.1s en base64 (audio/mpeg valide)
-    var silence = 'data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
-    var unlock = new Audio(silence);
-    unlock.play().then(function() {
-      iosUnlocked = true;
-      // Créer les vrais objets Audio depuis les blobs déjà téléchargés
-      for (var i = 0; i < n; i++) {
-        if (audioBlobs[i] && !audioObjects[i]) {
-          audioObjects[i] = new Audio(audioBlobs[i]);
-          audioObjects[i].preload = 'auto';
-        }
-      }
-      autoPlay = true;
-      jouerSlide(cur);
-    }).catch(function() {
-      // Fallback : essayer quand même
-      iosUnlocked = true;
-      autoPlay = true;
-      jouerSlide(cur);
-    });
   }
 
-  // ── Bouton Écouter / Arrêter ─────────────────────────────
+  // ── Bouton Écouter ───────────────────────────────────────
   btnAudio.addEventListener('click', function() {
     if (enLecture) { stopAudio(); return; }
-    if (!preloadDone) { btnAudio.innerHTML = '⏳ Patience…'; return; }
-    unlockAndPlay();
+    log('Tap reçu — preloadDone=' + preloadDone + ' blobs=' + audioBlobs.filter(Boolean).length + ' objs=' + audioObjs.filter(Boolean).length);
+    if (!preloadDone) { log('⏳ Chargement en cours…'); return; }
+
+    // Créer les Audio objects maintenant (dans le tap = déverrouillé iOS)
+    var created = 0;
+    for (var i = 0; i < n; i++) {
+      if (audioBlobs[i] && !audioObjs[i]) {
+        audioObjs[i] = new Audio(audioBlobs[i]);
+        created++;
+      }
+    }
+    log('Objets créés: ' + created + ' — lancement…');
+    autoPlay = true;
+    jouerSlide(cur);
   });
 
   // ── Changer de slide ─────────────────────────────────────
@@ -336,9 +320,8 @@
     if (i < 0) i = 0;
     if (i > n - 1) i = n - 1;
     if (!keepPlaying) {
-      // Navigation manuelle : arrêter l'audio courant
-      var a = audioObjects[cur];
-      if (a) { a.pause(); a.currentTime = 0; }
+      var a = audioObjs[cur];
+      if (a) { try { a.pause(); a.currentTime = 0; } catch(e){} }
       enLecture = false;
       autoPlay  = false;
       btnAudio.classList.remove('actif');
@@ -351,13 +334,10 @@
     prog.style.width = (((cur + 1) / n) * 100) + '%';
   }
 
-  // ── Préchargement (blobs seulement, pas d'Audio objects) ─
-  // Les Audio objects sont créés après le unlock iOS (au 1er tap)
+  // ── Préchargement blobs ──────────────────────────────────
   async function preloadAll() {
-    loadingBar.classList.add('show');
-    btnAudio.innerHTML = '… Préparation';
-    btnAudio.classList.add('actif');
-
+    log('Connexion ElevenLabs…');
+    var ok = 0, fail = 0;
     for (var i = 0; i < n; i++) {
       var texte = slides[i].getAttribute('data-script');
       if (!texte) continue;
@@ -378,15 +358,24 @@
         if (resp.ok) {
           var blob = await resp.blob();
           audioBlobs[i] = URL.createObjectURL(blob);
+          ok++;
+          log('Chargé ' + ok + '/' + n + '…');
+        } else {
+          fail++;
+          log('❌ Slide ' + (i+1) + ' erreur HTTP ' + resp.status);
         }
-      } catch(e) {}
-      btnAudio.innerHTML = '… ' + Math.round(((i + 1) / n) * 100) + '%';
+      } catch(e) {
+        fail++;
+        log('❌ Slide ' + (i+1) + ' réseau: ' + e.message);
+      }
     }
-
     preloadDone = true;
-    loadingBar.classList.remove('show');
-    btnAudio.classList.remove('actif');
-    btnAudio.innerHTML = '▶ Écouter';
+    if (fail === 0) {
+      log('✅ ' + ok + ' slides prêtes — appuyez Écouter');
+      btnAudio.innerHTML = '▶ Écouter';
+    } else {
+      log('⚠ ' + ok + ' OK / ' + fail + ' échecs');
+    }
   }
 
   // ── Navigation ───────────────────────────────────────────
@@ -403,15 +392,11 @@
     if (e.target.closest('.hud')) return;
     x0 = e.touches[0].clientX;
   }, {passive: true});
-
   document.addEventListener('touchend', function(e) {
     if (x0 === null) return;
     if (e.target.closest('.hud')) { x0 = null; return; }
     var dx = e.changedTouches[0].clientX - x0;
-    if (Math.abs(dx) > 60) {
-      if (dx < 0) showSlide(cur + 1);
-      else showSlide(cur - 1);
-    }
+    if (Math.abs(dx) > 60) { dx < 0 ? showSlide(cur+1) : showSlide(cur-1); }
     x0 = null;
   }, {passive: true});
 
