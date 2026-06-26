@@ -294,6 +294,8 @@
   var btnAudio = document.getElementById('btnAudio');
   var audioEl = null;
   var enLecture = false;
+  var audioCache = {}; // Cache des URLs audio pré-chargées
+  var preloadDone = false;
 
   function stopAudio() {
     if (audioEl) { audioEl.onended = null; audioEl.onerror = null; audioEl.pause(); audioEl = null; }
@@ -303,51 +305,72 @@
     loadingBar.classList.remove('show');
   }
 
-  window.toggleAudio = async function() {
-    if (enLecture) { stopAudio(); return; }
-
-    var texte = slides[cur].getAttribute('data-script');
-    if (!texte) return;
-
-    btnAudio.classList.add('actif');
-    btnAudio.innerHTML = '… Chargement';
+  // Pré-charger tous les audios en arrière-plan
+  async function preloadAll() {
     loadingBar.classList.add('show');
-    enLecture = true;
+    btnAudio.innerHTML = '… Préparation';
+    btnAudio.classList.add('actif');
 
-    try {
-      var resp = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' + XI_VOICE, {
-        method: 'POST',
-        headers: {
-          'xi-api-key': XI_KEY,
-          'Content-Type': 'application/json',
-          'Accept': 'audio/mpeg'
-        },
-        body: JSON.stringify({
-          text: texte,
-          model_id: 'eleven_multilingual_v2',
-          voice_settings: { stability: 0.5, similarity_boost: 0.75 }
-        })
-      });
-      if (!resp.ok) throw new Error('Erreur API ' + resp.status);
-      var blob = await resp.blob();
-      var url = URL.createObjectURL(blob);
-      audioEl = new Audio(url);
-      audioEl.onended = function() {
-        stopAudio();
-        // Avance automatique à la slide suivante après 2 secondes
-        setTimeout(function() {
-          if (cur < n-1) show(cur+1);
-        }, 2000);
-      };
-      audioEl.onerror = stopAudio;
-      audioEl.playbackRate = 1.15;
-      audioEl.play();
-      loadingBar.classList.remove('show');
-      btnAudio.innerHTML = '■ Arrêter';
-    } catch(e) {
-      stopAudio();
-      alert('Erreur : ' + e.message);
+    for (var i = 0; i < n; i++) {
+      var texte = slides[i].getAttribute('data-script');
+      if (!texte || audioCache[i]) continue;
+      try {
+        var resp = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' + XI_VOICE, {
+          method: 'POST',
+          headers: {
+            'xi-api-key': XI_KEY,
+            'Content-Type': 'application/json',
+            'Accept': 'audio/mpeg'
+          },
+          body: JSON.stringify({
+            text: texte,
+            model_id: 'eleven_multilingual_v2',
+            voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+          })
+        });
+        if (resp.ok) {
+          var blob = await resp.blob();
+          audioCache[i] = URL.createObjectURL(blob);
+        }
+      } catch(e) {}
+      // Mettre à jour le bouton avec la progression
+      var pct = Math.round(((i+1)/n)*100);
+      btnAudio.innerHTML = '… ' + pct + '%';
     }
+
+    preloadDone = true;
+    loadingBar.classList.remove('show');
+    btnAudio.classList.remove('actif');
+    btnAudio.innerHTML = '▶ Écouter';
+  }
+
+  function jouerSlide(index) {
+    if (!audioCache[index]) return;
+    audioEl = new Audio(audioCache[index]);
+    audioEl.playbackRate = 1.15;
+    audioEl.onended = function() {
+      stopAudio();
+      setTimeout(function() {
+        if (cur < n-1) {
+          show(cur+1);
+          setTimeout(function() { jouerSlide(cur); }, 300);
+        }
+      }, 1500);
+    };
+    audioEl.onerror = stopAudio;
+    audioEl.play();
+    enLecture = true;
+    btnAudio.classList.add('actif');
+    btnAudio.innerHTML = '■ Arrêter';
+  }
+
+  window.toggleAudio = function() {
+    if (enLecture) { stopAudio(); return; }
+    if (!preloadDone) {
+      alert('Patientez, chargement en cours…');
+      return;
+    }
+    jouerSlide(cur);
   };
 
   function show(i) {
@@ -386,6 +409,8 @@
   }, false);
 
   show(0);
+  // Lancer le préchargement de tous les audios
+  preloadAll();
 })();
 </script>
 </body>
