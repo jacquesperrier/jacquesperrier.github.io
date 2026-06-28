@@ -11,25 +11,25 @@ body { font-family:'DM Sans',sans-serif; background:#0F0F0F; color:#fff; min-hei
 .screen { display:none; min-height:100vh; flex-direction:column; }
 .screen.active { display:flex; }
 
-#s-home { background:radial-gradient(ellipse at 50% 30%, #2A1F00 0%, #0F0F0F 60%); align-items:center; justify-content:center; text-align:center; padding:40px 24px; }
-.logo { font-family:'Playfair Display',serif; font-size:42px; font-weight:900; color:#D4A017; line-height:1.05; margin-bottom:8px; }
+#s-home { background:radial-gradient(ellipse at 50% 30%, #1A1200 0%, #0F0F0F 60%); align-items:center; justify-content:center; text-align:center; padding:40px 24px; }
+.logo { font-family:'Playfair Display',serif; font-size:42px; font-weight:900; line-height:1.05; margin-bottom:8px; background:linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 .tagline { font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#8A7A5A; margin-bottom:10px; }
-.or-line { width:60px; height:2px; background:#D4A017; margin:0 auto 36px; }
-.btn-or { width:100%; max-width:320px; background:#D4A017; color:#1A1A1A; border:none; padding:18px 24px; border-radius:14px; font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:2px; cursor:pointer; display:block; }
+.or-line { width:60px; height:2px; background:#9C7F3D; margin:0 auto 36px; }
+.btn-or { width:100%; max-width:320px; background:linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%); color:#1A1A1A; border:none; padding:18px 24px; border-radius:14px; font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:2px; cursor:pointer; display:block; }
 .home-footer { margin-top:32px; font-size:10px; color:#555; line-height:1.6; }
 
-.top-bar { background:#1A1A1A; border-bottom:2px solid #D4A017; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
-.top-bar h1 { font-family:'Playfair Display',serif; font-size:17px; color:#D4A017; }
+.top-bar { background:#1A1A1A; border-bottom:2px solid #9C7F3D; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+.top-bar h1 { font-family:'Playfair Display',serif; font-size:17px; background:linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 .top-bar p { font-size:9px; color:#8A7A5A; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
 .btn-icon { background:transparent; border:none; color:#666; font-size:22px; cursor:pointer; padding:4px; }
 
 #s-form { background:#0F0F0F; }
 .form-scroll { flex:1; overflow-y:auto; padding:16px; -webkit-overflow-scrolling:touch; }
-.fsec-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#D4A017; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid #2A2A2A; }
+.fsec-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#B8954A; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid #2A2A2A; }
 .field { margin-bottom:12px; }
 .field label { font-size:9px; text-transform:uppercase; letter-spacing:1.2px; color:#8A7A5A; font-weight:700; display:block; margin-bottom:5px; }
 .field input, .field select, .field textarea { width:100%; background:#1C1C1C; border:1px solid #2A2A2A; border-radius:8px; padding:12px 14px; color:#fff; font-family:'DM Sans',sans-serif; font-size:14px; outline:none; -webkit-appearance:none; }
-.field input:focus, .field select:focus { border-color:#D4A017; }
+.field input:focus, .field select:focus { border-color:#B8954A; }
 .field-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .field textarea { resize:none; height:80px; }
 
@@ -42,43 +42,43 @@ body { font-family:'DM Sans',sans-serif; background:#0F0F0F; color:#fff; min-hei
 .photos-list { display:flex; flex-direction:column; gap:10px; }
 .photo-item { background:#1C1C1C; border:1px solid #2A2A2A; border-radius:10px; overflow:hidden; }
 .photo-item-header { display:flex; align-items:center; gap:8px; padding:8px 10px; background:#222; }
-.photo-num-badge { background:#D4A017; color:#1A1A1A; font-size:9px; font-weight:700; padding:2px 8px; border-radius:4px; white-space:nowrap; }
+.photo-num-badge { background:#B8954A; color:#1A1A1A; font-size:9px; font-weight:700; padding:2px 8px; border-radius:4px; white-space:nowrap; }
 .photo-zone-select { flex:1; background:#1C1C1C; border:1px solid #3A3A3A; border-radius:6px; padding:7px 10px; color:#fff; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; outline:none; -webkit-appearance:none; cursor:pointer; }
-.photo-zone-select:focus { border-color:#D4A017; }
+.photo-zone-select:focus { border-color:#B8954A; }
 .photo-zone-select option { background:#1C1C1C; color:#fff; }
 .photo-del-btn { background:rgba(255,70,50,0.15); color:#FF7043; border:1px solid rgba(255,70,50,0.3); border-radius:6px; width:28px; height:28px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .photo-item-img { position:relative; }
 .photo-item-img img { width:100%; max-height:160px; object-fit:cover; display:block; }
-.photo-zone-tag { position:absolute; bottom:6px; left:8px; background:rgba(212,160,23,0.92); color:#1A1A1A; font-size:9px; font-weight:700; padding:2px 8px; border-radius:4px; }
+.photo-zone-tag { position:absolute; bottom:6px; left:8px; background:rgba(184,149,74,0.92); color:#1A1A1A; font-size:9px; font-weight:700; padding:2px 8px; border-radius:4px; }
 
 .form-footer { padding:14px 16px; border-top:1px solid #1E1E1E; flex-shrink:0; }
-.btn-analyze { width:100%; background:#D4A017; color:#1A1A1A; border:none; padding:16px; border-radius:12px; font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; cursor:pointer; }
+.btn-analyze { width:100%; background:linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%); color:#1A1A1A; border:none; padding:16px; border-radius:12px; font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; cursor:pointer; }
 .btn-analyze:disabled { background:#333; color:#666; cursor:not-allowed; }
 
 #s-loading { background:#0F0F0F; align-items:center; justify-content:center; text-align:center; padding:40px 24px; }
-.spinner { width:56px; height:56px; border:3px solid #2A2A2A; border-top-color:#D4A017; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 20px; }
+.spinner { width:56px; height:56px; border:3px solid #2A2A2A; border-top-color:#B8954A; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 20px; }
 @keyframes spin { to { transform:rotate(360deg); } }
-.load-title { font-family:'Playfair Display',serif; font-size:22px; color:#D4A017; margin-bottom:8px; }
+.load-title { font-family:'Playfair Display',serif; font-size:22px; color:#B8954A; margin-bottom:8px; }
 .load-sub { font-size:13px; color:#888; }
 
 #s-rapport { background:#F8F4EC; color:#3A3A3A; }
 .rpt-scroll { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; }
 .rpt-hero { background:#1A1A1A; padding:16px 18px; display:flex; justify-content:space-between; align-items:center; }
 .rpt-hero-left h2 { font-family:'Playfair Display',serif; font-size:18px; color:#fff; line-height:1.1; }
-.rpt-hero-left h2 span { color:#D4A017; }
-.rpt-hero-left p { font-size:9px; color:#D4A017; text-transform:uppercase; letter-spacing:1.5px; margin-top:6px; }
-.score-box { text-align:center; border:2px solid #D4A017; border-radius:10px; overflow:hidden; min-width:80px; }
+.rpt-hero-left h2 span { color:#B8954A; }
+.rpt-hero-left p { font-size:9px; color:#B8954A; text-transform:uppercase; letter-spacing:1.5px; margin-top:6px; }
+.score-box { text-align:center; border:2px solid #B8954A; border-radius:10px; overflow:hidden; min-width:80px; }
 .score-box .sl { font-size:8px; color:#8A7A5A; text-transform:uppercase; padding:5px 8px 2px; background:#1A1A1A; font-weight:700; display:block; }
-.score-box .sv { font-family:'Playfair Display',serif; font-size:22px; color:#D4A017; background:#1A1A1A; padding:2px 8px; display:block; }
+.score-box .sv { font-family:'Playfair Display',serif; font-size:22px; color:#B8954A; background:#1A1A1A; padding:2px 8px; display:block; }
 .score-box .sc { font-size:10px; font-weight:700; padding:5px 8px; color:#fff; display:block; }
 
 .rpt-infos { display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:12px 14px; }
 .rpt-full { grid-column:1/-1; }
-.info-card { background:#F5EFE0; border-left:3px solid #D4A017; border-radius:8px; padding:9px 11px; }
+.info-card { background:#F5EFE0; border-left:3px solid #B8954A; border-radius:8px; padding:9px 11px; }
 .info-card label { font-size:8px; text-transform:uppercase; letter-spacing:1.2px; color:#8A7A5A; font-weight:700; display:block; margin-bottom:2px; }
 .info-card span { font-size:12px; color:#3A3A3A; font-weight:500; }
 
-.sec-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#D4A017; padding:12px 14px 5px; border-top:1px solid #D4C8A8; }
+.sec-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#B8954A; padding:12px 14px 5px; border-top:1px solid #D4C8A8; }
 .badges { display:flex; gap:6px; padding:0 14px 12px; }
 .badge { flex:1; text-align:center; border-radius:10px; padding:8px 4px; }
 .badge .bn { font-family:'Playfair Display',serif; font-size:24px; color:#fff; display:block; }
@@ -86,7 +86,7 @@ body { font-family:'DM Sans',sans-serif; background:#0F0F0F; color:#fff; min-hei
 
 .zone-tbl { width:calc(100% - 28px); margin:0 14px 12px; border-collapse:collapse; font-size:11px; }
 .zone-tbl thead tr { background:#1A1A1A; }
-.zone-tbl thead th { color:#D4A017; font-size:8px; text-transform:uppercase; padding:7px 8px; text-align:left; }
+.zone-tbl thead th { color:#B8954A; font-size:8px; text-transform:uppercase; padding:7px 8px; text-align:left; }
 .zone-tbl tbody tr:nth-child(odd) { background:#fff; }
 .zone-tbl tbody tr:nth-child(even) { background:#F8F4EC; }
 .zone-tbl tbody td { padding:6px 8px; color:#3A3A3A; border-bottom:1px solid #D4C8A8; }
@@ -101,25 +101,25 @@ body { font-family:'DM Sans',sans-serif; background:#0F0F0F; color:#fff; min-hei
 .pz-num { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; border-radius:50%; background:#1A1A1A; color:#fff; border:2px solid #9C7F3D; font-size:10px; font-weight:700; flex-shrink:0; }
 .nc-tbl { width:100%; border-collapse:collapse; font-size:10px; }
 .nc-tbl thead tr { background:#1A1A1A; }
-.nc-tbl thead th { color:#D4A017; font-size:7px; text-transform:uppercase; padding:5px 7px; text-align:left; }
+.nc-tbl thead th { color:#B8954A; font-size:7px; text-transform:uppercase; padding:5px 7px; text-align:left; }
 .nc-tbl tbody tr:nth-child(odd) { background:#fff; }
 .nc-tbl tbody tr:nth-child(even) { background:#F8F4EC; }
 .nc-tbl tbody td { padding:5px 7px; color:#3A3A3A; }
 
 .fiche { margin:0 14px 8px; border-radius:8px; overflow:hidden; }
 .fiche-hdr { display:grid; grid-template-columns:44px 1fr auto auto; }
-.fh-no { background:#1A1A1A; color:#D4A017; font-weight:700; font-size:10px; padding:7px 8px; display:flex; align-items:center; border-left:4px solid #D4A017; }
+.fh-no { background:#1A1A1A; color:#B8954A; font-weight:700; font-size:10px; padding:7px 8px; display:flex; align-items:center; border-left:4px solid #B8954A; }
 .fh-zone { background:#1A1A1A; color:#CCC; font-size:9px; padding:7px 8px; display:flex; align-items:center; }
 .fh-type, .fh-prio { font-size:8px; font-weight:700; color:#fff; padding:7px 8px; display:flex; align-items:center; text-transform:uppercase; }
 .fiche-body { background:#F5EFE0; }
 .frow { display:grid; grid-template-columns:75px 1fr; border-bottom:1px solid #D4C8A8; font-size:10px; }
 .frow:last-child { border-bottom:none; }
-.fl { background:rgba(212,160,23,0.08); padding:6px 7px; font-size:7px; font-weight:700; text-transform:uppercase; color:#8A7A5A; display:flex; align-items:center; }
+.fl { background:rgba(184,149,74,0.08); padding:6px 7px; font-size:7px; font-weight:700; text-transform:uppercase; color:#8A7A5A; display:flex; align-items:center; }
 .fv { padding:6px 9px; color:#3A3A3A; line-height:1.4; }
 
 .plan-tbl { width:calc(100% - 28px); margin:0 14px 12px; border-collapse:collapse; font-size:10px; }
 .plan-tbl thead tr { background:#1A1A1A; }
-.plan-tbl thead th { color:#D4A017; font-size:8px; text-transform:uppercase; padding:6px 7px; text-align:left; }
+.plan-tbl thead th { color:#B8954A; font-size:8px; text-transform:uppercase; padding:6px 7px; text-align:left; }
 .plan-tbl tbody tr:nth-child(odd) { background:#fff; }
 .plan-tbl tbody tr:nth-child(even) { background:#F8F4EC; }
 .plan-tbl tbody td { padding:5px 7px; color:#3A3A3A; vertical-align:top; border-bottom:1px solid #D4C8A8; }
@@ -127,53 +127,51 @@ body { font-family:'DM Sans',sans-serif; background:#0F0F0F; color:#fff; min-hei
 .sig-section { padding:14px; background:#F8F4EC; }
 .sig-steps { display:flex; margin-bottom:16px; }
 .sstep { flex:1; text-align:center; padding:8px 4px; border-bottom:2px solid #CCC; color:#AAA; font-size:9px; font-weight:700; text-transform:uppercase; }
-.sstep.active { border-bottom-color:#D4A017; color:#D4A017; }
+.sstep.active { border-bottom-color:#B8954A; color:#B8954A; }
 .sstep.done { border-bottom-color:#66BB6A; color:#66BB6A; }
 .sig-panel { display:none; }
 .sig-panel.active { display:block; }
-.sig-name { font-size:13px; font-weight:600; color:#D4A017; margin-bottom:3px; }
+.sig-name { font-size:13px; font-weight:600; color:#B8954A; margin-bottom:3px; }
 .sig-role { font-size:11px; color:#999; margin-bottom:10px; }
-.cvs-wrap { background:#fff; border-radius:10px; border:2px solid #D4A017; position:relative; overflow:hidden; margin-bottom:10px; }
+.cvs-wrap { background:#fff; border-radius:10px; border:2px solid #B8954A; position:relative; overflow:hidden; margin-bottom:10px; }
 .cvs-hint { position:absolute; top:9px; left:12px; font-size:9px; color:#BBAA88; text-transform:uppercase; letter-spacing:1.5px; pointer-events:none; }
 .cvs-line { position:absolute; bottom:40px; left:12px; right:12px; height:1px; background:#DDD; pointer-events:none; }
 canvas { display:block; width:100%; height:160px; touch-action:none; }
 .sig-btns { display:flex; gap:8px; margin-bottom:6px; }
 .btn-clr { flex:1; background:transparent; border:1px solid #CCC; color:#999; padding:10px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:12px; cursor:pointer; }
-.btn-nxt { flex:2.5; background:#D4A017; border:none; color:#1A1A1A; padding:12px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; cursor:pointer; text-transform:uppercase; }
+.btn-nxt { flex:2.5; background:#B8954A; border:none; color:#1A1A1A; padding:12px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; cursor:pointer; text-transform:uppercase; }
 .sig-warn { display:none; color:#FF7043; font-size:11px; text-align:center; margin-bottom:6px; }
 .sig-warn.show { display:block; }
 .final-hdr { text-align:center; padding:20px 0 14px; }
 .final-hdr .fck { font-size:44px; }
-.final-hdr h3 { font-family:'Playfair Display',serif; font-size:20px; color:#D4A017; margin:6px 0 4px; }
+.final-hdr h3 { font-family:'Playfair Display',serif; font-size:20px; color:#B8954A; margin:6px 0 4px; }
 .final-hdr p { font-size:12px; color:#999; }
 .recap-list { background:#1A1A1A; border-radius:10px; overflow:hidden; margin-bottom:14px; }
 .recap-row { display:flex; align-items:center; padding:11px 13px; gap:11px; border-bottom:1px solid #222; }
 .recap-row:last-child { border-bottom:none; }
 .recap-row img { height:36px; background:#fff; border-radius:4px; padding:2px; max-width:100px; object-fit:contain; }
 .recap-row .ri { flex:1; }
-.recap-row .ri strong { font-size:11px; color:#D4A017; display:block; }
+.recap-row .ri strong { font-size:11px; color:#B8954A; display:block; }
 .recap-row .ri span { font-size:10px; color:#888; }
 .recap-row .chk { color:#66BB6A; font-size:17px; font-weight:700; }
 .sig-print-wrap { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
-.spb { background:#F5EFE0; border-left:3px solid #D4A017; border-radius:8px; padding:11px; }
+.spb { background:#F5EFE0; border-left:3px solid #B8954A; border-radius:8px; padding:11px; }
 .spb label { font-size:8px; text-transform:uppercase; color:#8A7A5A; font-weight:700; display:block; margin-bottom:5px; }
 .spb .spb-name { font-size:11px; color:#3A3A3A; font-weight:600; margin-bottom:6px; line-height:1.4; }
 .spb .spb-ph { height:52px; border-bottom:1px solid #D4C8A8; display:flex; align-items:center; color:#BBAA88; font-size:10px; font-style:italic; margin-bottom:5px; }
 .spb img.sig-img { height:52px; display:none; margin-bottom:5px; max-width:100%; }
 .spb .spb-date { font-size:9px; color:#999; border-top:1px solid #D4C8A8; padding-top:5px; }
-.btn-print { width:100%; background:#D4A017; border:none; color:#1A1A1A; padding:16px; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; -webkit-user-select:none; user-select:none; touch-action:manipulation; }
+.btn-print { width:100%; background:linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%); border:none; color:#1A1A1A; padding:16px; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; -webkit-user-select:none; user-select:none; touch-action:manipulation; }
 .print-hint { text-align:center; font-size:10px; color:#999; margin-bottom:16px; }
-.btn-new { width:100%; background:transparent; border:1px solid #D4A017; color:#D4A017; padding:13px; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-bottom:20px; }
+.btn-new { width:100%; background:transparent; border:1px solid #B8954A; color:#B8954A; padding:13px; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-bottom:20px; }
 .rpt-footer { text-align:center; font-size:8px; color:#999; padding:10px 14px; border-top:1px solid #D4C8A8; margin:0 14px; }
 @media print {
-
   * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   body { background:white !important; }
   #s-home,#s-form,#s-loading,.top-bar,.sig-btns,.btn-new,.print-hint { display:none !important; }
   #s-rapport { display:block !important; position:absolute; left:0; top:0; width:100%; }
   .rpt-scroll { overflow:visible !important; height:auto !important; }
-  }
-
+}
 </style>
 </head>
 <body>
@@ -211,7 +209,7 @@ canvas { display:block; width:100%; height:160px; touch-action:none; }
     </div>
     <div style="margin-bottom:20px">
       <div class="fsec-title">Photos inspection *</div>
-      <p style="font-size:11px;color:#888;margin-bottom:10px">Ajoutez jusqu'a 10 photos. <strong style="color:#D4A017">Selectionnez la zone pour chaque photo.</strong></p>
+      <p style="font-size:11px;color:#888;margin-bottom:10px">Ajoutez jusqu'a 10 photos. <strong style="color:#B8954A">Selectionnez la zone pour chaque photo.</strong></p>
       <div class="upload-zone">
         <input type="file" id="photoInput" multiple accept="image/*">
         <div class="upload-icon">&#128247;</div>
@@ -235,7 +233,7 @@ canvas { display:block; width:100%; height:160px; touch-action:none; }
 <div class="screen" id="s-rapport">
   <div class="top-bar">
     <div><h1>Verdict 360 AI</h1><p>Rapport inspection</p></div>
-    <div class="pill" style="background:rgba(212,160,23,0.15);border:1px solid #D4A017;color:#D4A017;font-size:9px;padding:4px 10px;border-radius:20px" id="rptVia">N VIA-...</div>
+    <div class="pill" style="background:rgba(184,149,74,0.15);border:1px solid #B8954A;color:#B8954A;font-size:9px;padding:4px 10px;border-radius:20px" id="rptVia">N VIA-...</div>
   </div>
   <div class="rpt-scroll" id="rptBody"></div>
 </div>
@@ -318,20 +316,16 @@ function renderPhotos() {
   photos.forEach(function(p, i) {
     var item = document.createElement('div');
     item.className = 'photo-item';
-
     var header = document.createElement('div');
     header.className = 'photo-item-header';
-
     var badge = document.createElement('span');
     badge.className = 'photo-num-badge';
     badge.textContent = 'Photo ' + (i+1);
-
     var sel = document.createElement('select');
     sel.className = 'photo-zone-select';
     ZONES_DISPONIBLES.forEach(function(z) {
       var opt = document.createElement('option');
-      opt.value = z;
-      opt.textContent = z;
+      opt.value = z; opt.textContent = z;
       if (z === p.zone) opt.selected = true;
       sel.appendChild(opt);
     });
@@ -342,37 +336,25 @@ function renderPhotos() {
       var tag = document.getElementById('zone-tag-' + idx);
       if (tag) tag.textContent = this.value;
     });
-
     var del = document.createElement('button');
     del.className = 'photo-del-btn';
     del.innerHTML = '&#x2715;';
     del.setAttribute('data-i', i);
     del.addEventListener('click', function() {
       photos.splice(parseInt(this.getAttribute('data-i')), 1);
-      renderPhotos();
-      checkForm();
+      renderPhotos(); checkForm();
     });
-
-    header.appendChild(badge);
-    header.appendChild(sel);
-    header.appendChild(del);
-
+    header.appendChild(badge); header.appendChild(sel); header.appendChild(del);
     var imgWrap = document.createElement('div');
     imgWrap.className = 'photo-item-img';
-
     var img = document.createElement('img');
     img.src = p.b64;
-
     var tag = document.createElement('div');
     tag.className = 'photo-zone-tag';
     tag.id = 'zone-tag-' + i;
     tag.textContent = p.zone;
-
-    imgWrap.appendChild(img);
-    imgWrap.appendChild(tag);
-
-    item.appendChild(header);
-    item.appendChild(imgWrap);
+    imgWrap.appendChild(img); imgWrap.appendChild(tag);
+    item.appendChild(header); item.appendChild(imgWrap);
     grid.appendChild(item);
   });
 }
@@ -396,10 +378,6 @@ document.getElementById('btnAnalyze').addEventListener('click', function() {
   runAnalysis();
 });
 
-// ============================================================
-// ANALYSE RÉELLE PAR IA (Claude Vision via verdict-proxy)
-// ============================================================
-
 var ANALYSIS_SYSTEM_PROMPT =
 "Tu es un auditeur expert en hygiene et salubrite alimentaire au Quebec, specialise dans les normes MAPAQ et HACCP. " +
 "Tu analyses des photos prises lors d'une inspection d'etablissement alimentaire (restaurant, cuisine commerciale, epicerie). " +
@@ -421,61 +399,31 @@ var ANALYSIS_SYSTEM_PROMPT =
 "Types: CRITIQUE (risque immediat sante), MAJEUR (a corriger sous 24h), MINEURE (planifiable). " +
 "Sois precis et factuel - decris vraiment ce que tu vois (ex: 'employe touchant son visage avec des gants', 'rouille visible sur la surface metallique de la table', 'plancher humide et sale pres de l'evier').";
 
-
-function dataURLtoBase64(dataUrl) {
-  return dataUrl.split(',')[1];
-}
+function dataURLtoBase64(dataUrl) { return dataUrl.split(',')[1]; }
 
 function callVisionAPI(photo, zoneName) {
   var base64Data = dataURLtoBase64(photo.b64);
   var mediaType = photo.type || 'image/jpeg';
-
   var messages = [{
     role: "user",
     content: [
-      {
-        type: "image",
-        source: { type: "base64", media_type: mediaType, data: base64Data }
-      },
-      {
-        type: "text",
-        text: "Cette photo a ete prise dans la zone suivante de l'etablissement: \"" + zoneName + "\". " +
-              "Analyse cette photo et identifie les non-conformites MAPAQ reellement visibles. Reponds en JSON uniquement."
-      }
+      { type: "image", source: { type: "base64", media_type: mediaType, data: base64Data } },
+      { type: "text", text: "Cette photo a ete prise dans la zone suivante de l'etablissement: \"" + zoneName + "\". Analyse cette photo et identifie les non-conformites MAPAQ reellement visibles. Reponds en JSON uniquement." }
     ]
   }];
-
   return fetch(PROXY_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      messages: messages,
-      system: ANALYSIS_SYSTEM_PROMPT,
-      model: "claude-sonnet-4-6",
-      max_tokens: 1500
-    })
+    body: JSON.stringify({ messages: messages, system: ANALYSIS_SYSTEM_PROMPT, model: "claude-sonnet-4-6", max_tokens: 1500 })
   })
   .then(function(res) { return res.json(); })
   .then(function(data) {
-    if (data.error) {
-      console.error("Erreur API pour photo:", data.message || data.error);
-      return { nonConformites: [] };
-    }
-    var raw = data.result || "";
-    // Nettoyer d'eventuelles balises markdown ```json
-    raw = raw.replace(/```json/g, '').replace(/```/g, '').trim();
-    try {
-      var parsed = JSON.parse(raw);
-      return parsed && parsed.nonConformites ? parsed : { nonConformites: [] };
-    } catch(e) {
-      console.error("Erreur parsing JSON IA:", e, raw);
-      return { nonConformites: [] };
-    }
+    if (data.error) { console.error("Erreur API:", data.message || data.error); return { nonConformites: [] }; }
+    var raw = (data.result || "").replace(/```json/g,'').replace(/```/g,'').trim();
+    try { var p = JSON.parse(raw); return p && p.nonConformites ? p : { nonConformites: [] }; }
+    catch(e) { console.error("Erreur JSON:", e, raw); return { nonConformites: [] }; }
   })
-  .catch(function(err) {
-    console.error("Erreur reseau analyse photo:", err);
-    return { nonConformites: [] };
-  });
+  .catch(function(err) { console.error("Erreur reseau:", err); return { nonConformites: [] }; });
 }
 
 function runAnalysis() {
@@ -487,88 +435,45 @@ function runAnalysis() {
     var label = idx < photos.length ? ('Analyse de la photo '+(idx+1)+' / '+photos.length+'...') : msgs[Math.min(idx, msgs.length-1)];
     document.getElementById('loadMsg').textContent = label;
   }, 1800);
-
-  // Lancer l'analyse IA pour chaque photo, en sequence
-  var analysisPromises = photos.map(function(photo) {
-    return callVisionAPI(photo, photo.zone);
-  });
-
-  Promise.all(analysisPromises).then(function(allResults) {
-    clearInterval(timer);
-    result = buildResultFromAI(allResults);
-    buildReport();
-  }).catch(function(err) {
-    clearInterval(timer);
-    console.error("Erreur globale analyse:", err);
-    alert("Erreur lors de l'analyse IA. Verifiez la connexion et reessayez.");
-    goTo('s-form');
-  });
+  Promise.all(photos.map(function(photo) { return callVisionAPI(photo, photo.zone); }))
+  .then(function(allResults) { clearInterval(timer); result = buildResultFromAI(allResults); buildReport(); })
+  .catch(function(err) { clearInterval(timer); console.error("Erreur globale:", err); alert("Erreur lors de l'analyse IA. Verifiez la connexion et reessayez."); goTo('s-form'); });
 }
 
 function buildResultFromAI(allResults) {
-  var photoList = [];
-  var allUsedNC = [];
-  var globalCounter = 0;
-
+  var photoList = [], allUsedNC = [], globalCounter = 0;
   photos.forEach(function(photo, i) {
-    var aiResult = allResults[i] || { nonConformites: [] };
-    var ncsRaw = aiResult.nonConformites || [];
+    var ncsRaw = (allResults[i] || { nonConformites: [] }).nonConformites || [];
     var ncs = [];
-
     ncsRaw.forEach(function(nc) {
       globalCounter++;
       var noStr = 'NC-' + (globalCounter < 10 ? '0'+globalCounter : globalCounter);
       var article = nc.article && MAPAQ[nc.article] ? nc.article : 35;
       var priorite = nc.type === 'CRITIQUE' ? 'IMMEDIAT' : (nc.type === 'MAJEUR' ? 'URG24h' : 'PLANIFIE');
-      var ncObj = {
-        no: noStr,
-        type: nc.type || 'MINEURE',
-        priorite: priorite,
-        observation: nc.observation || 'Non-conformite observee',
-        regle: MAPAQ[article],
-        action: nc.action || 'Corriger et documenter.',
-        position: (nc.position && typeof nc.position.x === 'number' && typeof nc.position.y === 'number')
-          ? { x: Math.max(0.05,Math.min(0.95,nc.position.x)), y: Math.max(0.05,Math.min(0.95,nc.position.y)) }
-          : { x: 0.5, y: 0.5 }
-      };
-      ncs.push(ncObj);
-      allUsedNC.push(ncObj);
+      var ncObj = { no:noStr, type:nc.type||'MINEURE', priorite:priorite, observation:nc.observation||'Non-conformite observee', regle:MAPAQ[article], action:nc.action||'Corriger et documenter.',
+        position:(nc.position && typeof nc.position.x==='number' && typeof nc.position.y==='number') ? {x:Math.max(0.05,Math.min(0.95,nc.position.x)),y:Math.max(0.05,Math.min(0.95,nc.position.y))} : {x:0.5,y:0.5} };
+      ncs.push(ncObj); allUsedNC.push(ncObj);
     });
-
     photoList.push({ zone: photo.zone, photoIndex: i, ncs: ncs });
   });
-
-  var nbC = allUsedNC.filter(function(n){ return n.type==='CRITIQUE'; }).length;
-  var nbM = allUsedNC.filter(function(n){ return n.type==='MAJEUR'; }).length;
-  var nbMn = allUsedNC.filter(function(n){ return n.type==='MINEURE'; }).length;
-  var penalite = nbC*15 + nbM*7 + nbMn*2;
-  var score = Math.max(20, Math.min(100, 100 - penalite));
-  var cote = score < 50 ? 'ROUGE' : score < 70 ? 'JAUNE' : 'VERT';
-
-  var zoneMap = {};
-  photoList.forEach(function(pz) {
-    var z = pz.zone;
-    if (!zoneMap[z]) zoneMap[z] = { ncs: [] };
-    pz.ncs.forEach(function(nc) { zoneMap[z].ncs.push(nc); });
+  var nbC=allUsedNC.filter(function(n){return n.type==='CRITIQUE';}).length;
+  var nbM=allUsedNC.filter(function(n){return n.type==='MAJEUR';}).length;
+  var nbMn=allUsedNC.filter(function(n){return n.type==='MINEURE';}).length;
+  var score=Math.max(20,Math.min(100,100-(nbC*15+nbM*7+nbMn*2)));
+  var cote=score<50?'ROUGE':score<70?'JAUNE':'VERT';
+  var zoneMap={};
+  photoList.forEach(function(pz){ if(!zoneMap[pz.zone])zoneMap[pz.zone]={ncs:[]}; pz.ncs.forEach(function(nc){zoneMap[pz.zone].ncs.push(nc);}); });
+  var zoneScores=[];
+  Object.keys(zoneMap).forEach(function(z){
+    var ncs=zoneMap[z].ncs;
+    var zC=ncs.filter(function(n){return n.type==='CRITIQUE';}).length;
+    var zM=ncs.filter(function(n){return n.type==='MAJEUR';}).length;
+    var zMn=ncs.filter(function(n){return n.type==='MINEURE';}).length;
+    zoneScores.push({nom:z,obtenu:Math.max(2,25-(zC*10+zM*5+zMn*2)),max:25});
   });
-
-  var zoneScores = [];
-  Object.keys(zoneMap).forEach(function(zoneName) {
-    var ncs = zoneMap[zoneName].ncs;
-    var zNbC = ncs.filter(function(n){ return n.type==='CRITIQUE'; }).length;
-    var zNbM = ncs.filter(function(n){ return n.type==='MAJEUR'; }).length;
-    var zNbMn = ncs.filter(function(n){ return n.type==='MINEURE'; }).length;
-    var maxPts = 25;
-    var perdu = zNbC*10 + zNbM*5 + zNbMn*2;
-    var obtenu = Math.max(2, maxPts - perdu);
-    zoneScores.push({ nom: zoneName, obtenu: obtenu, max: maxPts });
-  });
-
-  return { score:score, cote:cote, zones:zoneScores, photos:photoList };
+  return {score:score,cote:cote,zones:zoneScores,photos:photoList};
 }
 
-/* ===== ANNOTATION : positions reelles fournies par l'IA (0..1), 
-   image affichee en object-fit:contain donc fiable a 100% ===== */
 function annotatePhoto(b64, ncs, photoIdx, callback) {
   var img = new Image();
   img.onerror = function() { callback(b64); };
@@ -577,196 +482,138 @@ function annotatePhoto(b64, ncs, photoIdx, callback) {
     canvas.width = img.width; canvas.height = img.height;
     var ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0);
-    var w = img.width, h = img.height;
-    var r = Math.max(16, Math.round(w/26));
+    var w=img.width, h=img.height, r=Math.max(16,Math.round(w/26));
     ncs.forEach(function(nc, idx) {
-      var cx = (nc.position ? nc.position.x : 0.5) * w;
-      var cy = (nc.position ? nc.position.y : 0.5) * h;
-
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, 2*Math.PI);
-      ctx.fillStyle = 'rgba(26,26,26,0.92)';
-      ctx.fill();
-      ctx.lineWidth = Math.max(2, Math.round(r/8));
-      ctx.strokeStyle = '#9C7F3D';
-      ctx.stroke();
-
-      var fs = Math.round(r*1.05);
-      ctx.font = 'bold '+fs+'px sans-serif';
-      ctx.fillStyle = '#fff';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      var numAffiche = nc.no ? nc.no.replace('NC-','') : String(idx+1);
-      ctx.fillText(numAffiche, cx, cy+1);
+      var cx=(nc.position?nc.position.x:0.5)*w, cy=(nc.position?nc.position.y:0.5)*h;
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI);
+      ctx.fillStyle='rgba(26,26,26,0.92)'; ctx.fill();
+      ctx.lineWidth=Math.max(2,Math.round(r/8)); ctx.strokeStyle='#9C7F3D'; ctx.stroke();
+      var fs=Math.round(r*1.05);
+      ctx.font='bold '+fs+'px sans-serif'; ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(nc.no?nc.no.replace('NC-',''):String(idx+1), cx, cy+1);
     });
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'alphabetic';
-    callback(canvas.toDataURL('image/jpeg', 0.88));
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    callback(canvas.toDataURL('image/jpeg',0.88));
   };
   img.src = b64;
 }
 
-window.printReport = function() {
-  window.scrollTo(0,0);
-  if (document.activeElement) document.activeElement.blur();
-  window.print();
-};
+window.printReport = function() { window.scrollTo(0,0); if(document.activeElement)document.activeElement.blur(); window.print(); };
 
-var TC = {CRITIQUE:'#FF7043',MAJEUR:'#FFA726',MINEURE:'#90A4AE'};
-var PC = {IMMEDIAT:'#8B1A1A',URG24h:'#E65100',URG48h:'#BF360C',PLANIFIE:'#546E7A'};
-var DL = {IMMEDIAT:'Immediat','URG24h':'24 h','URG48h':'48 h',PLANIFIE:'Planifie'};
+var TC={CRITIQUE:'#FF7043',MAJEUR:'#FFA726',MINEURE:'#90A4AE'};
+var PC={IMMEDIAT:'#8B1A1A',URG24h:'#E65100',URG48h:'#BF360C',PLANIFIE:'#546E7A'};
+var DL={IMMEDIAT:'Immediat','URG24h':'24 h','URG48h':'48 h',PLANIFIE:'Planifie'};
 
 function pill(text, color) { return '<span class="pill" style="background:'+(color||'#999')+'">'+text+'</span>'; }
 
 function buildReport() {
-  var r = result, f = formData;
-  var via = 'VIA-'+f.date.replace(/-/g,'').slice(2)+'-'+(Math.floor(Math.random()*900)+100);
-  var allNCs = [];
-  r.photos.forEach(function(pz){ pz.ncs.forEach(function(nc){ allNCs.push(Object.assign({},nc,{zone:pz.zone})); }); });
-  var nbC = allNCs.filter(function(n){return n.type==='CRITIQUE';}).length;
-  var nbM = allNCs.filter(function(n){return n.type==='MAJEUR';}).length;
-  var nbMn = allNCs.filter(function(n){return n.type==='MINEURE';}).length;
-  var dateStr = new Date(f.date+'T12:00:00').toLocaleDateString('fr-CA',{year:'numeric',month:'long',day:'numeric'});
-  var coteColor = r.cote==='ROUGE'?'#8B0000':r.cote==='JAUNE'?'#E65100':'#1B5E20';
-
-  document.getElementById('rptVia').textContent = 'N '+via;
-  var html = '';
-
-  html += '<div class="rpt-hero"><div class="rpt-hero-left"><h2>RAPPORT D&#39;INSPECTION<br><span>SALUBRITE ALIMENTAIRE</span></h2><p>Reglement sur les aliments - MAPAQ / HACCP</p></div>';
-  html += '<div class="score-box"><span class="sl">Score</span><span class="sv">'+r.score+'%</span><span class="sc" style="background:'+coteColor+'">'+r.cote+'</span></div></div>';
-
-  html += '<div class="rpt-infos">';
-  html += '<div class="info-card"><label>Etablissement</label><span>'+f.etab+'</span></div>';
-  html += '<div class="info-card"><label>No Permis MAPAQ</label><span>'+f.permis+'</span></div>';
-  html += '<div class="info-card rpt-full"><label>Adresse</label><span>'+f.adresse+'</span></div>';
-  html += '<div class="info-card"><label>Responsable</label><span>'+f.resp+'</span></div>';
-  html += '<div class="info-card"><label>Date inspection</label><span>'+dateStr+'</span></div>';
-  html += '<div class="info-card"><label>Inspecteur</label><span>Jacques Perrier</span></div>';
-  html += '<div class="info-card"><label>Type</label><span>'+f.type+'</span></div>';
-  html += '</div>';
-
-  html += '<div class="sec-title">Resume</div><div class="badges">';
-  html += '<div class="badge" style="background:#FF7043"><span class="bn">'+nbC+'</span><span class="bl">Critique</span></div>';
-  html += '<div class="badge" style="background:#FFA726"><span class="bn">'+nbM+'</span><span class="bl">Majeure</span></div>';
-  html += '<div class="badge" style="background:#90A4AE"><span class="bn">'+nbMn+'</span><span class="bl">Mineure</span></div>';
-  html += '<div class="badge" style="background:#66BB6A"><span class="bn">0</span><span class="bl">Conforme</span></div>';
-  html += '</div>';
-
-  html += '<div class="sec-title">Score par zone</div>';
-  html += '<table class="zone-tbl"><thead><tr><th>Zone</th><th>Obtenu</th><th>/ Max</th><th>%</th></tr></thead><tbody>';
-  r.zones.forEach(function(z) {
-    var pct = Math.round(z.obtenu/z.max*100);
-    var col = pct>=70?'#66BB6A':pct>=50?'#FFA726':'#FF7043';
-    html += '<tr><td>'+z.nom+'</td><td>'+pill(z.obtenu,col)+'</td><td style="color:#999">/ '+z.max+'</td><td>'+pill(pct+'%',col)+'</td></tr>';
+  var r=result, f=formData;
+  var via='VIA-'+f.date.replace(/-/g,'').slice(2)+'-'+(Math.floor(Math.random()*900)+100);
+  var allNCs=[];
+  r.photos.forEach(function(pz){pz.ncs.forEach(function(nc){allNCs.push(Object.assign({},nc,{zone:pz.zone}));});});
+  var nbC=allNCs.filter(function(n){return n.type==='CRITIQUE';}).length;
+  var nbM=allNCs.filter(function(n){return n.type==='MAJEUR';}).length;
+  var nbMn=allNCs.filter(function(n){return n.type==='MINEURE';}).length;
+  var dateStr=new Date(f.date+'T12:00:00').toLocaleDateString('fr-CA',{year:'numeric',month:'long',day:'numeric'});
+  var coteColor=r.cote==='ROUGE'?'#8B0000':r.cote==='JAUNE'?'#E65100':'#1B5E20';
+  document.getElementById('rptVia').textContent='N '+via;
+  var html='';
+  html+='<div class="rpt-hero"><div class="rpt-hero-left"><h2>RAPPORT D&#39;INSPECTION<br><span>SALUBRITE ALIMENTAIRE</span></h2><p>Reglement sur les aliments - MAPAQ / HACCP</p></div>';
+  html+='<div class="score-box"><span class="sl">Score</span><span class="sv">'+r.score+'%</span><span class="sc" style="background:'+coteColor+'">'+r.cote+'</span></div></div>';
+  html+='<div class="rpt-infos">';
+  html+='<div class="info-card"><label>Etablissement</label><span>'+f.etab+'</span></div>';
+  html+='<div class="info-card"><label>No Permis MAPAQ</label><span>'+f.permis+'</span></div>';
+  html+='<div class="info-card rpt-full"><label>Adresse</label><span>'+f.adresse+'</span></div>';
+  html+='<div class="info-card"><label>Responsable</label><span>'+f.resp+'</span></div>';
+  html+='<div class="info-card"><label>Date inspection</label><span>'+dateStr+'</span></div>';
+  html+='<div class="info-card"><label>Inspecteur</label><span>Jacques Perrier</span></div>';
+  html+='<div class="info-card"><label>Type</label><span>'+f.type+'</span></div></div>';
+  html+='<div class="sec-title">Resume</div><div class="badges">';
+  html+='<div class="badge" style="background:#FF7043"><span class="bn">'+nbC+'</span><span class="bl">Critique</span></div>';
+  html+='<div class="badge" style="background:#FFA726"><span class="bn">'+nbM+'</span><span class="bl">Majeure</span></div>';
+  html+='<div class="badge" style="background:#90A4AE"><span class="bn">'+nbMn+'</span><span class="bl">Mineure</span></div>';
+  html+='<div class="badge" style="background:#66BB6A"><span class="bn">0</span><span class="bl">Conforme</span></div></div>';
+  html+='<div class="sec-title">Score par zone</div>';
+  html+='<table class="zone-tbl"><thead><tr><th>Zone</th><th>Obtenu</th><th>/ Max</th><th>%</th></tr></thead><tbody>';
+  r.zones.forEach(function(z){var pct=Math.round(z.obtenu/z.max*100);var col=pct>=70?'#66BB6A':pct>=50?'#FFA726':'#FF7043';html+='<tr><td>'+z.nom+'</td><td>'+pill(z.obtenu,col)+'</td><td style="color:#999">/ '+z.max+'</td><td>'+pill(pct+'%',col)+'</td></tr>';});
+  html+='</tbody></table>';
+  html+='<div class="sec-title">Photos annotees par zone</div>';
+  r.photos.forEach(function(pz,pi){
+    var photo=photos[pz.photoIndex!==undefined?pz.photoIndex:pi];
+    html+='<div class="photo-zone"><div class="pz-hdr">Photo '+(pi+1)+' &#8212; '+pz.zone+'</div>';
+    if(photo)html+='<img class="pz-img" id="pz-img-'+pi+'" src="'+photo.b64+'">';
+    if(pz.ncs&&pz.ncs.length>0){
+      html+='<div class="pz-legend">';
+      pz.ncs.forEach(function(nc,idx){var n=nc.no?nc.no.replace('NC-',''):(idx+1);html+='<div class="pz-legend-item"><span class="pz-num">'+n+'</span><span><strong>'+nc.no+'</strong> &#8212; '+nc.observation+'</span></div>';});
+      html+='</div>';
+      html+='<table class="nc-tbl"><thead><tr><th>Ref.</th><th>Non-conformite</th><th>Type</th><th>Priorite</th></tr></thead><tbody>';
+      pz.ncs.forEach(function(nc){html+='<tr><td><strong>'+nc.no+'</strong></td><td>'+nc.observation+'</td><td>'+pill(nc.type,TC[nc.type])+'</td><td>'+pill(nc.priorite,PC[nc.priorite]||'#999')+'</td></tr>';});
+      html+='</tbody></table>';
+    }else{html+='<div class="pz-legend"><div class="pz-legend-item"><span style="color:#2E7D32;font-weight:700">&#10003; Aucune non-conformite identifiee sur cette photo</span></div></div>';}
+    html+='</div>';
   });
-  html += '</tbody></table>';
-
-  html += '<div class="sec-title">Photos annotees par zone</div>';
-  r.photos.forEach(function(pz, pi) {
-    var photo = photos[pz.photoIndex !== undefined ? pz.photoIndex : pi];
-    html += '<div class="photo-zone"><div class="pz-hdr">Photo '+(pi+1)+' &#8212; '+pz.zone+'</div>';
-    if (photo) html += '<img class="pz-img" id="pz-img-'+pi+'" src="'+photo.b64+'">';
-    if (pz.ncs && pz.ncs.length > 0) {
-      html += '<div class="pz-legend">';
-      pz.ncs.forEach(function(nc, idx) {
-        var numLegende = nc.no ? nc.no.replace('NC-','') : (idx+1);
-        html += '<div class="pz-legend-item"><span class="pz-num">'+numLegende+'</span><span><strong>'+nc.no+'</strong> &#8212; '+nc.observation+'</span></div>';
-      });
-      html += '</div>';
-    } else {
-      html += '<div class="pz-legend"><div class="pz-legend-item"><span style="color:#2E7D32;font-weight:700">&#10003; Aucune non-conformite identifiee sur cette photo</span></div></div>';
-    }
-    if (pz.ncs && pz.ncs.length > 0) {
-      html += '<table class="nc-tbl"><thead><tr><th>Ref.</th><th>Non-conformite</th><th>Type</th><th>Priorite</th></tr></thead><tbody>';
-      pz.ncs.forEach(function(nc) {
-        html += '<tr><td><strong>'+nc.no+'</strong></td><td>'+nc.observation+'</td><td>'+pill(nc.type,TC[nc.type])+'</td><td>'+pill(nc.priorite,PC[nc.priorite]||'#999')+'</td></tr>';
-      });
-      html += '</tbody></table>';
-    }
-    html += '</div>';
-  });
-
-  if (allNCs.length > 0) {
-    html += '<div class="sec-title">Fiches de non-conformites</div>';
-    allNCs.forEach(function(nc) {
-      var tc = TC[nc.type]||'#999', pc = PC[nc.priorite]||'#999';
-      html += '<div class="fiche"><div class="fiche-hdr"><div class="fh-no">'+nc.no+'</div><div class="fh-zone">'+nc.zone+'</div>';
-      html += '<div class="fh-type" style="background:'+tc+'">'+nc.type+'</div><div class="fh-prio" style="background:'+pc+'">'+nc.priorite+'</div></div>';
-      html += '<div class="fiche-body">';
-      html += '<div class="frow"><div class="fl">Observation</div><div class="fv">'+nc.observation+'</div></div>';
-      html += '<div class="frow"><div class="fl">Reglement</div><div class="fv">'+nc.regle+'</div></div>';
-      html += '<div class="frow"><div class="fl">Action</div><div class="fv"><strong>'+nc.action+'</strong></div></div>';
-      html += '</div></div>';
+  if(allNCs.length>0){
+    html+='<div class="sec-title">Fiches de non-conformites</div>';
+    allNCs.forEach(function(nc){
+      var tc=TC[nc.type]||'#999',pc=PC[nc.priorite]||'#999';
+      html+='<div class="fiche"><div class="fiche-hdr"><div class="fh-no">'+nc.no+'</div><div class="fh-zone">'+nc.zone+'</div>';
+      html+='<div class="fh-type" style="background:'+tc+'">'+nc.type+'</div><div class="fh-prio" style="background:'+pc+'">'+nc.priorite+'</div></div>';
+      html+='<div class="fiche-body"><div class="frow"><div class="fl">Observation</div><div class="fv">'+nc.observation+'</div></div>';
+      html+='<div class="frow"><div class="fl">Reglement</div><div class="fv">'+nc.regle+'</div></div>';
+      html+='<div class="frow"><div class="fl">Action</div><div class="fv"><strong>'+nc.action+'</strong></div></div></div></div>';
     });
-
-    html += '<div class="sec-title">Plan d&#39;actions prioritaires</div>';
-    html += '<table class="plan-tbl"><thead><tr><th>Ref.</th><th>Priorite</th><th>Action</th><th>Delai</th></tr></thead><tbody>';
-    allNCs.forEach(function(nc) {
-      var pc = PC[nc.priorite]||'#999', dl = DL[nc.priorite]||'--';
-      html += '<tr><td><strong>'+nc.no+'</strong></td><td>'+pill(nc.priorite,pc)+'</td><td>'+nc.action+'</td><td>'+dl+'</td></tr>';
-    });
-    html += '</tbody></table>';
+    html+='<div class="sec-title">Plan d&#39;actions prioritaires</div>';
+    html+='<table class="plan-tbl"><thead><tr><th>Ref.</th><th>Priorite</th><th>Action</th><th>Delai</th></tr></thead><tbody>';
+    allNCs.forEach(function(nc){var pc=PC[nc.priorite]||'#999',dl=DL[nc.priorite]||'--';html+='<tr><td><strong>'+nc.no+'</strong></td><td>'+pill(nc.priorite,pc)+'</td><td>'+nc.action+'</td><td>'+dl+'</td></tr>';});
+    html+='</tbody></table>';
   }
-
-  html += '<div class="sec-title">Signatures</div><div class="sig-section">';
-  html += '<div class="sig-steps"><div class="sstep active" id="ss1">1 Inspecteur</div><div class="sstep" id="ss2">2 Client</div><div class="sstep" id="ss3">3 Finaliser</div></div>';
-
-  html += '<div class="sig-panel active" id="sp1"><div class="sig-name">Inspecteur / Auditeur</div><div class="sig-role">Jacques Perrier - Auditeur en hygiene et salubrite alimentaire</div>';
-  html += '<div class="cvs-wrap"><div class="cvs-hint">Signez avec le doigt</div><div class="cvs-line"></div><canvas id="cv1"></canvas></div>';
-  html += '<div class="sig-btns"><button class="btn-clr" id="bclr1">Effacer</button><button class="btn-nxt" id="bnxt1">Confirmer</button></div>';
-  html += '<div class="sig-warn" id="sw1">Veuillez signer avant de continuer.</div></div>';
-
-  html += '<div class="sig-panel" id="sp2"><div class="sig-name">Responsable etablissement</div><div class="sig-role">'+f.etab+' - Passez le telephone au responsable</div>';
-  html += '<div class="cvs-wrap"><div class="cvs-hint">Signez avec le doigt</div><div class="cvs-line"></div><canvas id="cv2"></canvas></div>';
-  html += '<div class="sig-btns"><button class="btn-clr" id="bclr2">Effacer</button><button class="btn-nxt" id="bnxt2">Confirmer</button></div>';
-  html += '<div class="sig-warn" id="sw2">Veuillez signer avant de continuer.</div></div>';
-
-  html += '<div class="sig-panel" id="sp3"><div class="final-hdr"><div class="fck">&#9989;</div><h3>Signatures completes</h3><p>Les deux parties ont signe le rapport</p></div>';
-  html += '<div class="recap-list"><div class="recap-row"><img id="sr1" src="" alt=""><div class="ri"><strong>Inspecteur / Auditeur</strong><span>Jacques Perrier - MAPAQ/HACCP</span></div><div class="chk">&#10003;</div></div>';
-  html += '<div class="recap-row"><img id="sr2" src="" alt=""><div class="ri"><strong>Responsable</strong><span>'+f.etab+'</span></div><div class="chk">&#10003;</div></div></div>';
-  html += '<div class="sig-print-wrap">';
-  html += '<div class="spb"><label>Inspecteur / Auditeur</label><div class="spb-name">Jacques Perrier<br><small style="color:#8A7A5A;font-size:10px">Auditeur en hygiene et salubrite alimentaire</small></div>';
-  html += '<div class="spb-ph" id="sph1">En attente...</div><img class="sig-img" id="ps1"><div class="spb-date">Date : '+dateStr+'</div></div>';
-  html += '<div class="spb"><label>Responsable etablissement</label><div class="spb-name">'+f.resp+'<br><small style="color:#8A7A5A;font-size:10px">'+f.etab+'</small></div>';
-  html += '<div class="spb-ph" id="sph2">En attente...</div><img class="sig-img" id="ps2"><div class="spb-date">Date : '+dateStr+'</div></div>';
-  html += '</div>';
-  html += '<button class="btn-print" onclick="printReport()">&#128424; Imprimer / Enregistrer PDF</button>';
-  html += '<div class="print-hint">Safari - Partager - Imprimer - Enregistrer en PDF</div>';
-  html += '<button class="btn-new" id="btnNew">+ Nouveau rapport</button></div></div>';
-  html += '<div class="rpt-footer">Verdict 360 AI | info@verdict360ai.com | +1 (873) 822-1455 | N '+via+' | '+dateStr+'</div>';
-
-  document.getElementById('rptBody').innerHTML = html;
+  html+='<div class="sec-title">Signatures</div><div class="sig-section">';
+  html+='<div class="sig-steps"><div class="sstep active" id="ss1">1 Inspecteur</div><div class="sstep" id="ss2">2 Client</div><div class="sstep" id="ss3">3 Finaliser</div></div>';
+  html+='<div class="sig-panel active" id="sp1"><div class="sig-name">Inspecteur / Auditeur</div><div class="sig-role">Jacques Perrier - Auditeur en hygiene et salubrite alimentaire</div>';
+  html+='<div class="cvs-wrap"><div class="cvs-hint">Signez avec le doigt</div><div class="cvs-line"></div><canvas id="cv1"></canvas></div>';
+  html+='<div class="sig-btns"><button class="btn-clr" id="bclr1">Effacer</button><button class="btn-nxt" id="bnxt1">Confirmer</button></div>';
+  html+='<div class="sig-warn" id="sw1">Veuillez signer avant de continuer.</div></div>';
+  html+='<div class="sig-panel" id="sp2"><div class="sig-name">Responsable etablissement</div><div class="sig-role">'+f.etab+' - Passez le telephone au responsable</div>';
+  html+='<div class="cvs-wrap"><div class="cvs-hint">Signez avec le doigt</div><div class="cvs-line"></div><canvas id="cv2"></canvas></div>';
+  html+='<div class="sig-btns"><button class="btn-clr" id="bclr2">Effacer</button><button class="btn-nxt" id="bnxt2">Confirmer</button></div>';
+  html+='<div class="sig-warn" id="sw2">Veuillez signer avant de continuer.</div></div>';
+  html+='<div class="sig-panel" id="sp3"><div class="final-hdr"><div class="fck">&#9989;</div><h3>Signatures completes</h3><p>Les deux parties ont signe le rapport</p></div>';
+  html+='<div class="recap-list"><div class="recap-row"><img id="sr1" src="" alt=""><div class="ri"><strong>Inspecteur / Auditeur</strong><span>Jacques Perrier - MAPAQ/HACCP</span></div><div class="chk">&#10003;</div></div>';
+  html+='<div class="recap-row"><img id="sr2" src="" alt=""><div class="ri"><strong>Responsable</strong><span>'+f.etab+'</span></div><div class="chk">&#10003;</div></div></div>';
+  html+='<div class="sig-print-wrap">';
+  html+='<div class="spb"><label>Inspecteur / Auditeur</label><div class="spb-name">Jacques Perrier<br><small style="color:#8A7A5A;font-size:10px">Auditeur en hygiene et salubrite alimentaire</small></div>';
+  html+='<div class="spb-ph" id="sph1">En attente...</div><img class="sig-img" id="ps1"><div class="spb-date">Date : '+dateStr+'</div></div>';
+  html+='<div class="spb"><label>Responsable etablissement</label><div class="spb-name">'+f.resp+'<br><small style="color:#8A7A5A;font-size:10px">'+f.etab+'</small></div>';
+  html+='<div class="spb-ph" id="sph2">En attente...</div><img class="sig-img" id="ps2"><div class="spb-date">Date : '+dateStr+'</div></div></div>';
+  html+='<button class="btn-print" onclick="printReport()">&#128424; Imprimer / Enregistrer PDF</button>';
+  html+='<div class="print-hint">Safari - Partager - Imprimer - Enregistrer en PDF</div>';
+  html+='<button class="btn-new" id="btnNew">+ Nouveau rapport</button></div></div>';
+  html+='<div class="rpt-footer">Verdict 360 AI | info@verdict360ai.com | +1 (873) 822-1455 | N '+via+' | '+dateStr+'</div>';
+  document.getElementById('rptBody').innerHTML=html;
   goTo('s-rapport');
-
-  r.photos.forEach(function(pz, pi) {
-    var photo = photos[pz.photoIndex !== undefined ? pz.photoIndex : pi];
-    var imgEl = document.getElementById('pz-img-' + pi);
-    if (photo && imgEl && pz.ncs && pz.ncs.length > 0) {
-      (function(el, pidx, ncs){
-        annotatePhoto(photo.b64, ncs, pidx, function(annotated){ if(el) el.src = annotated; });
-      })(imgEl, pz.photoIndex !== undefined ? pz.photoIndex : pi, pz.ncs);
+  r.photos.forEach(function(pz,pi){
+    var photo=photos[pz.photoIndex!==undefined?pz.photoIndex:pi];
+    var imgEl=document.getElementById('pz-img-'+pi);
+    if(photo&&imgEl&&pz.ncs&&pz.ncs.length>0){
+      (function(el,pidx,ncs){annotatePhoto(photo.b64,ncs,pidx,function(a){if(el)el.src=a;});})(imgEl,pz.photoIndex!==undefined?pz.photoIndex:pi,pz.ncs);
     }
   });
-
-  setTimeout(function() {
+  setTimeout(function(){
     initCanvas('cv1');
-    document.getElementById('bclr1').addEventListener('click', function(){ clearCanvas('cv1'); });
-    document.getElementById('bnxt1').addEventListener('click', function(){ confirmSig(1); });
-    document.getElementById('bclr2').addEventListener('click', function(){ clearCanvas('cv2'); });
-    document.getElementById('bnxt2').addEventListener('click', function(){ confirmSig(2); });
-    document.getElementById('btnNew').addEventListener('click', function(){ resetApp(); });
-  }, 200);
+    document.getElementById('bclr1').addEventListener('click',function(){clearCanvas('cv1');});
+    document.getElementById('bnxt1').addEventListener('click',function(){confirmSig(1);});
+    document.getElementById('bclr2').addEventListener('click',function(){clearCanvas('cv2');});
+    document.getElementById('bnxt2').addEventListener('click',function(){confirmSig(2);});
+    document.getElementById('btnNew').addEventListener('click',function(){resetApp();});
+  },200);
 }
 
-function initCanvas(id) {
-  var c = document.getElementById(id); if(!c) return;
-  var dpr = window.devicePixelRatio||1;
-  var w = c.parentElement.clientWidth;
-  c.width = w*dpr; c.height = 160*dpr;
-  c.style.width = w+'px'; c.style.height = '160px';
-  var ctx = c.getContext('2d');
-  ctx.scale(dpr,dpr); ctx.strokeStyle='#1A1A1A'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
-  function getPos(e) { var r=c.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return {x:s.clientX-r.left,y:s.clientY-r.top}; }
+function initCanvas(id){
+  var c=document.getElementById(id);if(!c)return;
+  var dpr=window.devicePixelRatio||1,w=c.parentElement.clientWidth;
+  c.width=w*dpr;c.height=160*dpr;c.style.width=w+'px';c.style.height='160px';
+  var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.strokeStyle='#1A1A1A';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
+  function getPos(e){var r=c.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:s.clientX-r.left,y:s.clientY-r.top};}
   c.addEventListener('touchstart',function(e){e.preventDefault();drawing=true;var p=getPos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);},{passive:false});
   c.addEventListener('touchmove',function(e){e.preventDefault();if(!drawing)return;var p=getPos(e);ctx.lineTo(p.x,p.y);ctx.stroke();},{passive:false});
   c.addEventListener('touchend',function(e){e.preventDefault();drawing=false;},{passive:false});
@@ -774,37 +621,28 @@ function initCanvas(id) {
   c.addEventListener('mousemove',function(e){if(!drawing)return;var p=getPos(e);ctx.lineTo(p.x,p.y);ctx.stroke();});
   c.addEventListener('mouseup',function(){drawing=false;});
 }
-
-function clearCanvas(id) { var c=document.getElementById(id),dpr=window.devicePixelRatio||1; c.getContext('2d').clearRect(0,0,c.width/dpr,c.height/dpr); }
-
-function isEmptyCanvas(id) {
-  var c=document.getElementById(id),data=c.getContext('2d').getImageData(0,0,c.width,c.height).data;
-  for(var i=0;i<data.length;i++){if(data[i]!==0)return false;} return true;
-}
-
-function confirmSig(n) {
+function clearCanvas(id){var c=document.getElementById(id),dpr=window.devicePixelRatio||1;c.getContext('2d').clearRect(0,0,c.width/dpr,c.height/dpr);}
+function isEmptyCanvas(id){var c=document.getElementById(id),data=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(var i=0;i<data.length;i++){if(data[i]!==0)return false;}return true;}
+function confirmSig(n){
   if(isEmptyCanvas('cv'+n)){var w=document.getElementById('sw'+n);w.classList.add('show');setTimeout(function(){w.classList.remove('show');},2500);return;}
-  var url=document.getElementById('cv'+n).toDataURL('image/png'); sigs[n]=url;
+  var url=document.getElementById('cv'+n).toDataURL('image/png');sigs[n]=url;
   document.getElementById('sr'+n).src=url;
-  var ps=document.getElementById('ps'+n); ps.src=url; ps.style.display='block';
+  var ps=document.getElementById('ps'+n);ps.src=url;ps.style.display='block';
   document.getElementById('sph'+n).style.display='none';
-  document.getElementById('ss'+n).classList.remove('active'); document.getElementById('ss'+n).classList.add('done');
+  document.getElementById('ss'+n).classList.remove('active');document.getElementById('ss'+n).classList.add('done');
   var next=n+1;
   for(var i=1;i<=3;i++){var p=document.getElementById('sp'+i);if(p)p.classList.toggle('active',i===next);}
-  var ns=document.getElementById('ss'+next); if(ns){ns.classList.remove('done');ns.classList.add('active');}
-  if(next<=2) setTimeout(function(){initCanvas('cv'+next);},80);
+  var ns=document.getElementById('ss'+next);if(ns){ns.classList.remove('done');ns.classList.add('active');}
+  if(next<=2)setTimeout(function(){initCanvas('cv'+next);},80);
 }
-
-function resetApp() {
-  photos=[]; formData={}; result=null; sigs={1:null,2:null};
+function resetApp(){
+  photos=[];formData={};result=null;sigs={1:null,2:null};
   ['f-etab','f-permis','f-adresse','f-resp','f-contexte'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
   document.getElementById('photosGrid').innerHTML='';
   document.getElementById('btnAnalyze').disabled=true;
   goTo('s-home');
 }
-
 </script>
-
 </body>
 </html>
