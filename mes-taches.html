@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tâches — V360AI">
+<title>Mes Tâches — Verdict 360 AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Source+Sans+3:wght@400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --or-solide:#B8954A;--or-ombre:#9C7F3D;--or-highlight:#F0E4C0;--or-reflet:#D4C28E;
+  --or-grad:linear-gradient(110deg,#9C7F3D 0%,#B8954A 35%,#F0E4C0 50%,#B8954A 65%,#9C7F3D 100%);
+  --noir:#1A1A1A;
+}
+body{font-family:'Source Sans 3','Segoe UI',Arial,sans-serif;background:#1A1A1A;min-height:100vh;color:#fff;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:#1A1A1A;border-bottom:2px solid var(--or-ombre);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;letter-spacing:3px;background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-back{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--or-highlight);background:none;border:1px solid var(--or-ombre);border-radius:8px;padding:6px 12px;display:none;}
+.nav-back.visible{display:block;}
+
+/* ACCUEIL - GRILLE DE ROLES */
+#accueil{padding:30px 18px 40px;text-align:center;}
+.accueil-titre{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px;}
+.accueil-sub{font-size:13px;color:#999;margin-bottom:28px;}
+.roles-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:420px;margin:0 auto;}
+.role-tuile{background:#242424;border:1.5px solid #333;border-radius:16px;padding:24px 12px;cursor:pointer;transition:border-color 0.15s;}
+.role-tuile:active{border-color:var(--or-solide);background:#2a2a2a;}
+.role-icone{font-size:36px;margin-bottom:10px;}
+.role-nom{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;letter-spacing:0.5px;}
+.role-progres{font-size:10px;color:var(--or-highlight);margin-top:6px;font-weight:600;}
+
+/* ECRAN TACHES */
+#taches{display:none;padding:24px 18px 50px;max-width:600px;margin:0 auto;}
+.taches-header{text-align:center;margin-bottom:22px;}
+.taches-icone{font-size:40px;margin-bottom:8px;}
+.taches-titre{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:900;}
+.taches-date{font-size:12px;color:#888;margin-top:2px;}
+.progres-bar-wrap{background:#242424;border-radius:20px;height:10px;margin:16px 0 24px;overflow:hidden;}
+.progres-bar{height:100%;background:var(--or-grad);width:0%;transition:width 0.3s;}
+.progres-txt{text-align:center;font-size:11px;color:var(--or-highlight);font-weight:700;margin-top:-16px;margin-bottom:20px;}
+
+.cat-titre{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--or-solide);margin:20px 0 8px 4px;}
+.cat-titre:first-child{margin-top:0;}
+
+.tache-item{display:flex;align-items:center;gap:12px;background:#242424;border-radius:12px;padding:14px 16px;margin-bottom:9px;border:1.5px solid #2e2e2e;cursor:pointer;}
+.tache-item.fait{opacity:0.5;border-color:#3a3a2a;}
+.tache-check{width:22px;height:22px;border:2px solid var(--or-ombre);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:var(--or-highlight);}
+.tache-item.fait .tache-check{background:var(--or-grad);border-color:transparent;color:#1A1A1A;}
+.tache-txt{font-size:13.5px;line-height:1.4;flex:1;}
+.tache-item.fait .tache-txt{text-decoration:line-through;color:#888;}
+
+.reset-btn{display:block;width:100%;text-align:center;margin-top:26px;background:none;border:1.5px solid #333;color:#777;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:12px;border-radius:10px;}
+
+.footer{text-align:center;padding:20px;font-size:10px;color:#444;letter-spacing:1px;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">VERDICT <span style="color:var(--or-solide)">360</span> AI</div>
+  <button class="nav-back" id="btnRetour" onclick="retourAccueil()">← Rôles</button>
+</nav>
+
+<div id="accueil">
+  <div class="accueil-titre">Mes Tâches du jour</div>
+  <div class="accueil-sub">Sélectionne ton poste</div>
+  <div class="roles-grid">
+    <div class="role-tuile" onclick="ouvrirRole('serveur')">
+      <div class="role-icone">🍽️</div>
+      <div class="role-nom">SERVEUR /<br>SERVEUSE</div>
+      <div class="role-progres" id="prog-serveur">0/8 faites</div>
+    </div>
+    <div class="role-tuile" onclick="ouvrirRole('plongeur')">
+      <div class="role-icone">🧽</div>
+      <div class="role-nom">PLONGEUR</div>
+      <div class="role-progres" id="prog-plongeur">0/8 faites</div>
+    </div>
+    <div class="role-tuile" onclick="ouvrirRole('cuisinier')">
+      <div class="role-icone">👨‍🍳</div>
+      <div class="role-nom">CUISINIER</div>
+      <div class="role-progres" id="prog-cuisinier">0/9 faites</div>
+    </div>
+    <div class="role-tuile" onclick="ouvrirRole('gerant')">
+      <div class="role-icone">📋</div>
+      <div class="role-nom">GÉRANT /<br>SUPERVISEUR</div>
+      <div class="role-progres" id="prog-gerant">0/33 faites</div>
+    </div>
+    <div class="role-tuile" style="grid-column:1/3;" onclick="ouvrirRole('autre')">
+      <div class="role-icone">📝</div>
+      <div class="role-nom">AUTRE (personnalisé)</div>
+      <div class="role-progres" id="prog-autre">0/0 faites</div>
+    </div>
+  </div>
+</div>
+
+<div id="taches">
+  <div class="taches-header">
+    <div class="taches-icone" id="tacheIcone">🍽️</div>
+    <div class="taches-titre" id="tacheTitre">Serveur / Serveuse</div>
+    <div class="taches-date" id="tacheDate"></div>
+  </div>
+  <div class="progres-bar-wrap"><div class="progres-bar" id="progresBar"></div></div>
+  <div class="progres-txt" id="progresTxt">0 / 8 tâches complétées</div>
+  <div id="listeTaches"></div>
+  <div id="ajoutZone" style="display:none;margin-top:14px;">
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="inputNouvelleTache" placeholder="Nouvelle tâche…" style="flex:1;background:#242424;border:1.5px solid #333;border-radius:10px;padding:12px 14px;color:#fff;font-size:13px;font-family:'Source Sans 3',sans-serif;">
+      <button onclick="ajouterTacheAutre()" style="background:var(--or-grad);border:none;border-radius:10px;padding:0 18px;font-family:'Montserrat',sans-serif;font-weight:900;color:#1A1A1A;font-size:18px;">＋</button>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="resetRole()">↺ Réinitialiser les tâches d'aujourd'hui</button>
+</div>
+
+<div class="footer">VERDICT 360 AI · info@verdict360ai.com</div>
+
+<script>
+const TACHES = {
+  serveur: {
+    icone: '🍽️', nom: 'Serveur / Serveuse',
+    liste: [
+      "Vérifier la propreté des tables et chaises avant l'ouverture",
+      "Vérifier la température du comptoir/bar froid",
+      "Nettoyer et désinfecter les surfaces de service",
+      "Vérifier l'état de la vaisselle et des ustensiles avant le service",
+      "Vérifier les dates de péremption des condiments en salle",
+      "Se laver les mains régulièrement (min. 1x/heure)",
+      "Nettoyer la machine à café et les distributeurs",
+      "Signaler tout aliment suspect au gérant"
+    ]
+  },
+  plongeur: {
+    icone: '🧽', nom: 'Plongeur',
+    liste: [
+      "Vérifier la température du lave-vaisselle (rinçage min. 82°C)",
+      "Trier la vaisselle avant le lavage",
+      "Nettoyer et désinfecter l'évier et les surfaces de plonge",
+      "Vider les poubelles et remplacer les sacs",
+      "Nettoyer le sol de la zone de plonge",
+      "Ranger la vaisselle propre correctement",
+      "Vérifier le niveau de savon et détergent",
+      "Nettoyer les grilles et filtres du lave-vaisselle"
+    ]
+  },
+  cuisinier: {
+    icone: '👨‍🍳', nom: 'Cuisinier',
+    liste: [
+      "Relever les températures des réfrigérateurs et congélateurs",
+      "Vérifier les dates de péremption des aliments (méthode FIFO)",
+      "Nettoyer et désinfecter les surfaces de travail",
+      "Vérifier la température de cuisson des aliments à risque",
+      "Étiqueter et dater tous les aliments préparés",
+      "Nettoyer la hotte et les équipements de cuisson",
+      "Vérifier la propreté des ustensiles de cuisine",
+      "Vérifier les fiches signalétiques (SIMDUT) des produits utilisés",
+      "Signaler toute non-conformité au gérant"
+    ]
+  },
+  gerant: {
+    icone: '📋', nom: 'Gérant / Superviseur',
+    liste: [
+      {cat: "Tâches quotidiennes"},
+      "Valider les relevés de température de la journée",
+      "Effectuer une ronde de sécurité et d'hygiène",
+      "Vérifier que les checklists de l'équipe sont complétées",
+      "Réviser les registres HACCP du jour",
+      "Confirmer l'inventaire des produits de nettoyage",
+      "Archiver les rapports de la journée",
+
+      {cat: "Module Crise"},
+      "Identifier le type de crise (sanitaire, infestation, intoxication, inspection)",
+      "Sécuriser la zone concernée et stopper le service si nécessaire",
+      "Photographier les preuves avec horodatage",
+      "Compléter le rapport d'incident guidé étape par étape",
+      "Utiliser le script de communication (clients / médias / autorités)",
+      "Contacter l'auditeur Verdict 360 AI dans les 2 heures",
+      "Mettre en place les actions correctives immédiates documentées",
+      "Archiver le dossier complet pour l'inspecteur MAPAQ",
+
+      {cat: "Module Sécurité"},
+      "Inventorier les produits chimiques et entrer les fiches SIMDUT",
+      "Lister les équipements à inspecter (fours, friteuses, hottes, réfrigérateurs)",
+      "Configurer la checklist d'inspection hebdomadaire",
+      "Former les employés à signaler un incident",
+      "Désigner un responsable sécurité pour valider les rapports",
+      "Vérifier la conformité avec les exigences CNESST",
+
+      {cat: "Module Hygiène"},
+      "Configurer les zones de relevé de température",
+      "Définir les seuils d'alerte selon les normes MAPAQ",
+      "Créer les checklists de nettoyage par zone",
+      "Former les employés à la saisie des relevés",
+      "Configurer le registre de réception fournisseurs",
+      "Activer les alertes automatiques hors zone",
+
+      {cat: "Module Contrôle"},
+      "Adapter la grille d'audit aux critères MAPAQ du permis",
+      "Réaliser l'audit interne complet (état des lieux)",
+      "Identifier les non-conformités prioritaires et créer les plans d'action",
+      "Attribuer les responsables pour chaque action corrective",
+      "Planifier les audits internes récurrents (recommandé : mensuel)",
+
+      {cat: "Formation"},
+      "Vérifier que tous les employés ont complété leur formation ACADÉMIE",
+      "Planifier les formations manquantes"
+    ]
+  },
+  autre: {
+    icone: '📝', nom: 'Autre (personnalisé)',
+    liste: []
+  }
+};
+
+function getListeAutre() {
+  try {
+    return JSON.parse(localStorage.getItem('v360-taches-autre-liste')) || [];
+  } catch(e) { return []; }
+}
+
+function setListeAutre(liste) {
+  localStorage.setItem('v360-taches-autre-liste', JSON.stringify(liste));
+}
+
+function ajouterTacheAutre() {
+  const input = document.getElementById('inputNouvelleTache');
+  const texte = input.value.trim();
+  if (!texte) return;
+  const liste = getListeAutre();
+  liste.push(texte);
+  setListeAutre(liste);
+  input.value = '';
+  afficherTaches();
+}
+
+function supprimerTacheAutre(i) {
+  const liste = getListeAutre();
+  liste.splice(i, 1);
+  setListeAutre(liste);
+  const etat = getEtat('autre');
+  delete etat[i];
+  setEtat('autre', etat);
+  afficherTaches();
+}
+
+let roleActuel = null;
+
+function dateClé() {
+  const d = new Date();
+  return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+}
+
+function getEtat(role) {
+  const clé = 'v360-taches-' + role + '-' + dateClé();
+  try {
+    return JSON.parse(localStorage.getItem(clé)) || {};
+  } catch(e) { return {}; }
+}
+
+function setEtat(role, etat) {
+  const clé = 'v360-taches-' + role + '-' + dateClé();
+  localStorage.setItem(clé, JSON.stringify(etat));
+}
+
+function compterTaches(liste) {
+  return liste.filter(item => !(typeof item === 'object' && item.cat)).length;
+}
+
+function majProgresAccueil() {
+  Object.keys(TACHES).forEach(role => {
+    const etat = getEtat(role);
+    const liste = (role === 'autre') ? getListeAutre() : TACHES[role].liste;
+    const total = compterTaches(liste);
+    const faites = Object.values(etat).filter(v => v).length;
+    document.getElementById('prog-' + role).textContent = faites + '/' + total + ' faites';
+  });
+}
+
+function ouvrirRole(role) {
+  roleActuel = role;
+  document.getElementById('accueil').style.display = 'none';
+  document.getElementById('taches').style.display = 'block';
+  document.getElementById('btnRetour').classList.add('visible');
+  document.getElementById('ajoutZone').style.display = (role === 'autre') ? 'block' : 'none';
+
+  const data = TACHES[role];
+  document.getElementById('tacheIcone').textContent = data.icone;
+  document.getElementById('tacheTitre').textContent = data.nom;
+  document.getElementById('tacheDate').textContent = new Date().toLocaleDateString('fr-CA', {weekday:'long', day:'numeric', month:'long'});
+
+  afficherTaches();
+}
+
+function afficherTaches() {
+  const data = TACHES[roleActuel];
+  const liste = (roleActuel === 'autre') ? getListeAutre() : data.liste;
+  const etat = getEtat(roleActuel);
+  const conteneur = document.getElementById('listeTaches');
+  conteneur.innerHTML = '';
+
+  if (roleActuel === 'autre' && liste.length === 0) {
+    conteneur.innerHTML = '<div style="text-align:center;color:#666;font-size:13px;padding:20px 0;">Aucune tâche pour l\'instant.<br>Ajoute-en une ci-dessous ⬇️</div>';
+    majProgres();
+    return;
+  }
+
+  liste.forEach((item, i) => {
+    if (typeof item === 'object' && item.cat) {
+      const cat = document.createElement('div');
+      cat.className = 'cat-titre';
+      cat.textContent = item.cat;
+      conteneur.appendChild(cat);
+      return;
+    }
+    const fait = !!etat[i];
+    const div = document.createElement('div');
+    div.className = 'tache-item' + (fait ? ' fait' : '');
+    div.style.position = 'relative';
+    const supprBtn = (roleActuel === 'autre') ? `<div onclick="event.stopPropagation();supprimerTacheAutre(${i})" style="color:#a55;font-size:16px;padding:2px 4px;flex-shrink:0;">✕</div>` : '';
+    div.innerHTML = `<div class="tache-check">${fait ? '✓' : ''}</div><div class="tache-txt" style="flex:1;">${item}</div>${supprBtn}`;
+    div.onclick = () => toggleTache(i);
+    conteneur.appendChild(div);
+  });
+
+  majProgres();
+}
+
+function toggleTache(i) {
+  const etat = getEtat(roleActuel);
+  etat[i] = !etat[i];
+  setEtat(roleActuel, etat);
+  afficherTaches();
+}
+
+function majProgres() {
+  const liste = (roleActuel === 'autre') ? getListeAutre() : TACHES[roleActuel].liste;
+  const etat = getEtat(roleActuel);
+  const total = compterTaches(liste);
+  const faites = Object.values(etat).filter(v => v).length;
+  const pct = Math.round((faites/total)*100);
+  document.getElementById('progresBar').style.width = pct + '%';
+  document.getElementById('progresTxt').textContent = faites + ' / ' + total + ' tâches complétées';
+}
+
+function resetRole() {
+  setEtat(roleActuel, {});
+  afficherTaches();
+}
+
+function retourAccueil() {
+  document.getElementById('accueil').style.display = 'block';
+  document.getElementById('taches').style.display = 'none';
+  document.getElementById('btnRetour').classList.remove('visible');
+  majProgresAccueil();
+}
+
+majProgresAccueil();
+</script>
+
+</body>
+</html>
