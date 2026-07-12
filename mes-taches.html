@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tâches — V360AI">
+<title>Mes Tâches — Verdict 360 AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Source+Sans+3:wght@400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --or-solide:#B8954A;--or-ombre:#9C7F3D;--or-highlight:#F0E4C0;--or-reflet:#D4C28E;
+  --or-grad:linear-gradient(110deg,#9C7F3D 0%,#B8954A 35%,#F0E4C0 50%,#B8954A 65%,#9C7F3D 100%);
+  --noir:#1A1A1A;
+}
+body{font-family:'Source Sans 3','Segoe UI',Arial,sans-serif;background:#1A1A1A;min-height:100vh;color:#fff;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:#1A1A1A;border-bottom:2px solid var(--or-ombre);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;letter-spacing:3px;background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-back{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--or-highlight);background:none;border:1px solid var(--or-ombre);border-radius:8px;padding:6px 12px;display:none;}
+.nav-back.visible{display:block;}
+
+/* ACCUEIL - GRILLE DE ROLES */
+#accueil{padding:30px 18px 40px;text-align:center;}
+.accueil-titre{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px;}
+.accueil-sub{font-size:13px;color:#999;margin-bottom:28px;}
+.roles-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:420px;margin:0 auto;}
+.role-tuile{background:#242424;border:1.5px solid #333;border-radius:16px;padding:24px 12px;cursor:pointer;transition:border-color 0.15s;}
+.role-tuile:active{border-color:var(--or-solide);background:#2a2a2a;}
+.role-icone{font-size:36px;margin-bottom:10px;}
+.role-nom{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;letter-spacing:0.5px;}
+.role-progres{font-size:10px;color:var(--or-highlight);margin-top:6px;font-weight:600;}
+
+/* ECRAN TACHES */
+#taches{display:none;padding:24px 18px 50px;max-width:600px;margin:0 auto;}
+.taches-header{text-align:center;margin-bottom:22px;}
+.taches-icone{font-size:40px;margin-bottom:8px;}
+.taches-titre{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:900;}
+.taches-date{font-size:12px;color:#888;margin-top:2px;}
+.progres-bar-wrap{background:#242424;border-radius:20px;height:10px;margin:16px 0 24px;overflow:hidden;}
+.progres-bar{height:100%;background:var(--or-grad);width:0%;transition:width 0.3s;}
+.progres-txt{text-align:center;font-size:11px;color:var(--or-highlight);font-weight:700;margin-top:-16px;margin-bottom:20px;}
+
+.cat-titre{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--or-solide);margin:20px 0 8px 4px;}
+.cat-titre:first-child{margin-top:0;}
+
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--or-ombre);background:transparent;transition:background 0.15s;}
+.pin-dot.rempli{background:var(--or-grad);border-color:transparent;}
+
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:260px;margin:0 auto;}
+.pin-touche{aspect-ratio:1;border-radius:50%;background:#242424;border:1.5px solid #333;color:#fff;font-family:'Montserrat',sans-serif;font-size:22px;font-weight:700;}
+.pin-touche:active{background:#2f2f2f;border-color:var(--or-solide);}
+.pin-fonction{color:#999;font-size:18px;}
+.pin-valider{background:var(--or-grad);color:#1A1A1A;border:none;font-size:22px;}
+
+.tache-item{display:flex;align-items:center;gap:12px;background:#242424;border-radius:12px;padding:14px 16px;margin-bottom:9px;border:1.5px solid #2e2e2e;cursor:pointer;}
+.tache-item.fait{opacity:0.5;border-color:#3a3a2a;}
+.tache-check{width:22px;height:22px;border:2px solid var(--or-ombre);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:var(--or-highlight);}
+.tache-item.fait .tache-check{background:var(--or-grad);border-color:transparent;color:#1A1A1A;}
+.tache-txt{font-size:13.5px;line-height:1.4;flex:1;}
+.tache-item.fait .tache-txt{text-decoration:line-through;color:#888;}
+
+.reset-btn{display:block;width:100%;text-align:center;margin-top:26px;background:none;border:1.5px solid #333;color:#777;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:12px;border-radius:10px;}
+
+.footer{text-align:center;padding:20px;font-size:10px;color:#444;letter-spacing:1px;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">VERDICT <span style="color:var(--or-solide)">360</span> AI</div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button id="btnMessages" onclick="ouvrirMessages()" style="display:none;position:relative;background:none;border:1px solid var(--or-ombre);border-radius:8px;padding:6px 10px;font-size:15px;">
+      🔔<span id="badgeMessages" style="display:none;position:absolute;top:-6px;right:-6px;background:#c0392b;color:#fff;font-size:9px;font-weight:800;border-radius:10px;padding:1px 5px;">0</span>
+    </button>
+    <button class="nav-back" id="btnRetour" onclick="retourAccueil()">← Rôles</button>
+  </div>
+</nav>
+
+<!-- OVERLAY MESSAGES -->
+<div id="overlayMessages" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:200;overflow-y:auto;padding:20px 16px 60px;">
+  <div style="max-width:520px;margin:0 auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+      <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:16px;color:var(--or-highlight);">💬 Messages</div>
+      <button onclick="fermerMessages()" style="background:none;border:1px solid #333;color:#999;border-radius:8px;padding:6px 12px;font-size:12px;">Fermer ✕</button>
+    </div>
+    <div id="listeMessages"></div>
+    <div id="zoneEnvoi" style="margin-top:24px;padding-top:18px;border-top:1px solid #2a2a2a;"></div>
+  </div>
+</div>
+
+<div id="ecranCode" style="padding:50px 24px;text-align:center;">
+  <div style="font-size:40px;margin-bottom:10px;">🔒</div>
+  <div class="accueil-titre">Mes Tâches</div>
+  <div class="accueil-sub" style="margin-bottom:26px;">Entre ton code employé</div>
+
+  <div id="pinDots" style="display:flex;gap:14px;justify-content:center;margin-bottom:10px;">
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+  </div>
+  <div id="erreurCode" style="color:#c66;font-size:12px;height:16px;margin-bottom:18px;">&nbsp;</div>
+
+  <div class="pin-pad">
+    <button class="pin-touche" onclick="pinAjouter('1')">1</button>
+    <button class="pin-touche" onclick="pinAjouter('2')">2</button>
+    <button class="pin-touche" onclick="pinAjouter('3')">3</button>
+    <button class="pin-touche" onclick="pinAjouter('4')">4</button>
+    <button class="pin-touche" onclick="pinAjouter('5')">5</button>
+    <button class="pin-touche" onclick="pinAjouter('6')">6</button>
+    <button class="pin-touche" onclick="pinAjouter('7')">7</button>
+    <button class="pin-touche" onclick="pinAjouter('8')">8</button>
+    <button class="pin-touche" onclick="pinAjouter('9')">9</button>
+    <button class="pin-touche pin-fonction" onclick="pinEffacer()">⌫</button>
+    <button class="pin-touche" onclick="pinAjouter('0')">0</button>
+    <button class="pin-touche pin-valider" onclick="validerCode()">✓</button>
+  </div>
+</div>
+
+<div id="accueil" style="display:none;">
+  <div class="accueil-titre">Mes Tâches du jour</div>
+  <div class="accueil-sub" id="accueilSousTitre">Sélectionne ton poste</div>
+  <div class="roles-grid" id="rolesGrid">
+    <div class="role-tuile" onclick="ouvrirRole('serveur')">
+      <div class="role-icone">🍽️</div>
+      <div class="role-nom">SERVEUR /<br>SERVEUSE</div>
+      <div class="role-progres" id="prog-serveur">0/8 faites</div>
+    </div>
+    <div class="role-tuile" onclick="ouvrirRole('cuisinier')">
+      <div class="role-icone">👨‍🍳</div>
+      <div class="role-nom">CUISINIER</div>
+      <div class="role-progres" id="prog-cuisinier">0/9 faites</div>
+    </div>
+    <div class="role-tuile" onclick="ouvrirRole('plongeur')">
+      <div class="role-icone">🧽</div>
+      <div class="role-nom">PLONGEUR</div>
+      <div class="role-progres" id="prog-plongeur">0/8 faites</div>
+    </div>
+    <div class="role-tuile" onclick="ouvrirRole('debarasseur')">
+      <div class="role-icone">🧺</div>
+      <div class="role-nom">DÉBARRASSEUR<br>(BUS BOY)</div>
+      <div class="role-progres" id="prog-debarasseur">0/8 faites</div>
+    </div>
+    <div class="role-tuile" onclick="ouvrirRole('gerant')">
+      <div class="role-icone">📋</div>
+      <div class="role-nom">GÉRANT /<br>SUPERVISEUR</div>
+      <div class="role-progres" id="prog-gerant">0/33 faites</div>
+    </div>
+    <div class="role-tuile" onclick="ouvrirRole('autre')">
+      <div class="role-icone">📝</div>
+      <div class="role-nom">AUTRE<br>(personnalisé)</div>
+      <div class="role-progres" id="prog-autre">0/0 faites</div>
+    </div>
+  </div>
+  <button onclick="deconnecter()" style="display:block;margin:26px auto 0;background:none;border:1.5px solid #333;color:#777;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 20px;border-radius:10px;">↺ Changer de code</button>
+</div>
+
+<div id="taches">
+  <div class="taches-header">
+    <div class="taches-icone" id="tacheIcone">🍽️</div>
+    <div class="taches-titre" id="tacheTitre">Serveur / Serveuse</div>
+    <div class="taches-date" id="tacheDate"></div>
+  </div>
+  <div class="progres-bar-wrap"><div class="progres-bar" id="progresBar"></div></div>
+  <div class="progres-txt" id="progresTxt">0 / 8 tâches complétées</div>
+  <div id="listeTaches"></div>
+  <div id="ajoutZone" style="display:none;margin-top:14px;">
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="inputNouvelleTache" placeholder="Nouvelle tâche…" style="flex:1;background:#242424;border:1.5px solid #333;border-radius:10px;padding:12px 14px;color:#fff;font-size:13px;font-family:'Source Sans 3',sans-serif;">
+      <button onclick="ajouterTacheAutre()" style="background:var(--or-grad);border:none;border-radius:10px;padding:0 18px;font-family:'Montserrat',sans-serif;font-weight:900;color:#1A1A1A;font-size:18px;">＋</button>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="resetRole()">↺ Réinitialiser les tâches d'aujourd'hui</button>
+</div>
+
+<div class="footer">VERDICT 360 AI · info@verdict360ai.com</div>
+
+<script>
+const TACHES = {
+  serveur: {
+    icone: '🍽️', nom: 'Serveur / Serveuse',
+    liste: [
+      "Vérifier la propreté des tables et chaises avant l'ouverture",
+      "Vérifier la température du comptoir/bar froid",
+      "Nettoyer et désinfecter les surfaces de service",
+      "Vérifier l'état de la vaisselle et des ustensiles avant le service",
+      "Vérifier les dates de péremption des condiments en salle",
+      "Se laver les mains régulièrement (min. 1x/heure)",
+      "Nettoyer la machine à café et les distributeurs",
+      "Signaler tout aliment suspect au gérant"
+    ]
+  },
+  plongeur: {
+    icone: '🧽', nom: 'Plongeur',
+    liste: [
+      "Vérifier la température du lave-vaisselle (rinçage min. 82°C)",
+      "Trier la vaisselle avant le lavage",
+      "Nettoyer et désinfecter l'évier et les surfaces de plonge",
+      "Vider les poubelles et remplacer les sacs",
+      "Nettoyer le sol de la zone de plonge",
+      "Ranger la vaisselle propre correctement",
+      "Vérifier le niveau de savon et détergent",
+      "Nettoyer les grilles et filtres du lave-vaisselle"
+    ]
+  },
+  debarasseur: {
+    icone: '🧺', nom: 'Débarrasseur (bus boy)',
+    liste: [
+      "Débarrasser les tables rapidement après le départ des clients",
+      "Essuyer et désinfecter les tables immédiatement",
+      "Réapprovisionner les stations de service (serviettes, ustensiles)",
+      "Transporter la vaisselle sale vers la zone de plonge",
+      "Balayer et nettoyer le plancher de la salle à manger",
+      "Remplir les distributeurs (sel, poivre, condiments)",
+      "Vider les poubelles de la salle à manger",
+      "Signaler tout dégât ou bris au gérant"
+    ]
+  },
+  cuisinier: {
+    icone: '👨‍🍳', nom: 'Cuisinier',
+    liste: [
+      "Relever les températures des réfrigérateurs et congélateurs",
+      "Vérifier les dates de péremption des aliments (méthode FIFO)",
+      "Nettoyer et désinfecter les surfaces de travail",
+      "Vérifier la température de cuisson des aliments à risque",
+      "Étiqueter et dater tous les aliments préparés",
+      "Nettoyer la hotte et les équipements de cuisson",
+      "Vérifier la propreté des ustensiles de cuisine",
+      "Vérifier les fiches signalétiques (SIMDUT) des produits utilisés",
+      "Signaler toute non-conformité au gérant"
+    ]
+  },
+  gerant: {
+    icone: '📋', nom: 'Gérant / Superviseur',
+    liste: [
+      {cat: "Tâches quotidiennes"},
+      "Valider les relevés de température de la journée",
+      "Effectuer une ronde de sécurité et d'hygiène",
+      "Vérifier que les checklists de l'équipe sont complétées",
+      "Réviser les registres HACCP du jour",
+      "Confirmer l'inventaire des produits de nettoyage",
+      "Archiver les rapports de la journée",
+
+      {cat: "Module Crise"},
+      "Identifier le type de crise (sanitaire, infestation, intoxication, inspection)",
+      "Sécuriser la zone concernée et stopper le service si nécessaire",
+      "Photographier les preuves avec horodatage",
+      "Compléter le rapport d'incident guidé étape par étape",
+      "Utiliser le script de communication (clients / médias / autorités)",
+      "Contacter l'auditeur Verdict 360 AI dans les 2 heures",
+      "Mettre en place les actions correctives immédiates documentées",
+      "Archiver le dossier complet pour l'inspecteur MAPAQ",
+
+      {cat: "Module Sécurité"},
+      "Inventorier les produits chimiques et entrer les fiches SIMDUT",
+      "Lister les équipements à inspecter (fours, friteuses, hottes, réfrigérateurs)",
+      "Configurer la checklist d'inspection hebdomadaire",
+      "Former les employés à signaler un incident",
+      "Désigner un responsable sécurité pour valider les rapports",
+      "Vérifier la conformité avec les exigences CNESST",
+
+      {cat: "Module Hygiène"},
+      "Configurer les zones de relevé de température",
+      "Définir les seuils d'alerte selon les normes MAPAQ",
+      "Créer les checklists de nettoyage par zone",
+      "Former les employés à la saisie des relevés",
+      "Configurer le registre de réception fournisseurs",
+      "Activer les alertes automatiques hors zone",
+
+      {cat: "Module Contrôle"},
+      "Adapter la grille d'audit aux critères MAPAQ du permis",
+      "Réaliser l'audit interne complet (état des lieux)",
+      "Identifier les non-conformités prioritaires et créer les plans d'action",
+      "Attribuer les responsables pour chaque action corrective",
+      "Planifier les audits internes récurrents (recommandé : mensuel)",
+
+      {cat: "Formation"},
+      "Vérifier que tous les employés ont complété leur formation ACADÉMIE",
+      "Planifier les formations manquantes"
+    ]
+  },
+  autre: {
+    icone: '📝', nom: 'Autre (personnalisé)',
+    liste: []
+  },
+  proprietaire: {
+    icone: '👑', nom: 'Propriétaire / Exploitant',
+    liste: []
+  }
+};
+
+// Premier chiffre du code à 4 chiffres = poste
+const PREFIXES = {
+  '1': 'serveur',
+  '2': 'cuisinier',
+  '3': 'plongeur',
+  '4': 'debarasseur',
+  '8': 'gerant',
+  '9': 'proprietaire'
+};
+
+let codeActuel = null;
+let pinSaisi = '';
+
+function pinAjouter(chiffre) {
+  if (pinSaisi.length >= 4) return;
+  pinSaisi += chiffre;
+  majPinDots();
+  document.getElementById('erreurCode').innerHTML = '&nbsp;';
+}
+
+function pinEffacer() {
+  pinSaisi = pinSaisi.slice(0, -1);
+  majPinDots();
+}
+
+function majPinDots() {
+  const dots = document.querySelectorAll('#pinDots .pin-dot');
+  dots.forEach((d, i) => d.classList.toggle('rempli', i < pinSaisi.length));
+}
+
+function validerCode() {
+  const val = pinSaisi.trim();
+  const erreurEl = document.getElementById('erreurCode');
+  const role = (val.length === 4) ? PREFIXES[val[0]] : null;
+  if (!val || !role) {
+    erreurEl.textContent = val.length < 4 ? 'Code à 4 chiffres requis' : 'Code non reconnu';
+    pinSaisi = '';
+    majPinDots();
+    return;
+  }
+  erreurEl.innerHTML = '&nbsp;';
+  codeActuel = val;
+  sessionStorage.setItem('v360-code-actuel', val);
+  pinSaisi = '';
+  document.getElementById('ecranCode').style.display = 'none';
+  document.getElementById('accueil').style.display = 'block';
+  majBadgeMessages();
+
+  if (role === 'proprietaire') {
+    // Accès complet : voit toutes les tuiles
+    document.getElementById('accueilSousTitre').textContent = 'Accès complet — sélectionne un poste';
+    document.getElementById('rolesGrid').querySelectorAll('.role-tuile').forEach(t => t.style.display = 'block');
+    majProgresAccueil();
+  } else if (role === 'gerant') {
+    // Le superviseur gère ses tâches + celles de l'apprenti (Autre)
+    document.getElementById('accueilSousTitre').textContent = 'Superviseur — Gérant ou Autre';
+    document.getElementById('rolesGrid').querySelectorAll('.role-tuile').forEach(t => {
+      const nom = t.querySelector('.role-nom').textContent;
+      t.style.display = (nom.includes('GÉRANT') || nom.includes('AUTRE')) ? 'block' : 'none';
+    });
+    majProgresAccueil();
+  } else {
+    // Accès direct à son propre poste, sans passer par la grille
+    ouvrirRole(role);
+    document.getElementById('accueil').style.display = 'none';
+  }
+}
+
+function deconnecter() {
+  sessionStorage.removeItem('v360-code-actuel');
+  codeActuel = null;
+  document.getElementById('accueil').style.display = 'none';
+  document.getElementById('taches').style.display = 'none';
+  document.getElementById('btnRetour').classList.remove('visible');
+  pinSaisi = '';
+  majPinDots();
+  document.getElementById('ecranCode').style.display = 'block';
+}
+
+// Auto-connexion si un code est déjà en session
+window.addEventListener('DOMContentLoaded', () => {
+  const code = sessionStorage.getItem('v360-code-actuel');
+  if (code && code.length === 4 && PREFIXES[code[0]]) {
+    pinSaisi = code;
+    validerCode();
+  }
+});
+
+function getListeAutre() {
+  try {
+    return JSON.parse(localStorage.getItem('v360-taches-autre-liste')) || [];
+  } catch(e) { return []; }
+}
+
+function setListeAutre(liste) {
+  localStorage.setItem('v360-taches-autre-liste', JSON.stringify(liste));
+}
+
+function ajouterTacheAutre() {
+  const input = document.getElementById('inputNouvelleTache');
+  const texte = input.value.trim();
+  if (!texte) return;
+  const liste = getListeAutre();
+  liste.push(texte);
+  setListeAutre(liste);
+  input.value = '';
+  afficherTaches();
+}
+
+function supprimerTacheAutre(i) {
+  const liste = getListeAutre();
+  liste.splice(i, 1);
+  setListeAutre(liste);
+  const etat = getEtat('autre');
+  delete etat[i];
+  setEtat('autre', etat);
+  afficherTaches();
+}
+
+let roleActuel = null;
+
+function dateClé() {
+  const d = new Date();
+  return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+}
+
+function getEtat(role) {
+  const clé = 'v360-taches-' + role + '-' + dateClé();
+  try {
+    return JSON.parse(localStorage.getItem(clé)) || {};
+  } catch(e) { return {}; }
+}
+
+function setEtat(role, etat) {
+  const clé = 'v360-taches-' + role + '-' + dateClé();
+  localStorage.setItem(clé, JSON.stringify(etat));
+}
+
+function compterTaches(liste) {
+  return liste.filter(item => !(typeof item === 'object' && item.cat)).length;
+}
+
+function majProgresAccueil() {
+  Object.keys(TACHES).forEach(role => {
+    const el = document.getElementById('prog-' + role);
+    if (!el) return;
+    const etat = getEtat(role);
+    const liste = (role === 'autre') ? getListeAutre() : TACHES[role].liste;
+    const total = compterTaches(liste);
+    const faites = Object.values(etat).filter(v => v).length;
+    el.textContent = faites + '/' + total + ' faites';
+  });
+}
+
+function ouvrirRole(role) {
+  roleActuel = role;
+  document.getElementById('accueil').style.display = 'none';
+  document.getElementById('taches').style.display = 'block';
+  document.getElementById('ajoutZone').style.display = (role === 'autre') ? 'block' : 'none';
+
+  const btnRetour = document.getElementById('btnRetour');
+  btnRetour.classList.add('visible');
+  if (PREFIXES[codeActuel[0]] === 'proprietaire' || PREFIXES[codeActuel[0]] === 'gerant') {
+    btnRetour.textContent = '← Rôles';
+    btnRetour.onclick = retourAccueil;
+  } else {
+    btnRetour.textContent = '🔒 Déconnexion';
+    btnRetour.onclick = deconnecter;
+  }
+
+  const data = TACHES[role];
+  document.getElementById('tacheIcone').textContent = data.icone;
+  document.getElementById('tacheTitre').textContent = data.nom;
+  document.getElementById('tacheDate').textContent = new Date().toLocaleDateString('fr-CA', {weekday:'long', day:'numeric', month:'long'});
+
+  afficherTaches();
+}
+
+function afficherTaches() {
+  const data = TACHES[roleActuel];
+  const liste = (roleActuel === 'autre') ? getListeAutre() : data.liste;
+  const etat = getEtat(roleActuel);
+  const conteneur = document.getElementById('listeTaches');
+  conteneur.innerHTML = '';
+
+  if (roleActuel === 'autre' && liste.length === 0) {
+    conteneur.innerHTML = '<div style="text-align:center;color:#666;font-size:13px;padding:20px 0;">Aucune tâche pour l\'instant.<br>Ajoute-en une ci-dessous ⬇️</div>';
+    majProgres();
+    return;
+  }
+
+  liste.forEach((item, i) => {
+    if (typeof item === 'object' && item.cat) {
+      const cat = document.createElement('div');
+      cat.className = 'cat-titre';
+      cat.textContent = item.cat;
+      conteneur.appendChild(cat);
+      return;
+    }
+    const fait = !!etat[i];
+    const div = document.createElement('div');
+    div.className = 'tache-item' + (fait ? ' fait' : '');
+    div.style.position = 'relative';
+    const supprBtn = (roleActuel === 'autre') ? `<div onclick="event.stopPropagation();supprimerTacheAutre(${i})" style="color:#a55;font-size:16px;padding:2px 4px;flex-shrink:0;">✕</div>` : '';
+    div.innerHTML = `<div class="tache-check">${fait ? '✓' : ''}</div><div class="tache-txt" style="flex:1;">${item}</div>${supprBtn}`;
+    div.onclick = () => toggleTache(i);
+    conteneur.appendChild(div);
+  });
+
+  majProgres();
+}
+
+function toggleTache(i) {
+  const etat = getEtat(roleActuel);
+  etat[i] = !etat[i];
+  setEtat(roleActuel, etat);
+  afficherTaches();
+}
+
+function majProgres() {
+  const liste = (roleActuel === 'autre') ? getListeAutre() : TACHES[roleActuel].liste;
+  const etat = getEtat(roleActuel);
+  const total = compterTaches(liste);
+  const faites = Object.values(etat).filter(v => v).length;
+  const pct = Math.round((faites/total)*100);
+  document.getElementById('progresBar').style.width = pct + '%';
+  document.getElementById('progresTxt').textContent = faites + ' / ' + total + ' tâches complétées';
+}
+
+function resetRole() {
+  setEtat(roleActuel, {});
+  afficherTaches();
+}
+
+function retourAccueil() {
+  document.getElementById('accueil').style.display = 'block';
+  document.getElementById('taches').style.display = 'none';
+  document.getElementById('btnRetour').classList.remove('visible');
+  majProgresAccueil();
+}
+
+// ===== MESSAGES (connecté au Worker Cloudflare) =====
+const WORKER_URL = 'https://taches-messages.mjacquesperrier.workers.dev';
+const NOMS_ROLES = {serveur:'Serveur',cuisinier:'Cuisinier',plongeur:'Plongeur',debarasseur:'Débarrasseur',gerant:'Gérant',proprietaire:'Propriétaire'};
+
+async function majBadgeMessages() {
+  if (!codeActuel) return;
+  const role = PREFIXES[codeActuel[0]];
+  document.getElementById('btnMessages').style.display = 'block';
+  try {
+    let messages = [];
+    if (role === 'gerant' || role === 'proprietaire') {
+      const r = await fetch(WORKER_URL + '/manager-inbox');
+      const data = await r.json();
+      messages = data.messages || [];
+    } else {
+      const r = await fetch(WORKER_URL + '/inbox?code=' + codeActuel);
+      const data = await r.json();
+      messages = data.messages || [];
+    }
+    const nonLus = messages.filter(m => !m.lu).length;
+    const badge = document.getElementById('badgeMessages');
+    if (nonLus > 0) {
+      badge.style.display = 'block';
+      badge.textContent = nonLus;
+    } else {
+      badge.style.display = 'none';
+    }
+  } catch(e) { console.log('Erreur messages:', e); }
+}
+
+async function ouvrirMessages() {
+  document.getElementById('overlayMessages').style.display = 'block';
+  const role = PREFIXES[codeActuel[0]];
+  const conteneur = document.getElementById('listeMessages');
+  conteneur.innerHTML = '<div style="text-align:center;color:#666;padding:20px;">Chargement…</div>';
+
+  try {
+    let messages = [];
+    if (role === 'gerant' || role === 'proprietaire') {
+      const r = await fetch(WORKER_URL + '/manager-inbox');
+      const data = await r.json();
+      messages = data.messages || [];
+    } else {
+      const r = await fetch(WORKER_URL + '/inbox?code=' + codeActuel);
+      const data = await r.json();
+      messages = data.messages || [];
+    }
+
+    if (messages.length === 0) {
+      conteneur.innerHTML = '<div style="text-align:center;color:#666;padding:20px;font-size:13px;">Aucun message pour l\'instant.</div>';
+    } else {
+      conteneur.innerHTML = messages.map(m => {
+        const couleur = m.type === 'positif' ? '#4CAF50' : (m.type === 'negatif' ? '#c0392b' : 'var(--or-ombre)');
+        const icone = m.type === 'positif' ? '👍' : (m.type === 'negatif' ? '⚠️' : '💬');
+        const date = new Date(m.date).toLocaleDateString('fr-CA', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+        const provenance = (role === 'gerant' || role === 'proprietaire') ? ('De: ' + m.from) : '';
+        return `<div style="background:#242424;border-left:4px solid ${couleur};border-radius:0 10px 10px 0;padding:12px 14px;margin-bottom:8px;${m.lu ? 'opacity:0.6;' : ''}" onclick="marquerLu('${m.key}', this)">
+          <div style="font-size:11px;color:#888;margin-bottom:4px;">${icone} ${provenance} ${date}</div>
+          <div style="font-size:13.5px;color:#fff;">${m.texte}</div>
+        </div>`;
+      }).join('');
+    }
+  } catch(e) {
+    conteneur.innerHTML = '<div style="text-align:center;color:#c0392b;padding:20px;font-size:13px;">Erreur de connexion. Réessaie plus tard.</div>';
+  }
+
+  // Zone d'envoi selon le rôle
+  const zoneEnvoi = document.getElementById('zoneEnvoi');
+  if (role === 'gerant' || role === 'proprietaire') {
+    zoneEnvoi.innerHTML = `
+      <div style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--or-solide);margin-bottom:10px;text-transform:uppercase;">✉️ Envoyer une note</div>
+      <input type="text" id="destCode" placeholder="Code employé (ex: 1001)" maxlength="4" style="width:100%;background:#242424;border:1.5px solid #333;border-radius:10px;padding:12px 14px;color:#fff;font-size:13px;margin-bottom:8px;">
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button onclick="choisirType('positif')" id="btnPositif" style="flex:1;background:none;border:1.5px solid #4CAF50;color:#4CAF50;border-radius:10px;padding:10px;font-weight:700;font-size:12px;">👍 Positif</button>
+        <button onclick="choisirType('negatif')" id="btnNegatif" style="flex:1;background:none;border:1.5px solid #c0392b;color:#c0392b;border-radius:10px;padding:10px;font-weight:700;font-size:12px;">⚠️ Négatif</button>
+      </div>
+      <textarea id="texteMessage" placeholder="Ton message…" rows="3" style="width:100%;background:#242424;border:1.5px solid #333;border-radius:10px;padding:12px 14px;color:#fff;font-size:13px;margin-bottom:10px;resize:none;"></textarea>
+      <button onclick="envoyerNote()" style="width:100%;background:var(--or-grad);border:none;border-radius:10px;padding:13px;font-family:'Montserrat',sans-serif;font-weight:900;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#1A1A1A;">Envoyer</button>
+    `;
+    typeSelectionne = null;
+  } else {
+    zoneEnvoi.innerHTML = `
+      <div style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--or-solide);margin-bottom:10px;text-transform:uppercase;">✋ Signaler au gérant</div>
+      <textarea id="texteMessage" placeholder="Ton message au gérant…" rows="3" style="width:100%;background:#242424;border:1.5px solid #333;border-radius:10px;padding:12px 14px;color:#fff;font-size:13px;margin-bottom:10px;resize:none;"></textarea>
+      <button onclick="envoyerSignalement()" style="width:100%;background:var(--or-grad);border:none;border-radius:10px;padding:13px;font-family:'Montserrat',sans-serif;font-weight:900;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#1A1A1A;">Envoyer</button>
+    `;
+  }
+}
+
+let typeSelectionne = null;
+function choisirType(type) {
+  typeSelectionne = type;
+  document.getElementById('btnPositif').style.background = (type === 'positif') ? '#4CAF50' : 'none';
+  document.getElementById('btnPositif').style.color = (type === 'positif') ? '#1A1A1A' : '#4CAF50';
+  document.getElementById('btnNegatif').style.background = (type === 'negatif') ? '#c0392b' : 'none';
+  document.getElementById('btnNegatif').style.color = (type === 'negatif') ? '#fff' : '#c0392b';
+}
+
+async function envoyerNote() {
+  const to = document.getElementById('destCode').value.trim();
+  const texte = document.getElementById('texteMessage').value.trim();
+  if (!to || to.length !== 4 || !texte || !typeSelectionne) {
+    alert('Remplis le code employé (4 chiffres), choisis positif/négatif, et écris ton message.');
+    return;
+  }
+  try {
+    await fetch(WORKER_URL + '/send', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({to, from: codeActuel, type: typeSelectionne, texte})
+    });
+    fermerMessages();
+    alert('Message envoyé ✓');
+  } catch(e) {
+    alert('Erreur d\'envoi, réessaie.');
+  }
+}
+
+async function envoyerSignalement() {
+  const texte = document.getElementById('texteMessage').value.trim();
+  if (!texte) { alert('Écris ton message.'); return; }
+  try {
+    await fetch(WORKER_URL + '/reply', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({from: codeActuel, type: 'info', texte})
+    });
+    fermerMessages();
+    alert('Message envoyé au gérant ✓');
+  } catch(e) {
+    alert('Erreur d\'envoi, réessaie.');
+  }
+}
+
+async function marquerLu(key, el) {
+  el.style.opacity = '0.6';
+  try {
+    await fetch(WORKER_URL + '/read', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({key})
+    });
+    majBadgeMessages();
+  } catch(e) {}
+}
+
+function fermerMessages() {
+  document.getElementById('overlayMessages').style.display = 'none';
+}
+
+majProgresAccueil();
+</script>
+
+</body>
+</html>
