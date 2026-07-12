@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Crise — V360AI">
+<title>Module Crise — Verdict 360 AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Source+Sans+3:wght@400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+:root{
+  --or-solide:#B8954A;--or-ombre:#9C7F3D;--or-highlight:#F0E4C0;--or-reflet:#D4C28E;
+  --or-grad:linear-gradient(110deg,#9C7F3D 0%,#B8954A 35%,#F0E4C0 50%,#B8954A 65%,#9C7F3D 100%);
+  --noir:#1A1A1A;--rouge:#8B1A1A;
+}
+body{font-family:'Source Sans 3','Segoe UI',Arial,sans-serif;background:#f2f2f2;min-height:100vh;color:#1A1A1A;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:#1A1A1A;border-bottom:2px solid var(--or-ombre);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:900;letter-spacing:3px;background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-logo span{color:var(--or-solide);-webkit-text-fill-color:var(--or-solide);}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-lang{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;color:#888;background:none;border:1px solid #333;border-radius:6px;padding:4px 8px;cursor:pointer;}
+.nav-lang.actif{color:#1A1A1A;background:var(--or-grad);border-color:transparent;}
+.nav-module-badge{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:6px;background:var(--or-grad);color:#1A1A1A;}
+
+/* HERO */
+.hero{background:#1A1A1A;padding:36px 20px 30px;text-align:center;border-bottom:3px solid var(--or-ombre);}
+.hero-eyebrow{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;color:var(--or-solide);text-transform:uppercase;margin-bottom:14px;}
+.hero-title{font-family:'Montserrat',sans-serif;font-size:30px;font-weight:900;line-height:1.15;color:#fff;margin-bottom:10px;}
+.hero-title em{font-style:normal;background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-line2{font-size:15px;color:var(--or-highlight);font-weight:600;margin-bottom:14px;}
+.hero-sub{font-size:14px;color:#ccc;line-height:1.6;max-width:480px;margin:0 auto 22px;white-space:pre-line;}
+.hero-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:22px;}
+.hero-chip{display:flex;align-items:center;gap:6px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.5px;padding:7px 14px;border-radius:50px;border:1.5px solid var(--or-ombre);color:var(--or-highlight);}
+.hero-cta{display:inline-block;background:var(--or-grad);color:#1A1A1A;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;letter-spacing:1px;text-transform:uppercase;padding:13px 30px;border-radius:50px;text-decoration:none;box-shadow:0 4px 20px rgba(184,149,74,0.3);}
+
+/* CONTENU */
+.section{max-width:860px;margin:0 auto;padding:36px 18px;}
+.section-eyebrow{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800;letter-spacing:3px;color:var(--or-ombre);text-transform:uppercase;text-align:center;margin-bottom:8px;}
+.section-title{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;color:#1A1A1A;text-align:center;margin-bottom:28px;}
+
+/* PROBLEMES */
+.probleme-card{display:flex;gap:14px;background:#fff;border-left:4px solid var(--rouge);border-radius:0 12px 12px 0;padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);}
+.probleme-icone{font-size:24px;flex-shrink:0;}
+.probleme-titre{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:900;letter-spacing:0.5px;color:var(--rouge);margin-bottom:5px;}
+.probleme-desc{font-size:13px;color:#555;line-height:1.5;}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.feature-item{display:flex;align-items:center;gap:10px;background:#fff;border-radius:10px;padding:13px 14px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.feature-icone{font-size:18px;flex-shrink:0;}
+.feature-label{font-size:12px;font-weight:600;color:#1A1A1A;line-height:1.3;}
+
+/* ETAPES */
+.etapes-section{background:#1A1A1A;}
+.etapes-section .section-eyebrow{color:var(--or-solide);}
+.etapes-section .section-title{color:#fff;}
+.etape-card{display:flex;gap:14px;align-items:flex-start;margin-bottom:18px;}
+.etape-num{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:900;color:#1A1A1A;background:var(--or-grad);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.etape-titre{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:900;letter-spacing:1px;color:var(--or-highlight);margin-bottom:4px;}
+.etape-desc{font-size:13px;color:#ccc;line-height:1.5;}
+
+/* CHECKLIST */
+.checklist-card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.07);overflow:hidden;}
+.checklist-header{background:#1A1A1A;padding:14px 18px;border-bottom:2px solid var(--or-ombre);}
+.checklist-header-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase;background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.checklist-body{padding:8px 18px 16px;}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;}
+.check-item:last-child{border-bottom:none;}
+.check-box{width:18px;height:18px;border:2px solid var(--or-ombre);border-radius:5px;flex-shrink:0;margin-top:1px;}
+.check-txt{font-size:13px;color:#333;line-height:1.5;}
+
+/* AVIS */
+.avis-block{background:#fff8e6;border:1.5px solid var(--or-ombre);border-radius:10px;padding:14px 16px;font-size:12px;color:#555;line-height:1.6;margin-top:24px;}
+.avis-block strong{color:var(--or-ombre);}
+
+/* FOOTER */
+.footer{background:#1A1A1A;border-top:2px solid var(--or-ombre);padding:18px 20px;text-align:center;}
+.footer-brand{background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Montserrat',sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;margin-bottom:6px;}
+.footer-coord{color:#666;font-size:10px;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">VERDICT <span>360</span> AI</div>
+  <div class="nav-right">
+    <button class="nav-lang actif">FR</button>
+    <button class="nav-lang">EN</button>
+    <div class="nav-module-badge">🚨 Crise</div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Module Terrain · Gestion de Crise</div>
+  <div class="hero-title"><em>Reprenez</em> le contrôle.</div>
+  <div class="hero-line2">Documentez. Communiquez. Protégez votre permis.</div>
+  <div class="hero-sub">Verdict 360 AI vous guide pas à pas lors d'une situation critique
+pour limiter les dommages, documenter les faits et reprendre le contrôle.</div>
+  <div class="hero-badges">
+    <div class="hero-chip">🚨 Protocole immédiat</div>
+    <div class="hero-chip">📸 Preuves horodatées</div>
+    <div class="hero-chip">📄 Rapport auto</div>
+    <div class="hero-chip">📣 Script communication</div>
+    <div class="hero-chip">🔒 Archivage 2 ans</div>
+  </div>
+  <a class="hero-cta" href="https://jacquesperrier.github.io" target="_blank">Démarrer</a>
+</div>
+
+<div class="section">
+  <div class="section-eyebrow">Le problème</div>
+  <div class="section-title">Sans protocole, chaque crise s'aggrave</div>
+
+  <div class="probleme-card">
+    <div class="probleme-icone">⚠️</div>
+    <div>
+      <div class="probleme-titre">INTOXICATION ALIMENTAIRE SIGNALÉE</div>
+      <div class="probleme-desc">Un client malade. Les médias appellent. Vous n'avez aucun registre à montrer à l'inspecteur.</div>
+    </div>
+  </div>
+  <div class="probleme-card">
+    <div class="probleme-icone">🐛</div>
+    <div>
+      <div class="probleme-titre">INFESTATION DÉCOUVERTE</div>
+      <div class="probleme-desc">Fermeture ordonnée sur-le-champ. Pas de plan de communication ni de preuves de désinfection.</div>
+    </div>
+  </div>
+  <div class="probleme-card">
+    <div class="probleme-icone">📋</div>
+    <div>
+      <div class="probleme-titre">INSPECTION SURPRISE — DOSSIERS MANQUANTS</div>
+      <div class="probleme-desc">Températures non enregistrées, actions correctives non documentées. Amende immédiate.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="max-width:900px;">
+  <div class="section-eyebrow">La solution</div>
+  <div class="section-title">Ce que le module CRISE vous donne</div>
+  <div class="features-grid">
+    <div class="feature-item"><span class="feature-icone">🚨</span><span class="feature-label">Protocole de crise activé en 1 clic</span></div>
+    <div class="feature-item"><span class="feature-icone">📸</span><span class="feature-label">Photo horodatée des preuves</span></div>
+    <div class="feature-item"><span class="feature-icone">📄</span><span class="feature-label">Rapport d'incident auto-généré</span></div>
+    <div class="feature-item"><span class="feature-icone">📣</span><span class="feature-label">Script comm. client / médias intégré</span></div>
+    <div class="feature-item"><span class="feature-icone">✅</span><span class="feature-label">Checklist selon le type de crise</span></div>
+    <div class="feature-item"><span class="feature-icone">📬</span><span class="feature-label">Envoi auto à l'auditeur</span></div>
+    <div class="feature-item"><span class="feature-icone">🔒</span><span class="feature-label">Dossier sécurisé 2 ans MAPAQ</span></div>
+    <div class="feature-item"><span class="feature-icone">📊</span><span class="feature-label">Tableau suivi post-crise</span></div>
+  </div>
+</div>
+
+<div class="section etapes-section" style="max-width:100%;">
+  <div style="max-width:700px;margin:0 auto;">
+    <div class="section-eyebrow">Comment ça marche</div>
+    <div class="section-title">4 étapes, du déclenchement à l'archivage</div>
+    <div class="etape-card"><div class="etape-num">01</div><div><div class="etape-titre">DÉCLENCHER</div><div class="etape-desc">Ouvrez le module CRISE sur votre tablette ou mobile</div></div></div>
+    <div class="etape-card"><div class="etape-num">02</div><div><div class="etape-titre">DOCUMENTER</div><div class="etape-desc">Photographiez, notez, horodatez chaque élément de preuve</div></div></div>
+    <div class="etape-card"><div class="etape-num">03</div><div><div class="etape-titre">COMMUNIQUER</div><div class="etape-desc">Utilisez le script intégré pour informer clients et autorités</div></div></div>
+    <div class="etape-card"><div class="etape-num">04</div><div><div class="etape-titre">CLÔTURER</div><div class="etape-desc">Rapport complet généré et archivé automatiquement</div></div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="checklist-card">
+    <div class="checklist-header"><span class="checklist-header-title">📋 Checklist de mise en route</span></div>
+    <div class="checklist-body">
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Identifier le type de crise (sanitaire, infestation, intoxication, inspection)</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Sécuriser la zone concernée et stopper le service si nécessaire</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Photographier les preuves avec horodatage dans le module</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Compléter le rapport d'incident guidé étape par étape</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Utiliser le script de communication fourni (clients / médias / autorités)</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Contacter l'auditeur Verdict 360 AI dans les 2 heures</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Mettre en place les actions correctives immédiates documentées</div></div>
+      <div class="check-item"><div class="check-box"></div><div class="check-txt">Archiver le dossier complet pour l'inspecteur MAPAQ</div></div>
+    </div>
+  </div>
+  <div class="avis-block">⚠️ <strong>Avis :</strong> Ce module est un outil d'audit interne. Il ne constitue pas un document officiel du MAPAQ ni un substitut à l'inspection réglementaire.</div>
+</div>
+
+<div class="footer">
+  <div class="footer-brand">VERDICT 360 AI</div>
+  <div class="footer-coord">info@verdict360ai.com · +1 (873) 822-1455 · verdict360ai.com</div>
+</div>
+
+</body>
+</html>
