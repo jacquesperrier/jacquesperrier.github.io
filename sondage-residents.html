@@ -1,1 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Votre avis compte</title>
+<style>
+  :root {
+    --or-solide: #B8954A;
+    --or-ombre: #9C7F3D;
+    --or-reflet: #D4C28E;
+    --or-highlight: #F0E4C0;
+    --or-gradient: linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);
+    --noir: #0A0A0A;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: #F7F5F0;
+    color: var(--noir);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 60px;
+  }
+  .logo {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    color: var(--noir);
+  }
+  .logo span {
+    background: var(--or-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .sous-titre {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .carte {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    padding: 28px 20px;
+    width: 100%;
+    max-width: 460px;
+    margin-bottom: 20px;
+    border-top: 4px solid transparent;
+    border-image: var(--or-gradient) 1;
+  }
+  .categorie {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--or-ombre);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .question {
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    text-align: center;
+  }
+  .etoiles {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .etoile {
+    font-size: 42px;
+    cursor: pointer;
+    color: #DDD;
+    transition: transform 0.15s ease, color 0.15s ease;
+    user-select: none;
+  }
+  .etoile.actif {
+    color: var(--or-solide);
+    transform: scale(1.15);
+  }
+  .progression {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .point {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #DDD;
+  }
+  .point.fait { background: var(--or-solide); }
+  .point.courant { background: var(--or-ombre); width: 22px; border-radius: 4px; }
+  textarea {
+    width: 100%;
+    border: 2px solid #EEE;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: none;
+    min-height: 90px;
+  }
+  textarea:focus { outline: none; border-color: var(--or-solide); }
+  .bouton {
+    width: 100%;
+    max-width: 460px;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    background: var(--or-gradient);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 6px;
+    cursor: pointer;
+  }
+  .bouton:disabled { opacity: 0.4; }
+  .bouton-secondaire {
+    background: none;
+    color: #999;
+    font-weight: 500;
+    font-size: 15px;
+    margin-top: 12px;
+    box-shadow: none;
+  }
+  .merci {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .merci-icone { font-size: 60px; margin-bottom: 12px; }
+  .merci h2 { margin: 0 0 8px; }
+  .merci p { color: #666; font-size: 15px; }
+  .anonyme {
+    font-size: 13px;
+    color: #999;
+    text-align: center;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
 
+<div class="logo"><span>V</span>ERDICT 360 AI</div>
+<div class="sous-titre">Sondage de satisfaction — résidents</div>
+
+<div id="app"></div>
+
+<script>
+const questions = [
+  { id: "repas_gout", categorie: "🍽️ Vos repas", texte: "Le goût des repas?" },
+  { id: "repas_portion", categorie: "🍽️ Vos repas", texte: "Les portions sont-elles suffisantes?" },
+  { id: "repas_temperature", categorie: "🍽️ Vos repas", texte: "Les repas sont-ils servis à la bonne température?" },
+  { id: "repas_variete", categorie: "🍽️ Vos repas", texte: "Le choix et la variété au menu?" },
+  { id: "proprete", categorie: "🧹 Votre milieu de vie", texte: "La propreté de votre milieu de vie?" },
+  { id: "personnel", categorie: "🤝 Le personnel", texte: "L'attitude du personnel envers vous?" },
+  { id: "activites", categorie: "🎨 Les activités", texte: "Les activités offertes vous plaisent-elles?" }
+];
+
+let etape = 0;
+let reponses = {};
+let commentaire = "";
+
+function render() {
+  const app = document.getElementById("app");
+
+  if (etape < questions.length) {
+    const q = questions[etape];
+    const noteActuelle = reponses[q.id] || 0;
+
+    app.innerHTML = `
+      <div class="carte">
+        <div class="progression">
+          ${questions.map((_, i) => `<div class="point ${i < etape ? 'fait' : i === etape ? 'courant' : ''}"></div>`).join("")}
+        </div>
+        <div class="categorie">${q.categorie}</div>
+        <div class="question">${q.texte}</div>
+        <div class="etoiles" id="etoiles"></div>
+      </div>
+      <button class="bouton" id="btnSuivant" disabled>Continuer</button>
+      ${etape > 0 ? '<button class="bouton bouton-secondaire" id="btnRetour">Retour</button>' : ''}
+    `;
+
+    const etoilesDiv = document.getElementById("etoiles");
+    for (let i = 1; i <= 5; i++) {
+      const s = document.createElement("span");
+      s.className = "etoile" + (i <= noteActuelle ? " actif" : "");
+      s.textContent = "★";
+      s.onclick = () => {
+        reponses[q.id] = i;
+        render();
+      };
+      etoilesDiv.appendChild(s);
+    }
+
+    const btn = document.getElementById("btnSuivant");
+    if (noteActuelle > 0) btn.disabled = false;
+    btn.onclick = () => { etape++; render(); };
+
+    const retour = document.getElementById("btnRetour");
+    if (retour) retour.onclick = () => { etape--; render(); };
+
+  } else if (etape === questions.length) {
+    app.innerHTML = `
+      <div class="carte">
+        <div class="question">Un commentaire à ajouter? (facultatif)</div>
+        <textarea id="commentaire" placeholder="Écrivez ici...">${commentaire}</textarea>
+      </div>
+      <button class="bouton" id="btnEnvoyer">Envoyer mon avis</button>
+      <button class="bouton bouton-secondaire" id="btnRetour">Retour</button>
+      <div class="anonyme">🔒 Votre réponse est anonyme</div>
+    `;
+    document.getElementById("btnEnvoyer").onclick = () => {
+      commentaire = document.getElementById("commentaire").value;
+      etape++;
+      render();
+    };
+    document.getElementById("btnRetour").onclick = () => { etape--; render(); };
+
+  } else {
+    app.innerHTML = `
+      <div class="carte merci">
+        <div class="merci-icone">🙏</div>
+        <h2>Merci!</h2>
+        <p>Votre avis nous aide à améliorer votre milieu de vie.</p>
+      </div>
+    `;
+    envoyerReponses();
+  }
+}
+
+const WORKER_URL = "https://sondage-residents.mjacquesperrier.workers.dev";
+
+async function envoyerReponses() {
+  try {
+    await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reponses, commentaire }),
+    });
+  } catch (err) {
+    console.error("Envoi échoué (Worker pas encore branché?):", err);
+  }
+}
+
+render();
+</script>
+
+</body>
+</html>
