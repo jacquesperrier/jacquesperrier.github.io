@@ -1,1 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Résultats — Sondage résidents</title>
+<style>
+  :root {
+    --or-solide: #B8954A;
+    --or-ombre: #9C7F3D;
+    --or-reflet: #D4C28E;
+    --or-highlight: #F0E4C0;
+    --or-gradient: linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);
+    --noir: #0A0A0A;
+    --gris: #666;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: #F7F5F0;
+    color: var(--noir);
+    min-height: 100vh;
+    padding: 20px 16px 60px;
+  }
+  .logo { font-size: 20px; font-weight: 700; letter-spacing: 1px; text-align: center; }
+  .logo span { background: var(--or-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sous-titre { font-size: 14px; color: var(--gris); text-align: center; margin-bottom: 24px; }
+  .carte {
+    background: #fff; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    padding: 22px 18px; max-width: 560px; margin: 0 auto 18px;
+    border-top: 4px solid transparent; border-image: var(--or-gradient) 1;
+  }
+  h2 { font-size: 17px; margin: 0 0 14px; }
+  label { font-size: 14px; font-weight: 600; display: block; margin-bottom: 6px; }
+  input[type=password], textarea {
+    width: 100%; border: 2px solid #EEE; border-radius: 10px; padding: 12px;
+    font-size: 16px; font-family: inherit;
+  }
+  textarea { min-height: 100px; resize: vertical; }
+  .bouton {
+    width: 100%; padding: 14px; border: none; border-radius: 12px;
+    background: var(--or-gradient); color: #fff; font-size: 16px; font-weight: 700;
+    margin-top: 10px; cursor: pointer;
+  }
+  .bouton-lien { background: none; color: var(--or-ombre); font-weight: 600; font-size: 14px; text-decoration: underline; border: none; margin-top: 12px; cursor: pointer; padding: 0; }
+  .erreur { color: #B23A3A; font-size: 14px; margin-top: 10px; }
+  .stat-grid { display: flex; gap: 10px; text-align: center; margin-bottom: 4px; }
+  .stat-box { flex: 1; background: var(--or-highlight); border-radius: 12px; padding: 12px 6px; }
+  .stat-box .valeur { font-size: 24px; font-weight: 800; color: var(--or-ombre); }
+  .stat-box .label { font-size: 11px; color: var(--gris); margin-top: 2px; }
+  .cat-titre { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--or-ombre); margin: 18px 0 8px; }
+  .q-row { margin-bottom: 12px; }
+  .q-texte { font-size: 14px; margin-bottom: 5px; }
+  .barre-fond { background: #EEE; border-radius: 8px; height: 16px; overflow: hidden; display: flex; align-items: center; }
+  .barre-remplie { height: 100%; background: var(--or-gradient); border-radius: 8px 0 0 8px; transition: width 0.4s ease; }
+  .barre-note { font-size: 12px; font-weight: 700; color: var(--noir); margin-left: 8px; white-space: nowrap; }
+  .barre-wrap { display: flex; align-items: center; }
+  .commentaire { border-left: 3px solid var(--or-solide); padding: 8px 12px; margin-bottom: 10px; background: #FAF8F3; border-radius: 0 8px 8px 0; }
+  .commentaire .date { font-size: 11px; color: var(--gris); }
+  .commentaire .texte { font-size: 14px; margin-top: 2px; }
+  .vide { text-align: center; color: var(--gris); font-size: 14px; padding: 20px 0; }
+  #ecran-donnees { display: none; }
+  .refresh-row { display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .refresh-row .bouton-lien { margin-top: 0; }
+</style>
+</head>
+<body>
 
+<div class="logo"><span>V</span>ERDICT 360 AI</div>
+<div class="sous-titre">Tableau de bord — Sondage résidents</div>
+
+<div id="ecran-login" class="carte">
+  <h2>Accès au tableau de bord</h2>
+  <label for="mdp">Mot de passe administrateur</label>
+  <input type="password" id="mdp" placeholder="•••••••••••••">
+  <button class="bouton" onclick="chargerViaWorker()">Charger les résultats</button>
+  <div id="erreur-login" class="erreur" style="display:none;"></div>
+  <button class="bouton-lien" onclick="afficherCollage()">Ça ne fonctionne pas? Coller les données manuellement</button>
+
+  <div id="zone-collage" style="display:none; margin-top:14px;">
+    <label for="json-colle">Ouvrez cette adresse dans un nouvel onglet, copiez tout le texte affiché, puis collez-le ici :</label>
+    <p style="font-size:12px; color:var(--gris); word-break:break-all;">https://sondage-residents.mjacquesperrier.workers.dev/admin?key=VOTRE-MOT-DE-PASSE</p>
+    <textarea id="json-colle" placeholder="Collez le JSON ici..."></textarea>
+    <button class="bouton" onclick="chargerViaCollage()">Analyser les données collées</button>
+  </div>
+</div>
+
+<div id="ecran-donnees">
+  <div class="carte">
+    <div class="refresh-row">
+      <h2 style="margin:0;">Vue d'ensemble</h2>
+      <button class="bouton-lien" onclick="location.reload()">↻ Actualiser</button>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="valeur" id="nb-reponses">–</div><div class="label">Réponses</div></div>
+      <div class="stat-box"><div class="valeur" id="moyenne-globale">–</div><div class="label">Moyenne /5</div></div>
+      <div class="stat-box"><div class="valeur" id="nb-commentaires">–</div><div class="label">Commentaires</div></div>
+    </div>
+  </div>
+
+  <div class="carte">
+    <h2>Moyennes par question</h2>
+    <div id="zone-questions"></div>
+  </div>
+
+  <div class="carte">
+    <h2>Commentaires des résidents</h2>
+    <div id="zone-commentaires"></div>
+  </div>
+</div>
+
+<script>
+const WORKER_URL = "https://sondage-residents.mjacquesperrier.workers.dev";
+
+const QUESTIONS = [
+  { id: "repas_gout", categorie: "🍽️ Vos repas", texte: "Le goût des repas" },
+  { id: "repas_portion", categorie: "🍽️ Vos repas", texte: "Les portions sont-elles suffisantes" },
+  { id: "repas_temperature", categorie: "🍽️ Vos repas", texte: "Température des repas" },
+  { id: "repas_variete", categorie: "🍽️ Vos repas", texte: "Choix et variété au menu" },
+  { id: "proprete", categorie: "🧹 Votre milieu de vie", texte: "Propreté du milieu de vie" },
+  { id: "personnel", categorie: "🤝 Le personnel", texte: "Attitude du personnel" },
+  { id: "activites", categorie: "🎨 Les activités", texte: "Activités offertes" },
+];
+
+function afficherCollage() {
+  document.getElementById('zone-collage').style.display = 'block';
+}
+
+async function chargerViaWorker() {
+  const mdp = document.getElementById('mdp').value.trim();
+  const erreurEl = document.getElementById('erreur-login');
+  erreurEl.style.display = 'none';
+  if (!mdp) {
+    erreurEl.textContent = "Entrez le mot de passe.";
+    erreurEl.style.display = 'block';
+    return;
+  }
+  try {
+    const res = await fetch(`${WORKER_URL}/admin?key=${encodeURIComponent(mdp)}`);
+    if (!res.ok) {
+      erreurEl.textContent = `Accès refusé ou erreur (code ${res.status}). Vérifiez le mot de passe, ou essayez l'option "coller les données".`;
+      erreurEl.style.display = 'block';
+      return;
+    }
+    const data = await res.json();
+    afficherResultats(data);
+  } catch (e) {
+    erreurEl.textContent = "Impossible de contacter le serveur directement depuis ici (souvent une restriction de sécurité du navigateur). Essayez l'option \"coller les données manuellement\" ci-dessous.";
+    erreurEl.style.display = 'block';
+  }
+}
+
+function chargerViaCollage() {
+  const brut = document.getElementById('json-colle').value.trim();
+  const erreurEl = document.getElementById('erreur-login');
+  try {
+    const data = JSON.parse(brut);
+    afficherResultats(data);
+  } catch (e) {
+    erreurEl.textContent = "Le texte collé n'est pas un JSON valide. Assurez-vous de copier tout le contenu de la page, crochets [ ] inclus.";
+    erreurEl.style.display = 'block';
+  }
+}
+
+function afficherResultats(data) {
+  if (!Array.isArray(data) || data.length === 0) {
+    document.getElementById('ecran-login').style.display = 'none';
+    document.getElementById('ecran-donnees').style.display = 'block';
+    document.getElementById('zone-questions').innerHTML = '<div class="vide">Aucune réponse enregistrée pour le moment.</div>';
+    document.getElementById('nb-reponses').textContent = '0';
+    document.getElementById('moyenne-globale').textContent = '–';
+    document.getElementById('nb-commentaires').textContent = '0';
+    document.getElementById('zone-commentaires').innerHTML = '<div class="vide">Aucun commentaire pour le moment.</div>';
+    return;
+  }
+
+  // Moyennes par question
+  const sommes = {}, comptes = {};
+  QUESTIONS.forEach(q => { sommes[q.id] = 0; comptes[q.id] = 0; });
+
+  let sommeGlobale = 0, compteGlobal = 0;
+  const commentaires = [];
+
+  data.forEach(entree => {
+    const reponses = entree.reponses || {};
+    QUESTIONS.forEach(q => {
+      const val = reponses[q.id];
+      if (typeof val === 'number') {
+        sommes[q.id] += val;
+        comptes[q.id]++;
+        sommeGlobale += val;
+        compteGlobal++;
+      }
+    });
+    if (entree.commentaire && entree.commentaire.trim()) {
+      commentaires.push({ texte: entree.commentaire.trim(), date: entree.date });
+    }
+  });
+
+  document.getElementById('nb-reponses').textContent = data.length;
+  document.getElementById('moyenne-globale').textContent = compteGlobal > 0 ? (sommeGlobale / compteGlobal).toFixed(1) : '–';
+  document.getElementById('nb-commentaires').textContent = commentaires.length;
+
+  // Regrouper par catégorie pour l'affichage
+  const zoneQ = document.getElementById('zone-questions');
+  zoneQ.innerHTML = '';
+  let catCourante = null;
+  QUESTIONS.forEach(q => {
+    if (q.categorie !== catCourante) {
+      catCourante = q.categorie;
+      const catEl = document.createElement('div');
+      catEl.className = 'cat-titre';
+      catEl.textContent = catCourante;
+      zoneQ.appendChild(catEl);
+    }
+    const moyenne = comptes[q.id] > 0 ? (sommes[q.id] / comptes[q.id]) : 0;
+    const pourcentage = (moyenne / 5) * 100;
+    const row = document.createElement('div');
+    row.className = 'q-row';
+    row.innerHTML = `
+      <div class="q-texte">${q.texte}</div>
+      <div class="barre-wrap">
+        <div class="barre-fond" style="flex:1;">
+          <div class="barre-remplie" style="width:${pourcentage}%;"></div>
+        </div>
+        <div class="barre-note">${comptes[q.id] > 0 ? moyenne.toFixed(1) + ' / 5' : 'N/D'}</div>
+      </div>
+    `;
+    zoneQ.appendChild(row);
+  });
+
+  // Commentaires, plus récents en premier
+  const zoneC = document.getElementById('zone-commentaires');
+  if (commentaires.length === 0) {
+    zoneC.innerHTML = '<div class="vide">Aucun commentaire pour le moment.</div>';
+  } else {
+    commentaires.sort((a, b) => new Date(b.date) - new Date(a.date));
+    zoneC.innerHTML = commentaires.map(c => {
+      const d = c.date ? new Date(c.date).toLocaleDateString('fr-CA', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+      return `<div class="commentaire"><div class="date">${d}</div><div class="texte">${escapeHtml(c.texte)}</div></div>`;
+    }).join('');
+  }
+
+  document.getElementById('ecran-login').style.display = 'none';
+  document.getElementById('ecran-donnees').style.display = 'block';
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>
