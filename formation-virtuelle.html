@@ -310,30 +310,21 @@ function escFilterAndClean(str){
 }
 
 /* ===================== APPEL API CLAUDE ===================== */
+const ASSISTANT_WORKER_URL = "https://assistant-formation-ia.mjacquesperrier.workers.dev";
+
 async function askAssistant(userText, topicTitle){
-  const system = `Tu es l'assistante virtuelle de formation de Verdict 360 AI. Tu animes une formation pour des personnes ainées sur les bienfaits de l'intelligence artificielle au quotidien.
-Sujet actuellement en cours : "${topicTitle}".
-Règles strictes :
-- Réponds en français québécois simple, chaleureux et respectueux, jamais de jargon technique.
-- Garde tes réponses courtes : 2 à 4 phrases maximum.
-- Ne donne jamais de conseil médical, légal ou financier précis.
-- Si la question est trop complexe, personnelle, technique (dépannage d'appareil) ou hors-sujet, réponds brièvement puis précise gentiment qu'un formateur humain va faire un suivi.
-- Si la personne mentionne être ciblée en ce moment par une fraude ou une arnaque, rassure-la, conseille-lui de ne rien envoyer et de raccrocher, et précise qu'un formateur humain est avisé immédiatement.
-- Ne prétends jamais être une personne humaine.`;
   try{
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch(ASSISTANT_WORKER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 300,
-        system: system,
-        messages: [{ role: "user", content: userText }]
-      })
+      body: JSON.stringify({ userText: userText, topicTitle: topicTitle })
     });
     const data = await response.json();
-    const textBlocks = (data.content || []).filter(b=>b.type==="text").map(b=>b.text);
-    return textBlocks.join("\n") || "Désolée, je n'ai pas pu répondre — le formateur va prendre le relais.";
+    if(data.error){
+      console.error(data.error);
+      return "Une erreur est survenue avec l'assistante. Le formateur va prendre le relais sous peu.";
+    }
+    return data.answer || "Désolée, je n'ai pas pu répondre — le formateur va prendre le relais.";
   }catch(e){
     console.error(e);
     return "Une erreur est survenue avec l'assistante. Le formateur va prendre le relais sous peu.";
@@ -433,28 +424,41 @@ function setupMicIfAvailable(btnId, inputId){
   if(!SR){ btn.style.display='none'; return; }
   btn.style.display='inline-flex';
   let recognizing = false;
-  let recognition = new SR();
-  recognition.lang = 'fr-CA';
-  recognition.interimResults = false;
-  recognition.onresult = (e)=>{
-    const transcript = e.results[0][0].transcript;
-    document.getElementById(inputId).value = transcript;
-  };
-  recognition.onend = ()=>{ recognizing=false; btn.classList.remove('active'); };
-  recognition.onerror = (e)=>{
-    recognizing=false; btn.classList.remove('active');
-    if(e.error === 'not-allowed' || e.error === 'permission-denied'){
-      alert("Le micro n'est pas autorisé ici. Sur iPhone, ouvrez cette page directement dans Safari (pas dans l'aperçu de l'app Claude) et acceptez la permission du micro quand elle est demandée.");
-    } else if(e.error === 'no-speech'){
-      // Rien entendu — pas besoin d'alerter, l'utilisateur peut réessayer
-    } else {
-      alert("Le micro n'a pas pu démarrer (" + e.error + "). Vous pouvez continuer avec le clavier.");
-    }
-  };
+
+  function creerRecognition(){
+    const r = new SR();
+    r.lang = 'fr-CA';
+    r.interimResults = false;
+    r.onresult = (e)=>{
+      const transcript = e.results[0][0].transcript;
+      document.getElementById(inputId).value = transcript;
+    };
+    r.onend = ()=>{ recognizing=false; btn.classList.remove('active'); };
+    r.onerror = (e)=>{
+      recognizing=false; btn.classList.remove('active');
+      if(e.error === 'not-allowed' || e.error === 'permission-denied'){
+        alert("Le micro n'est pas autorisé ici. Sur iPhone, ouvrez cette page directement dans Safari (pas dans l'aperçu de l'app Claude) et acceptez la permission du micro quand elle est demandée.");
+      } else if(e.error === 'no-speech' || e.error === 'aborted'){
+        // Rien entendu, ou interrompu par la voix — pas besoin d'alerter, l'utilisateur peut réessayer
+      } else {
+        alert("Le micro n'a pas pu démarrer (" + e.error + "). Vous pouvez continuer avec le clavier.");
+      }
+    };
+    return r;
+  }
+
   btn.onclick = ()=>{
-    if(recognizing){ recognition.stop(); recognizing=false; btn.classList.remove('active'); return; }
+    if(recognizing){
+      if(window._recognitionActuelle) window._recognitionActuelle.stop();
+      recognizing=false; btn.classList.remove('active');
+      return;
+    }
+    // Toujours couper la voix avant de démarrer le micro — Safari refuse
+    // souvent le micro si la synthèse vocale est encore active.
+    if('speechSynthesis' in window) window.speechSynthesis.cancel();
     try{
-      recognition.start();
+      window._recognitionActuelle = creerRecognition();
+      window._recognitionActuelle.start();
       recognizing=true;
       btn.classList.add('active');
     }catch(e){
