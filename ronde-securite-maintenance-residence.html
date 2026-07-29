@@ -141,10 +141,10 @@
     align-items:center;
     justify-content:space-between;
     padding:11px 2px;
-    border-bottom:1px solid var(--line);
     gap:10px;
   }
-  .item:last-child{border-bottom:none;}
+  .item-wrap{border-bottom:1px solid var(--line);}
+  .item-wrap:last-child{border-bottom:none;}
   .item .name{font-size:14.5px; font-weight:500; flex:1;}
   .statebtns{display:flex; gap:6px; flex-shrink:0;}
   .statebtn{
@@ -159,6 +159,34 @@
   .statebtn.active-ok{background:var(--ok-bg); border-color:var(--ok); color:var(--ok);}
   .statebtn.active-warn{background:var(--warn-bg); border-color:var(--warn); color:var(--warn);}
   .statebtn.active-crit{background:var(--crit-bg); border-color:var(--crit); color:var(--crit);}
+  .photobtn{color:var(--sage-deep); font-size:15px;}
+  .photobtn.has-photos{background:var(--sage-pale); border-color:var(--sage);}
+
+  .thumbs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    padding:0 2px;
+  }
+  .thumbs.has-photos{padding-bottom:10px;}
+  .thumb{
+    position:relative;
+    width:56px; height:56px;
+    border-radius:8px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+  .thumb .rm{
+    position:absolute; top:2px; right:2px;
+    width:16px; height:16px;
+    border-radius:50%;
+    background:rgba(0,0,0,0.55);
+    color:#fff;
+    font-size:10px;
+    display:flex; align-items:center; justify-content:center;
+    line-height:1;
+  }
 
   .notes-list{display:flex; flex-direction:column; gap:8px;}
   .note-row{display:flex; gap:8px; align-items:center;}
@@ -302,157 +330,252 @@
   <div class="card">
     <h2><span class="n">2</span>🔎 Inspection obligatoire — Sécurité du bâtiment</h2>
     <div id="list-obligatoire">
-      <div class="item">
-        <div class="name">Sorties d'urgence / issues de secours</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob0" data-val="ok" onclick="setState('ob0','ok')">✔</button>
-          <button class="statebtn" data-id="ob0" data-val="warn" onclick="setState('ob0','warn')">⚠</button>
-          <button class="statebtn" data-id="ob0" data-val="crit" onclick="setState('ob0','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Sorties d'urgence / issues de secours</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob0" data-val="ok" onclick="setState('ob0','ok')">✔</button>
+            <button class="statebtn" data-id="ob0" data-val="warn" onclick="setState('ob0','warn')">⚠</button>
+            <button class="statebtn" data-id="ob0" data-val="crit" onclick="setState('ob0','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob0')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob0" style="display:none" onchange="handlePhoto(event,'ob0')">
+        <div class="thumbs" id="thumbs-ob0"></div>
       </div>
-      <div class="item">
-        <div class="name">Portes coupe-feu</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob1" data-val="ok" onclick="setState('ob1','ok')">✔</button>
-          <button class="statebtn" data-id="ob1" data-val="warn" onclick="setState('ob1','warn')">⚠</button>
-          <button class="statebtn" data-id="ob1" data-val="crit" onclick="setState('ob1','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Portes coupe-feu</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob1" data-val="ok" onclick="setState('ob1','ok')">✔</button>
+            <button class="statebtn" data-id="ob1" data-val="warn" onclick="setState('ob1','warn')">⚠</button>
+            <button class="statebtn" data-id="ob1" data-val="crit" onclick="setState('ob1','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob1')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob1" style="display:none" onchange="handlePhoto(event,'ob1')">
+        <div class="thumbs" id="thumbs-ob1"></div>
       </div>
-      <div class="item">
-        <div class="name">Extincteurs</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob2" data-val="ok" onclick="setState('ob2','ok')">✔</button>
-          <button class="statebtn" data-id="ob2" data-val="warn" onclick="setState('ob2','warn')">⚠</button>
-          <button class="statebtn" data-id="ob2" data-val="crit" onclick="setState('ob2','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Extincteurs</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob2" data-val="ok" onclick="setState('ob2','ok')">✔</button>
+            <button class="statebtn" data-id="ob2" data-val="warn" onclick="setState('ob2','warn')">⚠</button>
+            <button class="statebtn" data-id="ob2" data-val="crit" onclick="setState('ob2','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob2')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob2" style="display:none" onchange="handlePhoto(event,'ob2')">
+        <div class="thumbs" id="thumbs-ob2"></div>
       </div>
-      <div class="item">
-        <div class="name">Alarme incendie / détecteurs de fumée</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob3" data-val="ok" onclick="setState('ob3','ok')">✔</button>
-          <button class="statebtn" data-id="ob3" data-val="warn" onclick="setState('ob3','warn')">⚠</button>
-          <button class="statebtn" data-id="ob3" data-val="crit" onclick="setState('ob3','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Alarme incendie / détecteurs de fumée</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob3" data-val="ok" onclick="setState('ob3','ok')">✔</button>
+            <button class="statebtn" data-id="ob3" data-val="warn" onclick="setState('ob3','warn')">⚠</button>
+            <button class="statebtn" data-id="ob3" data-val="crit" onclick="setState('ob3','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob3')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob3" style="display:none" onchange="handlePhoto(event,'ob3')">
+        <div class="thumbs" id="thumbs-ob3"></div>
       </div>
-      <div class="item">
-        <div class="name">Éclairage d'urgence</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob4" data-val="ok" onclick="setState('ob4','ok')">✔</button>
-          <button class="statebtn" data-id="ob4" data-val="warn" onclick="setState('ob4','warn')">⚠</button>
-          <button class="statebtn" data-id="ob4" data-val="crit" onclick="setState('ob4','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Éclairage d'urgence</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob4" data-val="ok" onclick="setState('ob4','ok')">✔</button>
+            <button class="statebtn" data-id="ob4" data-val="warn" onclick="setState('ob4','warn')">⚠</button>
+            <button class="statebtn" data-id="ob4" data-val="crit" onclick="setState('ob4','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob4')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob4" style="display:none" onchange="handlePhoto(event,'ob4')">
+        <div class="thumbs" id="thumbs-ob4"></div>
       </div>
-      <div class="item">
-        <div class="name">Détecteurs de monoxyde de carbone</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob5" data-val="ok" onclick="setState('ob5','ok')">✔</button>
-          <button class="statebtn" data-id="ob5" data-val="warn" onclick="setState('ob5','warn')">⚠</button>
-          <button class="statebtn" data-id="ob5" data-val="crit" onclick="setState('ob5','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Détecteurs de monoxyde de carbone</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob5" data-val="ok" onclick="setState('ob5','ok')">✔</button>
+            <button class="statebtn" data-id="ob5" data-val="warn" onclick="setState('ob5','warn')">⚠</button>
+            <button class="statebtn" data-id="ob5" data-val="crit" onclick="setState('ob5','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob5')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob5" style="display:none" onchange="handlePhoto(event,'ob5')">
+        <div class="thumbs" id="thumbs-ob5"></div>
       </div>
-      <div class="item">
-        <div class="name">Générateur d'urgence</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob6" data-val="ok" onclick="setState('ob6','ok')">✔</button>
-          <button class="statebtn" data-id="ob6" data-val="warn" onclick="setState('ob6','warn')">⚠</button>
-          <button class="statebtn" data-id="ob6" data-val="crit" onclick="setState('ob6','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Générateur d'urgence</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob6" data-val="ok" onclick="setState('ob6','ok')">✔</button>
+            <button class="statebtn" data-id="ob6" data-val="warn" onclick="setState('ob6','warn')">⚠</button>
+            <button class="statebtn" data-id="ob6" data-val="crit" onclick="setState('ob6','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob6')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob6" style="display:none" onchange="handlePhoto(event,'ob6')">
+        <div class="thumbs" id="thumbs-ob6"></div>
       </div>
-      <div class="item">
-        <div class="name">Ascenseur(s)</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob7" data-val="ok" onclick="setState('ob7','ok')">✔</button>
-          <button class="statebtn" data-id="ob7" data-val="warn" onclick="setState('ob7','warn')">⚠</button>
-          <button class="statebtn" data-id="ob7" data-val="crit" onclick="setState('ob7','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Ascenseur(s)</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob7" data-val="ok" onclick="setState('ob7','ok')">✔</button>
+            <button class="statebtn" data-id="ob7" data-val="warn" onclick="setState('ob7','warn')">⚠</button>
+            <button class="statebtn" data-id="ob7" data-val="crit" onclick="setState('ob7','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob7')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob7" style="display:none" onchange="handlePhoto(event,'ob7')">
+        <div class="thumbs" id="thumbs-ob7"></div>
       </div>
-      <div class="item">
-        <div class="name">Lève-personne / monte-personne</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob8" data-val="ok" onclick="setState('ob8','ok')">✔</button>
-          <button class="statebtn" data-id="ob8" data-val="warn" onclick="setState('ob8','warn')">⚠</button>
-          <button class="statebtn" data-id="ob8" data-val="crit" onclick="setState('ob8','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Lève-personne / monte-personne</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob8" data-val="ok" onclick="setState('ob8','ok')">✔</button>
+            <button class="statebtn" data-id="ob8" data-val="warn" onclick="setState('ob8','warn')">⚠</button>
+            <button class="statebtn" data-id="ob8" data-val="crit" onclick="setState('ob8','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob8')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob8" style="display:none" onchange="handlePhoto(event,'ob8')">
+        <div class="thumbs" id="thumbs-ob8"></div>
       </div>
-      <div class="item">
-        <div class="name">Système d'appel infirmière / cloche d'urgence</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob9" data-val="ok" onclick="setState('ob9','ok')">✔</button>
-          <button class="statebtn" data-id="ob9" data-val="warn" onclick="setState('ob9','warn')">⚠</button>
-          <button class="statebtn" data-id="ob9" data-val="crit" onclick="setState('ob9','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Système d'appel infirmière / cloche d'urgence</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob9" data-val="ok" onclick="setState('ob9','ok')">✔</button>
+            <button class="statebtn" data-id="ob9" data-val="warn" onclick="setState('ob9','warn')">⚠</button>
+            <button class="statebtn" data-id="ob9" data-val="crit" onclick="setState('ob9','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob9')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob9" style="display:none" onchange="handlePhoto(event,'ob9')">
+        <div class="thumbs" id="thumbs-ob9"></div>
       </div>
-      <div class="item">
-        <div class="name">Rampes et mains courantes</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob10" data-val="ok" onclick="setState('ob10','ok')">✔</button>
-          <button class="statebtn" data-id="ob10" data-val="warn" onclick="setState('ob10','warn')">⚠</button>
-          <button class="statebtn" data-id="ob10" data-val="crit" onclick="setState('ob10','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Rampes et mains courantes</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob10" data-val="ok" onclick="setState('ob10','ok')">✔</button>
+            <button class="statebtn" data-id="ob10" data-val="warn" onclick="setState('ob10','warn')">⚠</button>
+            <button class="statebtn" data-id="ob10" data-val="crit" onclick="setState('ob10','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob10')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob10" style="display:none" onchange="handlePhoto(event,'ob10')">
+        <div class="thumbs" id="thumbs-ob10"></div>
       </div>
-      <div class="item">
-        <div class="name">Planchers (antidérapant, état)</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob11" data-val="ok" onclick="setState('ob11','ok')">✔</button>
-          <button class="statebtn" data-id="ob11" data-val="warn" onclick="setState('ob11','warn')">⚠</button>
-          <button class="statebtn" data-id="ob11" data-val="crit" onclick="setState('ob11','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Planchers (antidérapant, état)</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob11" data-val="ok" onclick="setState('ob11','ok')">✔</button>
+            <button class="statebtn" data-id="ob11" data-val="warn" onclick="setState('ob11','warn')">⚠</button>
+            <button class="statebtn" data-id="ob11" data-val="crit" onclick="setState('ob11','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob11')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob11" style="display:none" onchange="handlePhoto(event,'ob11')">
+        <div class="thumbs" id="thumbs-ob11"></div>
       </div>
-      <div class="item">
-        <div class="name">Éclairage des corridors</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob12" data-val="ok" onclick="setState('ob12','ok')">✔</button>
-          <button class="statebtn" data-id="ob12" data-val="warn" onclick="setState('ob12','warn')">⚠</button>
-          <button class="statebtn" data-id="ob12" data-val="crit" onclick="setState('ob12','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Éclairage des corridors</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob12" data-val="ok" onclick="setState('ob12','ok')">✔</button>
+            <button class="statebtn" data-id="ob12" data-val="warn" onclick="setState('ob12','warn')">⚠</button>
+            <button class="statebtn" data-id="ob12" data-val="crit" onclick="setState('ob12','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob12')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob12" style="display:none" onchange="handlePhoto(event,'ob12')">
+        <div class="thumbs" id="thumbs-ob12"></div>
       </div>
-      <div class="item">
-        <div class="name">Chauffage / climatisation (CVCA)</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob13" data-val="ok" onclick="setState('ob13','ok')">✔</button>
-          <button class="statebtn" data-id="ob13" data-val="warn" onclick="setState('ob13','warn')">⚠</button>
-          <button class="statebtn" data-id="ob13" data-val="crit" onclick="setState('ob13','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Chauffage / climatisation (CVCA)</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob13" data-val="ok" onclick="setState('ob13','ok')">✔</button>
+            <button class="statebtn" data-id="ob13" data-val="warn" onclick="setState('ob13','warn')">⚠</button>
+            <button class="statebtn" data-id="ob13" data-val="crit" onclick="setState('ob13','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob13')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob13" style="display:none" onchange="handlePhoto(event,'ob13')">
+        <div class="thumbs" id="thumbs-ob13"></div>
       </div>
-      <div class="item">
-        <div class="name">Plomberie (fuites, eau chaude)</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob14" data-val="ok" onclick="setState('ob14','ok')">✔</button>
-          <button class="statebtn" data-id="ob14" data-val="warn" onclick="setState('ob14','warn')">⚠</button>
-          <button class="statebtn" data-id="ob14" data-val="crit" onclick="setState('ob14','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Plomberie (fuites, eau chaude)</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob14" data-val="ok" onclick="setState('ob14','ok')">✔</button>
+            <button class="statebtn" data-id="ob14" data-val="warn" onclick="setState('ob14','warn')">⚠</button>
+            <button class="statebtn" data-id="ob14" data-val="crit" onclick="setState('ob14','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob14')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob14" style="display:none" onchange="handlePhoto(event,'ob14')">
+        <div class="thumbs" id="thumbs-ob14"></div>
       </div>
-      <div class="item">
-        <div class="name">Cuisine — équipements et réfrigération</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob15" data-val="ok" onclick="setState('ob15','ok')">✔</button>
-          <button class="statebtn" data-id="ob15" data-val="warn" onclick="setState('ob15','warn')">⚠</button>
-          <button class="statebtn" data-id="ob15" data-val="crit" onclick="setState('ob15','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Cuisine — équipements et réfrigération</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob15" data-val="ok" onclick="setState('ob15','ok')">✔</button>
+            <button class="statebtn" data-id="ob15" data-val="warn" onclick="setState('ob15','warn')">⚠</button>
+            <button class="statebtn" data-id="ob15" data-val="crit" onclick="setState('ob15','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob15')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob15" style="display:none" onchange="handlePhoto(event,'ob15')">
+        <div class="thumbs" id="thumbs-ob15"></div>
       </div>
-      <div class="item">
-        <div class="name">Hottes de cuisine</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob16" data-val="ok" onclick="setState('ob16','ok')">✔</button>
-          <button class="statebtn" data-id="ob16" data-val="warn" onclick="setState('ob16','warn')">⚠</button>
-          <button class="statebtn" data-id="ob16" data-val="crit" onclick="setState('ob16','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Hottes de cuisine</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob16" data-val="ok" onclick="setState('ob16','ok')">✔</button>
+            <button class="statebtn" data-id="ob16" data-val="warn" onclick="setState('ob16','warn')">⚠</button>
+            <button class="statebtn" data-id="ob16" data-val="crit" onclick="setState('ob16','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob16')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob16" style="display:none" onchange="handlePhoto(event,'ob16')">
+        <div class="thumbs" id="thumbs-ob16"></div>
       </div>
-      <div class="item">
-        <div class="name">Buanderie</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob17" data-val="ok" onclick="setState('ob17','ok')">✔</button>
-          <button class="statebtn" data-id="ob17" data-val="warn" onclick="setState('ob17','warn')">⚠</button>
-          <button class="statebtn" data-id="ob17" data-val="crit" onclick="setState('ob17','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Buanderie</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob17" data-val="ok" onclick="setState('ob17','ok')">✔</button>
+            <button class="statebtn" data-id="ob17" data-val="warn" onclick="setState('ob17','warn')">⚠</button>
+            <button class="statebtn" data-id="ob17" data-val="crit" onclick="setState('ob17','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob17')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob17" style="display:none" onchange="handlePhoto(event,'ob17')">
+        <div class="thumbs" id="thumbs-ob17"></div>
       </div>
-      <div class="item">
-        <div class="name">Stationnement / entrée extérieure (glace, déneigement)</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ob18" data-val="ok" onclick="setState('ob18','ok')">✔</button>
-          <button class="statebtn" data-id="ob18" data-val="warn" onclick="setState('ob18','warn')">⚠</button>
-          <button class="statebtn" data-id="ob18" data-val="crit" onclick="setState('ob18','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Stationnement / entrée extérieure (glace, déneigement)</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ob18" data-val="ok" onclick="setState('ob18','ok')">✔</button>
+            <button class="statebtn" data-id="ob18" data-val="warn" onclick="setState('ob18','warn')">⚠</button>
+            <button class="statebtn" data-id="ob18" data-val="crit" onclick="setState('ob18','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ob18')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ob18" style="display:none" onchange="handlePhoto(event,'ob18')">
+        <div class="thumbs" id="thumbs-ob18"></div>
       </div>
     </div>
   </div>
@@ -461,109 +584,174 @@
   <div class="card">
     <h2><span class="n">3</span>📋 État général — Équipements et entretien</h2>
     <div id="list-general">
-      <div class="item">
-        <div class="name">Propreté des aires communes</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge0" data-val="ok" onclick="setState('ge0','ok')">✔</button>
-          <button class="statebtn" data-id="ge0" data-val="warn" onclick="setState('ge0','warn')">⚠</button>
-          <button class="statebtn" data-id="ge0" data-val="crit" onclick="setState('ge0','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Propreté des aires communes</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge0" data-val="ok" onclick="setState('ge0','ok')">✔</button>
+            <button class="statebtn" data-id="ge0" data-val="warn" onclick="setState('ge0','warn')">⚠</button>
+            <button class="statebtn" data-id="ge0" data-val="crit" onclick="setState('ge0','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge0')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge0" style="display:none" onchange="handlePhoto(event,'ge0')">
+        <div class="thumbs" id="thumbs-ge0"></div>
       </div>
-      <div class="item">
-        <div class="name">Signalisation et affichage sécurité</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge1" data-val="ok" onclick="setState('ge1','ok')">✔</button>
-          <button class="statebtn" data-id="ge1" data-val="warn" onclick="setState('ge1','warn')">⚠</button>
-          <button class="statebtn" data-id="ge1" data-val="crit" onclick="setState('ge1','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Signalisation et affichage sécurité</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge1" data-val="ok" onclick="setState('ge1','ok')">✔</button>
+            <button class="statebtn" data-id="ge1" data-val="warn" onclick="setState('ge1','warn')">⚠</button>
+            <button class="statebtn" data-id="ge1" data-val="crit" onclick="setState('ge1','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge1')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge1" style="display:none" onchange="handlePhoto(event,'ge1')">
+        <div class="thumbs" id="thumbs-ge1"></div>
       </div>
-      <div class="item">
-        <div class="name">Trousse de premiers soins</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge2" data-val="ok" onclick="setState('ge2','ok')">✔</button>
-          <button class="statebtn" data-id="ge2" data-val="warn" onclick="setState('ge2','warn')">⚠</button>
-          <button class="statebtn" data-id="ge2" data-val="crit" onclick="setState('ge2','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Trousse de premiers soins</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge2" data-val="ok" onclick="setState('ge2','ok')">✔</button>
+            <button class="statebtn" data-id="ge2" data-val="warn" onclick="setState('ge2','warn')">⚠</button>
+            <button class="statebtn" data-id="ge2" data-val="crit" onclick="setState('ge2','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge2')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge2" style="display:none" onchange="handlePhoto(event,'ge2')">
+        <div class="thumbs" id="thumbs-ge2"></div>
       </div>
-      <div class="item">
-        <div class="name">Registre d'entretien à jour</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge3" data-val="ok" onclick="setState('ge3','ok')">✔</button>
-          <button class="statebtn" data-id="ge3" data-val="warn" onclick="setState('ge3','warn')">⚠</button>
-          <button class="statebtn" data-id="ge3" data-val="crit" onclick="setState('ge3','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Registre d'entretien à jour</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge3" data-val="ok" onclick="setState('ge3','ok')">✔</button>
+            <button class="statebtn" data-id="ge3" data-val="warn" onclick="setState('ge3','warn')">⚠</button>
+            <button class="statebtn" data-id="ge3" data-val="crit" onclick="setState('ge3','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge3')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge3" style="display:none" onchange="handlePhoto(event,'ge3')">
+        <div class="thumbs" id="thumbs-ge3"></div>
       </div>
-      <div class="item">
-        <div class="name">Entreposage sécuritaire des produits chimiques</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge4" data-val="ok" onclick="setState('ge4','ok')">✔</button>
-          <button class="statebtn" data-id="ge4" data-val="warn" onclick="setState('ge4','warn')">⚠</button>
-          <button class="statebtn" data-id="ge4" data-val="crit" onclick="setState('ge4','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Entreposage sécuritaire des produits chimiques</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge4" data-val="ok" onclick="setState('ge4','ok')">✔</button>
+            <button class="statebtn" data-id="ge4" data-val="warn" onclick="setState('ge4','warn')">⚠</button>
+            <button class="statebtn" data-id="ge4" data-val="crit" onclick="setState('ge4','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge4')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge4" style="display:none" onchange="handlePhoto(event,'ge4')">
+        <div class="thumbs" id="thumbs-ge4"></div>
       </div>
-      <div class="item">
-        <div class="name">Fiches SIMDUT disponibles</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge5" data-val="ok" onclick="setState('ge5','ok')">✔</button>
-          <button class="statebtn" data-id="ge5" data-val="warn" onclick="setState('ge5','warn')">⚠</button>
-          <button class="statebtn" data-id="ge5" data-val="crit" onclick="setState('ge5','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Fiches SIMDUT disponibles</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge5" data-val="ok" onclick="setState('ge5','ok')">✔</button>
+            <button class="statebtn" data-id="ge5" data-val="warn" onclick="setState('ge5','warn')">⚠</button>
+            <button class="statebtn" data-id="ge5" data-val="crit" onclick="setState('ge5','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge5')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge5" style="display:none" onchange="handlePhoto(event,'ge5')">
+        <div class="thumbs" id="thumbs-ge5"></div>
       </div>
-      <div class="item">
-        <div class="name">Barres d'appui salles de bain résidents</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge6" data-val="ok" onclick="setState('ge6','ok')">✔</button>
-          <button class="statebtn" data-id="ge6" data-val="warn" onclick="setState('ge6','warn')">⚠</button>
-          <button class="statebtn" data-id="ge6" data-val="crit" onclick="setState('ge6','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Barres d'appui salles de bain résidents</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge6" data-val="ok" onclick="setState('ge6','ok')">✔</button>
+            <button class="statebtn" data-id="ge6" data-val="warn" onclick="setState('ge6','warn')">⚠</button>
+            <button class="statebtn" data-id="ge6" data-val="crit" onclick="setState('ge6','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge6')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge6" style="display:none" onchange="handlePhoto(event,'ge6')">
+        <div class="thumbs" id="thumbs-ge6"></div>
       </div>
-      <div class="item">
-        <div class="name">Équipement de mobilité (fauteuils, marchettes)</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge7" data-val="ok" onclick="setState('ge7','ok')">✔</button>
-          <button class="statebtn" data-id="ge7" data-val="warn" onclick="setState('ge7','warn')">⚠</button>
-          <button class="statebtn" data-id="ge7" data-val="crit" onclick="setState('ge7','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Équipement de mobilité (fauteuils, marchettes)</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge7" data-val="ok" onclick="setState('ge7','ok')">✔</button>
+            <button class="statebtn" data-id="ge7" data-val="warn" onclick="setState('ge7','warn')">⚠</button>
+            <button class="statebtn" data-id="ge7" data-val="crit" onclick="setState('ge7','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge7')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge7" style="display:none" onchange="handlePhoto(event,'ge7')">
+        <div class="thumbs" id="thumbs-ge7"></div>
       </div>
-      <div class="item">
-        <div class="name">Portes verrouillées / contrôle d'accès</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge8" data-val="ok" onclick="setState('ge8','ok')">✔</button>
-          <button class="statebtn" data-id="ge8" data-val="warn" onclick="setState('ge8','warn')">⚠</button>
-          <button class="statebtn" data-id="ge8" data-val="crit" onclick="setState('ge8','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Portes verrouillées / contrôle d'accès</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge8" data-val="ok" onclick="setState('ge8','ok')">✔</button>
+            <button class="statebtn" data-id="ge8" data-val="warn" onclick="setState('ge8','warn')">⚠</button>
+            <button class="statebtn" data-id="ge8" data-val="crit" onclick="setState('ge8','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge8')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge8" style="display:none" onchange="handlePhoto(event,'ge8')">
+        <div class="thumbs" id="thumbs-ge8"></div>
       </div>
-      <div class="item">
-        <div class="name">Caméras de sécurité fonctionnelles</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge9" data-val="ok" onclick="setState('ge9','ok')">✔</button>
-          <button class="statebtn" data-id="ge9" data-val="warn" onclick="setState('ge9','warn')">⚠</button>
-          <button class="statebtn" data-id="ge9" data-val="crit" onclick="setState('ge9','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Caméras de sécurité fonctionnelles</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge9" data-val="ok" onclick="setState('ge9','ok')">✔</button>
+            <button class="statebtn" data-id="ge9" data-val="warn" onclick="setState('ge9','warn')">⚠</button>
+            <button class="statebtn" data-id="ge9" data-val="crit" onclick="setState('ge9','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge9')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge9" style="display:none" onchange="handlePhoto(event,'ge9')">
+        <div class="thumbs" id="thumbs-ge9"></div>
       </div>
-      <div class="item">
-        <div class="name">Génératrice — carburant / test</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge10" data-val="ok" onclick="setState('ge10','ok')">✔</button>
-          <button class="statebtn" data-id="ge10" data-val="warn" onclick="setState('ge10','warn')">⚠</button>
-          <button class="statebtn" data-id="ge10" data-val="crit" onclick="setState('ge10','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Génératrice — carburant / test</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge10" data-val="ok" onclick="setState('ge10','ok')">✔</button>
+            <button class="statebtn" data-id="ge10" data-val="warn" onclick="setState('ge10','warn')">⚠</button>
+            <button class="statebtn" data-id="ge10" data-val="crit" onclick="setState('ge10','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge10')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge10" style="display:none" onchange="handlePhoto(event,'ge10')">
+        <div class="thumbs" id="thumbs-ge10"></div>
       </div>
-      <div class="item">
-        <div class="name">Courroies et filtres CVCA</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge11" data-val="ok" onclick="setState('ge11','ok')">✔</button>
-          <button class="statebtn" data-id="ge11" data-val="warn" onclick="setState('ge11','warn')">⚠</button>
-          <button class="statebtn" data-id="ge11" data-val="crit" onclick="setState('ge11','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Courroies et filtres CVCA</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge11" data-val="ok" onclick="setState('ge11','ok')">✔</button>
+            <button class="statebtn" data-id="ge11" data-val="warn" onclick="setState('ge11','warn')">⚠</button>
+            <button class="statebtn" data-id="ge11" data-val="crit" onclick="setState('ge11','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge11')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge11" style="display:none" onchange="handlePhoto(event,'ge11')">
+        <div class="thumbs" id="thumbs-ge11"></div>
       </div>
-      <div class="item">
-        <div class="name">Liste des défauts affichée</div>
-        <div class="statebtns">
-          <button class="statebtn" data-id="ge12" data-val="ok" onclick="setState('ge12','ok')">✔</button>
-          <button class="statebtn" data-id="ge12" data-val="warn" onclick="setState('ge12','warn')">⚠</button>
-          <button class="statebtn" data-id="ge12" data-val="crit" onclick="setState('ge12','crit')">✕</button>
+      <div class="item-wrap">
+        <div class="item">
+          <div class="name">Liste des défauts affichée</div>
+          <div class="statebtns">
+            <button class="statebtn" data-id="ge12" data-val="ok" onclick="setState('ge12','ok')">✔</button>
+            <button class="statebtn" data-id="ge12" data-val="warn" onclick="setState('ge12','warn')">⚠</button>
+            <button class="statebtn" data-id="ge12" data-val="crit" onclick="setState('ge12','crit')">✕</button>
+            <button class="statebtn photobtn" onclick="triggerPhoto('ge12')">📷</button>
+          </div>
         </div>
+        <input type="file" accept="image/*" capture="environment" id="photoinput-ge12" style="display:none" onchange="handlePhoto(event,'ge12')">
+        <div class="thumbs" id="thumbs-ge12"></div>
       </div>
     </div>
   </div>
@@ -629,6 +817,43 @@ document.querySelectorAll('.item').forEach(item => {
     LABELS[btn.dataset.id] = nameEl.textContent;
   }
 });
+
+let photos = {};
+
+function triggerPhoto(id){
+  document.getElementById('photoinput-' + id).click();
+}
+
+function handlePhoto(event, id){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    if(!photos[id]) photos[id] = [];
+    photos[id].push(e.target.result);
+    renderThumbs(id);
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function renderThumbs(id){
+  const wrap = document.getElementById('thumbs-' + id);
+  const list = photos[id] || [];
+  wrap.classList.toggle('has-photos', list.length > 0);
+  wrap.innerHTML = list.map((src, i) => `
+    <div class="thumb">
+      <img src="${src}">
+      <div class="rm" onclick="removePhoto('${id}', ${i})">✕</div>
+    </div>`).join('');
+  document.querySelectorAll(`[onclick="triggerPhoto('${id}')"]`)
+    .forEach(btn => btn.classList.toggle('has-photos', list.length > 0));
+}
+
+function removePhoto(id, index){
+  photos[id].splice(index, 1);
+  renderThumbs(id);
+}
 
 function setState(id, val){
   state[id] = (state[id] === val) ? null : val;
@@ -752,6 +977,8 @@ function envoyerCourriel(){
     .map(i => i.value.trim())
     .filter(v => v.length > 0);
 
+  const totalPhotos = Object.values(photos).reduce((sum, arr) => sum + arr.length, 0);
+
   let body = `RONDE DE SÉCURITÉ — MAINTENANCE\n${lieu}\n\n`;
   body += `Date : ${date}   Heure : ${heure}\n`;
   body += `Secteur : ${secteur}\n`;
@@ -774,7 +1001,10 @@ function envoyerCourriel(){
     notes.forEach(n => body += `- ${n}\n`);
     body += `\n`;
   }
-  body += `Rapport complet disponible en pièce jointe PDF (imprimé séparément depuis l'application).`;
+  body += `Rapport complet avec photos disponible en pièce jointe PDF (imprimé séparément depuis l'application).`;
+  if(totalPhotos > 0){
+    body += `\n(${totalPhotos} photo(s) prise(s) durant la ronde — visibles uniquement dans le PDF imprimé, pas dans ce courriel)`;
+  }
 
   const subject = `Ronde de sécurité — ${lieu} — ${date}`;
   const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
