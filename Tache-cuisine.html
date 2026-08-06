@@ -1,1 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cuisine — Chartwell">
+<title>Fermeture Cuisine — Chartwell Le Plateau</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Source+Sans+3:wght@400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+:root{
+  --or-solide:#B8954A;--or-ombre:#9C7F3D;--or-highlight:#F0E4C0;--or-reflet:#D4C28E;
+  --or-grad:linear-gradient(110deg,#9C7F3D 0%,#B8954A 35%,#F0E4C0 50%,#B8954A 65%,#9C7F3D 100%);
+  --noir:#1A1A1A;--vert:#4A7C59;
+}
+body{font-family:'Source Sans 3','Segoe UI',Arial,sans-serif;background:#f2f2f2;min-height:100vh;color:#1A1A1A;padding-bottom:40px;}
 
+.nav{position:sticky;top:0;z-index:100;background:#1A1A1A;border-bottom:2px solid var(--or-ombre);padding:14px 20px;text-align:center;}
+.nav-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:900;letter-spacing:1.5px;color:#fff;text-transform:uppercase;}
+.nav-sub{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-top:3px;}
+
+.container{max-width:600px;margin:0 auto;padding:18px 16px;}
+
+.header-card{background:#fff;border-radius:14px;padding:16px 18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.07);}
+.date-display{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:800;color:var(--or-ombre);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.field-label{font-size:12px;font-weight:600;color:#555;margin-bottom:5px;}
+#employe-nom{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;}
+#employe-nom:focus{outline:none;border-color:var(--or-ombre);}
+
+.progress-bar{background:#fff;border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,0.07);}
+.progress-txt{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:800;color:#1A1A1A;margin-bottom:8px;}
+.progress-track{background:#eee;border-radius:20px;height:8px;overflow:hidden;}
+.progress-fill{background:var(--or-grad);height:100%;width:0%;transition:width 0.2s;}
+
+.checklist-card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.07);overflow:hidden;margin-bottom:16px;}
+.checklist-header{background:#1A1A1A;padding:14px 18px;border-bottom:2px solid var(--or-ombre);}
+.checklist-header-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase;background:var(--or-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.checklist-body{padding:8px 18px 16px;}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid #f0f0f0;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;}
+.check-item:last-child{border-bottom:none;}
+.check-box{width:20px;height:20px;border:2px solid var(--or-ombre);border-radius:5px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;transition:background 0.15s;}
+.check-box.checked{background:var(--or-grad);}
+.check-txt{font-size:13.5px;color:#333;line-height:1.5;transition:opacity 0.15s;}
+.check-item.checked .check-txt{opacity:0.5;text-decoration:line-through;}
+
+.send-buttons{display:flex;flex-direction:column;gap:10px;}
+.send-btn{display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;letter-spacing:0.5px;padding:15px;border-radius:12px;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.send-btn-email{background:var(--or-grad);color:#1A1A1A;}
+.send-btn-sms{background:#1A1A1A;color:#fff;border:1.5px solid var(--or-ombre);}
+.send-note{font-size:11px;color:#888;text-align:center;margin-top:10px;line-height:1.5;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-title">Chartwell Le Plateau</div>
+  <div class="nav-sub">🍳 Fermeture Cuisine</div>
+</nav>
+
+<div class="container">
+  <div class="header-card">
+    <div class="date-display" id="date-display"></div>
+    <div class="field-label">Nom de l'employé</div>
+    <input type="text" id="employe-nom" placeholder="Ton nom">
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-txt" id="progress-txt">0 / 0 tâches complétées</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div class="checklist-card">
+    <div class="checklist-header"><span class="checklist-header-title">📋 Checklist de fermeture</span></div>
+    <div class="checklist-body" id="checklist-body">
+      <div class="check-item" data-idx="0"><div class="check-box"></div><div class="check-txt">Nettoyer et désinfecter toutes les surfaces de travail</div></div>
+      <div class="check-item" data-idx="1"><div class="check-box"></div><div class="check-txt">Laver et ranger toute la vaisselle et les chaudrons</div></div>
+      <div class="check-item" data-idx="2"><div class="check-box"></div><div class="check-txt">Nettoyer la cuisinière et les brûleurs</div></div>
+      <div class="check-item" data-idx="3"><div class="check-box"></div><div class="check-txt">Nettoyer le four (intérieur et extérieur)</div></div>
+      <div class="check-item" data-idx="4"><div class="check-box"></div><div class="check-txt">Nettoyer la friteuse et vérifier l'huile</div></div>
+      <div class="check-item" data-idx="5"><div class="check-box"></div><div class="check-txt">Nettoyer la hotte et les filtres</div></div>
+      <div class="check-item" data-idx="6"><div class="check-box"></div><div class="check-txt">Nettoyer et désinfecter les planches à découper</div></div>
+      <div class="check-item" data-idx="7"><div class="check-box"></div><div class="check-txt">Nettoyer l'intérieur et l'extérieur des réfrigérateurs/congélateurs</div></div>
+      <div class="check-item" data-idx="8"><div class="check-box"></div><div class="check-txt">Vérifier et noter les températures des réfrigérateurs/congélateurs</div></div>
+      <div class="check-item" data-idx="9"><div class="check-box"></div><div class="check-txt">Étiqueter et dater tous les aliments entamés (FIFO)</div></div>
+      <div class="check-item" data-idx="10"><div class="check-box"></div><div class="check-txt">Jeter les aliments périmés ou non identifiés</div></div>
+      <div class="check-item" data-idx="11"><div class="check-box"></div><div class="check-txt">Balayer et laver le plancher de la cuisine</div></div>
+      <div class="check-item" data-idx="12"><div class="check-box"></div><div class="check-txt">Vider toutes les poubelles et remplacer les sacs</div></div>
+      <div class="check-item" data-idx="13"><div class="check-box"></div><div class="check-txt">Nettoyer et désinfecter l'évier</div></div>
+      <div class="check-item" data-idx="14"><div class="check-box"></div><div class="check-txt">Ranger tous les produits chimiques de nettoyage</div></div>
+      <div class="check-item" data-idx="15"><div class="check-box"></div><div class="check-txt">Vérifier que le lave-vaisselle est propre et vide</div></div>
+      <div class="check-item" data-idx="16"><div class="check-box"></div><div class="check-txt">Éteindre les équipements non nécessaires (four, friteuse, etc.)</div></div>
+      <div class="check-item" data-idx="17"><div class="check-box"></div><div class="check-txt">Verrouiller la chambre froide et l'entrepôt sec</div></div>
+      <div class="check-item" data-idx="18"><div class="check-box"></div><div class="check-txt">Signaler tout bris ou incident au superviseur</div></div>
+      <div class="check-item" data-idx="19"><div class="check-box"></div><div class="check-txt">Confirmer que la cuisine est fermée conforme</div></div>
+    </div>
+  </div>
+
+  <div class="send-buttons">
+    <button class="send-btn send-btn-email" id="btn-email">✉️ Envoyer par courriel</button>
+    <button class="send-btn send-btn-sms" id="btn-sms">💬 Envoyer par texto</button>
+  </div>
+  <div class="send-note">Le rapport s'ouvre dans Mail ou Messages, prérempli. Confirme l'envoi dans l'app.</div>
+</div>
+
+<script>
+(function(){
+  var EMAIL_DEST = 'jperrier2@chartwell.com';
+  var SMS_DEST = '+12633621946';
+  var TITRE = 'Fermeture Cuisine';
+
+  function todayKey(){
+    var d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+  }
+  var STORAGE_KEY = 'chartwell-cuisine-' + todayKey();
+  var NAME_KEY = 'chartwell-employe-nom';
+
+  var dateDisplay = document.getElementById('date-display');
+  var now = new Date();
+  dateDisplay.textContent = now.toLocaleDateString('fr-CA', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+  var nomInput = document.getElementById('employe-nom');
+  try { nomInput.value = localStorage.getItem(NAME_KEY) || ''; } catch(e){}
+  nomInput.addEventListener('input', function(){
+    try { localStorage.setItem(NAME_KEY, nomInput.value); } catch(e){}
+  });
+
+  function loadChecked(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch(e){ return {}; }
+  }
+  function saveChecked(state){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e){}
+  }
+  var checkedState = loadChecked();
+  var items = document.querySelectorAll('.check-item');
+  var total = items.length;
+
+  function updateProgress(){
+    var count = 0;
+    items.forEach(function(item){
+      if (checkedState[item.getAttribute('data-idx')]) count++;
+    });
+    document.getElementById('progress-txt').textContent = count + ' / ' + total + ' tâches complétées';
+    document.getElementById('progress-fill').style.width = (count/total*100) + '%';
+  }
+
+  function applyCheckedVisual(item, isChecked){
+    var box = item.querySelector('.check-box');
+    item.classList.toggle('checked', isChecked);
+    box.classList.toggle('checked', isChecked);
+    box.textContent = isChecked ? '✓' : '';
+  }
+
+  items.forEach(function(item){
+    var idx = item.getAttribute('data-idx');
+    applyCheckedVisual(item, !!checkedState[idx]);
+    item.addEventListener('click', function(){
+      checkedState[idx] = !checkedState[idx];
+      applyCheckedVisual(item, checkedState[idx]);
+      saveChecked(checkedState);
+      updateProgress();
+    });
+  });
+  updateProgress();
+
+  function buildMessage(){
+    var nom = nomInput.value.trim() || '(non identifié)';
+    var count = 0;
+    var lignes = [];
+    items.forEach(function(item){
+      var idx = item.getAttribute('data-idx');
+      var txt = item.querySelector('.check-txt').textContent;
+      var done = !!checkedState[idx];
+      if (done) count++;
+      lignes.push((done ? '✅ ' : '❌ ') + txt);
+    });
+    var entete = TITRE + ' — Chartwell Le Plateau\n' +
+      'Employé : ' + nom + '\n' +
+      'Date : ' + now.toLocaleDateString('fr-CA', {weekday:'long', year:'numeric', month:'long', day:'numeric'}) + '\n' +
+      'Heure : ' + now.toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'}) + '\n' +
+      'Résultat : ' + count + ' / ' + total + ' tâches complétées\n\n';
+    return entete + lignes.join('\n');
+  }
+
+  document.getElementById('btn-email').addEventListener('click', function(){
+    var body = buildMessage();
+    var subject = TITRE + ' — ' + now.toLocaleDateString('fr-CA');
+    window.location.href = 'mailto:' + EMAIL_DEST + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  });
+
+  document.getElementById('btn-sms').addEventListener('click', function(){
+    var body = buildMessage();
+    window.location.href = 'sms:' + SMS_DEST + '&body=' + encodeURIComponent(body);
+  });
+})();
+</script>
+</body>
+</html>
