@@ -1,1 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Cadeau du Numérique — Verdict 360 AI | Académie</title>
+<style>
+  :root{
+    --or-solide:#B8954A;
+    --or-ombre:#9C7F3D;
+    --or-reflet:#D4C28E;
+    --or-highlight:#F0E4C0;
+    --noir:#1A1A1A;
+    --noir-fond:#0A0A0A;
+    --gradient-or: linear-gradient(110deg, #9C7F3D 0%, #B8954A 35%, #F0E4C0 50%, #B8954A 65%, #9C7F3D 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background:#FAF9F6;
+    color:var(--noir);
+    line-height:1.5;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px;}
 
+  header.hero{
+    background:var(--noir-fond);
+    color:#fff;
+    padding:48px 20px 40px;
+    text-align:center;
+  }
+  header.hero .logo{
+    font-size:1.1rem;
+    letter-spacing:2px;
+    font-weight:700;
+    background:var(--gradient-or);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    margin-bottom:18px;
+  }
+  header.hero h1{
+    font-size:1.9rem;
+    line-height:1.25;
+    margin-bottom:14px;
+  }
+  header.hero p{
+    color:#D8D3C8;
+    font-size:1.05rem;
+    max-width:520px;
+    margin:0 auto;
+  }
+
+  section.forfaits{padding:40px 0 20px;}
+  section.forfaits h2{
+    text-align:center;
+    font-size:1.5rem;
+    margin-bottom:8px;
+  }
+  section.forfaits .sub{
+    text-align:center;
+    color:#666;
+    margin-bottom:32px;
+  }
+
+  .carte{
+    background:#fff;
+    border:1px solid #E6E1D6;
+    border-radius:14px;
+    padding:26px 24px;
+    margin-bottom:20px;
+    position:relative;
+    box-shadow:0 2px 10px rgba(0,0,0,0.04);
+  }
+  .carte.recommande{
+    border:2px solid var(--or-solide);
+  }
+  .badge{
+    display:inline-block;
+    background:var(--gradient-or);
+    color:var(--noir);
+    font-size:0.72rem;
+    font-weight:700;
+    letter-spacing:0.5px;
+    padding:4px 10px;
+    border-radius:20px;
+    margin-bottom:10px;
+    text-transform:uppercase;
+  }
+  .carte h3{
+    font-size:1.25rem;
+    margin-bottom:6px;
+  }
+  .prix{
+    font-size:1.8rem;
+    font-weight:700;
+    color:var(--or-ombre);
+    margin-bottom:14px;
+  }
+  .prix span{
+    font-size:0.95rem;
+    font-weight:400;
+    color:#888;
+  }
+  .carte ul{
+    list-style:none;
+    margin-bottom:20px;
+  }
+  .carte ul li{
+    padding-left:24px;
+    position:relative;
+    margin-bottom:8px;
+    color:#333;
+    font-size:0.96rem;
+  }
+  .carte ul li::before{
+    content:"✓";
+    position:absolute;
+    left:0;
+    color:var(--or-ombre);
+    font-weight:700;
+  }
+  .btn-offrir{
+    display:block;
+    text-align:center;
+    background:var(--gradient-or);
+    color:var(--noir);
+    font-weight:700;
+    padding:14px;
+    border-radius:10px;
+    text-decoration:none;
+    font-size:1rem;
+    transition:opacity 0.2s;
+  }
+  .btn-offrir:active{opacity:0.85;}
+
+  .note-evenement{
+    font-size:0.85rem;
+    color:#777;
+    margin-top:10px;
+    text-align:center;
+  }
+
+  blockquote.citation{
+    background:#F5F2EA;
+    border-left:4px solid var(--or-solide);
+    padding:20px 22px;
+    margin:36px 0;
+    font-style:italic;
+    color:#444;
+    border-radius:6px;
+  }
+  blockquote.citation cite{
+    display:block;
+    margin-top:10px;
+    font-style:normal;
+    font-size:0.85rem;
+    color:#888;
+  }
+
+  footer.contact{
+    background:var(--noir-fond);
+    color:#fff;
+    padding:40px 20px 32px;
+    text-align:center;
+  }
+  footer.contact h2{
+    font-size:1.3rem;
+    margin-bottom:10px;
+  }
+  footer.contact p{
+    color:#C9C4B8;
+    margin-bottom:20px;
+    font-size:0.95rem;
+  }
+  .contact-links{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:center;
+    margin-bottom:20px;
+  }
+  .contact-links a{
+    color:var(--or-reflet);
+    text-decoration:none;
+    font-size:0.98rem;
+  }
+  .fine{
+    font-size:0.78rem;
+    color:#777;
+    border-top:1px solid #2A2A2A;
+    padding-top:16px;
+    margin-top:10px;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="logo">VERDICT 360 AI | ACADÉMIE</div>
+    <h1>Le Cadeau du Numérique</h1>
+    <p>Offrez à un être cher la confiance et l'autonomie face à l'intelligence artificielle — un cadeau qui change vraiment le quotidien.</p>
+  </div>
+</header>
+
+<section class="forfaits">
+  <div class="wrap">
+    <h2>Trois façons d'offrir ce cadeau</h2>
+    <p class="sub">Choisissez le forfait qui convient le mieux</p>
+
+    <div class="carte">
+      <h3>Forfait Découverte</h3>
+      <div class="prix">69 $ <span>paiement unique</span></div>
+      <ul>
+        <li>Introduction guidée à l'intelligence artificielle</li>
+        <li>Accès à l'ACADÉMIE en ligne, à son rythme</li>
+        <li>Support bilingue français/anglais</li>
+        <li>Certificat de participation</li>
+      </ul>
+      <a class="btn-offrir" href="https://buy.stripe.com/9B65kCbya1VZaCs3zRfEk00">Offrir ce forfait — 69 $</a>
+    </div>
+
+    <div class="carte recommande">
+      <span class="badge">Le plus populaire</span>
+      <h3>Forfait Complice</h3>
+      <div class="prix">99 $ <span>paiement unique</span></div>
+      <ul>
+        <li>Tout le contenu du forfait Découverte</li>
+        <li>Accompagnement approfondi, exercices pratiques</li>
+        <li>Séance de suivi personnalisée</li>
+        <li>Accès prolongé à l'ACADÉMIE</li>
+      </ul>
+      <a class="btn-offrir" href="https://buy.stripe.com/00wfZg6dQ303eSI6M3fEk01">Offrir ce forfait — 99 $</a>
+    </div>
+
+    <div class="carte">
+      <h3>Forfait Événement des Fêtes</h3>
+      <div class="prix">Dès 249 $ <span>groupe jusqu'à 8 personnes</span></div>
+      <ul>
+        <li>Formation de groupe animée, en résidence ou à distance</li>
+        <li>Ambiance conviviale, adaptée aux aînés</li>
+        <li>Matériel imprimé remis à chaque participant</li>
+        <li>Certificat de participation pour chacun</li>
+      </ul>
+      <a class="btn-offrir" href="https://buy.stripe.com/fZu9AS6dQfMP25W5HZfEk02">Réserver — dès 249 $</a>
+      <p class="note-evenement">Frais additionnels de 15 $/personne au-delà de 8 participants, facturés séparément.</p>
+    </div>
+
+    <blockquote class="citation">
+      « Je ne pensais jamais pouvoir comprendre tout ça un jour. Aujourd'hui, j'utilise l'intelligence artificielle chaque semaine, et je me sens moins seule face à la technologie. »
+      <cite>— Un participant, après une conférence Verdict 360 AI | Académie</cite>
+    </blockquote>
+  </div>
+</section>
+
+<footer class="contact">
+  <div class="wrap">
+    <h2>Prêt à offrir ce cadeau?</h2>
+    <p>Le paiement se fait en toute sécurité en ligne. Une confirmation vous sera envoyée par courriel avec les prochaines étapes.</p>
+    <div class="contact-links">
+      <a href="mailto:info@verdict360ai.com">✉️ info@verdict360ai.com</a>
+      <a href="tel:+18738221455">📞 +1 (873) 822-1455</a>
+      <a href="https://verdict360ai.com">🌐 verdict360ai.com</a>
+    </div>
+    <div class="fine">Verdict 360 AI | Académie — Formation privée alignée sur l'accompagnement numérique des aînés</div>
+  </div>
+</footer>
+
+</body>
+</html>
