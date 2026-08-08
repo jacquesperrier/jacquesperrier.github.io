@@ -1,3 +1,7 @@
 name = "sondage-residents"
 main = "worker-sondage-residents.js"
 compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "SONDAGE_KV"
+id = "608bcbc7b4c2450d853926b0d7907be0"
