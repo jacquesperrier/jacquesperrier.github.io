@@ -43,8 +43,12 @@
     background: var(--or-gradient); color: #fff; font-size: 16px; font-weight: 700;
     margin-top: 10px; cursor: pointer;
   }
+  .bouton-danger {
+    background: #B23A3A;
+  }
   .bouton-lien { background: none; color: var(--or-ombre); font-weight: 600; font-size: 14px; text-decoration: underline; border: none; margin-top: 12px; cursor: pointer; padding: 0; }
   .erreur { color: #B23A3A; font-size: 14px; margin-top: 10px; }
+  .succes { color: #2E7D32; font-size: 14px; margin-top: 10px; }
   .stat-grid { display: flex; gap: 10px; text-align: center; margin-bottom: 4px; }
   .stat-box { flex: 1; background: var(--or-highlight); border-radius: 12px; padding: 12px 6px; }
   .stat-box .valeur { font-size: 24px; font-weight: 800; color: var(--or-ombre); }
@@ -108,19 +112,24 @@
     <h2>Commentaires des résidents</h2>
     <div id="zone-commentaires"></div>
   </div>
+
+  <div class="carte">
+    <h2>Réinitialisation</h2>
+    <p style="font-size:13px; color:var(--gris); margin-top:0;">Supprime définitivement toutes les réponses enregistrées. Cette action est irréversible.</p>
+    <button class="bouton bouton-danger" onclick="reinitialiser()">🗑️ Réinitialiser toutes les réponses</button>
+    <div id="message-reset" style="display:none; margin-top:10px;"></div>
+  </div>
 </div>
 
 <script>
 const WORKER_URL = "https://sondage-residents.mjacquesperrier.workers.dev";
+let mdpActuel = "";
 
 const QUESTIONS = [
   { id: "repas_gout", categorie: "🍽️ Vos repas", texte: "Le goût des repas" },
   { id: "repas_portion", categorie: "🍽️ Vos repas", texte: "Les portions sont-elles suffisantes" },
   { id: "repas_temperature", categorie: "🍽️ Vos repas", texte: "Température des repas" },
   { id: "repas_variete", categorie: "🍽️ Vos repas", texte: "Choix et variété au menu" },
-  { id: "proprete", categorie: "🧹 Votre milieu de vie", texte: "Propreté du milieu de vie" },
-  { id: "personnel", categorie: "🤝 Le personnel", texte: "Attitude du personnel" },
-  { id: "activites", categorie: "🎨 Les activités", texte: "Activités offertes" },
 ];
 
 function afficherCollage() {
@@ -143,6 +152,7 @@ async function chargerViaWorker() {
       erreurEl.style.display = 'block';
       return;
     }
+    mdpActuel = mdp;
     const data = await res.json();
     afficherResultats(data);
   } catch (e) {
@@ -154,12 +164,48 @@ async function chargerViaWorker() {
 function chargerViaCollage() {
   const brut = document.getElementById('json-colle').value.trim();
   const erreurEl = document.getElementById('erreur-login');
+  const mdp = document.getElementById('mdp').value.trim();
   try {
     const data = JSON.parse(brut);
+    mdpActuel = mdp;
     afficherResultats(data);
   } catch (e) {
     erreurEl.textContent = "Le texte collé n'est pas un JSON valide. Assurez-vous de copier tout le contenu de la page, crochets [ ] inclus.";
     erreurEl.style.display = 'block';
+  }
+}
+
+async function reinitialiser() {
+  const msgEl = document.getElementById('message-reset');
+  msgEl.style.display = 'none';
+
+  if (!mdpActuel) {
+    msgEl.className = 'erreur';
+    msgEl.textContent = "Mot de passe introuvable. Rechargez la page et reconnectez-vous avant de réinitialiser.";
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  const confirmation = confirm("Êtes-vous certain de vouloir supprimer TOUTES les réponses du sondage? Cette action est irréversible.");
+  if (!confirmation) return;
+
+  try {
+    const res = await fetch(`${WORKER_URL}/admin?key=${encodeURIComponent(mdpActuel)}`, { method: "DELETE" });
+    if (!res.ok) {
+      msgEl.className = 'erreur';
+      msgEl.textContent = `Échec de la réinitialisation (code ${res.status}). Vérifiez la connexion ou réessayez.`;
+      msgEl.style.display = 'block';
+      return;
+    }
+    const data = await res.json();
+    msgEl.className = 'succes';
+    msgEl.textContent = `${data.supprimees || 0} réponse(s) supprimée(s). La page va se recharger.`;
+    msgEl.style.display = 'block';
+    setTimeout(() => location.reload(), 1800);
+  } catch (e) {
+    msgEl.className = 'erreur';
+    msgEl.textContent = "Impossible de contacter le serveur directement depuis ici (restriction de sécurité du navigateur possible). Réessayez depuis un ordinateur si le problème persiste.";
+    msgEl.style.display = 'block';
   }
 }
 
